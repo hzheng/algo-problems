@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
  * Remove the duplicate characters in a string without using any additional buffer
  */
 public class RemoveDup {
-    int removeDup(char[] str) {
+    public int removeDup(char[] str) {
         if (str == null) return 0;
 
         int len = str.length;

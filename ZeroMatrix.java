@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
  */
 public class ZeroMatrix {
     // time complexity: O(M*N), space complexity: O(M+N)
-    void zeroMatrix(int[][] matrix) {
+    public void zeroMatrix(int[][] matrix) {
         int m = matrix.length;
         int n = matrix[0].length;
         // we could use bit vector to save more space

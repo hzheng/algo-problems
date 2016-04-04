@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
  * (e.g., "waterbottLe" is a rotation of "erbottLewat").
  */
 public class RotationCheck {
-    boolean isRotation(String s1, String s2) {
+    public boolean isRotation(String s1, String s2) {
         if (s1 == null || s2 == null
             || s1.length() != s2.length()) {
             return false;

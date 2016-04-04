@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
  */
 public class MatrixRotate {
     // time complexity: O(n^2), space complexity: O(1)
-    void rotate(int[][] matrix) {
+    public void rotate(int[][] matrix) {
         if (matrix == null) return;
 
         int n = matrix.length;

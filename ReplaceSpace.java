@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
  *  can perform this operation in place.)
  */
 public class ReplaceSpace {
-    void replaceSpace(char[] str, int len) {
+    public void replaceSpace(char[] str, int len) {
         if (str == null) return;
 
         int spaceCount = 0;

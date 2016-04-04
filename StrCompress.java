@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
  */
 public class StrCompress {
     // time complexity: O(n), space complexity: O(n)
-    String compress(String str) {
+    public String compress(String str) {
         if (str == null) {
             return null;
         }

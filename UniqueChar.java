@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
     What if you can not use additional data structures?
  */
 public class UniqueChar {
-    static boolean hasUniqueChar_by_set(String str) {
+    public boolean hasUniqueCharBySet(String str) {
         if (str == null) return false;
 
         Set<Character> chars = new HashSet<Character>();
@@ -18,7 +18,7 @@ public class UniqueChar {
         return chars.size() == str.length();
     }
 
-    static boolean hasUniqueChar_by_sort(String str) {
+    public boolean hasUniqueCharBySort(String str) {
         if (str == null) return false;
 
         char[] chars = str.toCharArray();
@@ -31,7 +31,7 @@ public class UniqueChar {
         return true;
     }
 
-    static boolean hasUniqueChar_by_array(String str) {
+    public boolean hasUniqueCharByArray(String str) {
         if (str == null) return false;
 
         // time complexity: O(N), space complexity: O(1)
@@ -48,7 +48,7 @@ public class UniqueChar {
         return true;
     }
 
-    static boolean hasUniqueChar_by_bitset(String str) {
+    public boolean hasUniqueCharByBitset(String str) {
         if (str == null) return false;
 
         int checker = 0;
@@ -63,10 +63,10 @@ public class UniqueChar {
     }
 
     void test(String str, boolean expected) {
-        assertEquals(expected, hasUniqueChar_by_set(str));
-        assertEquals(expected, hasUniqueChar_by_sort(str));
-        assertEquals(expected, hasUniqueChar_by_array(str));
-        assertEquals(expected, hasUniqueChar_by_bitset(str));
+        assertEquals(expected, hasUniqueCharBySet(str));
+        assertEquals(expected, hasUniqueCharBySort(str));
+        assertEquals(expected, hasUniqueCharByArray(str));
+        assertEquals(expected, hasUniqueCharByBitset(str));
     }
 
     @Test

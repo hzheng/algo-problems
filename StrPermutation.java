@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
  */
 public class StrPermutation {
     // time complexity: O(nlogn), space complexity: O(n)
-    boolean isPermutationBySort(String s1, String s2) {
+    public boolean isPermutationBySort(String s1, String s2) {
         if (s1 == null || s2 == null) return false;
 
         char[] c1 = s1.toCharArray();
@@ -21,7 +21,7 @@ public class StrPermutation {
     }
 
     // time complexity: O(n), space complexity: O(n)
-    boolean isPermutationByMapCount(String s1, String s2) {
+    public boolean isPermutationByMapCount(String s1, String s2) {
         if (s1 == null || s2 == null) return false;
 
         int len = s1.length();
@@ -45,7 +45,7 @@ public class StrPermutation {
     }
 
     // time complexity: O(n), space complexity: O(1)
-    boolean isPermutationByArrayCount(String s1, String s2) {
+    public boolean isPermutationByArrayCount(String s1, String s2) {
         if (s1 == null || s2 == null) return false;
 
         int len = s1.length();

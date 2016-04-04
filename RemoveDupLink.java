@@ -15,7 +15,7 @@ public class RemoveDupLink {
     /**
      * time complexity: O(N^2) space complexity: O(1)
      */
-    void removeDupLink(LinkedListNode head) {
+    public void removeDupLink(LinkedListNode head) {
         if (head == null) return;
 
         for (LinkedListNode cursor = head; cursor != null; cursor = cursor.next) {
@@ -33,7 +33,7 @@ public class RemoveDupLink {
     /**
      * time complexity: O(N) space complexity: O(N)
      */
-    void removeDupLinkByHash(LinkedListNode head) {
+    public void removeDupLinkByHash(LinkedListNode head) {
         if (head == null) return;
 
         Map<Object, Boolean> map = new HashMap<Object, Boolean>();
