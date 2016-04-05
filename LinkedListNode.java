@@ -21,6 +21,12 @@ class LinkedListNode
         }
     }
 
+    void appendToTail(Object data) {
+        LinkedListNode n = this;
+        for (; n.next != null; n = n.next) {}
+        n.next = new LinkedListNode(data);
+    }
+
     public boolean equals(LinkedListNode that) {
         if (that == null) return false;
 
