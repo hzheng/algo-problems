@@ -21,7 +21,7 @@ public class RemoveDupLink {
         for (LinkedListNode cursor = head; cursor != null; cursor = cursor.next) {
             // remove all nodes after checkHead that are equal to the cursor
             for (LinkedListNode checkHead = cursor; checkHead.next != null; ) {
-                if (cursor.equals(checkHead.next)) {
+                if (cursor.data == checkHead.next.data) {
                     checkHead.next = checkHead.next.next; // remove the duplicate
                 } else {
                     checkHead = checkHead.next;
@@ -36,7 +36,7 @@ public class RemoveDupLink {
     public void removeDupLinkByHash(LinkedListNode head) {
         if (head == null) return;
 
-        Map<Object, Boolean> map = new HashMap<Object, Boolean>();
+        Map<Integer, Boolean> map = new HashMap<Integer, Boolean>();
         LinkedListNode prev = null;
         for (LinkedListNode cursor = head; cursor != null; cursor = cursor.next) {
             if (map.containsKey(cursor.data)) {
@@ -48,7 +48,7 @@ public class RemoveDupLink {
         }
     }
 
-    void test(Object[] before, Object[] expected) {
+    void test(int[] before, int[] expected) {
         LinkedListNode list = new LinkedListNode(before);
         removeDupLink(list);
         assertArrayEquals(expected, list.toArray());
@@ -60,28 +60,28 @@ public class RemoveDupLink {
 
     @Test
     public void test1() {
-        test(new Object[] {1}, new Object[] {1});
+        test(new int[] {1}, new int[] {1});
     }
 
     @Test
     public void test2() {
-        test(new Object[] {1, 1}, new Object[] {1});
+        test(new int[] {1, 1}, new int[] {1});
     }
 
     @Test
     public void test3() {
-        test(new Object[] {1, 2, 1}, new Object[] {1, 2});
+        test(new int[] {1, 2, 1}, new int[] {1, 2});
     }
 
     @Test
     public void test4() {
-        test(new Object[] {1, 2, 1, 2}, new Object[] {1, 2});
+        test(new int[] {1, 2, 1, 2}, new int[] {1, 2});
     }
 
     // @Test
     public void test5() {
-        test(new Object[] {1, 2, 5, 2, 8, 16, 1, 1, 5, 3},
-             new Object[] {1, 2, 5, 8, 16, 3});
+        test(new int[] {1, 2, 5, 2, 8, 16, 1, 1, 5, 3},
+             new int[] {1, 2, 5, 8, 16, 3});
     }
 
     public static void main(String[] args) {
