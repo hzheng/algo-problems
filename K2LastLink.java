@@ -48,44 +48,38 @@ public class K2LastLink {
         return node;
     }
 
-    void test(Object[] array, int k, Object expected) {
+    void test(int[] array, int k, int expected) {
         LinkedListNode list = new LinkedListNode(array);
         LinkedListNode result = k2Last(list, k);
         LinkedListNode result2 = k2LastRecursive(list, k);
-        if (expected != null) {
-            LinkedListNode expectedNode = new LinkedListNode(expected);
-            assertTrue(expectedNode.equals(result));
-            assertTrue(expectedNode.equals(result2));
-        } else {
-            assertNull(result);
-            assertNull(result2);
-        }
+        assertEquals(expected, result.data);
+        assertEquals(expected, result2.data);
     }
 
     @Test
     public void test0() {
-        test(new Object[] {3}, 1, 3);
+        test(new int[] {3}, 1, 3);
     }
 
     @Test
     public void test1() {
-        test(new Object[] {1, 2, 3, 4, 5, 6, 7, 8}, 3, 6);
+        test(new int[] {1, 2, 3, 4, 5, 6, 7, 8}, 3, 6);
     }
 
     @Test
     public void test2() {
-        test(new Object[] {1, 2, 3, 4, 5, 6, 7, 8}, 1, 8);
+        test(new int[] {1, 2, 3, 4, 5, 6, 7, 8}, 1, 8);
     }
 
     @Test
     public void test3() {
-        test(new Object[] {1, 2, 3, 4, 5, 6, 7, 8}, 8, 1);
+        test(new int[] {1, 2, 3, 4, 5, 6, 7, 8}, 8, 1);
     }
 
     @Test(expected=IndexOutOfBoundsException.class)
     public void test4() {
         // FIXME: can only check the first exception
-        test(new Object[] {1, 2, 3, 4, 5, 6, 7, 8}, 9, null);
+        test(new int[] {1, 2, 3, 4, 5, 6, 7, 8}, 9, 0);
     }
 
     public static void main(String[] args) {

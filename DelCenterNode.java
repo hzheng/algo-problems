@@ -26,7 +26,7 @@ public class DelCenterNode {
         }
     }
 
-    void test(Object[] before, Object[] expected) {
+    void test(int[] before, int[] expected) {
         LinkedListNode list = new LinkedListNode(before);
         delMiddle(list);
         assertArrayEquals(expected, list.toArray());
@@ -34,38 +34,37 @@ public class DelCenterNode {
 
     @Test
     public void test1() {
-        test(new Object[] {1}, new Object[] {1});
+        test(new int[] {1}, new int[] {1});
     }
 
     @Test
     public void test2() {
-        test(new Object[] {1, 2}, new Object[] {1, 2});
+        test(new int[] {1, 2}, new int[] {1, 2});
     }
 
     @Test
     public void test3() {
-        test(new Object[] {1, 2, 3}, new Object[] {1, 3});
+        test(new int[] {1, 2, 3}, new int[] {1, 3});
     }
 
     @Test
     public void test4() {
-        test(new Object[] {1, 2, 3, 4}, new Object[] {1, 2, 3, 4});
+        test(new int[] {1, 2, 3, 4}, new int[] {1, 2, 3, 4});
     }
 
     @Test
     public void test5() {
-        test(new Object[] {1, 2, 3, 4, 5}, new Object[] {1, 2, 4, 5});
+        test(new int[] {1, 2, 3, 4, 5}, new int[] {1, 2, 4, 5});
     }
 
     @Test
     public void test6() {
-        test(new Object[] {1, 2, 3, 4, 5, 6}, new Object[] {1, 2, 3, 4, 5, 6});
+        test(new int[] {1, 2, 3, 4, 5, 6}, new int[] {1, 2, 3, 4, 5, 6});
     }
 
     @Test
     public void test7() {
-        test(new Object[] {1, 2, 3, 4, 5, 6, 7},
-             new Object[] {1, 2, 3, 5, 6, 7});
+        test(new int[] {1, 2, 3, 4, 5, 6, 7}, new int[] {1, 2, 3, 5, 6, 7});
     }
 
     public static void main(String[] args) {

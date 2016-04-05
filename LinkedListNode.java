@@ -3,14 +3,14 @@ import java.util.ArrayList;
 
 class LinkedListNode
 {
-    Object data;
+    int data;
     LinkedListNode next;
 
-    public LinkedListNode(Object data) {
+    public LinkedListNode(int data) {
         this.data = data;
     }
 
-    public LinkedListNode(Object[] array) {
+    public LinkedListNode(int[] array) {
         if (array == null || array.length == 0) return;
 
         data = array[0];
@@ -21,27 +21,20 @@ class LinkedListNode
         }
     }
 
-    void appendToTail(Object data) {
+    void appendToTail(int data) {
         LinkedListNode n = this;
         for (; n.next != null; n = n.next) {}
         n.next = new LinkedListNode(data);
     }
 
-    public boolean equals(LinkedListNode that) {
-        if (that == null) return false;
-
-        if (data == null && that.data == null) return true;
-
-        if (data == null && that.data != null) return false;
-
-        return data.equals(that.data);
-    }
-
-    public Object[] toArray() {
-        List<Object> list = new ArrayList<Object>();
+    public int[] toArray() {
+        List<Integer> list = new ArrayList<Integer>();
         for (LinkedListNode l = this; l != null; l = l.next) {
             list.add(l.data);
         }
-        return list.toArray();
+        return list.stream().mapToInt(i->i).toArray();
+    }
+
+    public static void main(String[] args) {
     }
 }

@@ -15,4 +15,7 @@ public class DelMiddleNode {
         middle.data = middle.next.data;
         middle.next = middle.next.next;
     }
+
+    public static void main(String[] args) {
+    }
 }
