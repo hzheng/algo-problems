@@ -55,7 +55,7 @@ public class RemoveDupLink {
 
         LinkedListNode list2 = new LinkedListNode(before);
         removeDupLinkByHash(list2);
-        assertArrayEquals(expected, list.toArray());
+        assertArrayEquals(expected, list2.toArray());
     }
 
     @Test

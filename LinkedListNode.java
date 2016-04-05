@@ -35,6 +35,18 @@ class LinkedListNode
         return list.stream().mapToInt(i->i).toArray();
     }
 
+    public String toString() {
+        StringBuffer sb = new StringBuffer("[");
+        for (LinkedListNode l = this; l != null; l = l.next) {
+            if (l != this) {
+                sb.append(",");
+            }
+            sb.append(l.data);
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
     public static void main(String[] args) {
     }
 }
