@@ -1,5 +1,7 @@
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 class LinkedListNode
 {
@@ -19,6 +21,33 @@ class LinkedListNode
             tail.next = new LinkedListNode(array[i]);
             tail = tail.next;
         }
+    }
+
+    /**
+     * Create <code>LinkedListNode</code> from an interger array, with same
+     * value representing the same node.
+     * This is used to create a linked list that may have loop
+     */
+    public static LinkedListNode uniqueList(int[] array) {
+        if (array == null || array.length == 0) return null;
+
+        Map<Integer, LinkedListNode> map
+            = new HashMap<Integer, LinkedListNode>();
+        LinkedListNode head = new LinkedListNode(array[0]);
+        map.put(head.data, head);
+
+        LinkedListNode tail = head;
+        for (int i = 1; i < array.length; i++) {
+            int val = array[i];
+            LinkedListNode node = map.get(val);
+            if (node == null) {
+                node = new LinkedListNode(val);
+                map.put(val, node);
+            }
+            tail.next = node;
+            tail = tail.next;
+        }
+        return head;
     }
 
     void appendToTail(int data) {
