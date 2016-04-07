@@ -35,7 +35,7 @@ public class ListLoop {
         if (expected == null) {
             assertNull(node);
         } else {
-            assertEquals(node.data, expected[0]);
+            assertEquals(expected[0], node.data);
         }
     }
 

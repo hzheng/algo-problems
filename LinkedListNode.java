@@ -56,6 +56,14 @@ class LinkedListNode
         n.next = new LinkedListNode(data);
     }
 
+    public int length() {
+        int i = 0;
+        for (LinkedListNode l = this; l != null; l = l.next) {
+            ++i;
+        }
+        return i;
+    }
+
     public int[] toArray() {
         List<Integer> list = new ArrayList<Integer>();
         for (LinkedListNode l = this; l != null; l = l.next) {
