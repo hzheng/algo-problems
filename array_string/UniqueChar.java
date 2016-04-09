@@ -89,6 +89,16 @@ public class UniqueChar {
         test(null, false);
     }
 
+    @Test
+    public void test5() {
+        test("abcdefgh", true);
+    }
+
+    @Test
+    public void test6() {
+        test("abcdefgah", false);
+    }
+
     public static void main(String[] args) {
         org.junit.runner.JUnitCore.main("UniqueChar");
     }
