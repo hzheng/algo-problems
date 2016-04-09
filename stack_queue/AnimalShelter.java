@@ -58,24 +58,25 @@ public class AnimalShelter {
 
     public Animal dequeueAny() {
         if (dogs.size() == 0) {
-            return cats.poll();
+            return dequeueCat();
         }
         if (cats.size() == 0) {
-            return dogs.poll();
+            return dequeueDog();
         }
+
         if (dogs.peek().olderThan(cats.peek())) {
-            return dogs.poll();
+            return dequeueDog();
         } else {
-            return cats.poll();
+            return dequeueCat();
         }
     }
 
     public Dog dequeueDog() {
-        return dogs.removeFirst();
+        return dogs.poll();
     }
 
     public Cat dequeueCat() {
-        return cats.removeFirst();
+        return cats.poll();
     }
 
     public static void main(String[] args) {
