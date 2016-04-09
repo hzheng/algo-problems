@@ -1,12 +1,14 @@
+package linkedlist;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
-class LinkedListNode
+public class LinkedListNode
 {
-    int data;
-    LinkedListNode next;
+    public int data;
+    public LinkedListNode next;
 
     public LinkedListNode(int data) {
         this.data = data;

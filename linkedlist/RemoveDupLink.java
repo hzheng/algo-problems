@@ -1,3 +1,5 @@
+import linkedlist.LinkedListNode;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -78,7 +80,7 @@ public class RemoveDupLink {
         test(new int[] {1, 2, 1, 2}, new int[] {1, 2});
     }
 
-    // @Test
+    @Test
     public void test5() {
         test(new int[] {1, 2, 5, 2, 8, 16, 1, 1, 5, 3},
              new int[] {1, 2, 5, 8, 16, 3});

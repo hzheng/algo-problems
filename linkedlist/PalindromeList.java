@@ -1,3 +1,5 @@
+import linkedlist.LinkedListNode;
+
 import java.util.Stack;
 import org.junit.Test;
 import static org.junit.Assert.*;
