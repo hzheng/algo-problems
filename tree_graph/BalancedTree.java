@@ -1,7 +1,7 @@
-import tree_graph.TreeNode;
-
 import org.junit.Test;
 import static org.junit.Assert.*;
+
+import tree_graph.TreeNode;
 
 /**
  * Cracking the Coding Interview(5ed) Problem 4.1:

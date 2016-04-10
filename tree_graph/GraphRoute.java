@@ -1,10 +1,10 @@
 import java.util.LinkedList;
 
-import tree_graph.Graph.Node;
-import static tree_graph.Graph.State.*;
-
 import org.junit.Test;
 import static org.junit.Assert.*;
+
+import tree_graph.Graph.Node;
+import static tree_graph.Graph.State.*;
 
 /**
  * Cracking the Coding Interview(5ed) Problem 4.2:

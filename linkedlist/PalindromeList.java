@@ -1,8 +1,9 @@
-import linkedlist.LinkedListNode;
-
 import java.util.Stack;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
+
+import linkedlist.LinkedListNode;
 
 /**
  * Cracking the Coding Interview(5ed) Problem 2.7:

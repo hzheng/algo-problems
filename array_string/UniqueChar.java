@@ -1,4 +1,7 @@
-import java.util.*;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Arrays;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 

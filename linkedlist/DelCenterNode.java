@@ -1,7 +1,7 @@
-import linkedlist.LinkedListNode;
-
 import org.junit.Test;
 import static org.junit.Assert.*;
+
+import linkedlist.LinkedListNode;
 
 /**
  * Misinterpretion of Cracking the Coding Interview(5ed) Problem 2.3:
