@@ -9,6 +9,10 @@ import java.util.LinkedList;
 
 public class TreeUtils {
     public static TreeNode createTree(Integer[] dataArray) {
+        return createTree(dataArray, false);
+    }
+
+    public static TreeNode createTree(Integer[] dataArray, boolean linkParent) {
         if ((dataArray == null) || (dataArray.length == 0)) return null;
 
         int len = dataArray.length;
@@ -21,6 +25,7 @@ public class TreeUtils {
             TreeNode child = null;
             if (node != null && dataArray[i] != null) {
                 child = node.left = new TreeNode(dataArray[i]);
+                if (linkParent) child.parent = node;
             }
             queue.add(child);
 
@@ -30,10 +35,24 @@ public class TreeUtils {
             child = null;
             if (node != null && dataArray[i] != null) {
                 child = node.right = new TreeNode(dataArray[i]);
+                if (linkParent) child.parent = node;
             }
             queue.add(child);
         }
         return root;
+    }
+
+    public static TreeNode findBST(TreeNode root, int n) {
+        for (TreeNode node = root; node != null; ) {
+            if (node.data == n) return node;
+
+            if (node.data < n) {
+                node = node.right;
+            } else {
+                node = node.left;
+            }
+        }
+        return null;
     }
 
     // https://stackoverflow.com/questions/4965335/how-to-print-binary-tree-diagram
