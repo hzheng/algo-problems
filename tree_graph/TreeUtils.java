@@ -55,6 +55,14 @@ public class TreeUtils {
         return null;
     }
 
+    public static TreeNode find(TreeNode root, int n) {
+        if (root == null) return null;
+        if (root.data == n) return root;
+
+        TreeNode node = find(root.left, n);
+        return (node != null) ? node : find(root.right, n);
+    }
+
     // https://stackoverflow.com/questions/4965335/how-to-print-binary-tree-diagram
     public static void print(TreeNode root) {
         print(Collections.singletonList(root), 1, maxLevel(root));
