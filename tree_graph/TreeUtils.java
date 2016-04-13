@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.LinkedList;
+import java.util.Stack;
 
 // import tree_graph.TreeNode;
 
@@ -61,6 +62,60 @@ public class TreeUtils {
 
         TreeNode node = find(root.left, n);
         return (node != null) ? node : find(root.right, n);
+    }
+
+    public static List<TreeNode> bfs(TreeNode root, boolean hasParent) {
+        if (root == null) return null;
+
+        List<TreeNode> list = new ArrayList<TreeNode>();
+        LinkedList<TreeNode> queue = new LinkedList<TreeNode>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            TreeNode node = queue.removeFirst();
+            list.add(node);
+            if (node.left != null) {
+                queue.add(node.left);
+                if (hasParent) {
+                    node.left.parent = node;
+                }
+            }
+            if (node.right != null) {
+                queue.add(node.right);
+                if (hasParent) {
+                    node.right.parent = node;
+                }
+            }
+        }
+        return list;
+    }
+
+    public static List<TreeNode> dfs(TreeNode root) {
+        if (root == null) return null;
+
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        stack.push(root);
+        List<TreeNode> list = new ArrayList<TreeNode>();
+        while (!stack.empty()) {
+            TreeNode top = stack.pop();
+            list.add(top);
+            if (top.left != null) stack.push(top.left);
+            if (top.right != null) stack.push(top.right);
+        }
+        return list;
+    }
+
+    public static List<TreeNode> dfsRecursive(TreeNode root) {
+        if (root == null) return null;
+        List<TreeNode> list = new ArrayList<TreeNode>();
+        dfsRecursive(root, list);
+        return list;
+    }
+
+    private static void dfsRecursive(TreeNode root, List<TreeNode> list) {
+        if (root == null) return;
+        dfsRecursive(root.left, list);
+        list.add(root);
+        dfsRecursive(root.right, list);
     }
 
     // https://stackoverflow.com/questions/4965335/how-to-print-binary-tree-diagram

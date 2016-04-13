@@ -15,6 +15,10 @@ public class TreeNode
         this.data = data;
     }
 
+    public String toString() {
+        return "(" + data + ")";
+    }
+
     public static void main(String[] args) {
     }
 }
