@@ -14,6 +14,7 @@ import tree_graph.TreeNode;
  * Given a binary tree, print all paths which sum to a given value.
  */
 public class FindSumTree {
+    // time complexity: O(N ^ 2), space complexity: O(log(N))
     public static List<List<TreeNode> > findSum(TreeNode root, int sum) {
         List<List<TreeNode> > results = new ArrayList<List<TreeNode> >();
         LinkedList<TreeNode> path = new LinkedList<TreeNode>();
@@ -47,10 +48,12 @@ public class FindSumTree {
         path.removeLast();
     }
 
-    // the method from book is more simple and efficient for two reasons:
+    // time complexity: O(N * log(N)), space complexity: O(log(N))
+    // the method from book is more simple(only one recursion) and
+    // time efficient(vs. O(N ^ 2)) for two reasons:
     // 1. it only prints path value instead of get path nodes
-    // 2. it uses search strategy "ends at" instead of "starts from"
-    // 3. using extra array to store path makes it easy to look backwards
+    // 2. using extra array to store path makes it easy to look backwards
+    // 3. most of all, its search strategy is "ends at" instead of "starts from"
     public static void findSum2(TreeNode node, int sum) {
         int[] path = new int[depth(node)];
         findSum2(node, sum, path, 0);
