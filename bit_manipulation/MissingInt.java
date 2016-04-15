@@ -66,6 +66,41 @@ public class MissingInt {
         }
     }
 
+    private static class BitIntegerList {
+        List<BitInteger> value;
+    }
+
+    // iterative version of the book's solution
+    public static int findMissing2(List<BitInteger> array) {
+        int missing = 0;
+        BitIntegerList list = new BitIntegerList();
+        list.value = array;
+        for (int i = 0; list.value.size() > 0; i++) {
+            missing |= (findMissing2(list, i)) << i;
+        }
+        return missing;
+    }
+
+    private static int findMissing2(BitIntegerList list, int col) {
+        List<BitInteger> array = list.value;
+        List<BitInteger> ones = new ArrayList<BitInteger>(array.size() / 2);
+        List<BitInteger> zeros = new ArrayList<BitInteger>(array.size() / 2);
+        for (BitInteger i : array) {
+            if (i.get(col) == 0) {
+                zeros.add(i);
+            } else {
+                ones.add(i);
+            }
+        }
+        if (zeros.size() > ones.size()) {
+            list.value = ones;
+            return 1;
+        } else {
+            list.value = zeros;
+            return 0;
+        }
+    }
+
     public static int findMissingRecursive(List<BitInteger> array) {
         return findMissingRecursive(array, 0);
     }
@@ -135,6 +170,8 @@ public class MissingInt {
     void benchmark(int n, int missing) {
         System.out.print("benchmark findMissing...");
         benchmark(MissingInt::findMissing, n, missing);
+        System.out.print("benchmark findMissing2...");
+        benchmark(MissingInt::findMissing2, n, missing);
         System.out.print("benchmark findMissingRecursive...");
         benchmark(MissingInt::findMissingRecursive, n, missing);
     }
