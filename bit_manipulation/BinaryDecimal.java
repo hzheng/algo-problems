@@ -73,17 +73,17 @@ public class BinaryDecimal {
         test(0.2, "ERROR: .0011001100110011001100110011001");
     }
 
-    public void benchmark(Function<Double, String> binRep, double d) {
+    void benchmark(Function<Double, String> binRep, double d) {
         final int N = 10000000;
-        long t = System.currentTimeMillis();
+        long t = System.nanoTime();
         String result = "";
         for (int i = 0; i < N; i++) {
             result = binRep.apply(d);
         }
-        System.out.format("%d ms\n", System.currentTimeMillis() - t);
+        System.out.format("%.0f ms\n", (System.nanoTime() - t) * 1e-6);
     }
 
-    public void benchmark(double d) {
+    void benchmark(double d) {
         System.out.println("\ndecimal: " + d);
         System.out.print("benchmark binaryRep ...");
         benchmark(BinaryDecimal::binaryRep, d);

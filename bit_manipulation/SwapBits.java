@@ -2,7 +2,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Cracking the Coding Interview(5ed) Problem 5.5:
+ * Cracking the Coding Interview(5ed) Problem 5.6:
  * Swap odd and even bits in an integer with as few instructions as possible
  * (e.g., bit 0 and bit1 are swapped, bit 2 and bit 3 are swapped, and so on
  */
