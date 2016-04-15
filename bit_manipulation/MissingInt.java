@@ -68,23 +68,30 @@ public class MissingInt {
 
     private static class BitIntegerList {
         List<BitInteger> value;
+        BitIntegerList(List<BitInteger> value) {
+            this.value = value;
+        }
     }
 
     // iterative version of the book's solution
     public static int findMissing2(List<BitInteger> array) {
         int missing = 0;
-        BitIntegerList list = new BitIntegerList();
-        list.value = array;
-        for (int i = 0; list.value.size() > 0; i++) {
-            missing |= (findMissing2(list, i)) << i;
+        BitIntegerList list = new BitIntegerList(array);
+        for (int i = 0; ; i++) {
+            int bit = findMissing2(list, i);
+            if (bit < 0) break;
+            missing |= bit << i;
         }
         return missing;
     }
 
     private static int findMissing2(BitIntegerList list, int col) {
         List<BitInteger> array = list.value;
-        List<BitInteger> ones = new ArrayList<BitInteger>(array.size() / 2);
-        List<BitInteger> zeros = new ArrayList<BitInteger>(array.size() / 2);
+        int size = array.size();
+        if (size == 0) return -1;
+
+        List<BitInteger> ones = new ArrayList<BitInteger>(size / 2);
+        List<BitInteger> zeros = new ArrayList<BitInteger>(size / 2);
         for (BitInteger i : array) {
             if (i.get(col) == 0) {
                 zeros.add(i);
