@@ -11,8 +11,6 @@ import static org.junit.Assert.*;
  * Print all valid combinations of n-pairs of parentheses.
  */
 public class Parentheses {
-    // TODO: represent left/right parenthese with 1 and 0 for efficiency.
-
     // FIXME: wrong
     public static List<String> parenthesesWrong(int count) {
         List<String> list = new ArrayList<String>();
