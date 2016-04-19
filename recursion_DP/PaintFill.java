@@ -35,9 +35,6 @@ public class PaintFill {
         }
     }
 
-    private void test(int n, Function<Integer, List<String> > getParen) {
-    }
-
     @Test
     public void test() {
     }
