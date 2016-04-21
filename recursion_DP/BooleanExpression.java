@@ -17,47 +17,6 @@ import static org.junit.Assert.*;
  * of parenthesizing the expression such that it evaluates to result.
  */
 public class BooleanExpression {
-    static class Evaluation {
-        String expr;
-        boolean val;
-
-        Evaluation(String expr, boolean val) {
-            this.expr = expr;
-            this.val = val;
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            if (!(other instanceof Evaluation)) return false;
-
-            Evaluation that = (Evaluation)other;
-            return expr.equals(that.expr) && val == that.val;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(expr, val);
-        }
-
-        @Override
-        public String toString() {
-            return "(" + expr + "," + val + ")";
-        }
-    }
-
-    private static boolean eval(char operator, boolean left, boolean right) {
-        switch (operator) {
-        case '&':
-            return left & right;
-        case '|':
-            return left | right;
-        case '^':
-            return left ^ right;
-        default:
-            throw new IllegalArgumentException();
-        }
-    }
-
     private static boolean[][] counterEval(char operator, boolean desired) {
         switch (operator) {
         case '&':
@@ -74,33 +33,6 @@ public class BooleanExpression {
         }
     }
 
-    private static boolean basicEval(String expr) {
-        if (expr.equals("0")) return false;
-        if (expr.equals("1")) return true;
-
-        boolean first = basicEval(expr.substring(0, 1));
-        boolean third = basicEval(expr.substring(2, 3));
-        return eval(expr.charAt(1), first, third);
-    }
-
-    private static void saveBasic(Map<Evaluation, Long> map, String ... exprs) {
-        for (String expr : exprs) {
-            boolean val = basicEval(expr);
-            map.put(new Evaluation(expr, val), 1L);
-            map.put(new Evaluation(expr, !val), 0L);
-        }
-    }
-
-    private static Map<Evaluation, Long> initMap() {
-        Map<Evaluation, Long> map = new HashMap<Evaluation, Long>();
-        saveBasic(map, "0", "1");
-        saveBasic(map, "1&1", "1&0", "0&1", "0&0");
-        saveBasic(map, "1|1", "1|0", "0|1", "0|0");
-        saveBasic(map, "1^1", "1^0", "0^1", "0^0");
-
-        return map;
-    }
-
     private final static Pattern EXP_PAT = Pattern.compile("[0,1]([&|^][0,1])*");
 
     private static boolean validate(String expression) {
@@ -112,21 +44,25 @@ public class BooleanExpression {
             throw new IllegalArgumentException(expression + " is invalid.");
         }
 
-        Map<Evaluation, Long> map = initMap();
-        return evaluate(expression, result, map);
+        return evaluate(expression, result, new HashMap<String, Long>());
     }
 
     private static long evaluate(String expr, boolean result,
-                                Map<Evaluation, Long> map) {
+                                Map<String, Long> map) {
 
-        Evaluation eval = new Evaluation(expr, result);
-        if (map.containsKey(eval)) {
-            // System.out.println("****" + eval + "=" + map.get(eval));
-            return map.get(eval);
+        int len = expr.length();
+        if (len == 1) {
+            if (expr.charAt(0) == '1') return result ? 1 : 0;
+            return result ? 0 : 1;
+        }
+
+        String key = expr + (result ? "T" : "F");
+        if (map.containsKey(key)) {
+            // System.out.println("****" + key + "=" + map.get(key));
+            return map.get(key);
         }
 
         long count = 0;
-        int len = expr.length();
         for (int i = 1; i < len; i += 2) {
             String leftExpr = expr.substring(0, i);
             String rightExpr = expr.substring(i + 1);
@@ -136,12 +72,16 @@ public class BooleanExpression {
                 count += leftCount * rightCount;
             }
         }
-        map.put(eval, count);
+        map.put(key, count);
         return count;
     }
 
     // From the book
     public static long countDP(String exp, boolean result) {
+        if (!validate(exp)) {
+            throw new IllegalArgumentException(exp + " is invalid.");
+        }
+
         return countDP(exp, result, 0, exp.length() - 1,
                        new HashMap<String, Long>());
     }
@@ -225,7 +165,7 @@ public class BooleanExpression {
         }
     }
 
-    // @Test
+    @Test
     public void test1() {
         test("0", false, 1);
         test("1^0", false, 0);
