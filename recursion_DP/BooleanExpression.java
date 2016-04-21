@@ -44,31 +44,50 @@ public class BooleanExpression {
             throw new IllegalArgumentException(expression + " is invalid.");
         }
 
-        return evaluate(expression, result, new HashMap<String, Long>());
+        return evaluate(expression, result, 0, expression.length() - 1,
+                        new HashMap<String, Long>());
+    }
+
+    private static long eval(char left, char right, char op, boolean result) {
+        switch (op) {
+        case '&':
+            if (result) return (left == '1' && right == '1') ? 1 : 0;
+            return (left == '0' || right == '0') ? 1 : 0;
+        case '|':
+            if (result) return (left == '1' || right == '1') ? 1 : 0;
+            return (left == '0' && right == '0') ? 1 : 0;
+        case '^':
+            if (result) return (left == right) ? 0 : 1;
+            return (left == right) ? 1 : 0;
+        default:
+            assert false;
+            return -1;
+        }
     }
 
     private static long evaluate(String expr, boolean result,
-                                Map<String, Long> map) {
-
-        int len = expr.length();
-        if (len == 1) {
-            if (expr.charAt(0) == '1') return result ? 1 : 0;
+                                 int start, int end, Map<String, Long> map) {
+        if (start == end) {
+            if (expr.charAt(start) == '1') return result ? 1 : 0;
             return result ? 0 : 1;
         }
 
-        String key = expr + (result ? "T" : "F");
+        if (start + 2 == end) { // for efficiency
+            return eval(expr.charAt(start), expr.charAt(end),
+                        expr.charAt(++start), result);
+        }
+
+        String key = "" + start + (result ? "T" : "F") + end;
         if (map.containsKey(key)) {
             // System.out.println("****" + key + "=" + map.get(key));
             return map.get(key);
         }
 
         long count = 0;
-        for (int i = 1; i < len; i += 2) {
-            String leftExpr = expr.substring(0, i);
-            String rightExpr = expr.substring(i + 1);
+        for (int i = start + 1; i < end; i += 2) {
             for (boolean[] boolPair : counterEval(expr.charAt(i), result)) {
-                long leftCount = evaluate(leftExpr, boolPair[0], map);
-                long rightCount = evaluate(rightExpr, boolPair[1], map);
+                long leftCount = evaluate(expr, boolPair[0], start, i - 1, map);
+                long rightCount = evaluate(expr, boolPair[1], i + 1, end, map);
                 count += leftCount * rightCount;
             }
         }
@@ -87,9 +106,8 @@ public class BooleanExpression {
     }
 
     private static long countDP(String exp, boolean result, int start, int end,
-                               Map<String, Long> cache) {
-        // problem 1: may have BUG: start + "|" + end
-        // problem 2: adding start and end make cache less useful
+                                Map<String, Long> cache) {
+        // problem: may have BUG: start + "|" + end
         String key = "" + result + start + end;
         if (cache.containsKey(key)) {
             // System.out.println("****" + key + "=" + cache.get(key));
@@ -143,7 +161,7 @@ public class BooleanExpression {
     }
 
     private long test(Function<String, Boolean, Long> count,
-                     String name, String expression, boolean result) {
+                      String name, String expression, boolean result) {
         long t1 = System.nanoTime();
         long n = count.apply(expression, result);
         System.out.format("%s: %.3f ms\n", name, (System.nanoTime() - t1) * 1e-6);
@@ -186,11 +204,11 @@ public class BooleanExpression {
         int n = ThreadLocalRandom.current().nextInt(0, 2);
         expr[0] = (n == 0) ? '0' : '1';
         int i = 1;
-        for ( ; i < length; i++) {
+        for (; i < length; i++) {
             switch (ThreadLocalRandom.current().nextInt(0, 3)) {
-                case 0: expr[i] = '|'; break;
-                case 1: expr[i] = '&'; break;
-                case 2: expr[i] = '^'; break;
+            case 0: expr[i] = '|'; break;
+            case 1: expr[i] = '&'; break;
+            case 2: expr[i] = '^'; break;
             }
             n = ThreadLocalRandom.current().nextInt(0, 2);
             expr[++i] = (n == 0) ? '0' : '1';
