@@ -44,8 +44,8 @@ public class CircusTower {
          * and other.isBefore(this) are both false. This is different from the
          * compareTo method, where if a < b then b > a. */
         public boolean isBefore(Person other) {
-            return (h < other.h) && (w < other.w);
-            // return (h <= other.h) && (w <= other.w);
+            // return (h < other.h) && (w < other.w);
+            return (h <= other.h) && (w <= other.w);
         }
 
         @Override
@@ -124,7 +124,7 @@ public class CircusTower {
         // Find longest sequence that we can append current_element to
         List<Person> best_sequence = null;
         for (int i = 0; i < current_index; i++) {
-            if (array.get(i).isBefore(current_element)) { // If current_element is bigger than list tail
+                if (array.get(i).isBefore(current_element)) { // If current_element is bigger than list tail
                 best_sequence = seqWithMaxLength(best_sequence, solutions[i]); // Set best_sequence to our new max
             }
         }
@@ -159,6 +159,61 @@ public class CircusTower {
         return longestIncreasingSubsequence(people);
     }
 
+    // time complexity: O(N ^ log(N)), space complexity: O(N)
+    // https://en.wikipedia.org/wiki/Longest_increasing_subsequence
+    @SuppressWarnings("unchecked")
+    public static List<Person> buildTower3(List<Person> people) {
+        Collections.sort(people);
+
+        final int n = people.size();
+        // seq[j] stores the index k of the smallest value X[k] s.t there is an
+        // increasing subsequence of length j ending at X[k] on the range k ≤ i.
+        // Note that j ≤ k ≤ i.
+        List<Integer> seq = new ArrayList<Integer>(n + 1);
+        // predecessors[k] stores the index of the predecessor of X[k] in the
+        // longest increasing subsequence ending at X[k].
+        int[] predecessors = new int[n];
+        seq.add(0);
+        for (int i = 1; i < n; ++i) {
+            int lastIndex = seq.get(seq.size() - 1);
+            Person curPerson = people.get(i);
+            if (people.get(lastIndex).isBefore(curPerson)) {
+                seq.add(i);
+                predecessors[i] = lastIndex;
+                continue;
+            }
+
+            // Binary search the lightest person referenced by seq who is just
+            // heavier than the current person(may have glitch: height may be
+            // not strictly increasing)
+            // the above "if block" could be merged into the below
+            int start = 0;
+    		for (int end = seq.size() - 1; start < end;) {
+    			int mid = (start + end) / 2;
+    			if (people.get(seq.get(mid)).w <= curPerson.w) {
+                    start = mid + 1;
+                } else {
+                    end = mid;
+                }
+            }
+            // Update seq if new value is smaller than old referenced value
+    		if (curPerson.w <= people.get(seq.get(start)).w) {
+                seq.set(start, i);
+    			if (start > 0) {
+                    predecessors[i] = seq.get(start - 1);
+                }
+    		}
+        }
+
+        Person[] result = new Person[seq.size()];
+        int lastIndex = seq.get(seq.size() - 1);
+    	for (int k = seq.size(); k > 0; k--) {
+            result[k - 1] = people.get(lastIndex);
+            lastIndex = predecessors[lastIndex];
+        }
+        return Arrays.asList(result);
+    }
+
     private List<Person> test(Function<List<Person>, List<Person> > buildTower,
                               String name, List<Person> people) {
         System.out.println("testing " + name);
@@ -181,8 +236,15 @@ public class CircusTower {
     private void test(List<Person> people) {
         List<Person> rs1 = test(CircusTower::buildTower, "buildTower", people);
         List<Person> rs2 = test(CircusTower::buildTower2, "buildTower2", people);
+        List<Person> rs3 = test(CircusTower::buildTower3, "buildTower3", people);
+        assertEquals(rs1.size(), rs2.size());
         if (rs1.size() != rs2.size()) {
-            assertEquals(rs1, rs2);
+            assertEquals(rs1, rs2); // for debug
+        }
+
+        assertEquals(rs2.size(), rs3.size());
+        if (rs2.size() != rs3.size()) {
+            assertEquals(rs2, rs3); // for debug
         }
     }
 
@@ -197,6 +259,13 @@ public class CircusTower {
 
     private void test(int[][] data) {
         test(createPeople(data));
+    }
+
+    @Test
+    public void test0() {
+        test(new int[][] {
+            {18, 38}, {119, 24}, {5, 43}, {10, 17}, {58, 17}, {92, 27}
+        });
     }
 
     @Test
@@ -222,7 +291,8 @@ public class CircusTower {
     @Test
     public void test3() {
         // int N = 10000; // buildTower <0.5s, while buildTower2 StackOverflow
-        int N = 1000; // no big difference
+        int N = 5000; // no big difference between buildTower and buildTower2
+                      // buildTower3 is much faster, of course
         for (int times = 10; times > 0; times--) {
             System.out.println("===testing " + N + " people===");
             List<Person> people = new ArrayList<Person>();
