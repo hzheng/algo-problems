@@ -44,8 +44,8 @@ public class CircusTower {
          * and other.isBefore(this) are both false. This is different from the
          * compareTo method, where if a < b then b > a. */
         public boolean isBefore(Person other) {
-            // return (h < other.h) && (w < other.w);
-            return (h <= other.h) && (w <= other.w);
+            return (h < other.h) && (w < other.w);
+            // return (h <= other.h) && (w <= other.w);
         }
 
         @Override
@@ -190,14 +190,14 @@ public class CircusTower {
             int start = 0;
     		for (int end = seq.size() - 1; start < end;) {
     			int mid = (start + end) / 2;
-    			if (people.get(seq.get(mid)).w <= curPerson.w) {
+    			if (people.get(seq.get(mid)).w < curPerson.w) {
                     start = mid + 1;
                 } else {
                     end = mid;
                 }
             }
             // Update seq if new value is smaller than old referenced value
-    		if (curPerson.w <= people.get(seq.get(start)).w) {
+    		if (curPerson.w < people.get(seq.get(start)).w) {
                 seq.set(start, i);
     			if (start > 0) {
                     predecessors[i] = seq.get(start - 1);
