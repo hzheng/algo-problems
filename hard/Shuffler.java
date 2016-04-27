@@ -35,7 +35,7 @@ public class Shuffler {
         shuffleRecursive(cards, cards.length - 1);
     }
 
-    public static void shuffleRecursive(int[] cards, int i) {
+    private static void shuffleRecursive(int[] cards, int i) {
         if (i < 1) return;
 
         shuffleRecursive(cards, i - 1); // Shuffle earlier part
