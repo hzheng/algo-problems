@@ -7,6 +7,7 @@ class ListNode {
 }
 
 public class SumNode {
+    // beats 35.18%
     public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
         if (l1 == null || l2 == null) return null;
 

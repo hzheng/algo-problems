@@ -22,7 +22,7 @@ public class LongestNoRepeatSubstring {
         return Math.max(strLen - start, maxLen);
     }
 
-    // beats 40.31%
+    // beats 56%
     public int lengthOfLongestSubstring2(String s) {
         int maxLen = 0;
         int start = 0;

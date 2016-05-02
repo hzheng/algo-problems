@@ -1,6 +1,7 @@
 import java.util.*;
 
 public class TwoSum {
+    // beats 58.79%
     public int[] twoSum(int[] nums, int target) {
         Map<Integer, Integer> complements = new HashMap<Integer, Integer>();
         for (int i = 0; i < nums.length; i++) {
