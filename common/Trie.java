@@ -15,6 +15,12 @@ public class Trie<T> {
         this.c = c;
     }
 
+    public Trie(T defaultVal, List<String> keys) {
+        for (String key : keys) {
+            insert(key, defaultVal);
+        }
+    }
+
     public void insert(String key, T val) {
         if (key == null || key.isEmpty() || val == null) return;
 
