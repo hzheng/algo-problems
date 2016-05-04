@@ -56,6 +56,57 @@ public class MedianArray {
         }
     }
 
+    // beats 6.24%(same?)
+    public double findMedianSortedArraysIterative(int[] nums1, int[] nums2) {
+        int end1 = nums1.length - 1;
+        int end2 = nums2.length - 1;
+        if (end1 < 0 && end2 < 0) return 0.0; // in case
+
+        int start1 = 0;
+        int start2 = 0;
+        while (true) {
+            int len1 = end1 - start1 + 1;
+            int len2 = end2 - start2 + 1;
+            if (len1 > len2) { // swap
+                int tmp = len1;
+                len1 = len2;
+                len2 = tmp;
+                tmp = start1;
+                start1 = start2;
+                start2 = tmp;
+                tmp = end1;
+                end1 = end2;
+                end2 = tmp;
+                int[] tmps = nums1;
+                nums1 = nums2;
+                nums2 = tmps;
+            }
+            int shrink = (len1 + len2) / 4;
+            if (shrink < 2) {
+                return findMedianArraysSlow(nums1, start1, end1,
+                                            nums2, start2, end2);
+            }
+
+            // nums2's lens >= shrink * 2 (L = len1 + len2)
+            if ((len1 <= shrink)
+                || (nums1[start1 + shrink] >= nums2[start2 + shrink])) {
+                // nums2's leftmost 1/4L must be on the median's left
+                start2 += shrink - 1;
+            } else {
+                // nums1's lens >= shrink and nums1's 1/4L value < nums2's
+                start1 += shrink - 1;
+            }
+            if ((len1 <= shrink)
+                || (nums2[end2 - shrink] >= nums1[end1 - shrink])) {
+                // nums2's rightmost 1/4L must be on the median's right
+                end2 -= shrink - 1;
+            } else {
+                // nums1's lens >= shrink and nums1's -1/4L value > nums2's
+                end1 -= shrink - 1;
+            }
+        }
+    }
+
     private double median(int[] nums, int start, int end) {
         int mid = (start + end) / 2;
         if (((end - start) & 1) == 0) {
@@ -154,14 +205,18 @@ public class MedianArray {
         MedianArray ma = new MedianArray();
         double fastMedian = test(ma::findMedianSortedArrays,
                                  "findMedianSortedArrays", nums1, nums2);
+        double iterativeMedian = test(ma::findMedianSortedArraysIterative,
+                                 "findMedianSortedArraysIterative", nums1, nums2);
         double slowMedian = test(ma::findMedianArraysSlow,
                                  "findMedianArraysSlow", nums1, nums2);
         assertEquals(slowMedian, fastMedian, 1e-8);
+        assertEquals(iterativeMedian, fastMedian, 1e-8);
+        System.out.println("====================");
     }
 
     @Test
     public void test3() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             test(1000000, 1000000);
         }
     }
