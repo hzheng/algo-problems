@@ -5,8 +5,11 @@ import java.util.stream.IntStream;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// Find the median of the two sorted arrays. The overall run time complexity
+// should be O(log (m+n)).
 public class MedianArray {
     // beats 6.24%
+    // time complexity: O(log(M + N))
     private double findMedianSortedArrays(int[] nums1, int start1, int end1,
                                           int[] nums2, int start2, int end2) {
         final int len1 = end1 - start1 + 1;
@@ -129,7 +132,24 @@ public class MedianArray {
         int l2 = end2 - start2 + 1;
         if (l2 == 0) return median(nums1, start1, end1);
 
-        if (l1 == 1 && l2 == 1) return (nums1[start1] + nums2[start2]) / 2.0;
+        if (l1 == 1 && l2 == 1) return (nums1[start1] + nums2[start2]) / 2d;
+
+        if (l1 == 1 && l2 == 2) {
+            if (nums1[start1] <= nums2[start2]) return nums2[start2];
+            if (nums1[start1] >= nums2[start2 + 1]) return nums2[start2 + 1];
+            return nums1[start1];
+        }
+
+        if (l2 == 1 && l1 == 2) {
+            if (nums2[start2] <= nums1[start1]) return nums1[start1];
+            if (nums2[start2] >= nums1[start1 + 1]) return nums1[start1 + 1];
+            return nums2[start2];
+        }
+
+        if (l1 == 2 && l2 == 2) {
+            return (Math.max(nums1[start1], nums2[start2])
+                    + Math.min(nums1[start1 + 1], nums2[start2 + 1])) / 2d;
+        }
 
         int[] nums = new int[l1 + l2];
         int i = 0;
@@ -186,8 +206,9 @@ public class MedianArray {
 
     // www.programcreek.com/2012/12/leetcode-median-of-two-sorted-arrays-java/
     // BUG: although median or median pair are kept during division,
-    // it's not guaranteed the right answer if excluded values are not
-    // properly paired
+    // it doesn't guarante the right answer if excluded values are not
+    // properly paired. Actually, this method works when two arrays have
+    // the same length.
     public double findMedianSortedArrays3(int[] nums1, int[] nums2) {
         if (nums1.length == 0 && nums2.length == 0) return 0.0; // in case
 
@@ -214,7 +235,7 @@ public class MedianArray {
 
         if (l1 == 2 && l2 == 2) {
             return (Math.max(nums1[start1], nums2[start2])
-                    + Math.min(nums1[start1 + 1], nums2[start2 + 1]))/2.0;
+                    + Math.min(nums1[start1 + 1], nums2[start2 + 1])) / 2.0;
         }
         if (l1 == 1 && l2 == 2) {
             if (nums1[start1] <= nums2[start2]) return nums2[start2];
