@@ -143,13 +143,57 @@ public class MedianArray {
         return median(nums, 0, l1 + l2 - 1);
     }
 
+    // www.programcreek.com/2012/12/leetcode-median-of-two-sorted-arrays-java/
+    // beats 40.63% (but may casue stackoverflow)
+    public double findMedianSortedArrays2(int[] nums1, int[] nums2) {
+        int l1 = nums1.length;
+        int l2 = nums2.length;
+
+        int total = l1 + l2;
+        if (total == 0) return 0.0; // in case
+
+        if ((total & 1) == 1) {
+            return findKth(nums1, 0, l1 - 1,
+                           nums2, 0, l2 - 1, total / 2);
+        }
+        return (findKth(nums1, 0, l1 - 1, nums2, 0, l2 - 1, total / 2) +
+                findKth(nums1, 0, l1 - 1, nums2, 0, l2 - 1, total / 2 - 1)) / 2;
+    }
+
+    private double findKth(int[] nums1, int start1, int end1,
+                           int[] nums2, int start2, int end2, int k) {
+        int len1 = end1 - start1 + 1;
+        if (len1 == 0) return nums2[start2 + k];
+
+        int len2 = end2 - start2 + 1;
+        if (len2 == 0) return nums1[start1 + k];
+
+        if (k == 0) return Math.min(nums1[start1], nums2[start2]);
+
+        int k1 = len1 * k / (len1 + len2);
+        int k2 = k - k1 - 1;
+        if (nums1[k1 + start1] > nums2[k2 + start2]) {
+            k -= k2 + 1;
+            end1 = start1 + k1;
+            start2 += k2 + 1;
+        } else {
+            k -= k1 + 1;
+            end2 = start2 + k2;
+            start1 += k1 + 1;
+        }
+        return findKth(nums1, start1, end1, nums2, start2, end2, k);
+    }
+
     private void test(int[] nums1, int[] nums2, double expected) {
         assertEquals(expected, findMedianSortedArrays(nums1, nums2), 1e-8);
+        assertEquals(expected, findMedianArraysSlow(nums1, nums2), 1e-8);
+        assertEquals(expected, findMedianSortedArrays2(nums1, nums2), 1e-8);
     }
 
     @Test
     public void test1() {
         test(new int[] {1}, new int[] {}, 1);
+        test(new int[] {}, new int[] {1}, 1);
         test(new int[] {1}, new int[] {2}, 1.5);
         test(new int[] {1, 1}, new int[] {90}, 1);
         test(new int[] {1, 3}, new int[] {90}, 3);
@@ -161,8 +205,11 @@ public class MedianArray {
     }
 
     private void test(int[] nums1, int[] nums2) {
-        assertEquals(findMedianArraysSlow(nums1, nums2),
+        double expected = findMedianArraysSlow(nums1, nums2);
+        assertEquals(expected,
                      findMedianSortedArrays(nums1, nums2), 1e-8);
+        assertEquals(expected,
+                     findMedianSortedArrays2(nums1, nums2), 1e-8);
     }
 
     @Test
@@ -206,9 +253,14 @@ public class MedianArray {
         double fastMedian = test(ma::findMedianSortedArrays,
                                  "findMedianSortedArrays", nums1, nums2);
         double iterativeMedian = test(ma::findMedianSortedArraysIterative,
-                                 "findMedianSortedArraysIterative", nums1, nums2);
+                                      "findMedianSortedArraysIterative", nums1, nums2);
         double slowMedian = test(ma::findMedianArraysSlow,
                                  "findMedianArraysSlow", nums1, nums2);
+        if (l1 < 1000 && l2 < 1000) { // may case stack overflow
+            double kthMedian = test(ma::findMedianSortedArrays2,
+                                    "findMedianSortedArrays2", nums1, nums2);
+            assertEquals(kthMedian, fastMedian, 1e-8);
+        }
         assertEquals(slowMedian, fastMedian, 1e-8);
         assertEquals(iterativeMedian, fastMedian, 1e-8);
         System.out.println("====================");
@@ -217,6 +269,7 @@ public class MedianArray {
     @Test
     public void test3() {
         for (int i = 0; i < 100; i++) {
+            test(1000, 1000);
             test(1000000, 1000000);
         }
     }
