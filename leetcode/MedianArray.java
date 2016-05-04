@@ -184,10 +184,65 @@ public class MedianArray {
         return findKth(nums1, start1, end1, nums2, start2, end2, k);
     }
 
+    // www.programcreek.com/2012/12/leetcode-median-of-two-sorted-arrays-java/
+    // BUG: although median or median pair are kept during division,
+    // it's not guaranteed the right answer if excluded values are not
+    // properly paired
+    public double findMedianSortedArrays3(int[] nums1, int[] nums2) {
+        if (nums1.length == 0 && nums2.length == 0) return 0.0; // in case
+
+        return findMedianSortedArrays3(nums1, 0, nums1.length - 1,
+                                       nums2, 0, nums2.length - 1);
+    }
+
+    private double findMedianSortedArrays3(int[] nums1, int start1, int end1,
+                                           int[] nums2, int start2, int end2) {
+        int l1 = end1 - start1 + 1;
+        if (l1 == 0) return median(nums2, start2, end2);
+
+        int l2 = end2 - start2 + 1;
+        if (l2 == 0) return median(nums1, start1, end1);
+        System.out.println("l1="+l1);
+        System.out.println("l2="+l2);
+
+        double m1 = median(nums1, start1, end1);
+        double m2 = median(nums2, start2, end2);
+
+        if (Math.abs(m1 - m2) < 1e-8) return m1;
+
+        if (l1 == 1 && l2 == 1) return (nums1[start1] + nums2[start2]) / 2.0;
+
+        if (l1 == 2 && l2 == 2) {
+            return (Math.max(nums1[start1], nums2[start2])
+                    + Math.min(nums1[start1 + 1], nums2[start2 + 1]))/2.0;
+        }
+        if (l1 == 1 && l2 == 2) {
+            if (nums1[start1] <= nums2[start2]) return nums2[start2];
+            if (nums1[start1] >= nums2[start2 + 1]) return nums2[start2 + 1];
+            return nums1[start1];
+        }
+        if (l2 == 1 && l1 == 2) {
+            if (nums2[start2] <= nums1[start1]) return nums1[start1];
+            if (nums2[start2] >= nums1[start1 + 1]) return nums1[start1 + 1];
+            return nums2[start2];
+        }
+
+        if (m1 < m2) {
+            start1 = (start1 + end1) / 2;
+            end2 = (start2 + end2) / 2 + 1;
+        } else {
+            end1 = (start1 + end1) / 2 + 1;
+            start2 = (start2 + end2) / 2;
+        }
+        return findMedianSortedArrays3(nums1, start1, end1,
+                                       nums2, start2, end2);
+    }
+
     private void test(int[] nums1, int[] nums2, double expected) {
         assertEquals(expected, findMedianSortedArrays(nums1, nums2), 1e-8);
         assertEquals(expected, findMedianArraysSlow(nums1, nums2), 1e-8);
         assertEquals(expected, findMedianSortedArrays2(nums1, nums2), 1e-8);
+        // assertEquals(expected, findMedianSortedArrays3(nums1, nums2), 1e-8);
     }
 
     @Test
@@ -198,6 +253,8 @@ public class MedianArray {
         test(new int[] {1, 1}, new int[] {90}, 1);
         test(new int[] {1, 3}, new int[] {90}, 3);
         test(new int[] {1, 3, 5}, new int[] {2, 4}, 3);
+        test(new int[] {1}, new int[] {2, 3, 4}, 2.5);
+        test(new int[] {1}, new int[] {2, 3, 4, 5, 6}, 3.5);
         test(new int[] {1}, new int[] {2, 3, 4, 5, 6, 7, 8, 9, 10}, 5.5);
         test(new int[] {1, 3, 5, 7, 20 }, new int[] {2, 4, 6, 8}, 5);
         test(new int[] {1, 3, 5, 7, 20 }, new int[] {2, 4, 6, 8, 10, 12}, 6);
@@ -210,6 +267,8 @@ public class MedianArray {
                      findMedianSortedArrays(nums1, nums2), 1e-8);
         assertEquals(expected,
                      findMedianSortedArrays2(nums1, nums2), 1e-8);
+        // assertEquals(expected,
+        //              findMedianSortedArrays3(nums1, nums2), 1e-8);
     }
 
     @Test
@@ -263,12 +322,15 @@ public class MedianArray {
         }
         assertEquals(slowMedian, fastMedian, 1e-8);
         assertEquals(iterativeMedian, fastMedian, 1e-8);
+        // double median3 = test(ma::findMedianSortedArrays3,
+        //                          "findMedianSortedArrays3", nums1, nums2);
+        // assertEquals(median3, fastMedian, 1e-8);
         System.out.println("====================");
     }
 
     @Test
     public void test3() {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 50; i++) {
             test(1000, 1000);
             test(1000000, 1000000);
         }
