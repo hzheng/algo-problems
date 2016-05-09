@@ -20,7 +20,7 @@ public class ThreeSum {
                 twoSum(nums, i, result, map);
             }
         }
-        return new ArrayList<List<Integer> >(result);
+        return new ArrayList<List<Integer>>(result);
     }
 
     private void twoSum(int[] nums, int start, Set<List<Integer> > lists,
@@ -28,22 +28,23 @@ public class ThreeSum {
         map.clear();
         int target = -nums[start];
         for (int i = start + 1; i < nums.length; i++) {
-            int complement = target - nums[i];
+            int num = nums[i];
+            int complement = target - num;
             if (map.containsKey(complement)) {
-                List<Integer> l = Arrays.asList(-target, complement, nums[i]);
+                List<Integer> l = Arrays.asList(-target, complement, num);
                 // Collections.sort(l);
                 lists.add(l);
             } else {
-                map.put(nums[i], i);
+                map.put(num, i);
             }
         }
     }
 
-    // beats 9.95%
+    // beats 34.07%
     public List<List<Integer> > threeSum2(int[] nums) {
         if (nums == null || nums.length < 3) return Collections.emptyList();
 
-        Set<List<Integer> > result = new HashSet<List<Integer> >();
+        List<List<Integer> > result = new ArrayList<List<Integer> >();
         Arrays.sort(nums);
         for (int i = 0; i < nums.length - 2; i++) {
             if (nums[i] > 0) break;
@@ -51,15 +52,20 @@ public class ThreeSum {
                 twoSum2(nums, i, result);
             }
         }
-        return new ArrayList<List<Integer> >(result);
+        return result;
     }
 
-    private void twoSum2(int[] nums, int start, Set<List<Integer> > lists) {
-        int target = -nums[start];
+    private void twoSum2(int[] nums, int start, List<List<Integer> > lists) {
+        int target = nums[start];
+        int lastNum = target - 1; // make it different
         for (int i = start + 1; i < nums.length; i++) {
-            int complement = target - nums[i];
+            int num = nums[i];
+            if (num == lastNum) continue;
+
+            lastNum = num;
+            int complement = -target - num;
             if (find(nums, i + 1, complement)) {
-                List<Integer> l = Arrays.asList(-target, nums[i], complement);
+                List<Integer> l = Arrays.asList(target, num, complement);
                 lists.add(l);
             }
         }
@@ -69,6 +75,7 @@ public class ThreeSum {
         for (int end = nums.length - 1; end >= start; ) {
             int mid = (start + end) / 2;
             if (nums[mid] == target) return true;
+
             if (nums[mid] < target) {
                 start = mid + 1;
             } else {
@@ -78,26 +85,36 @@ public class ThreeSum {
         return false;
     }
 
-    void test(int[] nums, int[][] expected) {
+    void test(int[] nums, Integer[][] expected) {
         ThreeSum sum = new ThreeSum();
         test(sum::threeSum, "threeSum", nums, expected);
         test(sum::threeSum2, "threeSum2", nums, expected);
     }
 
     void test(Function<int[], List<List<Integer>>> threeSum, String name,
-              int[] nums, int[][] expected) {
+              int[] nums, Integer[][] expected) {
         List<List<Integer> > res = threeSum.apply(nums);
         // System.out.println(res);
-        Integer[][] lists = res.stream().map(
+        Integer[][] resArray = res.stream().map(
             l -> l.stream().toArray(Integer[]::new)).toArray(Integer[][]::new);
-        assertArrayEquals(expected, lists);
+        resArray = sort(resArray);
+        expected = sort(expected);
+        assertArrayEquals(expected, resArray);
+    }
+
+    Integer[][] sort(Integer[][] lists) {
+        Arrays.sort(lists, (a, b) -> {
+            if (a[0] != b[0]) return a[0] - b[0];
+            if (a[1] != b[1]) return a[1] - b[1];
+            return a[2] - b[2];
+        });
+        return lists;
     }
 
     @Test
     public void test1() {
         test(new int[] {-1, 0, 1, 2, -1, -4},
-             new int[][] {{-1, -1, 2}, {-1, 0, 1}});
-        //  new int[][] {{1, 0, -1}, {-1, -1, 2}});
+             new Integer[][] {{-1, -1, 2}, {-1, 0, 1}});
     }
 
     @Test
@@ -111,7 +128,7 @@ public class ThreeSum {
             -11, -2, 14, -10, 2, 12, 8, -7, -11, -13, -9, 14, 5, -5, -9, 1, -2,
             6, 5, -12, -1, -10, -9, -9, -10, 12, 11
         },
-             new int[][] {
+             new Integer[][] {
             {-11, -1, 12}, {-7, -1, 8}, {-3, -1, 4}, {-8, -3, 11},
             {-4, -3, 7}, {-9, -5, 14}, {-5, -5, 10}, {-12, 6, 6},
             {-13, 4, 9}, {-9, 4, 5}, {-14, 2, 12}, {-10, 2, 8}, {-6, 2, 4},
