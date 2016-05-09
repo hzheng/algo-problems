@@ -85,10 +85,45 @@ public class ThreeSum {
         return false;
     }
 
+    // beats 60.94%
+    public List<List<Integer> > threeSum3(int[] nums) {
+        if (nums == null || nums.length < 3) return Collections.emptyList();
+
+        List<List<Integer> > result = new ArrayList<List<Integer> >();
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length - 2; i++) {
+            if (nums[i] > 0) break;
+            if (i == 0 || nums[i] > nums[i - 1]) {
+                twoSum3(nums, i, result);
+            }
+        }
+        return result;
+    }
+
+    private void twoSum3(int[] nums, int start, List<List<Integer> > lists) {
+        int target = -nums[start];
+        for (int i = start + 1, j = nums.length - 1; j > i; ) {
+            int sum = nums[i] + nums[j];
+            if (sum == target) {
+                List<Integer> l = Arrays.asList(-target, nums[i], nums[j]);
+                lists.add(l);
+                i++;
+                while (i < j && nums[i] == nums[i - 1]) i++;
+                j--;
+                while (i < j && nums[j] == nums[j + 1]) j--;
+            } else if (sum < target) {
+                i++;
+            } else {
+                j--;
+            }
+        }
+    }
+
     void test(int[] nums, Integer[][] expected) {
         ThreeSum sum = new ThreeSum();
         test(sum::threeSum, "threeSum", nums, expected);
         test(sum::threeSum2, "threeSum2", nums, expected);
+        test(sum::threeSum3, "threeSum3", nums, expected);
     }
 
     void test(Function<int[], List<List<Integer>>> threeSum, String name,
