@@ -1,7 +1,8 @@
 import java.util.List;
 import java.util.ArrayList;
-import java.util.function.Function;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.function.Function;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -31,6 +32,7 @@ public class Parentheses {
     }
 
     // from the book
+    // beats 87.70% in leetcode
     public static List<String> parentheses2(int count) {
         char[] str = new char[count * 2];
         List<String> list = new ArrayList<String>();
@@ -40,11 +42,8 @@ public class Parentheses {
 
     private static void addParen2(List<String> list, int leftRem, int rightRem,
                                   char[] str, int count) {
-        // if (leftRem < 0 || rightRem < leftRem) return; // invalid state
-
-        if (leftRem == 0 && rightRem == 0) { /* all out of left and right parentheses */
-            String s = String.copyValueOf(str);
-            list.add(s);
+        if (leftRem == 0 && rightRem == 0) { // all out of left and right parentheses
+            list.add(String.valueOf(str));
         } else {
             if (leftRem > 0) { // try a left paren, if there are some available
                 str[count] = '(';
@@ -69,7 +68,7 @@ public class Parentheses {
     }
 
     private static void addParenBit(List<String> list, int leftRem, int rightRem,
-                                  long[] bits, int index, int count) {
+                                    long[] bits, int index, int count) {
         if (leftRem == 0 && rightRem == 0) {
             list.add(int2str(bits[0], count));
         } else {
@@ -100,12 +99,50 @@ public class Parentheses {
         return new String(bitStr);
     }
 
+    // FIXME: wrong
+    public static List<String> generateParenthesisWrong(int n) {
+        if (n < 1) return Collections.emptyList();
+
+        if (n == 1) return Arrays.asList("()");
+
+        List<String> res = new ArrayList<>();
+        for (String p : generateParenthesisWrong(n - 1)) {
+            res.add("()" + p);
+            res.add("(" + p + ")");
+            if (p.charAt(1) != ')') {
+                res.add(p + "()");
+            }
+        }
+        return res;
+    }
+
+    void test(Function<Integer, List<String> > getParen, String name,
+              int n, String ... expected) {
+        Arrays.sort(expected);
+        List<String> res = getParen.apply(n);
+        Collections.sort(res);
+        assertArrayEquals(expected, res.toArray());
+    }
+
+    void test(int n, String ... expected) {
+        test(Parentheses::parentheses2, "parentheses2", n, expected);
+        test(Parentheses::parenthesesBit, "parenthesesBit", n, expected);
+        // test(Parentheses::generateParenthesis, "generateParenthesis", n, expected);
+    }
+
+    @Test
+    public void test1() {
+        test(1, "()");
+        test(2, "()()", "(())");
+        test(3, "((()))", "(()())", "(())()", "()(())", "()()()");
+    }
+
     private List<String> test(int n, Function<Integer, List<String> > getParen) {
         long t = System.nanoTime();
         List<String> parens = getParen.apply(n);
         System.out.format("%.03f ms\n", (System.nanoTime() - t) * 1e-6);
-        System.out.println("total=" + parens.size());
-        if (n < 8) {
+        // System.out.println("total=" + parens.size());
+        if (n < 0) {
             Collections.sort(parens);
             for (String s : parens) {
                 System.out.println(s);
@@ -114,14 +151,23 @@ public class Parentheses {
         return parens;
     }
 
-    @Test
-    public void test() {
-        int n = 13; // out of memory when n > 15
+    private void test(int n) {
         System.out.println("test printParentheses2");
         List<String> parens2 = test(n, Parentheses::parentheses2);
         System.out.println("test printParentheseBit");
         List<String> parensBit = test(n, Parentheses::parenthesesBit);
         assertEquals(parens2, parensBit);
+        // System.out.println("test generateParenthesis");
+        // List<String> parens = test(n, Parentheses::generateParenthesis);
+        // assertEquals(parens2, parens);
+    }
+
+    @Test
+    public void test2() {
+        for (int i = 1; i < 13; i++) { // out of memory when i > 15
+            System.out.format("=====%s=====\n", i);
+            test(i);
+        }
     }
 
     public static void main(String[] args) {
