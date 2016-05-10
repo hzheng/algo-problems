@@ -25,26 +25,26 @@ public class Regex {
         }
 
         int[] match(String s, int start) {
-            if (many && any) return new int[]{start, s.length() + 1};
+            if (many && any) return new int[] {start, s.length() + 1};
 
             if (start >= s.length()) {
-                return many ? new int[]{start, start} : null;
+                return many ? new int[] {start, start} : null;
             }
 
             char c = s.charAt(start);
             if (ch != c) {
-                if (many) return new int[]{start, start};
-                if (any) return new int[]{start + 1, start + 1};
+                if (many) return new int[] {start, start};
+                if (any) return new int[] {start + 1, start + 1};
 
                 return null;
             }
             // ch == c
-            if (!many) return new int[]{start + 1, start + 1};
+            if (!many) return new int[] {start + 1, start + 1};
             int end = start + 1;
-            for ( ; end < s.length(); end++) {
+            for (; end < s.length(); end++) {
                 if (s.charAt(end) != c) break;
             }
-            return new int[]{start, end};
+            return new int[] {start, end};
         }
     }
 
@@ -103,13 +103,37 @@ public class Regex {
         while (s.length() > 0 && (c == '.' || c == s.charAt(0))) {
             if (isMatch2(s, p.substring(2))) return true;
             s = s.substring(1);
-      }
-      return isMatch2(s, p.substring(2));
+        }
+        return isMatch2(s, p.substring(2));
+    }
+
+    // http://www.jiuzhang.com/solutions/regular-expression-matching/
+    // beats 26.44%
+    public boolean isMatch3(String s, String p) {
+        if (p.isEmpty()) return s.isEmpty();
+
+        if (p.length() == 1 || p.charAt(1) != '*') {
+            if (!matchFirst(p, s)) return false;
+
+            return isMatch3(s.substring(1), p.substring(1));
+        }
+
+        if (!matchFirst(p, s)) return isMatch3(s, p.substring(2));
+        // fork: 1. consume the character and reuse the same pattern
+        //       2. keep the character, and skip '*' pattern
+        // Here is also an opportunity to use DP
+        return isMatch3(s.substring(1), p) || isMatch3(s, p.substring(2));
+    }
+
+    private boolean matchFirst(String p, String s){
+        if (s.isEmpty()) return false;
+        return p.charAt(0) == '.' || p.charAt(0) == s.charAt(0);
     }
 
     void test(String s, String p, boolean expected) {
         assertEquals(expected, isMatch(s, p));
         assertEquals(expected, isMatch2(s, p));
+        assertEquals(expected, isMatch3(s, p));
     }
 
     @Test
