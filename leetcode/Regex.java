@@ -60,6 +60,8 @@ public class Regex {
                         new Token(c, (i + 1 < len) && p.charAt(i + 1) == '*'));
                 }
             }
+            // if keep tokens as list instead of array, "beat ratio" will
+            // drop to 43.24%
             tokens = tokenList.toArray(new Token[0]);
         }
 
@@ -86,8 +88,28 @@ public class Regex {
         }
     }
 
+    // http://articles.leetcode.com/regular-expression-matching/
+    // beats 2.28%
+    public boolean isMatch2(String s, String p) {
+        if (p.isEmpty()) return s.isEmpty();
+
+        char c = p.charAt(0);
+        if (p.length() == 1 || p.charAt(1) != '*') {
+            if (s.length() == 0 || c != '.' && c != s.charAt(0)) return false;
+            return isMatch2(s.substring(1), p.substring(1));
+        }
+
+        // p.charAt(1) == '*'
+        while (s.length() > 0 && (c == '.' || c == s.charAt(0))) {
+            if (isMatch2(s, p.substring(2))) return true;
+            s = s.substring(1);
+      }
+      return isMatch2(s, p.substring(2));
+    }
+
     void test(String s, String p, boolean expected) {
         assertEquals(expected, isMatch(s, p));
+        assertEquals(expected, isMatch2(s, p));
     }
 
     @Test
