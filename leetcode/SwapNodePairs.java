@@ -26,16 +26,6 @@ public class SwapNodePairs {
         return dummy.next;
     }
 
-    public ListNode swapPairs2(ListNode head) {
-        if (head == null) return head;
-
-        ListNode dummy = new ListNode(0);
-        dummy.next = head;
-        for (ListNode cur = dummy; cur.next != null && cur.next.next != null; ) {
-        }
-        return dummy.next;
-    }
-
     void test(int[] n, int[] expected) {
         ListNode l = swapPairs(ListNode.of(n));
         assertArrayEquals(expected, l == null ? null : l.toArray());
