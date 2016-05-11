@@ -1,15 +1,9 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// Given a linked list, remove the nth node from the end of list.
-class ListNode {
-    int val;
-    ListNode next;
-    ListNode(int x) {
-        val = x;
-    }
-}
+import common.ListNode;
 
+// Given a linked list, remove the nth node from the end of list.
 public class RemoveNodeFromEnd {
     // beats 7.54%
     public ListNode removeNthFromEnd(ListNode head, int n) {

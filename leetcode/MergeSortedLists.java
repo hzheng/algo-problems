@@ -3,14 +3,10 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import common.ListNode;
+
 // Merge two sorted linked lists and return it as a new list.
-class ListNode {
-    int val;
-    ListNode next;
-    ListNode(int x) {
-        val = x;
-    }
-}
+
 
 public class MergeSortedLists {
     // beats 11.81%
@@ -28,29 +24,11 @@ public class MergeSortedLists {
         return dummy.next;
     }
 
-    ListNode createList(int[] l) {
-        ListNode dummy = new ListNode(0);
-        ListNode cur = dummy;
-        for (int i : l) {
-            cur.next = new ListNode(i);
-            cur = cur.next;
-        }
-        return dummy.next;
-    }
-
-    int[] toArray(ListNode l) {
-        List<Integer> list = new ArrayList<>();
-        for (; l != null; l = l.next) {
-            list.add(l.val);
-        }
-        return list.stream().mapToInt(i->i).toArray();
-    }
-
     void test(int[] n1, int[] n2, int[] expected) {
-        ListNode l1 = createList(n1);
-        ListNode l2 = createList(n2);
+        ListNode l1 = ListNode.of(n1);
+        ListNode l2 = ListNode.of(n2);
         ListNode l = mergeTwoLists(l1, l2);
-        assertArrayEquals(expected, toArray(l));
+        assertArrayEquals(expected, l.toArray());
     }
 
     @Test

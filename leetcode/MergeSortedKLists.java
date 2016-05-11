@@ -5,23 +5,9 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import common.ListNode;
+
 // Merge k sorted linked lists and return it as a new list.
-class ListNode {
-    int val;
-    ListNode next;
-    ListNode(int x) {
-        val = x;
-    }
-
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (ListNode l = this; l != null; l = l.next) {
-            sb.append("->" + l.val);
-        }
-        return sb.toString();
-    }
-}
-
 public class MergeSortedKLists {
     // beats 12.37% (1.31% if not set PriorityQueue's size)
     // time complexity: O(N * log(K))
@@ -94,30 +80,12 @@ public class MergeSortedKLists {
         return listSet.get(0);
     }
 
-    ListNode createList(int[] l) {
-        ListNode dummy = new ListNode(0);
-        ListNode cur = dummy;
-        for (int i : l) {
-            cur.next = new ListNode(i);
-            cur = cur.next;
-        }
-        return dummy.next;
-    }
-
-    int[] toArray(ListNode l) {
-        List<Integer> list = new ArrayList<>();
-        for (; l != null; l = l.next) {
-            list.add(l.val);
-        }
-        return list.stream().mapToInt(i->i).toArray();
-    }
-
     void test(Function<ListNode[], ListNode> merge,
               int[] expected, int[] ... listArray) {
         ListNode[] lists = Stream.of(listArray)
-                           .map(l->createList(l)).toArray(ListNode[]::new);
+                           .map(l->ListNode.of(l)).toArray(ListNode[]::new);
         ListNode res = merge.apply(lists);
-        assertArrayEquals(expected, toArray(res));
+        assertArrayEquals(expected, res.toArray());
     }
 
     void test(int[] expected, int[] ... listArray) {

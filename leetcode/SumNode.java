@@ -1,10 +1,4 @@
-class ListNode {
-    int val;
-    ListNode next;
-    ListNode(int x) {
-        val = x;
-    }
-}
+import common.ListNode;
 
 public class SumNode {
     // beats 35.18%
