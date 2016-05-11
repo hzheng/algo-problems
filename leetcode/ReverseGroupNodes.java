@@ -12,23 +12,23 @@ public class ReverseGroupNodes {
 
         ListNode dummy = new ListNode(0);
         dummy.next = head;
-        ListNode begin = dummy;
+        head = dummy;
         while (true) {
-            ListNode end = begin;
-            for (int i = k; i > 0 && end != null; i--, end = end.next) {}
-            if (end == null) return dummy.next;
-            // reverse nodes between begin and end
-            ListNode prev = end.next;
-            for (ListNode cur = begin.next; cur != end; ) {
+            ListNode tail = head;
+            for (int i = k; i > 0 && tail != null; i--, tail = tail.next) {}
+            if (tail == null) return dummy.next;
+            // reverse nodes between head and tail
+            ListNode prev = tail.next;
+            for (ListNode cur = head.next; cur != tail; ) {
                 ListNode next = cur.next;
                 cur.next = prev;
                 prev = cur;
                 cur = next;
             }
-            end.next = prev;
-            ListNode next = begin.next;
-            begin.next = end;
-            begin = next;
+            tail.next = prev;
+            ListNode next = head.next;
+            head.next = tail;
+            head = next;
         }
     }
 
@@ -46,6 +46,7 @@ public class ReverseGroupNodes {
         test(new int[] {1, 2, 3, 4}, 2, new int[] {2, 1, 4, 3});
         test(new int[] {1, 2, 3, 4, 5}, 2, new int[] {2, 1, 4, 3, 5});
         test(new int[] {1, 2, 3, 4, 5}, 3, new int[] {3, 2, 1, 4, 5});
+        test(new int[] {1, 2, 3, 4, 5, 6}, 4, new int[] {4, 3, 2, 1, 5, 6});
     }
 
     public static void main(String[] args) {
