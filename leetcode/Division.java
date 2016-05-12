@@ -27,7 +27,7 @@ public class Division {
         return sign > 0 ? res : -res;
     }
 
-    // beats 8.94%
+    // beats 75.64% (only 8.94% if use countBits)
     public int divide(int dividend, int divisor) {
         if (divisor == 0) return Integer.MAX_VALUE;
         if (dividend == divisor) return 1;
@@ -59,27 +59,24 @@ public class Division {
         }
         if (dividend < divisor) return sign > 0 ? overflow : -overflow;
 
-        int bit1 = countBits(dividend);
-        int bit2 = countBits(divisor);
-        int shift = bit1 - bit2 - 1;
-        if (shift > 0) {
-            divisor <<= shift;
+        int adjust = 1;
+        int max = Integer.MAX_VALUE >> 1; // avoid overflow
+        int shift = -1;
+        for (; divisor < dividend; divisor <<= 1) {
+            shift++;
+            if (divisor >= max) {
+                adjust = 0;
+                break;
+            }
         }
-
-        int res = -1;
-        for (; dividend >= 0; dividend -= divisor) {
-            res++;
-        }
-        if (shift > 0) {
-            res <<= shift;
-            dividend += divisor;
-            divisor >>= shift;
-            res += divide(dividend, divisor);
-        }
-        res += overflow;
+        divisor >>= adjust;
+        dividend -= divisor;
+        divisor >>= shift;
+        int res = (1 << shift) + divide(dividend, divisor) + overflow;
         return sign > 0 ? res : -res;
     }
 
+    // dumped
     int countBits(int n) {
         int bits = 0;
         for (; n > 0; n >>= 1) bits++;
