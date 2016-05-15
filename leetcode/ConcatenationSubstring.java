@@ -186,7 +186,7 @@ public class ConcatenationSubstring {
         }
     }
 
-    // beats 89.19%
+    // beats 91.26%
     public List<Integer> findSubstring3(String s, String[] words) {
         if (s.isEmpty() || words.length == 0) return Collections.emptyList();
 
@@ -194,29 +194,26 @@ public class ConcatenationSubstring {
         WordIndices indices = new WordIndices(words);
         int sLen = s.length();
         int slice = words[0].length();
+        int maxDiff = (words.length - 1) * slice;
         for (int shift = 0; shift < slice; shift++) {
-            int count = 0;
             int left = shift;
             indices.reset();
             for (int cur = shift; cur <= sLen - slice; cur += slice) {
                 int index = indices.check(s, cur, left);
                 if (index < 0) {
-                    count = 0;
                     left = cur + slice;
                     continue;
                 }
 
                 if (index > 0) {
-                    count -= (index - left) / slice - 1;
                     left = index;
                     continue;
                 }
 
-                if (++count == words.length) { // found one
+                if (left + maxDiff == cur) { // found one
                     res.add(left);
                     indices.decrease(s.substring(left, left + slice));
                     left += slice;
-                    count--;
                 }
             }
         }
@@ -273,12 +270,50 @@ public class ConcatenationSubstring {
         }
     } // WordIndices
 
+    // http://www.jiuzhang.com/solutions/substring-with-concatenation-of-all-words/
+    // Time Limit Exceeded
+    public List<Integer> findSubstring4(String s, String[] words) {
+        List<Integer> result = new ArrayList<Integer>();
+        Map<String, Integer> toFind = new HashMap<>();
+        Map<String, Integer> found = new HashMap<>();
+        int m = words.length;
+        int n = words[0].length();
+        for (int i = 0; i < m; i++) {
+            if (!toFind.containsKey(words[i])) {
+                toFind.put(words[i], 1);
+            }
+            else {
+                toFind.put(words[i], toFind.get(words[i]) + 1);
+            }
+        }
+        for (int i = 0; i <= s.length() - n * m; i++) {
+            found.clear();
+            int j;
+            for (j = 0; j < m; j++) {
+                int k = i + j * n;
+                String stub = s.substring(k, k + n);
+                if (!toFind.containsKey(stub)) break;
+                if(!found.containsKey(stub)) {
+                    found.put(stub, 1);
+                }
+                else {
+                    found.put(stub, found.get(stub) + 1);
+                }
+                if (found.get(stub) > toFind.get(stub)) break;
+            }
+            if (j == m) {
+                result.add(i);
+            }
+        }
+        return result;
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
     }
 
-    void test(Function<String, String[], List<Integer>> find,
+    void test(Function<String, String[], List<Integer> > find,
               Integer[] expected, String s, String ... words) {
         List<Integer> indexes = find.apply(s, words);
         // System.out.println(indexes);
@@ -291,6 +326,7 @@ public class ConcatenationSubstring {
         test(c::findSubstring, expected, s, words);
         test(c::findSubstring2, expected, s, words);
         test(c::findSubstring3, expected, s, words);
+        test(c::findSubstring4, expected, s, words);
     }
 
     @Test
