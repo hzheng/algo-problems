@@ -123,14 +123,179 @@ public class ConcatenationSubstring {
         }
     }
 
-    void test(Integer[] expected, String s, String ... words) {
-        List<Integer> indexes = findSubstring(s, words);
+    // Time Limit Exceeded
+    public List<Integer> findSubstring2(String s, String[] words) {
+        if (s.isEmpty() || words.length == 0) return Collections.emptyList();
+
+        List<Integer> indices = new ArrayList<>();
+        WordMap wordMap = new WordMap(words);
+        for (int offset = 0;; offset++) {
+            int res = wordMap.scan(s, offset);
+            if (res < 0) break;
+
+            if (res > 0) {
+                indices.add(offset);
+            }
+        }
+        return indices;
+    }
+
+    static class WordMap {
+        private String[] words;
+        private Map<String, Integer> map;
+        private int len;
+
+        public WordMap(String[] words) {
+            this.words = words;
+            len = words[0].length();
+        }
+
+        public void reset() {
+            map = new HashMap<>();
+            for (String word : words) {
+                if (map.containsKey(word)) {
+                    map.put(word, map.get(word) + 1);
+                } else {
+                    map.put(word, 1);
+                }
+            }
+        }
+
+        public boolean check(String word) {
+            if (!map.containsKey(word)) return false;
+
+            int count = map.get(word);
+            if (--count == 0) {
+                map.remove(word);
+            } else {
+                map.put(word, count);
+            }
+            return true;
+        }
+
+        public int scan(String s, int offset) {
+            int sLen = s.length();
+            int end = offset + len * words.length;
+            if (sLen < end) return -1;
+
+            reset();
+            for (int i = offset; i <= end - len; i += len) {
+                if (!check(s.substring(i, i + len))) return 0;
+            }
+            return 1;
+        }
+    }
+
+    // beats 89.19%
+    public List<Integer> findSubstring3(String s, String[] words) {
+        if (s.isEmpty() || words.length == 0) return Collections.emptyList();
+
+        List<Integer> res = new ArrayList<>();
+        WordIndices indices = new WordIndices(words);
+        int sLen = s.length();
+        int slice = words[0].length();
+        for (int shift = 0; shift < slice; shift++) {
+            int count = 0;
+            int left = shift;
+            indices.reset();
+            for (int cur = shift; cur <= sLen - slice; cur += slice) {
+                int index = indices.check(s, cur, left);
+                if (index < 0) {
+                    count = 0;
+                    left = cur + slice;
+                    continue;
+                }
+
+                if (index > 0) {
+                    count -= (index - left) / slice - 1;
+                    left = index;
+                    continue;
+                }
+
+                if (++count == words.length) { // found one
+                    res.add(left);
+                    indices.decrease(s.substring(left, left + slice));
+                    left += slice;
+                    count--;
+                }
+            }
+        }
+        return res;
+    }
+
+    static class WordIndices {
+        private Map<String, int[]> map = new HashMap<>();
+        private int len;
+        private boolean modified;
+
+        public WordIndices(String[] words) {
+            for (String word : words) {
+                if (map.containsKey(word)) {
+                    map.get(word)[0]++;
+                } else {
+                    map.put(word, new int[] {1, 0});
+                }
+            }
+            len = words[0].length();
+        }
+
+        public void reset() {
+            if (!modified) return;
+
+            for (int[] index : map.values()) {
+                index[1] = 0;
+            }
+            modified = false;
+        }
+
+        public int check(String s, int cur, int left) {
+            String word = s.substring(cur, cur + len);
+            if (!map.containsKey(word)) {
+                reset();
+                return -1;
+            }
+
+            modified = true;
+            int[] indices = map.get(word);
+            if (++indices[1] <= indices[0]) return 0;
+
+            --indices[1];
+            for (int index = left;; ) {
+                String w = s.substring(index, index += len);
+                if (w.equals(word)) return index;
+
+                decrease(w);
+            }
+        }
+
+        public void decrease(String word) {
+            map.get(word)[1]--;
+        }
+    } // WordIndices
+
+    @FunctionalInterface
+    interface Function<A, B, C> {
+        public C apply(A a, B b);
+    }
+
+    void test(Function<String, String[], List<Integer>> find,
+              Integer[] expected, String s, String ... words) {
+        List<Integer> indexes = find.apply(s, words);
         // System.out.println(indexes);
+        Collections.sort(indexes);
         assertArrayEquals(expected, indexes.toArray(new Integer[0]));
+    }
+
+    void test(Integer[] expected, String s, String ... words) {
+        ConcatenationSubstring c = new ConcatenationSubstring();
+        test(c::findSubstring, expected, s, words);
+        test(c::findSubstring2, expected, s, words);
+        test(c::findSubstring3, expected, s, words);
     }
 
     @Test
     public void test1() {
+        test(new Integer[] {0, 1, 2}, "aaaaaaaa", "aa", "aa", "aa");
         test(new Integer[] {0, 9}, "barfoothefoobarman", "foo", "bar");
         test(new Integer[] {3, 9, 15}, "barfoothefoobarfooman", "foo");
         test(new Integer[] {1}, "yarewas", "was", "are");
@@ -143,6 +308,12 @@ public class ConcatenationSubstring {
              "aaaaaaaaaaaaaaaa", "a", "a");
         test(new Integer[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13},
              "aaaaaaaaaaaaaaaa", "a", "a", "a");
+        test(new Integer[] {},
+             "ababababababababababababababababababababababababa",
+             "ab","ba","ab","ba","ab","ba","ab","ba","ab","ba","ab","ba");
+        test(new Integer[] {2},
+             "abababababababbababababababababababababababababa",
+             "ab","ba","ab","ba","ab","ba","ab","ba","ab","ba","ab","ba");
     }
 
     public static void main(String[] args) {

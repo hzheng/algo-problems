@@ -1,5 +1,6 @@
 import java.util.*;
 
+// Find the length of the longest substring without repeating characters.
 public class LongestNoRepeatSubstring {
     // beats 30.1%
     public int lengthOfLongestSubstring(String s) {
