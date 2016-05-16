@@ -42,6 +42,31 @@ public class LongestParentheses {
         return maxLen;
     }
 
+    // http://www.geeksforgeeks.org/length-of-the-longest-valid-substring/
+    // beats 50.87%
+    public int longestValidParentheses2(String s) {
+        Stack<Integer> stack = new Stack<>();
+        stack.push(-1);
+        int maxLen = 0;
+        for (int cur = 0; cur < s.length(); cur++) {
+            switch (s.charAt(cur)) {
+            case '(':
+                stack.push(cur);
+                break;
+            case ')':
+                stack.pop();
+                if (stack.empty()) {
+                    // push current index as base for next valid pairs
+                    stack.push(cur);
+                } else {
+                    maxLen = Math.max(maxLen, cur - stack.peek());
+                }
+            }
+        }
+
+        return maxLen;
+    }
+
     public int longestValidParenthesesBug(String s) {
         int extraLeftParen = 0;
         int maxLen = 0;
@@ -68,6 +93,7 @@ public class LongestParentheses {
 
     void test(String s, int expected) {
         assertEquals(expected, longestValidParentheses(s));
+        assertEquals(expected, longestValidParentheses2(s));
     }
 
     @Test
