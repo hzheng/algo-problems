@@ -6,39 +6,33 @@ import static org.junit.Assert.*;
 
 // Solve a Sudoku puzzle by filling the empty cells
 public class SudokuSolver {
-    // beats 11.51%
+    // beats 8.67%(last version: 11.51%)
     static final int SIZE = 9;
+    static final char BLANK = '.';
 
     public void solveSudoku(char[][] board) {
         List<BlockList> blocks = new ArrayList<>(SIZE * 3);
         for (int i = 0; i < SIZE; i++) {
             blocks.add(new RowList(board, i));
-        }
-        for (int i = 0; i < SIZE; i++) {
             blocks.add(new ColList(board, i));
-        }
-        for (int i = 0; i < SIZE; i++) {
             blocks.add(new SquareList(board, i));
         }
         solve(blocks);
     }
 
     private boolean solve(List<BlockList> blocks) {
+        PriorityQueue<BlockList> queue = new PriorityQueue<>(SIZE * 3);
         for (BlockList block : blocks) {
             if (!block.isValid()) return false;
 
-            block.resetBlank();
+            if (block.getBlanks() > 0) {
+                queue.add(block);
+            }
         }
 
-        PriorityQueue<BlockList> queue = new PriorityQueue<>(blocks.size());
-        queue.addAll(blocks);
-        BlockList head = null;
-        while (!queue.isEmpty()) {
-            head = queue.poll();
-            if (head.getBlanks() > 0) break;
-        }
         if (queue.isEmpty()) return true;
 
+        BlockList head = queue.poll();
         while (head.fill()) {
             if (solve(blocks)) return true;
         }
@@ -66,15 +60,15 @@ public class SudokuSolver {
 
         @Override
         public int compareTo(BlockList other) {
-            return getBlanks() - other.getBlanks();
+            return blanks - other.blanks;
         }
 
         int getBlanks() {
-            if (blanks >= 0) return blanks;
+            if (blanks == 0) return 0;
 
             blanks = 0;
             for (char c : this) {
-                if (c == '.') {
+                if (c == BLANK) {
                     blanks++;
                 }
             }
@@ -84,7 +78,7 @@ public class SudokuSolver {
         boolean isValid() {
             int bits = 0;
             for (char c : this) {
-                if (c != '.') {
+                if (c != BLANK) {
                     int mask = 1 << (c - '1');
                     if ((bits & mask) > 0) return false;
 
@@ -142,7 +136,7 @@ public class SudokuSolver {
             int i = 0;
             int j = 0;
             for (char c : this) {
-                if (c == '.') {
+                if (c == BLANK) {
                     filledIndices[j++] = i;
                 } else {
                     digits.remove(c);
@@ -163,18 +157,17 @@ public class SudokuSolver {
             for (int i = 0; i < digits.length; i++) {
                 set(filledIndices[i], digits[i]);
             }
+            blanks = 0;
             return true;
         }
 
         void unfill() {
             for (int i : filledIndices) {
-                set(i, '.');
+                set(i, BLANK);
             }
             digitPerm = null;
-        }
-
-        void resetBlank() {
-            blanks = -1;
+            // blanks = -1;
+            blanks = filledIndices.length;
         }
     } // BlockList
 
