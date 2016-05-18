@@ -62,8 +62,8 @@ public class CombinationSum {
     }
 
     private void combinationSum2(int[] candidates, int target,
-                                int index, List<Integer> preselected,
-                                List<List<Integer> > res) {
+                                 int index, List<Integer> preselected,
+                                 List<List<Integer> > res) {
         int first = candidates[index];
         for (int times = target / first; times >= 0; times--) {
             List<Integer> combination = new ArrayList<>(preselected);
@@ -88,11 +88,11 @@ public class CombinationSum {
         return combinationSum3(candidates, target, candidates.length - 1);
     }
 
-    private List<List<Integer>> combinationSum3(int[] candidates, int target,
-                                                int index) {
+    private List<List<Integer> > combinationSum3(int[] candidates, int target,
+                                                 int index) {
         int last = candidates[index];
         if (index == 0) {
-             List<List<Integer>> res = new ArrayList<>();
+            List<List<Integer> > res = new ArrayList<>();
             if (target % last == 0) {
                 List<Integer> r = new ArrayList<Integer>();
                 for (int times = target / last; times > 0; times--) {
@@ -103,7 +103,7 @@ public class CombinationSum {
             return res;
         }
 
-        List<List<Integer>> res = combinationSum3(candidates, target, index - 1);
+        List<List<Integer> > res = combinationSum3(candidates, target, index - 1);
         for (int times = 1; times <= target / last; times++) {
             int tgt = target - times * last;
             for (List<Integer> r : combinationSum3(candidates, tgt, index - 1)) {
@@ -114,6 +114,37 @@ public class CombinationSum {
             }
         }
         return res;
+    }
+
+    // http://www.jiuzhang.com/solutions/combination-sum/
+    // beats 74.42%
+    public List<List<Integer> > combinationSum4(int[] candidates, int target) {
+        List<List<Integer> > res = new ArrayList<>();
+        List<Integer> path = new ArrayList<>();
+        Arrays.sort(candidates);
+        combinationSum4(candidates, target, path, 0, res);
+        return res;
+    }
+
+    private void combinationSum4(int[] candidates, int target,
+                                 List<Integer> path, int index,
+                                 List<List<Integer> > res) {
+        if (target == 0) {
+            res.add(new ArrayList<Integer>(path));
+            return;
+        }
+
+        // int prev = -1;
+        for (int i = index; i < candidates.length; i++) {
+            if (candidates[i] > target) break;
+
+            // if (prev != -1 && prev == candidates[i]) continue;
+
+            path.add(candidates[i]);
+            combinationSum4(candidates, target - candidates[i], path, i, res);
+            path.remove(path.size() - 1);
+            // prev = candidates[i];
+        }
     }
 
     @FunctionalInterface
@@ -137,7 +168,7 @@ public class CombinationSum {
             Arrays.sort(b);
             int len = Math.min(a.length, b.length);
             int i = 0;
-            for (; i < len && (a[i] == b[i]); i++) ;
+            for (; i < len && (a[i] == b[i]); i++);
             if (i == len) return a.length - b.length;
             return a[i] - b[i];
         });
@@ -149,6 +180,7 @@ public class CombinationSum {
         test(sum::combinationSum, expected, target, candidates);
         test(sum::combinationSum2, expected, target, candidates);
         test(sum::combinationSum3, expected, target, candidates);
+        test(sum::combinationSum4, expected, target, candidates);
     }
 
     @Test
