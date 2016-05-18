@@ -20,10 +20,10 @@ public class CombinationSum {
         return candidates;
     }
 
-    // beats 0.68%
+    // beats 16.98%
     public List<List<Integer> > combinationSum(int[] candidates, int target) {
-        candidates = preprocess(candidates);
-        if (candidates == null) return null;
+        // candidates = preprocess(candidates); // only beats 0.68% if add this
+        // if (candidates == null) return null;
 
         List<List<Integer> > res = new ArrayList<>();
         combinationSum(candidates, target, 0, Collections.emptyList(), res);
@@ -51,10 +51,10 @@ public class CombinationSum {
         }
     }
 
-    // beats 0.97%
+    // beats 44.62%
     public List<List<Integer> > combinationSum2(int[] candidates, int target) {
-        candidates = preprocess(candidates);
-        if (candidates == null) return null;
+        // candidates = preprocess(candidates); // beats 0.97% if add this
+        // if (candidates == null) return null;
 
         List<List<Integer> > res = new ArrayList<>();
         combinationSum2(candidates, target, 0, Collections.emptyList(), res);
@@ -73,17 +73,17 @@ public class CombinationSum {
             int newTarget = target - times * first;
             if (newTarget == 0) {
                 res.add(combination);
-            } else if (newTarget >= first && index + 1 < candidates.length) {
+            } else if (index + 1 < candidates.length) {
                 combinationSum2(candidates, newTarget, index + 1,
                                 combination, res);
             }
         }
     }
 
-    // beats 0.68%
+    // beats 57.38%
     public List<List<Integer> > combinationSum3(int[] candidates, int target) {
-        candidates = preprocess(candidates);
-        if (candidates == null) return null;
+        // candidates = preprocess(candidates); // beats 0.68% if add this
+        // if (candidates == null) return null;
 
         return combinationSum3(candidates, target, candidates.length - 1);
     }
@@ -127,7 +127,21 @@ public class CombinationSum {
         // System.out.println(res);
         Integer[][] resArray = res.stream().map(
             a -> a.toArray(new Integer[0])).toArray(Integer[][]::new);
+        sort(resArray);
         assertArrayEquals(expected, resArray);
+    }
+
+    Integer[][] sort(Integer[][] lists) {
+        Arrays.sort(lists, (a, b) -> {
+            Arrays.sort(a);
+            Arrays.sort(b);
+            int len = Math.min(a.length, b.length);
+            int i = 0;
+            for (; i < len && (a[i] == b[i]); i++) ;
+            if (i == len) return a.length - b.length;
+            return a[i] - b[i];
+        });
+        return lists;
     }
 
     void test(int[][] expected, int target, int ... candidates) {
@@ -139,9 +153,14 @@ public class CombinationSum {
 
     @Test
     public void test1() {
-        test(new int[][] { {2, 2, 3}, {7} }, 7, 7, 2, 2, 6, 3);
+        // test(new int[][] { {2, 2, 3}, {7} }, 7, 7, 2, 2, 6, 3); // no repeat
+        test(new int[][] { {2, 2, 3}, {7} }, 7, 7, 2, 6, 3);
+        // test(new int[][] { {2, 2, 2, 2, 2}, {2, 2, 3, 3}, {2, 2, 6}, {3, 7} },
+        //      10, 7, 2, 2, 6, 3);
         test(new int[][] { {2, 2, 2, 2, 2}, {2, 2, 3, 3}, {2, 2, 6}, {3, 7} },
-             10, 7, 2, 2, 6, 3);
+             10, 7, 2, 6, 3);
+        test(new int[][] { {3, 4, 4}, {3, 8}, {4, 7} }, 11, 8, 7, 4, 3);
+        test(new int[][] { {3} }, 3, 8, 7, 4, 3);
     }
 
     public static void main(String[] args) {
