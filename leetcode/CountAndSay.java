@@ -31,10 +31,36 @@ public class CountAndSay {
         return sb.toString();
     }
 
+    // beats 64.44%
+    public String countAndSay2(int n) {
+        StringBuilder last = new StringBuilder("1");
+        while (--n > 0) {
+            StringBuilder sb = new StringBuilder();
+            int lastCount = 1;
+            char lastDigit = last.charAt(0);
+            for (int j = 1; j < last.length(); ++j) {
+                char c = last.charAt(j);
+                if (c == lastDigit) {
+                    lastCount++;
+                } else {
+                    sb.append(lastCount).append(lastDigit);
+                    lastCount = 1;
+                    lastDigit = c;
+                }
+            }
+            if (lastCount > 0) {
+                sb.append(lastCount).append(lastDigit);
+            }
+            last = sb;
+        }
+        return last.toString();
+    }
+
     void test(String... expected) {
         int n = expected.length;
         for (int i = 1; i <= n; i++) {
             assertEquals(expected[i - 1], countAndSay(i));
+            assertEquals(expected[i - 1], countAndSay2(i));
         }
     }
 
