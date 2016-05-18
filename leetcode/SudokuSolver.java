@@ -226,7 +226,103 @@ public class SudokuSolver {
         }
     } // SquareList
 
-    void test(String[] boardStr, String[] expected) {
+    // http://www.jiuzhang.com/solutions/sudoku-solver/
+    // beats 18.75%
+    public void solveSudoku2(char[][] board) {
+        solve(board);
+    }
+
+    private boolean solve(char[][] board) {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (board[i][j] != BLANK) continue;
+
+                for (char c = '1'; c <= '9'; c++) {
+                    board[i][j] = c;
+                    if (isValid(board, i, j) && solve(board)) return true;
+
+                    board[i][j] = BLANK;
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isValid(char[][] board, int row, int col) {
+        int bits = 0;
+        for (int i = 0; i < 9; i++) {
+            char c = board[row][i];
+            if (c == BLANK) continue;
+
+            int mask = 1 << (c - '1');
+            if ((bits & mask) > 0) return false;
+
+            bits |= mask;
+        }
+
+        bits = 0;
+        for (int i = 0; i < 9; i++) {
+            char c = board[i][col];
+            if (c == BLANK) continue;
+
+            int mask = 1 << (c - '1');
+            if ((bits & mask) > 0) return false;
+
+            bits |= mask;
+        }
+
+        bits = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                char c = board[row / 3 * 3 + i][col / 3 * 3 + j];
+                if (c == BLANK) continue;
+
+                int mask = 1 << (c - '1');
+                if ((bits & mask) > 0) return false;
+
+                bits |= mask;
+            }
+        }
+
+        return true;
+    }
+
+    // beats 8.10%
+    public void solveSudoku3(char[][] board) {
+        List<Integer> blanks = new ArrayList<Integer>();
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (board[i][j] == BLANK) {
+                    blanks.add(i * SIZE + j);
+                }
+            }
+        }
+        solve(blanks.stream().mapToInt(i->i).toArray(), board, 0);
+    }
+
+    private boolean solve(int[] blanks, char[][] board, int cur) {
+        if (cur == blanks.length) return true;
+
+        int index = blanks[cur];
+        int row = index / SIZE;
+        int col = index % SIZE;
+        for (char c = '1'; c <= '9'; c++) {
+            board[row][col] = c;
+            if (isValid(board, row, col) && solve(blanks, board, cur + 1)) {
+                return true;
+            }
+            board[row][col] = BLANK;
+        }
+        return false;
+    }
+
+    @FunctionalInterface
+    interface Function<A> {
+        public void apply(A a);
+    }
+
+    void test(Function<char[][]> solve, String[] boardStr, String[] expected) {
         int size = boardStr.length;
         char[][] board = new char[size][];
         for (int i = 0; i < size; i++) {
@@ -236,11 +332,18 @@ public class SudokuSolver {
         for (int i = 0; i < size; i++) {
             expectedBoard[i] = expected[i].toCharArray();
         }
-        solveSudoku(board);
+        solve.apply(board);
 
         System.out.println("******result*****");
         print(board);
         assertArrayEquals(expectedBoard, board);
+    }
+
+    void test(String[] boardStr, String[] expected) {
+        SudokuSolver solver = new SudokuSolver();
+        test(solver::solveSudoku, boardStr, expected);
+        test(solver::solveSudoku2, boardStr, expected);
+        test(solver::solveSudoku3, boardStr, expected);
     }
 
     void print(char[][] board) {
