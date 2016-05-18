@@ -85,6 +85,7 @@ public class CombinationSum {
         // candidates = preprocess(candidates); // beats 0.68% if add this
         // if (candidates == null) return null;
 
+        Arrays.sort(candidates);
         return combinationSum3(candidates, target, candidates.length - 1);
     }
 
@@ -94,7 +95,7 @@ public class CombinationSum {
         if (index == 0) {
             List<List<Integer> > res = new ArrayList<>();
             if (target % last == 0) {
-                List<Integer> r = new ArrayList<Integer>();
+                List<Integer> r = new ArrayList<>();
                 for (int times = target / last; times > 0; times--) {
                     r.add(last);
                 }
@@ -130,20 +131,20 @@ public class CombinationSum {
                                  List<Integer> path, int index,
                                  List<List<Integer> > res) {
         if (target == 0) {
-            res.add(new ArrayList<Integer>(path));
+            res.add(new ArrayList<>(path));
             return;
         }
 
         // int prev = -1;
         for (int i = index; i < candidates.length; i++) {
-            if (candidates[i] > target) break;
+            int candidate = candidates[i];
+            if (candidate > target) break;
 
-            // if (prev != -1 && prev == candidates[i]) continue;
-
-            path.add(candidates[i]);
-            combinationSum4(candidates, target - candidates[i], path, i, res);
+            // if (prev != -1 && prev == candidate) continue;
+            path.add(candidate);
+            combinationSum4(candidates, target - candidate, path, i, res);
             path.remove(path.size() - 1);
-            // prev = candidates[i];
+            // prev = candidate;
         }
     }
 
