@@ -31,9 +31,10 @@ public class CountAndSay {
         return sb.toString();
     }
 
-    // beats 64.44%
+    // beats 76.15%
     public String countAndSay2(int n) {
-        StringBuilder last = new StringBuilder("1");
+        String last = "1";
+        // StringBuilder last = new StringBuilder("1"); // beats 64.44%
         while (--n > 0) {
             StringBuilder sb = new StringBuilder();
             int lastCount = 1;
@@ -51,9 +52,9 @@ public class CountAndSay {
             if (lastCount > 0) {
                 sb.append(lastCount).append(lastDigit);
             }
-            last = sb;
+            last = sb.toString();
         }
-        return last.toString();
+        return last;
     }
 
     void test(String... expected) {
