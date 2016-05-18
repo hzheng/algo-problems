@@ -80,6 +80,42 @@ public class CombinationSum {
         }
     }
 
+    // beats 0.68%
+    public List<List<Integer> > combinationSum3(int[] candidates, int target) {
+        candidates = preprocess(candidates);
+        if (candidates == null) return null;
+
+        return combinationSum3(candidates, target, candidates.length - 1);
+    }
+
+    private List<List<Integer>> combinationSum3(int[] candidates, int target,
+                                                int index) {
+        int last = candidates[index];
+        if (index == 0) {
+             List<List<Integer>> res = new ArrayList<>();
+            if (target % last == 0) {
+                List<Integer> r = new ArrayList<Integer>();
+                for (int times = target / last; times > 0; times--) {
+                    r.add(last);
+                }
+                res.add(r);
+            }
+            return res;
+        }
+
+        List<List<Integer>> res = combinationSum3(candidates, target, index - 1);
+        for (int times = 1; times <= target / last; times++) {
+            int tgt = target - times * last;
+            for (List<Integer> r : combinationSum3(candidates, tgt, index - 1)) {
+                for (int i = times; i > 0; i--) {
+                    r.add(last);
+                }
+                res.add(r);
+            }
+        }
+        return res;
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -98,6 +134,7 @@ public class CombinationSum {
         CombinationSum sum = new CombinationSum();
         test(sum::combinationSum, expected, target, candidates);
         test(sum::combinationSum2, expected, target, candidates);
+        test(sum::combinationSum3, expected, target, candidates);
     }
 
     @Test
