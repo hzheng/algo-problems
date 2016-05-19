@@ -31,7 +31,7 @@ public class StrMultiplier {
         while (--n > 0) {
             product = add(product, num);
         }
-        for (int i = zeros; i > 0; i--) {
+        for (int i = zeros; i > 0; i--) { // can be optimized by 0's tables
             product += '0';
         }
         return product;
@@ -52,6 +52,37 @@ public class StrMultiplier {
         }
         sumStr[0] = '1';
         return new String(sumStr, 1 - carry, maxLen + carry);
+    }
+
+    // http://www.jiuzhang.com/solutions/multiply-strings/
+    // beats 20.55%
+    public String multiply2(String num1, String num2) {
+        int len1 = num1.length();
+        int len2 = num2.length();
+        int len = len1 + len2;
+        int[] num = new int[len];
+        for (int i = len1 - 1; i >= 0; i--) {
+            int carry = 0;
+            int j = len2 - 1;
+            for (; j >= 0; j--) {
+                int product = carry + num[i + j + 1]
+                              + Character.getNumericValue(num1.charAt(i))
+                              * Character.getNumericValue(num2.charAt(j));
+                num[i + j + 1] = product % 10;
+                carry = product / 10;
+            }
+            num[i + j + 1] = carry;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        while (i < len - 1 && num[i] == 0) {
+            i++;
+        }
+        while (i < len) {
+            sb.append(num[i++]);
+        }
+        return sb.toString();
     }
 
     @FunctionalInterface
@@ -75,6 +106,7 @@ public class StrMultiplier {
     void test(String n1, String n2) {
         StrMultiplier multiplier = new StrMultiplier();
         test(multiplier::multiply, "multiply", n1, n2);
+        test(multiplier::multiply2, "multiply2", n1, n2);
     }
 
     @Test
