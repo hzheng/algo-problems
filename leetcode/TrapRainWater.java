@@ -42,8 +42,57 @@ public class TrapRainWater {
         return water;
     }
 
+    // http://www.geeksforgeeks.org/trapping-rain-water/
+    // beats 16.67%
+    public int trap2(int[] height) {
+        int len = height.length;
+        if (len == 0) return 0;
+
+        int[] left = new int[len];
+        left[0] = height[0];
+        for (int i = 1; i < len; i++) {
+            left[i] = Math.max(left[i - 1], height[i]);
+        }
+
+        int[] right = new int[len];
+        right[len - 1] = height[len - 1];
+        for (int i = len - 2; i >= 0; i--) {
+            right[i] = Math.max(right[i + 1], height[i]);
+        }
+
+        int water = 0;
+        for (int i = 0; i < len; i++) {
+            water += Math.min(left[i], right[i]) - height[i];
+        }
+
+        return water;
+    }
+
+    // beats 16.67%
+    public int trap3(int[] height) {
+        int len = height.length;
+        if (len == 0) return 0;
+
+        int[] left = new int[len];
+        left[0] = height[0];
+        for (int i = 1; i < len; i++) {
+            left[i] = Math.max(left[i - 1], height[i]);
+        }
+
+        int water = 0;
+        int right = height[len - 1];
+        for (int i = len - 2; i >= 0; i--) {
+            right = Math.max(right, height[i]);
+            water += Math.min(left[i], right) - height[i];
+        }
+
+        return water;
+    }
+
     void test(int expected, int ... height) {
         assertEquals(expected, trap(height));
+        assertEquals(expected, trap2(height));
+        assertEquals(expected, trap3(height));
     }
 
     @Test
