@@ -251,6 +251,117 @@ public class WildcardMatch {
         return pCur == pLen;
     }
 
+    public boolean isMatch6(String s, String p) {
+        return isMatch6(s, p, 0, 0);
+    }
+
+    private boolean isMatch6(String s, String p, int sCur, int pCur) {
+        if (pCur == p.length()) return sCur == s.length();
+
+        if (p.charAt(pCur) == '*') {
+            for (pCur++; pCur < p.length() && p.charAt(pCur) == '*'; pCur++);
+            for (; sCur <= s.length(); sCur++) {
+                if (isMatch6(s, p, sCur, pCur)) return true;
+            }
+            return false;
+        }
+
+        if (sCur < s.length()
+            && (p.charAt(pCur) == '?' || s.charAt(sCur) == p.charAt(pCur))) {
+            return isMatch6(s, p, sCur + 1, pCur + 1);
+        }
+
+        return false;
+    }
+
+    // https://www.youtube.com/watch?v=3ZDZ-N0EPV0
+    // Time: O(|s||p|), Space: O(|s|)
+    // beats 44.08%
+    public boolean isMatch7(String s, String p) {
+        int pLen = p.length();
+        char[] pat = p.toCharArray();
+        int index = 0;
+        boolean isFirst = true;
+        for (int i = 0; i < pLen; i++) {
+            if (pat[i] == '*') {
+                if (isFirst) {
+                    pat[index++] = pat[i];
+                    isFirst = false;
+                }
+            } else {
+                pat[index++] = pat[i];
+                isFirst = true;
+            }
+        }
+
+        pLen = index;
+        int sLen = s.length();
+        boolean[][] tbl = new boolean[sLen + 1][pLen + 1];
+        tbl[0][0] = true;
+        if (pLen > 0 && pat[0] == '*') {
+            tbl[0][1] = true;
+        }
+
+        for (int i = 1; i <= sLen; i++) {
+            for (int j = 1; j <= pLen; j++) {
+                if (s.charAt(i - 1) == pat[j - 1] || pat[j - 1] == '?') {
+                    tbl[i][j] = tbl[i - 1][j - 1];
+                } else if (pat[j - 1] == '*') {
+                    tbl[i][j] = tbl[i - 1][j] || tbl[i][j - 1];
+                }
+            }
+        }
+        return tbl[sLen][pLen];
+    }
+
+    //http://www.jiuzhang.com/solutions/wildcard-matching/
+    // Time: O(|s||p|*log|s|), Space: O(|s|)
+    // Time can also optimize to O(|s||p|)
+    public boolean isMatch8(String s, String p) {
+        int pLenNoStar = 0;
+        for (char c : p.toCharArray()) {
+            if (c != '*') {
+                pLenNoStar++;
+            }
+        }
+        if (pLenNoStar > s.length()) return false;
+
+        s = " " + s;
+        p = " " + p;
+        int sLen = s.length();
+        int pLen = p.length();
+        boolean[] dp = new boolean[sLen];
+        dp[0] = true;
+        SortedSet<Integer> firstTrueSet = new TreeSet<>();
+        firstTrueSet.add(0);
+
+        boolean allStar = true;
+        for (int pCur = 1; pCur < pLen; pCur++) {
+            if (p.charAt(pCur) != '*') {
+                allStar = false;
+            }
+            for (int sCur = sLen - 1; sCur >= 0; sCur--) {
+                if (sCur == 0) {
+                    dp[sCur] = allStar;
+                } else if (p.charAt(pCur) != '*') {
+                    if (s.charAt(sCur) == p.charAt(pCur) || p.charAt(pCur) == '?') {
+                        dp[sCur] = dp[sCur - 1];
+                    } else {
+                        dp[sCur] = false;
+                    }
+                } else {
+                    dp[sCur] = !firstTrueSet.isEmpty() && sCur >= firstTrueSet.first();
+                }
+                if (dp[sCur]) {
+                    firstTrueSet.add(sCur);
+                } else {
+                    firstTrueSet.remove(sCur);
+                }
+            }
+        }
+        return dp[sLen - 1];
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -270,10 +381,16 @@ public class WildcardMatch {
             assertEquals(expected, isMatch3(s, p));
             assertEquals(expected, isMatch4(s, p));
             assertEquals(expected, isMatch5(s, p));
+            assertEquals(expected, isMatch6(s, p));
+            assertEquals(expected, isMatch7(s, p));
+            assertEquals(expected, isMatch8(s, p));
         } else {
             WildcardMatch matcher = new WildcardMatch();
             test(matcher::isMatch, "isMatch", s, p, expected);
             test(matcher::isMatch, "isMatch5", s, p, expected);
+            test(matcher::isMatch, "isMatch6", s, p, expected);
+            test(matcher::isMatch, "isMatch7", s, p, expected);
+            test(matcher::isMatch, "isMatch8", s, p, expected);
         }
     }
 
