@@ -223,7 +223,7 @@ public class WildcardMatch {
         return s.length() >= count;
     }
 
-    // https://simpleandstupid.com/2014/10/26/wildcard-matching-leetcode-%E8%A7%A3%E9%A2%98%E7%AC%94%E8%AE%B0/
+    // http://www.programcreek.com/2014/06/leetcode-wildcard-matching-java/
     // beats 66.37%
     public boolean isMatch5(String s, String p) {
         int pLen = p.length();
@@ -251,16 +251,29 @@ public class WildcardMatch {
         return pCur == pLen;
     }
 
-    void test(String s, String p, boolean expected) {
+    @FunctionalInterface
+    interface Function<A, B, C> {
+        public C apply(A a, B b);
+    }
+
+    void test(Function<String, String, Boolean> match, String name,
+              String s, String p, boolean expected) {
         long t1 = System.nanoTime();
-        assertEquals(expected, isMatch(s, p));
-        assertEquals(expected, isMatch5(s, p));
+        assertEquals(expected, match.apply(s, p));
+        System.out.format("%s %.3f ms\n", name, (System.nanoTime() - t1) * 1e-6);
+    }
+
+    void test(String s, String p, boolean expected) {
         if (p.length() < 50) {
+            assertEquals(expected, isMatch(s, p));
             assertEquals(expected, isMatch2(s, p));
             assertEquals(expected, isMatch3(s, p));
             assertEquals(expected, isMatch4(s, p));
+            assertEquals(expected, isMatch5(s, p));
         } else {
-            System.out.format("%.3f ms\n", (System.nanoTime() - t1) * 1e-6);
+            WildcardMatch matcher = new WildcardMatch();
+            test(matcher::isMatch, "isMatch", s, p, expected);
+            test(matcher::isMatch, "isMatch5", s, p, expected);
         }
     }
 
