@@ -223,9 +223,38 @@ public class WildcardMatch {
         return s.length() >= count;
     }
 
+    // https://simpleandstupid.com/2014/10/26/wildcard-matching-leetcode-%E8%A7%A3%E9%A2%98%E7%AC%94%E8%AE%B0/
+    // beats 66.37%
+    public boolean isMatch5(String s, String p) {
+        int pLen = p.length();
+        int pCur = 0;
+        int pMark = -1;
+        int sMark = -1;
+        for (int sCur = 0; sCur < s.length(); ) {
+            if (pCur < pLen
+                && (p.charAt(pCur) == '?' || p.charAt(pCur) == s.charAt(sCur))) {
+                sCur++;
+                pCur++;
+            } else if (pCur < pLen && p.charAt(pCur) == '*') {
+                pMark = pCur++;
+                sMark = sCur;
+            } else if (pMark >= 0) {
+                pCur = pMark + 1;
+                sCur = ++sMark;
+            } else {
+                return false;
+            }
+        }
+        while (pCur < pLen && p.charAt(pCur) == '*') {
+            ++pCur;
+        }
+        return pCur == pLen;
+    }
+
     void test(String s, String p, boolean expected) {
         long t1 = System.nanoTime();
         assertEquals(expected, isMatch(s, p));
+        assertEquals(expected, isMatch5(s, p));
         if (p.length() < 50) {
             assertEquals(expected, isMatch2(s, p));
             assertEquals(expected, isMatch3(s, p));
