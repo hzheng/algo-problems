@@ -120,12 +120,29 @@ public class MergeIntervals {
         return intervals.subList(0, endIndex);
     }
 
+    // beats 0.64%
+    // time complexity: O(N * log(N)) space complexity: O(1)
+    public List<Interval> merge5(List<Interval> intervals) {
+        Collections.sort(intervals, ((a, b) -> a.start - b.start));
+        int endIndex = 0;
+        for (Interval i : intervals) {
+            if (endIndex == 0 || intervals.get(endIndex - 1).end < i.start) {
+                intervals.set(endIndex++, i);
+            } else { // overlapped
+                Interval j = intervals.get(endIndex - 1);
+                j.end = Math.max(j.end, i.end);
+            }
+        }
+        return intervals.subList(0, endIndex);
+    }
+
     void test(int[] expected, int ... intervals) {
         MergeIntervals m = new MergeIntervals();
         test(m::merge, "merge", expected, intervals);
         test(m::merge2, "merge2", expected, intervals);
         test(m::merge3, "merge3", expected, intervals);
         test(m::merge4, "merge4", expected, intervals);
+        test(m::merge5, "merge5", expected, intervals);
     }
 
     void test(Function<List<Interval>, List<Interval> > merge, String name,
