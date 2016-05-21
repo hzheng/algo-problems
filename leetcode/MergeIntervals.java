@@ -97,6 +97,7 @@ public class MergeIntervals {
         return res;
     }
 
+    // http://www.geeksforgeeks.org/merging-intervals/
     // beats 0%(?)
     // time complexity: O(N * log(N)) space complexity: O(1)
     public List<Interval> merge4(List<Interval> intervals) {
@@ -120,20 +121,24 @@ public class MergeIntervals {
         return intervals.subList(0, endIndex);
     }
 
-    // beats 0.64%
+    // beats 38.02%
     // time complexity: O(N * log(N)) space complexity: O(1)
     public List<Interval> merge5(List<Interval> intervals) {
+        int n = intervals.size();
+        if (n < 2) return intervals;
+
         Collections.sort(intervals, ((a, b) -> a.start - b.start));
         int endIndex = 0;
-        for (Interval i : intervals) {
-            if (endIndex == 0 || intervals.get(endIndex - 1).end < i.start) {
-                intervals.set(endIndex++, i);
+        for (int i = 1; i < n; i++) {
+            Interval cur = intervals.get(i);
+            Interval last = intervals.get(endIndex);
+            if (last.end < cur.start) {
+                intervals.set(++endIndex, cur);
             } else { // overlapped
-                Interval j = intervals.get(endIndex - 1);
-                j.end = Math.max(j.end, i.end);
+                last.end = Math.max(cur.end, last.end);
             }
         }
-        return intervals.subList(0, endIndex);
+        return intervals.subList(0, endIndex + 1);
     }
 
     void test(int[] expected, int ... intervals) {
