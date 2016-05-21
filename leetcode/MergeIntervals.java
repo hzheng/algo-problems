@@ -52,30 +52,26 @@ public class MergeIntervals {
         return new ArrayList<>(map.values());
     }
 
-    // beats 1.21%
+    // beats 86.52%
     public List<Interval> merge2(List<Interval> intervals) {
         List<Interval> res = new ArrayList<>();
+        if (intervals.size() == 0) return res;
+
         PriorityQueue<Interval> queue
             = new PriorityQueue<>((a, b) -> a.start - b.start);
         queue.addAll(intervals);
-        Interval first = queue.poll();
-        while (first != null) {
-            Interval second = queue.poll();
-            if (second == null) {
-                res.add(first);
-                break;
-            }
-
-            if (second.start > first.end) {
-                res.add(first);
-                first = second;
-            } else if (second.end > first.end) {
-                first = new Interval(first.start, second.end);
+        Interval prev = queue.poll();
+        for (Interval next = queue.poll(); next != null; next = queue.poll()) {
+            if (next.start > prev.end) {
+                res.add(prev);
+                prev = next;
+            } else if (next.end > prev.end) {
+                prev = new Interval(prev.start, next.end);
             }
         }
+        res.add(prev);
         return res;
     }
-
 
     void test(int[] expected, int ... intervals) {
         MergeIntervals m = new MergeIntervals();
