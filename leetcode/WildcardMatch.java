@@ -44,6 +44,7 @@ public class WildcardMatch {
             if (i < 0) return false;
 
             // split both s and p by the pStr
+            // could be optimized by checking 'i''s validity by length
             // left part
             if (!isMatch(s, sStart, sStart + i - 1, p, pStart, range[0] - 1)) continue;
             // right part
@@ -251,6 +252,7 @@ public class WildcardMatch {
         return pCur == pLen;
     }
 
+    // Time Limit Exceeded
     public boolean isMatch6(String s, String p) {
         return isMatch6(s, p, 0, 0);
     }
