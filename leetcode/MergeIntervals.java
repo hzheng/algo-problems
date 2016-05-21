@@ -23,6 +23,7 @@ class Interval {
 
 public class MergeIntervals {
     // beats 1.36%
+    // time complexity: O(N * log(N)) space complexity: O(N)
     public List<Interval> merge(List<Interval> intervals) {
         SortedMap<Integer, Interval> map = new TreeMap<>();
 
@@ -53,6 +54,7 @@ public class MergeIntervals {
     }
 
     // beats 86.52%
+    // time complexity: O(N * log(N)) space complexity: O(N)
     public List<Interval> merge2(List<Interval> intervals) {
         List<Interval> res = new ArrayList<>();
         if (intervals.size() == 0) return res;
@@ -73,10 +75,57 @@ public class MergeIntervals {
         return res;
     }
 
+    // beats 86.52%
+    // time complexity: O(N * log(N)) space complexity: O(N)
+    public List<Interval> merge3(List<Interval> intervals) {
+        int n = intervals.size();
+        if (n < 2) return intervals;
+
+        List<Interval> res = new ArrayList<>();
+        Collections.sort(intervals, ((a, b) -> a.start - b.start));
+        Interval prev = intervals.get(0);
+        for (int i = 1; i < n; i++) {
+            Interval next = intervals.get(i);
+            if (next.start > prev.end) {
+                res.add(prev);
+                prev = next;
+            } else if (next.end > prev.end) {
+                prev = new Interval(prev.start, next.end);
+            }
+        }
+        res.add(prev);
+        return res;
+    }
+
+    // beats 0%(?)
+    // time complexity: O(N * log(N)) space complexity: O(1)
+    public List<Interval> merge4(List<Interval> intervals) {
+        // reverse sort
+        Collections.sort(intervals, ((a, b) -> b.start - a.start));
+        int endIndex = 0;
+        for (Interval i : intervals) {
+            if (endIndex == 0 || intervals.get(endIndex - 1).start > i.end) {
+                intervals.set(endIndex++, i);
+                continue;
+            }
+            // overlapped
+            do {
+                Interval j = intervals.get(endIndex - 1);
+                j.start = i.start;
+                j.end = Math.max(j.end, i.end);
+                endIndex--;
+            } while (endIndex > 0 && intervals.get(endIndex - 1).start <= i.end);
+            endIndex++;
+        }
+        return intervals.subList(0, endIndex);
+    }
+
     void test(int[] expected, int ... intervals) {
         MergeIntervals m = new MergeIntervals();
         test(m::merge, "merge", expected, intervals);
         test(m::merge2, "merge2", expected, intervals);
+        test(m::merge3, "merge3", expected, intervals);
+        test(m::merge4, "merge4", expected, intervals);
     }
 
     void test(Function<List<Interval>, List<Interval> > merge, String name,
@@ -98,6 +147,7 @@ public class MergeIntervals {
 
     @Test
     public void test1() {
+        test(new int[] {1, 2}, 1, 2);
         test(new int[] {1, 6, 8, 10, 15, 18}, 1, 3, 2, 6, 8, 10, 15, 18);
         test(new int[] {1, 18}, 1, 3, 2, 6, 8, 10, 5, 18);
         test(new int[] {1, 18}, 1, 3, 2, 6, 5, 18);
