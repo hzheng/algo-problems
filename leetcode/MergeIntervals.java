@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.function.Function;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -51,14 +52,46 @@ public class MergeIntervals {
         return new ArrayList<>(map.values());
     }
 
+    // beats 1.21%
+    public List<Interval> merge2(List<Interval> intervals) {
+        List<Interval> res = new ArrayList<>();
+        PriorityQueue<Interval> queue
+            = new PriorityQueue<>((a, b) -> a.start - b.start);
+        queue.addAll(intervals);
+        Interval first = queue.poll();
+        while (first != null) {
+            Interval second = queue.poll();
+            if (second == null) {
+                res.add(first);
+                break;
+            }
+
+            if (second.start > first.end) {
+                res.add(first);
+                first = second;
+            } else if (second.end > first.end) {
+                first = new Interval(first.start, second.end);
+            }
+        }
+        return res;
+    }
+
+
     void test(int[] expected, int ... intervals) {
+        MergeIntervals m = new MergeIntervals();
+        test(m::merge, "merge", expected, intervals);
+        test(m::merge2, "merge2", expected, intervals);
+    }
+
+    void test(Function<List<Interval>, List<Interval> > merge, String name,
+              int[] expected, int ... intervals) {
         int [] res = new int[expected.length];
         List<Interval> intervalList = new ArrayList<>();
         for (int i = 0; i < intervals.length; i += 2) {
             intervalList.add(new Interval(intervals[i], intervals[i + 1]));
         }
         int i = 0;
-        List<Interval> merged = merge(intervalList);
+        List<Interval> merged = merge.apply(intervalList);
         Collections.sort(merged, ((a, b) -> a.start - b.start));
         for (Interval interval : merged) {
             res[i++] = interval.start;
