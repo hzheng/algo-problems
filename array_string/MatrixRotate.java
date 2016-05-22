@@ -96,8 +96,7 @@ public class MatrixRotate {
     }
 
     void test(Function<int[][]> rotate, int[][] matrix, int[][] expected) {
-        matrix = Arrays.stream(matrix).map((int[] row) -> row.clone())
-             .toArray(n -> new int[n][]);
+        matrix = Arrays.stream(matrix).map(r -> r.clone()).toArray(int[][]::new);
         rotate.apply(matrix);
         assertArrayEquals(expected, matrix);
     }
