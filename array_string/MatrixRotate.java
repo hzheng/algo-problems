@@ -1,3 +1,5 @@
+import java.util.*;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -8,6 +10,7 @@ import static org.junit.Assert.*;
  */
 public class MatrixRotate {
     // time complexity: O(n^2), space complexity: O(1)
+    // beats 25.09%
     public void rotate(int[][] matrix) {
         if (matrix == null) return;
 
@@ -35,6 +38,46 @@ public class MatrixRotate {
         }
     }
 
+    // http://www.programcreek.com/2013/01/leetcode-rotate-image-java/
+    // beats 7.67%
+    public void rotate2(int[][] matrix) {
+        int n = matrix.length;
+        int rows = n / 2;
+        int cols = (int)Math.ceil(n / 2.);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                int temp = matrix[i][j];
+                matrix[i][j] = matrix[n - 1 - j][i];
+                matrix[n - 1 - j][i] = matrix[n - 1 - i][n - 1 - j];
+                matrix[n - 1 - i][n - 1 - j] = matrix[j][n - 1 - i];
+                matrix[j][n - 1 - i] = temp;
+            }
+        }
+    }
+
+    // beats 7.67%
+    public void rotate3(int[][] matrix) {
+        // rotate along to diagonal
+        int n = matrix.length;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                swap(matrix, i, j, n - 1 - j, n - 1 - i);
+            }
+        }
+        // rotate along to middle horizontal line
+        for (int i = 0; i < n / 2; i++) {
+            for (int j = 0; j < n; j++) {
+                swap(matrix, i, j, n - 1 - i, j);
+            }
+        }
+    }
+
+    private void swap(int[][] matrix, int r1, int c1, int r2, int c2) {
+        int tmp = matrix[r1][c1];
+        matrix[r1][c1] = matrix[r2][c2];
+        matrix[r2][c2] = tmp;
+    }
+
     void print(int[][] matrix) {
         int n = matrix.length;
         for (int i = 0; i < n; i++) {
@@ -47,9 +90,23 @@ public class MatrixRotate {
         System.out.println();
     }
 
-    void test(int[][] matrix, int[][] expected) {
-        rotate(matrix);
+    @FunctionalInterface
+    interface Function<A> {
+        public void apply(A a);
+    }
+
+    void test(Function<int[][]> rotate, int[][] matrix, int[][] expected) {
+        matrix = Arrays.stream(matrix).map((int[] row) -> row.clone())
+             .toArray(n -> new int[n][]);
+        rotate.apply(matrix);
         assertArrayEquals(expected, matrix);
+    }
+
+    void test(int[][] matrix, int[][] expected) {
+        MatrixRotate r = new MatrixRotate();
+        test(r::rotate, matrix, expected);
+        test(r::rotate2, matrix, expected);
+        test(r::rotate3, matrix, expected);
     }
 
     @Test
