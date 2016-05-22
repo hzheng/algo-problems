@@ -82,6 +82,46 @@ public class Permutation {
         return nextPerm;
     }
 
+    // beats 67.81%
+    public List<List<Integer>> permute3(int[] nums) {
+        int n = nums.length;
+        List<List<Integer> > res = new ArrayList<>();
+        int[] indices = new int[n];
+        for (int i = 0; i < n; i++) {
+            indices[i] = i;
+        }
+        while (true) {
+            List<Integer> perm = new ArrayList<>();
+            for (int i : indices) {
+                perm.add(nums[i]);
+            }
+            res.add(perm);
+            if (!next(indices)) break;
+        }
+        return res;
+    }
+
+    private boolean next(int[] indices) {
+        int n = indices.length;
+        int i = n - 1;
+        for (; i > 0 && indices[i] < indices[i - 1]; i--);
+        if (i == 0) return false;
+
+        int j = n - 1;
+        for (; indices[j] < indices[i - 1]; j--) ;
+        swap(indices, i - 1, j);
+        for (j = n - 1; j > i; i++, j--) {
+            swap(indices, i, j);
+        }
+        return true;
+    }
+
+    private void swap(int[] nums, int i, int j) {
+        int tmp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = tmp;
+    }
+
     void testNext(Integer[] expected, Integer[] nums) {
         List<Integer> res = next(Arrays.asList(nums));
         if (expected == null) {
@@ -124,12 +164,14 @@ public class Permutation {
         Permutation p = new Permutation();
         test(p::permute, "permute", n, expected);
         test(p::permute2, "permute2", n, expected);
+        test(p::permute3, "permute3", n, expected);
     }
 
     void test(int[][] expected, int ... nums) {
         Permutation p = new Permutation();
         test(p::permute, "permute", expected, nums);
         test(p::permute2, "permute2", expected, nums);
+        test(p::permute3, "permute3", expected, nums);
     }
 
     @Test
