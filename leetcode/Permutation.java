@@ -122,6 +122,30 @@ public class Permutation {
         nums[j] = tmp;
     }
 
+    // http://www.jiuzhang.com/solutions/permutations/
+    // beats 13.69%
+    public List<List<Integer>> permute4(int[] nums) {
+         List<List<Integer>> res = new ArrayList<>();
+         permute4(res, new ArrayList<Integer>(), nums);
+         return res;
+    }
+
+    private void permute4(List<List<Integer>> res, List<Integer> list, int[] nums){
+        int n = nums.length;
+        if (list.size() == n) {
+            res.add(new ArrayList<Integer>(list));
+            return;
+        }
+
+        for (int i = 0; i < n; i++){
+            if (list.contains(nums[i])) continue;
+
+            list.add(nums[i]);
+            permute4(res, list, nums);
+            list.remove(list.size() - 1);
+        }
+    }
+
     void testNext(Integer[] expected, Integer[] nums) {
         List<Integer> res = next(Arrays.asList(nums));
         if (expected == null) {
@@ -165,6 +189,7 @@ public class Permutation {
         test(p::permute, "permute", n, expected);
         test(p::permute2, "permute2", n, expected);
         test(p::permute3, "permute3", n, expected);
+        test(p::permute4, "permute4", n, expected);
     }
 
     void test(int[][] expected, int ... nums) {
@@ -172,6 +197,7 @@ public class Permutation {
         test(p::permute, "permute", expected, nums);
         test(p::permute2, "permute2", expected, nums);
         test(p::permute3, "permute3", expected, nums);
+        test(p::permute4, "permute4", expected, nums);
     }
 
     @Test
