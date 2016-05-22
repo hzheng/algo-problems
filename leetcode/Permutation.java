@@ -1,5 +1,6 @@
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -83,7 +84,7 @@ public class Permutation {
     }
 
     // beats 67.81%
-    public List<List<Integer>> permute3(int[] nums) {
+    public List<List<Integer> > permute3(int[] nums) {
         int n = nums.length;
         List<List<Integer> > res = new ArrayList<>();
         int[] indices = new int[n];
@@ -108,7 +109,7 @@ public class Permutation {
         if (i == 0) return false;
 
         int j = n - 1;
-        for (; indices[j] < indices[i - 1]; j--) ;
+        for (; indices[j] < indices[i - 1]; j--);
         swap(indices, i - 1, j);
         for (j = n - 1; j > i; i++, j--) {
             swap(indices, i, j);
@@ -124,25 +125,74 @@ public class Permutation {
 
     // http://www.jiuzhang.com/solutions/permutations/
     // beats 13.69%
-    public List<List<Integer>> permute4(int[] nums) {
-         List<List<Integer>> res = new ArrayList<>();
-         permute4(res, new ArrayList<Integer>(), nums);
-         return res;
+    public List<List<Integer> > permute4(int[] nums) {
+        List<List<Integer> > res = new ArrayList<>();
+        permute4(res, new ArrayList<Integer>(), nums);
+        return res;
     }
 
-    private void permute4(List<List<Integer>> res, List<Integer> list, int[] nums){
+    private void permute4(List<List<Integer> > res, List<Integer> list, int[] nums) {
         int n = nums.length;
         if (list.size() == n) {
             res.add(new ArrayList<Integer>(list));
             return;
         }
 
-        for (int i = 0; i < n; i++){
+        for (int i = 0; i < n; i++) {
             if (list.contains(nums[i])) continue;
 
             list.add(nums[i]);
             permute4(res, list, nums);
             list.remove(list.size() - 1);
+        }
+    }
+
+    // http://www.programcreek.com/2013/02/leetcode-permutations-java/
+    // beats 0.29%
+    public List<List<Integer> > permute5(int[] nums) {
+        List<List<Integer> > res = new ArrayList<>();
+        permute5(nums, 0, res);
+        return res;
+    }
+
+    private void permute5(int[] nums, int start, List<List<Integer> > res) {
+        if (start >= nums.length) {
+            res.add(Arrays.stream(nums).boxed().collect(Collectors.toList()));
+            return;
+        }
+
+        for (int i = start; i < nums.length; i++) {
+            swap(nums, start, i);
+            permute5(nums, start + 1, res);
+            swap(nums, start, i);
+        }
+    }
+
+    // https://siddontang.gitbooks.io/leetcode-solution/content/backtracking/permutation.html
+    // backtracking, similar to permute4, but add visited flags
+    // beats 67.81%
+    public List<List<Integer> > permute6(int[] nums) {
+        List<List<Integer> > res = new ArrayList<>();
+        permute6(res, new ArrayList<Integer>(), nums, new boolean[nums.length]);
+        return res;
+    }
+
+    private void permute6(List<List<Integer> > res, List<Integer> cur,
+                          int[] nums, boolean[] isVisited) {
+        int n = nums.length;
+        if (cur.size() == n) {
+            res.add(new ArrayList<Integer>(cur));
+            return;
+        }
+
+        for (int i = 0; i < nums.length; ++i) {
+            if (!isVisited[i]) {
+                isVisited[i] = true;
+                cur.add(nums[i]);
+                permute6(res, cur, nums, isVisited);
+                isVisited[i] = false;
+                cur.remove(cur.size() - 1);
+            }
         }
     }
 
@@ -166,17 +216,31 @@ public class Permutation {
     }
 
     void test(Function<int[], List<List<Integer>>> perm, String name,
-              int[][] expected, int ... nums) {
+              Integer[][] expected, int ... nums) {
         System.out.println("test " + name);
         List<List<Integer> > res = perm.apply(nums);
         Integer[][] resArray = res.stream().map(
             a -> a.toArray(new Integer[0])).toArray(Integer[][]::new);
-
+        sort(resArray);
+        sort(expected);
         assertArrayEquals(expected, resArray);
     }
 
+    Integer[][] sort(Integer[][] lists) {
+        Arrays.sort(lists, (a, b) -> {
+            // Arrays.sort(a);
+            // Arrays.sort(b);
+            int len = Math.min(a.length, b.length);
+            int i = 0;
+            for (; i < len && (a[i] == b[i]); i++);
+            if (i == len) return a.length - b.length;
+            return a[i] - b[i];
+        });
+        return lists;
+    }
+
     void test(Function<int[], List<List<Integer>>> perm, String name,
-              int n, int[][] expected) {
+              int n, Integer[][] expected) {
         int[] nums = new int[n];
         for (int i = 1; i <= n; i++) {
             nums[i - 1] = i;
@@ -184,30 +248,35 @@ public class Permutation {
         test(perm, name, expected, nums);
     }
 
-    void test(int n, int[][] expected) {
+    void test(int n, Integer[][] expected) {
         Permutation p = new Permutation();
         test(p::permute, "permute", n, expected);
         test(p::permute2, "permute2", n, expected);
         test(p::permute3, "permute3", n, expected);
         test(p::permute4, "permute4", n, expected);
+        test(p::permute5, "permute5", n, expected);
+        test(p::permute6, "permute6", n, expected);
     }
 
-    void test(int[][] expected, int ... nums) {
+    void test(Integer[][] expected, int ... nums) {
         Permutation p = new Permutation();
         test(p::permute, "permute", expected, nums);
         test(p::permute2, "permute2", expected, nums);
         test(p::permute3, "permute3", expected, nums);
         test(p::permute4, "permute4", expected, nums);
+        test(p::permute5, "permute5", expected, nums);
+        test(p::permute6, "permute6", expected, nums);
     }
 
     @Test
     public void test1() {
-        test(3, new int[][] {
+        test(3, new Integer[][] {
             {1, 2, 3}, {1, 3, 2}, {2, 1, 3}, {2, 3, 1}, {3, 1, 2}, {3, 2, 1}
         });
-        test(new int[][] {
-            {4, 2, 3}, {4, 3, 2}, {2, 4, 3}, {2, 3, 4}, {3, 4, 2}, {3, 2, 4}},
-            4, 2, 3);
+        test(new Integer[][] {
+            {4, 2, 3}, {4, 3, 2}, {2, 4, 3}, {2, 3, 4}, {3, 4, 2}, {3, 2, 4}
+        },
+             4, 2, 3);
     }
 
     public static void main(String[] args) {
