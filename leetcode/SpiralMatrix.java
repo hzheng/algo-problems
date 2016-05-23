@@ -23,10 +23,15 @@ public class SpiralMatrix {
             for (row++, col--; row < rows - i; row++) {
                 res.add(matrix[row][col]);
             }
-            for (row--, col--; row > i && col >= i; col--) {
+            if (--row <= i) break;
+
+            for (col--; col >= i; col--) {
                 res.add(matrix[row][col]);
             }
-            for (row--, col++; row > i && col < cols - i - 1; row--) {
+
+            if (++col >= cols - i - 1) break;
+
+            for (row--; row > i; row--) {
                 res.add(matrix[row][col]);
             }
         }
