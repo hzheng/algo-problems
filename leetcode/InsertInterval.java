@@ -33,6 +33,7 @@ public class InsertInterval {
             res.add(newInterval);
             return res;
         }
+
         Interval interval = intervals.get(startPos);
         for (int i = 0; i < startPos; i++) {
             res.add(intervals.get(i));
@@ -63,9 +64,8 @@ public class InsertInterval {
 
         int high = n - 1;
         int low = offset;
-        int mid = 0;
         while (low <= high) {
-            mid = (low + high) / 2;
+            int mid = (low + high) / 2;
             int midInterval = intervals.get(mid).start;
             if (midInterval == target) return mid;
 
@@ -77,6 +77,26 @@ public class InsertInterval {
         }
         if (high < 0) return 0;
         return (intervals.get(high).end >= target) ? high : high + 1;
+    }
+
+    // http://www.jiuzhang.com/solutions/insert-interval/
+    // beats 70.43%
+    public List<Interval> insert2(List<Interval> intervals, Interval newInterval) {
+        List<Interval> res = new ArrayList<Interval>();
+        int insertPos = 0;
+        for (Interval interval : intervals) {
+            if (interval.end < newInterval.start) {
+                res.add(interval);
+                insertPos++;
+            } else if (interval.start > newInterval.end) {
+                res.add(interval);
+            } else {
+                newInterval.start = Math.min(interval.start, newInterval.start);
+                newInterval.end = Math.max(interval.end, newInterval.end);
+            }
+        }
+        res.add(insertPos, newInterval);
+        return res;
     }
 
     @FunctionalInterface
@@ -104,6 +124,7 @@ public class InsertInterval {
     void test(int[] intervals, int[] newInterval, int ... expected) {
         InsertInterval i = new InsertInterval();
         test(i::insert, "insert", intervals, newInterval, expected);
+        test(i::insert2, "insert2", intervals, newInterval, expected);
     }
 
     @Test
