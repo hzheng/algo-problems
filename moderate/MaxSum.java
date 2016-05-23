@@ -8,9 +8,8 @@ import static org.junit.Assert.*;
  * Given an array of integers, find the contiguous sequence with the largest sum.
  */
 public class MaxSum {
+    // beats 13.99%
     public static int findMaxSum(int[] a) {
-        if (a == null || a.length == 0) return 0;
-
         int maxSingle = Integer.MIN_VALUE; // in case of all negatives
         int sum = 0;
         int maxSum = 0;
@@ -28,6 +27,27 @@ public class MaxSum {
         return maxSingle < 0 ? maxSingle : maxSum;
     }
 
+    // beats 13.99%
+    public static int maxSubArray(int[] nums) {
+        int maxSum = 0;
+        int sum = 0;
+        for (int num : nums) {
+            sum += num;
+            if (maxSum < sum) {
+                maxSum = sum;
+            } else if (sum < 0) {
+                sum = 0;
+            }
+        }
+        if (maxSum == 0) {
+            maxSum = Integer.MIN_VALUE;
+            for (int num : nums) {
+                maxSum = Math.max(num, maxSum);
+            }
+        }
+        return maxSum;
+    }
+
     // from the book
     public static int getMaxSum(int[] a) {
         int maxSum = 0;
@@ -43,28 +63,33 @@ public class MaxSum {
         return maxSum;
     }
 
-    private int test(Function<int[], Integer> maxSum, String name, int[] a) {
+    private void test(Function<int[], Integer> maxSum, String name,
+                      int expected, int ... a) {
         long t1 = System.nanoTime();
         int n = maxSum.apply(a);
-        System.out.format("%s: %.3f ms\n", name, (System.nanoTime() - t1) * 1e-6);
-        return n;
+        if (a.length > 100) {
+            System.out.format("%s: %.3f ms\n", name,
+                              (System.nanoTime() - t1) * 1e-6);
+        }
+        assertEquals(expected, n);
     }
 
-    private void test(int[] a, int expected) {
-        assertEquals(expected, test(MaxSum::findMaxSum, "findMaxSum", a));
+    private void test(int expected, int ... a) {
+        test(MaxSum::findMaxSum, "findMaxSum", expected, a);
+        test(MaxSum::maxSubArray, "maxSubArray", expected, a);
         if (expected >= 0) {
-            assertEquals(expected, test(MaxSum::getMaxSum, "getMaxSum", a));
+            test(MaxSum::getMaxSum, "getMaxSum", expected, a);
         }
     }
 
     @Test
     public void test1() {
-        test(new int[] {-2, -4}, -2);
-        test(new int[] {-2, -4, 0}, 0);
-        test(new int[] {-2, -4, 5, 7}, 12);
-        test(new int[] {2, -4, 5, 7}, 12);
-        test(new int[] {5, -4, 5, 7}, 13);
-        test(new int[] {6, -2, -2, 3, -2, -2, 4, 5, -4, -4, 5, 7, -9}, 14);
+        test(0, -2, -4, 0);
+        test(12, -2, -4, 5, 7);
+        test(6, -2, 1, -3, 4, -1, 2, 1, -5, 4);
+        test(1, -2, 1);
+        test(-1, -2, -1);
+        test(14, 6, -2, -2, 3, -2, -2, 4, 5, -4, -4, 5, 7, -9);
     }
 
     public static void main(String[] args) {
