@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.function.Function;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -85,15 +86,74 @@ public class NQueens {
         }
     }
 
-    void test(int expected, int n) {
-        List<List<String> > res = solveNQueens(n);
+    // adapted from EightQueens.java
+    // beats 85.11%
+    public List<List<String> > solveNQueens2(int n) {
+        List<List<String> > solutions = new ArrayList<>();
+        placeQueens(solutions, new int[n], 0);
+        return solutions;
+    }
+
+    private void placeQueens(List<List<String> > solutions,
+                             int[] occupiedCols, int row) {
+        int n = occupiedCols.length;
+        if (row == n) {
+            List<String> solution = new ArrayList<>();
+            char[] board = new char[n];
+            for (int i = 0; i < n; i++) {
+                int occupiedCol = occupiedCols[i];
+                for (int j = 0; j < n; j++) {
+                    board[j] = (j == occupiedCol) ? QUEEN : SPACE;
+                }
+                solution.add(new String(board));
+            }
+            solutions.add(solution);
+            return;
+        }
+
+        // check all columns on the row-th row
+        for (int col = 0; col < n; col++) {
+            if (isSafe(row, col, occupiedCols)) {
+                occupiedCols[row] = col;
+                placeQueens(solutions, occupiedCols, row + 1);
+            }
+        }
+    }
+
+    private boolean isSafe(int row1, int col1, int[] occupiedCols) {
+        for (int row2 = 0; row2 < row1; row2++) {
+            int col2 = occupiedCols[row2];
+            if (col1 == col2) return false;
+            if ((row1 - row2) == Math.abs(col2 - col1)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    void test(Function<Integer, List<List<String>>> solve, String name,
+              int expected, int n) {
+        long t1 = System.nanoTime();
+        List<List<String> > res = solve.apply(n);
+        System.out.format("%d-queen %s: %.3f ms\n", n, name,
+                          (System.nanoTime() - t1) * 1e-6);
         assertEquals(expected, res.size());
+    }
+
+    void test(int expected, int n) {
+        NQueens q = new NQueens();
+        test(q::solveNQueens, "solveNQueens", expected, n);
+        test(q::solveNQueens2, "solveNQueens2", expected, n);
     }
 
     @Test
     public void test1() {
         test(2, 4);
+        test(4, 6);
         test(92, 8);
+        test(724, 10);
+        test(14200, 12);
+        // test(365596, 14);
     }
 
     public static void main(String[] args) {
