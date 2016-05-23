@@ -86,6 +86,42 @@ public class NQueens {
         }
     }
 
+    // N-Queens II
+    // beats 85.11%
+    // we can improve efficiency by removing board but that
+    // need change class Marker's code
+    public int totalNQueens(int n) {
+        if (n == 0) return 0;
+
+        char[][] board = new char[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                board[i][j] = SPACE;
+            }
+        }
+        int[] solutions = new int[1];
+        Marker marker = new Marker(board);
+        fill(board, 0, marker, solutions);
+        return solutions[0];
+    }
+
+    private void fill(char[][] board, int row, Marker marker,
+                      int[] solutions) {
+        int n = board.length;
+        if (row == n) {
+            solutions[0]++;
+            return;
+        }
+
+        for (int col = 0; col < n; col++) {
+            if (marker.safe(row, col)) {
+                marker.mark(row, col);
+                fill(board, row + 1, marker, solutions);
+                marker.unmark(row, col);
+            }
+        }
+    }
+
     // adapted from EightQueens.java
     // beats 85.11%
     public List<List<String> > solveNQueens2(int n) {
@@ -144,6 +180,7 @@ public class NQueens {
         NQueens q = new NQueens();
         test(q::solveNQueens, "solveNQueens", expected, n);
         test(q::solveNQueens2, "solveNQueens2", expected, n);
+        assertEquals(expected, totalNQueens(n));
     }
 
     @Test
