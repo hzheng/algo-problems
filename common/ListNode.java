@@ -2,6 +2,7 @@ package common;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ListNode {
     public int val;
@@ -27,5 +28,9 @@ public class ListNode {
             list.add(l.val);
         }
         return list.stream().mapToInt(i->i).toArray();
+    }
+
+    public String toString() {
+        return Arrays.toString(toArray());
     }
 }
