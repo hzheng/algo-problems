@@ -33,9 +33,9 @@ public class UniquePath {
     public int uniquePaths2(int m, int n) {
         if (m == 1 || n == 1) return 1;
 
-        if (m == 2) return n;
+        // if (m == 2) return n;
 
-        if (n == 2) return m;
+        // if (n == 2) return m;
 
         int count = 0;
         int n1 = n / 2;
@@ -55,10 +55,6 @@ public class UniquePath {
     private int uniquePaths3(int m, int n, int[][] cache) {
         if (m == 1 || n == 1) return 1;
 
-        if (m == 2) return n;
-
-        if (n == 2) return m;
-
         int computed = cache[m - 1][n - 1];
         if (computed > 0) return computed;
 
@@ -74,6 +70,40 @@ public class UniquePath {
             cache[n - 1][m - 1] = count;
         }
         return count;
+    }
+
+    // beats 5.98%
+    public int uniquePaths4(int m, int n) {
+        if (m == 1 || n == 1) return 1;
+
+        int[][] count = new int[m][n];
+        for(int i = 0; i < m; i++) {
+            count[i][0] = 1;
+        }
+        for(int j = 0; j < n; j++) {
+            count[0][j] = 1;
+        }
+
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                count[i][j] = count[i - 1][j] + count[i][j - 1];
+            }
+        }
+        return count[m - 1][n - 1];
+    }
+
+    // beats 83.92%
+    public int uniquePaths5(int m, int n) {
+        int[] count = new int[n];
+        for (int i = 0; i < n; i++) {
+            count[i] = 1;
+        }
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                count[j] += count[j - 1];
+            }
+        }
+        return count[n - 1];
     }
 
     @FunctionalInterface
@@ -93,6 +123,8 @@ public class UniquePath {
         test(p::uniquePaths, "uniquePaths", expected, m, n);
         test(p::uniquePaths2, "uniquePaths2", expected, m, n);
         test(p::uniquePaths3, "uniquePaths3", expected, m, n);
+        test(p::uniquePaths4, "uniquePaths4", expected, m, n);
+        test(p::uniquePaths5, "uniquePaths5", expected, m, n);
     }
 
     @Test
