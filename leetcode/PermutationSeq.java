@@ -61,7 +61,7 @@ public class PermutationSeq {
         }
 
         int index = 0;
-        for ( ; k > 0; n--) {
+        for (; k > 0; n--) {
             int order = 1;
             while (order <= n && k >= getFactorial(factorials, order)) {
                 order++;
@@ -74,12 +74,12 @@ public class PermutationSeq {
                 n--;
             }
             int factorial = getFactorial(factorials, order);
-            int shift = nums.size() - k / factorial - 1;
+            int nextIndex = nums.size() - k / factorial - 1;
             k %= factorial;
             if (k == 0) {
-                shift++;
+                nextIndex++;
             }
-            perms[index++] = nums.remove(shift);
+            perms[index++] = nums.remove(nextIndex);
         }
         for (int i = 0; i < nums.size(); i++) {
             perms[index++] = nums.get(i);
@@ -89,11 +89,33 @@ public class PermutationSeq {
     }
 
     private int getFactorial(int[] factorials, int n) {
+        if (n == 0) return 1;
+
         int factorial = factorials[n - 1];
         if (factorial > 0) return factorial;
 
         factorial = n * getFactorial(factorials, n - 1);
         return factorials[n - 1] = factorial;
+    }
+
+    // beats 77.48%
+    public String getPermutation3(int n, int k) {
+        StringBuilder availables = new StringBuilder("123456789");
+        availables.setLength(n);
+        StringBuilder sb = new StringBuilder();
+        int total = 1;
+        for (int i = 1; i < n; i++) {
+            total *= i;
+        }
+
+        for (int i = 0, j = k - 1; i + 1 < n; i++) {
+            int index = j / total;
+            sb.append(availables.charAt(index));
+            availables.deleteCharAt(index);
+            j %= total;
+            total /= (n - 1 - i);
+        }
+        return sb.append(availables.charAt(0)).toString();
     }
 
     @FunctionalInterface
@@ -112,6 +134,7 @@ public class PermutationSeq {
         PermutationSeq p = new PermutationSeq();
         test(p::getPermutation, "getPermutation", n, k, expected);
         test(p::getPermutation2, "getPermutation2", n, k, expected);
+        test(p::getPermutation3, "getPermutation3", n, k, expected);
     }
 
     @Test
