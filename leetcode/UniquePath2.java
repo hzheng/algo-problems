@@ -46,15 +46,15 @@ public class UniquePath2 {
         int n = obstacleGrid[0].length;
 
         int[][] count = new int[m][n];
-        count[0][0] = 1 - obstacleGrid[0][0];
+        count[0][0] = 1; // 1 - obstacleGrid[0][0];
         for (int i = 1; i < m; i++) {
-            if (count[i - 1][0] == 1 && obstacleGrid[i][0] == 0) {
-                count[i][0] = 1;
+            if (obstacleGrid[i][0] == 0) {
+                count[i][0] = count[i - 1][0];
             }
         }
         for (int j = 1; j < n; j++) {
-            if (count[0][j - 1] == 1 && obstacleGrid[0][j] == 0) {
-                count[0][j] = 1;
+            if (obstacleGrid[0][j] == 0) {
+                count[0][j] = count[0][j - 1];
             }
         }
 
@@ -74,7 +74,7 @@ public class UniquePath2 {
         int n = obstacleGrid[0].length;
         int[] count = new int[n];
 
-        count[0] = 1 - obstacleGrid[0][0];
+        count[0] = 1; // 1 - obstacleGrid[0][0];
         for (int i = 1; i < n; i++) {
             count[i] = (1 - obstacleGrid[0][i]) * count[i - 1];
         }
@@ -111,6 +111,8 @@ public class UniquePath2 {
         test(2, new int[][] { {0, 0, 0}, {0, 1, 0}, {0, 0, 0}});
         test(0, new int[][] { {0, 0, 0}, {0, 1, 0}, {0, 0, 1}});
         test(0, new int[][] { {0}, {1}});
+        // unclear when the (0, 0) is obstacle
+        test(2, new int[][] { {1, 0, 0}, {0, 1, 0}, {0, 0, 0}});
     }
 
     public static void main(String[] args) {
