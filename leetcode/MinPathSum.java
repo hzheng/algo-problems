@@ -15,13 +15,13 @@ public class MinPathSum {
         int n = grid[0].length;
         if (n == 0) return 0;
 
-        if (m == 1) {
-            return Arrays.stream(grid[0]).reduce(0, Integer::sum);
-        }
+        // if (m == 1) {
+        //     return Arrays.stream(grid[0]).reduce(0, Integer::sum);
+        // }
 
-        if (n == 1) {
-            return Arrays.stream(grid).map(a -> a[0]).reduce(0, Integer::sum);
-        }
+        // if (n == 1) {
+        //     return Arrays.stream(grid).map(a -> a[0]).reduce(0, Integer::sum);
+        // }
 
         int[][] min = new int[m][n];
         min[0][0] = grid[0][0];
@@ -148,6 +148,28 @@ public class MinPathSum {
         }
     }
 
+    // rolling array
+    // beats 92.89%
+    public int minPathSum4(int[][] grid) {
+        int m = grid.length;
+        if (m == 0) return 0;
+
+        int n = grid[0].length;
+        if (n == 0) return 0;
+
+        int[] min = new int[n];
+        for (int i = 1; i < n; i++) {
+            min[i] = Integer.MAX_VALUE;
+        }
+        for (int i = 0; i < m; i++) {
+            min[0] += grid[i][0];
+            for (int j = 1; j < n; j++) {
+                min[j] = grid[i][j] + Math.min(min[j - 1], min[j]);
+            }
+        }
+        return min[n - 1];
+    }
+
     void test(Function<int[][], Integer> min, String name,
               int expected, int[][] grid) {
         assertEquals(expected, (int)min.apply(grid));
@@ -158,6 +180,7 @@ public class MinPathSum {
         test(m::minPathSum, "minPathSum", expected, grid);
         test(m::minPathSum2, "minPathSum2", expected, grid);
         test(m::minPathSum3, "minPathSum3", expected, grid);
+        test(m::minPathSum4, "minPathSum4", expected, grid);
     }
 
     @Test
