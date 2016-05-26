@@ -109,6 +109,31 @@ public class EditDistance {
         return d[len1][len2];
     }
 
+    // https://en.wikipedia.org/wiki/Wagner%E2%80%93Fischer_algorithm
+    // beats 30.79%
+    public int minDistance4(String word1, String word2) {
+        int len1 = word1.length();
+        int len2 = word2.length();
+        int d[][] = new int[len1 + 1][len2 + 1];
+
+        for (int i = 0; i <= len2; i++) {
+            d[0][i] = i;
+        }
+        for (int i = 1; i <= len1; i++) {
+            d[i][0] = i;
+            for (int j = 1; j <= len2; j++) {
+                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    d[i][j] = d[i - 1][j - 1];
+                } else {
+                    d[i][j] = 1 + min(d[i][j - 1], d[i - 1][j], d[i - 1][j - 1]);
+                }
+            }
+        }
+
+        return d[len1][len2];
+    }
+
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -128,6 +153,7 @@ public class EditDistance {
         }
         test(e::minDistance2, "minDistance2", word1, word2, expected);
         test(e::minDistance3, "minDistance3", word1, word2, expected);
+        test(e::minDistance4, "minDistance4", word1, word2, expected);
     }
 
     @Test
