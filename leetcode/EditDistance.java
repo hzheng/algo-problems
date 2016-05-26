@@ -85,6 +85,30 @@ public class EditDistance {
         return d[len1][len2];
     }
 
+    // http://www.geeksforgeeks.org/dynamic-programming-set-5-edit-distance/
+    // beats 46.71%
+    public int minDistance3(String word1, String word2) {
+        int len1 = word1.length();
+        int len2 = word2.length();
+        int d[][] = new int[len1 + 1][len2 + 1];
+
+        for (int i = 0; i <= len1; i++) {
+            for (int j = 0; j <= len2; j++) {
+                if (i == 0) {
+                    d[i][j] = j;
+                } else if (j == 0) {
+                    d[i][j] = i;
+                } else if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    d[i][j] = d[i - 1][j - 1];
+                } else {
+                    d[i][j] = 1 + min(d[i][j - 1], d[i - 1][j], d[i - 1][j - 1]);
+                }
+            }
+        }
+
+        return d[len1][len2];
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -103,6 +127,7 @@ public class EditDistance {
             test(e::minDistance, "minDistance", word1, word2, expected);
         }
         test(e::minDistance2, "minDistance2", word1, word2, expected);
+        test(e::minDistance3, "minDistance3", word1, word2, expected);
     }
 
     @Test
