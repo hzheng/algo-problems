@@ -6,10 +6,11 @@ import static org.junit.Assert.*;
 // Given a string S and a string T, find the minimum window in S which will
 // contain all the characters in T in complexity O(n).
 public class MinWindowSubstr {
-    // beats 25.94%
+    // beats 38.04%%
     static class CharSet {
         int count;
-        Queue<Integer> indices = new ArrayDeque<>();
+        // beat rate will drop to 25.94% if use ArrayDeque
+        Queue<Integer> indices = new LinkedList<>();
 
         public void add() {
             count++;
