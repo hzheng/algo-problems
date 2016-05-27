@@ -133,6 +133,34 @@ public class EditDistance {
         return d[len1][len2];
     }
 
+    // beats 91.58%
+    public int minDistance5(String word1, String word2) {
+        if (word1.length() > word2.length()) { // make sure word1 is shorter
+            String tmp = word1;
+            word1 = word2;
+            word2 = tmp;
+        }
+
+        int len1 = word1.length();
+        int len2 = word2.length();
+        int[] d = new int[len1 + 1];
+        for (int i = 0; i <= len1; i++) {
+            d[i] = i;
+        }
+        for (int i = 0; i < len2; i++) {
+            int[] d1 = new int[len1 + 1];
+            d1[0] = i + 1;
+            for (int j = 0; j < len1; j++) {
+                if (word1.charAt(j) == word2.charAt(i)) {
+                    d1[j + 1] = d[j];
+                } else {
+                    d1[j + 1] = min(d[j], d[j + 1], d1[j]) + 1;
+                }
+            }
+            d = d1;
+        }
+        return d[len1];
+    }
 
     @FunctionalInterface
     interface Function<A, B, C> {
@@ -154,6 +182,7 @@ public class EditDistance {
         test(e::minDistance2, "minDistance2", word1, word2, expected);
         test(e::minDistance3, "minDistance3", word1, word2, expected);
         test(e::minDistance4, "minDistance4", word1, word2, expected);
+        test(e::minDistance5, "minDistance5", word1, word2, expected);
     }
 
     @Test
