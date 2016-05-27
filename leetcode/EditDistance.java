@@ -158,6 +158,9 @@ public class EditDistance {
                 }
             }
             d = d1;
+            // can avoid recreating d1 each loop by copying, but beat ratio
+            // will drop to 37.11%(that dosen't necessarily mean worse)
+            // System.arraycopy(d1, 0, d, 0, len1 + 1);
         }
         return d[len1];
     }
