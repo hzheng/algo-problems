@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 
 // Return all possible combinations of k numbers out of 1 ... n.
 public class Combination {
-    // beats 30.91
+    // beats 30.91%
     public List<List<Integer> > combine(int n, int k) {
         List<List<Integer> > res = new ArrayList<>();
         combine(n, k, res, new ArrayList<Integer>());
