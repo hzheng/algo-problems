@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 // Given a string S and a string T, find the minimum window in S which will
 // contain all the characters in T in complexity O(n).
 public class MinWindowSubstr {
-    // beats 38.04%%
+    // beats 38.04%%(or 15.47%)
     static class CharSet {
         int count;
         // beat rate will drop to 25.94% if use ArrayDeque
@@ -45,23 +45,18 @@ public class MinWindowSubstr {
             if (map.get(c).consume(i) < 0) {
                 left--;
             }
-            if (left <= 0) {
-                int start = getStart(map);
-                if (minEnd < 0 || (i - start < minEnd - minStart)) {
-                    minStart = start;
-                    minEnd = i;
-                }
+            if (left > 0) continue;
+
+            int start = Integer.MAX_VALUE;
+            for (CharSet charSet : map.values()) {
+                start = Math.min(start, charSet.indices.peek());
+            }
+            if (minEnd < 0 || (i - start < minEnd - minStart)) {
+                minStart = start;
+                minEnd = i;
             }
         }
         return minEnd < 0 ? "" : s.substring(minStart, minEnd + 1);
-    }
-
-    private int getStart(Map<Character, CharSet> map) {
-        int min = Integer.MAX_VALUE;
-        for (CharSet charSet : map.values()) {
-            min = Math.min(min, charSet.indices.peek());
-        }
-        return min;
     }
 
     void test(String s, String t, String expected) {
