@@ -9,6 +9,7 @@ import static org.junit.Assert.*;
 //Would this affect the run-time complexity? How and why?
 public class SearchRotatedSortedArray2 {
     // beats 23.71%
+    // worse case: time complexity: O(N)
     public boolean search(int[] nums, int target) {
         return search(nums, 0, nums.length - 1, target) >= 0;
     }
@@ -34,6 +35,10 @@ public class SearchRotatedSortedArray2 {
         }
         // nums[left] == nums[mid])
         // target could be anywhere: e.g. if all but target are equals
+        // the following code can be replace by single line:
+        // return search(nums, left + 1, right, target);
+        // but that will take more recursive call and the beat
+        // rate drops to 3.37%
         int midVal = nums[mid];
         int i = left + 1;
         for (; i < mid; i++) {
@@ -44,6 +49,7 @@ public class SearchRotatedSortedArray2 {
         } else {
             return search(nums, i, mid - 1, target);
         }
+
     }
 
     // beats 23.71%
@@ -66,15 +72,17 @@ public class SearchRotatedSortedArray2 {
                     right = mid - 1;
                 }
             } else {
-                int i = left + 1;
-                for (; i < mid; i++) {
-                    if (nums[i] != midVal) break;
-                }
-                if (i >= mid) { // all left part are equal
-                    left = mid + 1;
-                } else {
-                    right = mid - 1;
-                }
+                // int i = left + 1;
+                // for (; i < mid; i++) {
+                //     if (nums[i] != midVal) break;
+                // }
+                // if (i >= mid) { // all left part are equal
+                //     left = mid + 1;
+                // } else {
+                //     left = i;
+                //     right = mid - 1;
+                // }
+                left++;
             }
         }
         return false;
