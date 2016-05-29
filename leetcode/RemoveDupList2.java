@@ -37,6 +37,24 @@ public class RemoveDupList2 {
         return dummy.next;
     }
 
+    // beats 21.24%
+    public ListNode deleteDuplicates2(ListNode head) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode lastNode = dummy;
+        for (ListNode n = head; n != null && n.next != null; n = n.next) {
+            if (n.val != n.next.val) {
+                lastNode = n;
+            } else {
+                do {
+                    n = n.next;
+                } while (n.next != null && n.val == n.next.val) ;
+                lastNode.next = n.next;
+            }
+        }
+        return dummy.next;
+    }
+
     void test(Function<ListNode, ListNode> removeDup, int [] nums, int[] expected) {
         nums = nums.clone();
         ListNode res = removeDup.apply(ListNode.of(nums));
@@ -46,6 +64,7 @@ public class RemoveDupList2 {
     void test(int[] nums, int[] expected) {
         RemoveDupList2 rm = new RemoveDupList2();
         test(rm::deleteDuplicates, nums, expected);
+        test(rm::deleteDuplicates2, nums, expected);
     }
 
     @Test
