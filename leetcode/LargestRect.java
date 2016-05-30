@@ -7,6 +7,7 @@ import static org.junit.Assert.*;
 // the width of each bar is 1, find the area of largest rectangle.
 public class LargestRect {
     //  Time Limit Exceeded
+    // time complexity: O(N ^ 2)
     public int largestRectangleArea(int[] heights) {
         int n = heights.length;
         if (n == 0) return 0;
@@ -118,10 +119,12 @@ public class LargestRect {
 
     // http://www.geeksforgeeks.org/largest-rectangular-area-in-a-histogram-set-1/
     // divide and conquer
+    // time complexity: O(N * logN)
     // code omitted
 
     // beats 59.19%
     // http://www.geeksforgeeks.org/largest-rectangle-under-histogram/
+    // time complexity: O(N)
     public int largestRectangleArea4(int[] heights) {
         Stack<Integer> stack = new Stack<>();
         int maxArea = 0;
