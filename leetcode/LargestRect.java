@@ -46,6 +46,7 @@ public class LargestRect {
         }
     }
 
+    // divide and conquer
     //  Time Limit Exceeded
     public int largestRectangleArea2(int[] heights) {
         PriorityQueue<IndexedHeight> queue = new PriorityQueue<>();
@@ -78,6 +79,7 @@ public class LargestRect {
         return max(min.height * (end - start + 1), leftMax, rightMax);
     }
 
+    // divide and conque
     // beats 0.14%
     public int largestRectangleArea3(int[] heights) {
         int n = heights.length;
@@ -114,10 +116,33 @@ public class LargestRect {
         return max;
     }
 
+    // http://www.geeksforgeeks.org/largest-rectangular-area-in-a-histogram-set-1/
+    // divide and conquer
+    // code omitted
+
+    // beats 59.19%
+    // http://www.geeksforgeeks.org/largest-rectangle-under-histogram/
+    public int largestRectangleArea4(int[] heights) {
+        Stack<Integer> stack = new Stack<>();
+        int maxArea = 0;
+        for (int i = 0; i <= heights.length; ) {
+            if (stack.empty()
+                || i < heights.length && heights[i] > heights[stack.peek()]) {
+                stack.push(i++);
+            } else {
+                int last = stack.pop();
+                int width = stack.empty() ? i : i - stack.peek() - 1;
+                maxArea = Math.max(maxArea, heights[last] * width);
+            }
+        }
+        return maxArea;
+    }
+
     void test(int expected, int ... heights) {
         assertEquals(expected, largestRectangleArea(heights));
         assertEquals(expected, largestRectangleArea2(heights));
         assertEquals(expected, largestRectangleArea3(heights));
+        assertEquals(expected, largestRectangleArea4(heights));
     }
 
     @Test
