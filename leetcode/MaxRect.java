@@ -89,6 +89,9 @@ public class MaxRect {
     // http://www.geeksforgeeks.org/maximum-size-sub-matrix-with-all-1s-in-a-binary-matrix/
     // only for sub-squrare matrix
 
+    // https://www.youtube.com/watch?v=g8bSdXCG-lA
+    // also histogram DP
+
     void test(int expected, String ... matrixStr) {
         char[][] matrix =  new char[matrixStr.length][];
         for (int i = 0; i < matrixStr.length; i++) {
