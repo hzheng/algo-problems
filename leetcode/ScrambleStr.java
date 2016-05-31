@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 // Given two strings s1 and s2 of the same length, determine if s2 is a
 // scrambled string of s1.
 public class ScrambleStr {
-    // beats 34.88%
+    // beats 71.43%(34.88% if use 'isPerm2')
     public boolean isScramble(String s1, String s2) {
         if (s1.equals(s2)) return true;
 
@@ -37,6 +37,19 @@ public class ScrambleStr {
     }
 
     private boolean isPerm(String s1, String s2, int i1, int i2, int len) {
+        if (len == 1) return s1.charAt(i1) == s2.charAt(i2);
+
+        char[] arr1 = s1.toCharArray();
+        char[] arr2 = s2.toCharArray();
+        Arrays.sort(arr1, i1, i1 + len);
+        Arrays.sort(arr2, i2, i2 + len);
+        for (int i = i1, j = i2; i < i1 + len; i++, j++) {
+            if (arr1[i] != arr2[j]) return false;
+        }
+        return true;
+    }
+
+    private boolean isPerm2(String s1, String s2, int i1, int i2, int len) {
         if (len == 1) return s1.charAt(i1) == s2.charAt(i2);
 
         Map<Character, Integer> map = new HashMap<>();
