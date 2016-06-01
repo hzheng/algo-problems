@@ -101,6 +101,7 @@ public class DecodeWays {
     }
 
     // beats 68.71%
+    // time complexity: O(N), space complexity: O(N)
     public int numDecodings4(String s) {
         int len = s.length();
         if (len == 0) return 0;
@@ -122,6 +123,7 @@ public class DecodeWays {
     }
 
     // beats 68.71%
+    // time complexity: O(N), space complexity: O(1)
     public int numDecodings5(String s) {
         int len = s.length();
         if (len == 0 || s.charAt(0) == '0') return 0;
