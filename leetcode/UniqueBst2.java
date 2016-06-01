@@ -10,30 +10,19 @@ import common.TreeNode;
 public class UniqueBst2 {
     // beats 39.17%
     public List<TreeNode> generateTrees(int n) {
-        List<TreeNode> res = new ArrayList<>();
-        if (n > 0) {
-            generateTrees(1, n, res);
-        }
-        return res;
+        return n == 0 ? Collections.emptyList() : generateTrees(1, n);
     }
 
-    private void generateTrees(int start, int end, List<TreeNode> res) {
+    private List<TreeNode> generateTrees(int start, int end) {
+        List<TreeNode> res = new ArrayList<>();
         if (start > end) {
             res.add(null);
-            return;
-        }
-
-        if (start == end) {
-            res.add(new TreeNode(start));
-            return;
+            return res;
         }
 
         for (int i = start; i <= end; i++) {
-            List<TreeNode> left = new ArrayList<>();
-            generateTrees(start, i - 1, left);
-
-            List<TreeNode> right = new ArrayList<>();
-            generateTrees(i + 1, end, right);
+            List<TreeNode> left = generateTrees(start, i - 1);
+            List<TreeNode> right = generateTrees(i + 1, end);
 
             for (TreeNode l : left) {
                 for (TreeNode r : right) {
@@ -44,6 +33,7 @@ public class UniqueBst2 {
                 }
             }
         }
+        return res;
     }
 
     void test(Function<Integer, List<TreeNode>> generate, String name,
