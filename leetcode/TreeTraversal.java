@@ -24,6 +24,7 @@ public class TreeTraversal {
     }
 
     // beats 3.26%
+    // shortcoming: changed input tree
     public List<Integer> inorderTraversal2(TreeNode root) {
         List<Integer> res = new ArrayList<>();
         if (root == null) return res;
@@ -49,6 +50,39 @@ public class TreeTraversal {
         return res;
     }
 
+    // beats 3.26%
+    // http://www.jiuzhang.com/solutions/binary-tree-inorder-traversal/
+    public List<Integer> inorderTraversal3(TreeNode root) {
+        Stack<TreeNode> stack = new Stack<>();
+        List<Integer> res = new ArrayList<>();
+        for (TreeNode n = root; n != null || !stack.empty(); n = n.right) {
+            while (n != null) {
+                stack.add(n);
+                n = n.left;
+            }
+            n = stack.pop();
+            res.add(n.val);
+        }
+        return res;
+    }
+
+    // beats 3.26%
+    public List<Integer> inorderTraversal4(TreeNode root) {
+        Stack<TreeNode> stack = new Stack<>();
+        List<Integer> res = new ArrayList<>();
+        for (TreeNode n = root; n != null || !stack.empty(); ) {
+            if (n != null) {
+                stack.push(n);
+                n = n.left;
+            } else {
+                TreeNode top = stack.pop();
+                res.add(top.val);
+                n = top.right;
+            }
+        }
+        return res;
+    }
+
     void test(Function<TreeNode, List<Integer> > traversal,
               String s, Integer ... expected) {
         TreeNode root = TreeNode.of(s);
@@ -60,6 +94,8 @@ public class TreeTraversal {
         TreeTraversal t = new TreeTraversal();
         test(t::inorderTraversal, s, expected);
         test(t::inorderTraversal2, s, expected);
+        test(t::inorderTraversal3, s, expected);
+        test(t::inorderTraversal4, s, expected);
     }
 
     @Test
