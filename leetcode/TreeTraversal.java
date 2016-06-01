@@ -67,6 +67,7 @@ public class TreeTraversal {
     }
 
     // beats 3.26%
+    // http://www.programcreek.com/2012/12/leetcode-solution-of-binary-tree-inorder-traversal-in-java/
     public List<Integer> inorderTraversal4(TreeNode root) {
         Stack<TreeNode> stack = new Stack<>();
         List<Integer> res = new ArrayList<>();
@@ -78,6 +79,28 @@ public class TreeTraversal {
                 TreeNode top = stack.pop();
                 res.add(top.val);
                 n = top.right;
+            }
+        }
+        return res;
+    }
+
+    public List<Integer> inorderTraversal5(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        if (root == null) return res;
+
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            TreeNode top = stack.peek();
+            if (top.left != null) {
+                stack.push(top.left);
+                top.left = null;
+            } else {
+                res.add(top.val);
+                stack.pop();
+                if (top.right != null) {
+                    stack.push(top.right);
+                }
             }
         }
         return res;
@@ -96,6 +119,7 @@ public class TreeTraversal {
         test(t::inorderTraversal2, s, expected);
         test(t::inorderTraversal3, s, expected);
         test(t::inorderTraversal4, s, expected);
+        test(t::inorderTraversal5, s, expected);
     }
 
     @Test
