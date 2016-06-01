@@ -53,6 +53,41 @@ public class RestoreIp {
         cur.remove(size);
     }
 
+    // beats 21.91%
+    public List<String> restoreIpAddresses2(String s) {
+        List<String> res = new ArrayList<>();
+        restoreIp2(s, new ArrayList<String>(), res);
+        return res;
+    }
+
+    private void restoreIp2(String s, List<String> cur, List<String> res) {
+        int size = cur.size();
+        int len = s.length();
+        if (size == 4) {
+            if (len == 0) {
+                res.add(String.join(".", cur));
+            }
+            return;
+        }
+
+        for (int i = 1; i < 4 && i <= len; i++) {
+            String segment = s.substring(0, i);
+            if (!isValid(segment)) continue;
+
+            cur.add(segment);
+            restoreIp2(s.substring(i), cur, res);
+            cur.remove(size);
+        }
+    }
+
+    private boolean isValid(String s) {
+        if (s.charAt(0) == '0') {
+            return s.length() == 1;
+        }
+
+        return Integer.parseInt(s) < 256;
+    }
+
     void test(Function<String, List<String> > restore,
               String s, String ... expected) {
         String[] res = restore.apply(s).toArray(new String[0]);
@@ -70,6 +105,7 @@ public class RestoreIp {
     void test(String s, String ... expected) {
         RestoreIp r = new RestoreIp();
         test(r::restoreIpAddresses, s, expected);
+        test(r::restoreIpAddresses2, s, expected);
     }
 
     @Test
