@@ -41,7 +41,7 @@ public class TreeLevelOrderTraversal {
 
     // beats 58.26%
     public List<List<Integer> > levelOrder2(TreeNode root) {
-        List<List<Integer>> res = new ArrayList<>();
+        List<List<Integer> > res = new ArrayList<>();
         if (root == null) return res;
 
         Queue<TreeNode> queue = new LinkedList<>();
@@ -68,7 +68,7 @@ public class TreeLevelOrderTraversal {
     public List<List<Integer> > levelOrder3(TreeNode root) {
         List<List<Integer> > res = new ArrayList<>();
 
-        for (int max = 0; ; max++) {
+        for (int max = 0;; max++) {
             List<Integer> level = new ArrayList<>();
             dfs(root, level, 0, max);
             if (level.size() == 0) break;
@@ -90,6 +90,34 @@ public class TreeLevelOrderTraversal {
         dfs(root.right, level, cur + 1, max);
     }
 
+    // another recursion
+    // beats 6.32%
+    public List<List<Integer> > levelOrder4(TreeNode root) {
+        List<List<Integer> > res = new ArrayList<>();
+        if (root != null) {
+            levelOrder4(Arrays.asList(root), res);
+        }
+        return res;
+    }
+
+    private void levelOrder4(List<TreeNode> level, List<List<Integer> > res) {
+        List<Integer> levelVal = new LinkedList<>();
+        List<TreeNode> nextLevel = new LinkedList<>();
+        for (TreeNode node : level) {
+            levelVal.add(node.val);
+            if (node.left != null) {
+                nextLevel.add(node.left);
+            }
+            if (node.right != null) {
+                nextLevel.add(node.right);
+            }
+        }
+        res.add(levelVal);
+        if (!nextLevel.isEmpty()) {
+            levelOrder4(nextLevel, res);
+        }
+    }
+
     void test(Function<TreeNode, List<List<Integer>>> traversal,
               String s, int[] ... expected) {
         TreeNode root = TreeNode.of(s);
@@ -103,6 +131,7 @@ public class TreeLevelOrderTraversal {
         test(t::levelOrder, s, expected);
         test(t::levelOrder2, s, expected);
         test(t::levelOrder3, s, expected);
+        test(t::levelOrder4, s, expected);
     }
 
     @Test
