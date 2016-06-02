@@ -6,23 +6,21 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
-// Given a binary tree, return the zigzag level order traversal of its nodes'
-// values. (ie, from left to right, then right to left for the next level and
-// alternate between).
-public class TreeZigzagTraversal {
-    // beats 52.53%
-    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+// Given a binary tree, return the bottom-up level order traversal of its nodes'
+// values. (ie, from left to right, level by level from leaf to root).
+public class TreeLevelOrderTraversal2 {
+    // beats 31.93%
+    public List<List<Integer>> levelOrderBottom(TreeNode root) {
         List<List<Integer> > res = new ArrayList<>();
         if (root == null) return res;
 
         Queue<TreeNode> queue = new LinkedList<>();
         queue.offer(root);
-        boolean direction = false;
         List<Integer> level = null;
         while (!queue.isEmpty()) {
             TreeNode n = queue.poll();
             if (n == null) { // finished one level
-                res.add(level);
+                res.add(0, level); // or reverse the res at the end
                 level = null;
                 continue;
             }
@@ -30,13 +28,8 @@ public class TreeZigzagTraversal {
             if (level == null) { // new level begins
                 level = new ArrayList<>();
                 queue.offer(null);
-                direction = !direction;
             }
-            if (direction) {
-                level.add(n.val);
-            } else {
-                level.add(0, n.val);
-            }
+            level.add(n.val);
             if (n.left != null) {
                 queue.offer(n.left);
             }
@@ -47,23 +40,19 @@ public class TreeZigzagTraversal {
         return res;
     }
 
-    // beats 10.87%
-    public List<List<Integer> > zigzagLevelOrder2(TreeNode root) {
+    // beats 31.93%
+    public List<List<Integer> > levelOrderBottom2(TreeNode root) {
         List<List<Integer> > res = new ArrayList<>();
         if (root == null) return res;
 
         Queue<TreeNode> queue = new LinkedList<>();
         queue.offer(root);
-        for (boolean direction = false; !queue.isEmpty(); direction = !direction) {
+        while (!queue.isEmpty()) {
             List<Integer> level = new ArrayList<>();
             int size = queue.size();
             for (int i = 0; i < size; i++) {
                 TreeNode head = queue.poll();
-                if (direction) {
-                    level.add(0, head.val);
-                } else {
-                    level.add(head.val);
-                }
+                level.add(head.val);
                 if (head.left != null) {
                     queue.offer(head.left);
                 }
@@ -71,39 +60,36 @@ public class TreeZigzagTraversal {
                     queue.offer(head.right);
                 }
             }
-            res.add(level);
+            res.add(0, level);
         }
         return res;
     }
 
-    // beats 52.53%
-    public List<List<Integer> > zigzagLevelOrder3(TreeNode root) {
+    // beats 3.33%
+    public List<List<Integer> > levelOrderBottom3(TreeNode root) {
         List<List<Integer> > res = new ArrayList<>();
-
-        for (int max = 0;; max++) {
-            List<Integer> level = new ArrayList<>();
-            dfs(root, level, 0, max);
-            if (level.size() == 0) break;
-
-            res.add(level);
+        if (root != null) {
+            levelOrderBottom3(Arrays.asList(root), res);
         }
         return res;
     }
 
-    private void dfs(TreeNode root, List<Integer> level, int cur, int max) {
-        if (root == null || cur > max) return;
-
-        if (cur == max) {
-            if ((max & 1) == 0) {
-                level.add(root.val);
-            } else {
-                level.add(0, root.val);
+    private void levelOrderBottom3(List<TreeNode> level, List<List<Integer> > res) {
+        List<Integer> levelVal = new LinkedList<>();
+        List<TreeNode> nextLevel = new LinkedList<>();
+        for (TreeNode node : level) {
+            levelVal.add(node.val);
+            if (node.left != null) {
+                nextLevel.add(node.left);
             }
-            return;
+            if (node.right != null) {
+                nextLevel.add(node.right);
+            }
         }
-
-        dfs(root.left, level, cur + 1, max);
-        dfs(root.right, level, cur + 1, max);
+        res.add(0, levelVal);
+        if (!nextLevel.isEmpty()) {
+            levelOrderBottom3(nextLevel, res);
+        }
     }
 
     void test(Function<TreeNode, List<List<Integer>>> traversal,
@@ -115,20 +101,19 @@ public class TreeZigzagTraversal {
     }
 
     void test(String s, int[] ... expected) {
-        TreeZigzagTraversal t = new TreeZigzagTraversal();
-        test(t::zigzagLevelOrder, s, expected);
-        test(t::zigzagLevelOrder2, s, expected);
-        test(t::zigzagLevelOrder3, s, expected);
+        TreeLevelOrderTraversal2 t = new TreeLevelOrderTraversal2();
+        test(t::levelOrderBottom, s, expected);
+        test(t::levelOrderBottom2, s, expected);
+        test(t::levelOrderBottom3, s, expected);
     }
 
     @Test
     public void test1() {
-        test("1,#,2,3", new int[][] {{1}, {2}, {3}});
-        test("1,2,3,4,#,#,5", new int[][] {{1}, {3, 2}, {4, 5}});
-        test("3,9,20,#,#,15,7", new int[][] {{3}, {20, 9}, {15, 7}});
+        test("1,#,2,3", new int[][] {{3}, {2}, {1}});
+        test("3,9,20,#,#,15,7", new int[][] {{15, 7}, {9, 20}, {3}});
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("TreeZigzagTraversal");
+        org.junit.runner.JUnitCore.main("TreeLevelOrderTraversal2");
     }
 }
