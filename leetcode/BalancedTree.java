@@ -27,6 +27,8 @@ public class BalancedTree {
         return Math.max(depth(root.left), depth(root.right)) + 1;
     }
 
+    // TODO: non-recursive solution
+
     void test(Function<TreeNode, Boolean> balanced, String s, boolean expected) {
         TreeNode root = TreeNode.of(s);
         assertEquals(expected, balanced.apply(root));
