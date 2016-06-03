@@ -53,7 +53,7 @@ public class TreeNode {
         list.add(val);
         while (!queue.isEmpty()) {
             TreeNode node = queue.poll();
-            if (node.left == null && node.right == null) continue;
+            // if (node.left == null && node.right == null) continue;
 
             if (node.left == null) {
                 list.add(null);
@@ -67,6 +67,12 @@ public class TreeNode {
                 queue.offer(node.right);
                 list.add(node.right.val);
             }
+        }
+        while (true) {
+            int last = list.size() - 1;
+            if (list.get(last) != null) break;
+
+            list.remove(last);
         }
         return list.stream().toArray(Integer[]::new);
     }
