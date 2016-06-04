@@ -96,6 +96,47 @@ public class TreeFromPreorderInorder {
         return root;
     }
 
+    // beats 25.32%
+    public TreeNode buildTree3(int[] preorder, int[] inorder) {
+        return buildTree3(preorder, new int[1], inorder, 0, inorder.length);
+    }
+
+    private TreeNode buildTree3(int[] preorder, int[] from,
+                                int[] inorder, int start, int end) {
+        if (start >= end) return null;
+
+
+        TreeNode root = new TreeNode(preorder[from[0]++]);
+        int rootIndex = start;
+        for (; rootIndex < end; rootIndex++) {
+            if (inorder[rootIndex] == root.val) break;
+        }
+
+        root.left = buildTree3(preorder, from, inorder, start, rootIndex);
+        root.right = buildTree3(preorder, from, inorder, rootIndex + 1, end);
+        return root;
+    }
+
+    // beats 74.94%
+    public TreeNode buildTree4(int[] preorder, int[] inorder) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < inorder.length; i++) {
+            map.put(inorder[i], i);
+        }
+        return buildTree4(map, preorder, new int[1], inorder, 0, inorder.length);
+    }
+
+    private TreeNode buildTree4(Map<Integer, Integer> map, int[] preorder,
+                                int[] from, int[] inorder, int start, int end) {
+        if (start >= end) return null;
+
+        TreeNode root = new TreeNode(preorder[from[0]++]);
+        int rootIndex = map.get(root.val);
+        root.left = buildTree4(map, preorder, from, inorder, start, rootIndex);
+        root.right = buildTree4(map, preorder, from, inorder, rootIndex + 1, end);
+        return root;
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -110,6 +151,8 @@ public class TreeFromPreorderInorder {
         TreeFromPreorderInorder t = new TreeFromPreorderInorder();
         test(t::buildTree, preorder, inorder, expected);
         test(t::buildTree2, preorder, inorder, expected);
+        test(t::buildTree3, preorder, inorder, expected);
+        test(t::buildTree4, preorder, inorder, expected);
     }
 
     @Test
