@@ -39,12 +39,12 @@ public class TreeFromPreorderInorder {
         for (int i = start + 1; i < end; i++) {
             TreeNode cur = stack.peek();
             TreeNode node = new TreeNode(nums[i]);
-            if (preorderAfter(nums[i], cur, map)) {
+            if (after(nums[i], cur, map)) {
                 cur.right = node;
             } else {
                 while (!stack.isEmpty()) {
                     cur = stack.pop();
-                    if (preorderAfter(nums[i], cur, map)) {
+                    if (after(nums[i], cur, map)) {
                         stack.push(cur);
                         TreeNode tmp = cur.right;
                         cur.right = node;
@@ -59,8 +59,41 @@ public class TreeFromPreorderInorder {
         return stack.elementAt(0);
     }
 
-    private boolean preorderAfter(int n, TreeNode node, Map<Integer, Integer> map) {
+    private boolean after(int n, TreeNode node, Map<Integer, Integer> map) {
         return map.get(n) > map.get(node.val);
+    }
+
+    // beats 73.81%
+    public TreeNode buildTree2(int[] preorder, int[] inorder) {
+        int len = preorder.length;
+        if (len == 0) return null;
+
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < len; i++) {
+            map.put(inorder[i], i);
+        }
+
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode root = new TreeNode(preorder[0]);
+        stack.push(root);
+        for (int i = 1; i < len; i++) {
+            TreeNode cur = stack.peek();
+            int val = preorder[i];
+            TreeNode node = new TreeNode(val);
+            if (after(val, cur, map)) {
+                while (!stack.isEmpty()) {
+                    cur = stack.pop();
+                    if (!stack.isEmpty() && !after(val, stack.peek(), map)) {
+                        break;
+                    }
+                }
+                cur.right = node;
+            } else {
+                cur.left = node;
+            }
+            stack.push(node);
+        }
+        return root;
     }
 
     @FunctionalInterface
@@ -76,10 +109,14 @@ public class TreeFromPreorderInorder {
     void test(int[] preorder, int[] inorder, String expected) {
         TreeFromPreorderInorder t = new TreeFromPreorderInorder();
         test(t::buildTree, preorder, inorder, expected);
+        test(t::buildTree2, preorder, inorder, expected);
     }
 
     @Test
     public void test1() {
+        test(new int[] {4, 2, 1, 3}, new int[] {1, 2, 3, 4}, "{4,2,#,1,3}");
+        test(new int[] {4, 1, 2, 3}, new int[] {1, 2, 3, 4}, "{4,1,#,#,2,#,3}");
+        test(new int[] {3, 1, 2, 4}, new int[] {1, 2, 3, 4}, "{3,1,4,#,2}");
         test(new int[] {1, 2, 4, 3}, new int[] {1, 2, 3, 4}, "{1,#,2,#,4,3}");
         test(new int[] {1, 2, 3}, new int[] {1, 3, 2}, "{1,#,2,3}");
         test(new int[] {3, 9, 20, 15, 7}, new int[] {9, 3, 15, 20, 7},
