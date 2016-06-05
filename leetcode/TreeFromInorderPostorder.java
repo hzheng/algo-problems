@@ -18,7 +18,7 @@ public class TreeFromInorderPostorder {
         for (int i = 0; i < inorder.length; i++) {
             map.put(inorder[i], i);
         }
-        return buildTree(map, postorder, new int[]{len}, inorder, 0, len);
+        return buildTree(map, postorder, new int[] {len}, inorder, 0, len);
     }
 
     private TreeNode buildTree(Map<Integer, Integer> map, int[] postorder,
@@ -29,6 +29,32 @@ public class TreeFromInorderPostorder {
         int rootIndex = map.get(root.val);
         root.right = buildTree(map, postorder, last, inorder, rootIndex + 1, end);
         root.left = buildTree(map, postorder, last, inorder, start, rootIndex);
+        return root;
+    }
+
+    // beats 77.06%
+    public TreeNode buildTree2(int[] inorder, int[] postorder) {
+        int len = inorder.length;
+        if (len == 0) return null;
+
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < inorder.length; i++) {
+            map.put(inorder[i], i);
+        }
+        return buildTree2(map, inorder, 0, len - 1, postorder, 0, len - 1);
+    }
+
+    private TreeNode buildTree2(Map<Integer, Integer> map,
+                                int[] inorder, int inStart, int inEnd,
+                                int[] postorder, int postStart, int postEnd) {
+        if (inStart > inEnd) return null;
+
+        TreeNode root = new TreeNode(postorder[postEnd]);
+        int index = map.get(postorder[postEnd]);
+        root.left = buildTree2(map, inorder, inStart, index - 1,
+                               postorder, postStart, postStart + index - inStart - 1);
+        root.right = buildTree2(map, inorder, index + 1, inEnd,
+                                postorder, postStart + index - inStart, postEnd - 1);
         return root;
     }
 
@@ -45,6 +71,7 @@ public class TreeFromInorderPostorder {
     void test(int[] inorder, int[] postorder, String expected) {
         TreeFromInorderPostorder t = new TreeFromInorderPostorder();
         test(t::buildTree, inorder, postorder, expected);
+        test(t::buildTree2, inorder, postorder, expected);
     }
 
     @Test
