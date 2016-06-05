@@ -7,6 +7,7 @@ import static org.junit.Assert.*;
 import common.TreeNode;
 
 // Given preorder and inorder traversal of a tree, construct the binary tree.
+// You may assume that duplicates do not exist in the tree.
 public class TreeFromPreorderInorder {
     // beats 72.17%
     public TreeNode buildTree(int[] preorder, int[] inorder) {
