@@ -112,14 +112,11 @@ public class InterleaveStr {
         return dp[len1][len2];
     }
 
-    // beats 79.69%%
+    // beats 79.69%
     public boolean isInterleave4(String s1, String s2, String s3) {
         int len1 = s1.length();
         int len2 = s2.length();
         if (len1 + len2 != s3.length()) return false;
-
-        if (len1 == 0) return s2.equals(s3);
-        if (len2 == 0) return s1.equals(s3);
 
         boolean[] dp = new boolean[len2 + 1];
         // first row
@@ -152,7 +149,10 @@ public class InterleaveStr {
 
     @Test
     public void test1() {
+        test("", "", "", true);
         test("", "b", "b", true);
+        test("", "b", "a", false);
+        test("b", "", "b", true);
         test("a", "b", "a", false);
         test("ab", "bc", "bbac", false);
         test("bc", "bb", "bbcb", true);
