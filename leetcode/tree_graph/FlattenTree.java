@@ -95,6 +95,42 @@ public class FlattenTree {
         }
     }
 
+    // http://www.programcreek.com/2013/01/leetcode-flatten-binary-tree-to-linked-list/
+    // beats 6.48%
+    public void flatten4(TreeNode root) {
+        Stack<TreeNode> stack = new Stack<>();
+        for (TreeNode n = root; n != null || !stack.empty(); n = n.right) {
+            if (n.right != null) {
+                stack.push(n.right);
+            }
+            if (n.left != null) {
+                n.right = n.left;
+                n.left = null;
+            } else if (!stack.empty()) {
+                n.right = stack.pop();
+            }
+        }
+    }
+
+    // space complexity is O(1)
+    // beats 29.33%
+    public void flatten5(TreeNode root) {
+        for (TreeNode cur = root; cur != null; ) {
+            if (cur.left == null) {
+                cur = cur.right;
+            }
+            else {
+                TreeNode prev = cur.left;
+                while (prev.right != null) {
+                    prev = prev.right;
+                }
+                prev.right = cur.right;
+                cur.right = cur.left;
+                cur.left = null;
+            }
+        }
+    }
+
     @FunctionalInterface
     interface Function<A> {
         public void apply(A a);
@@ -111,6 +147,8 @@ public class FlattenTree {
         test(f::flatten, s, expected);
         test(f::flatten2, s, expected);
         test(f::flatten3, s, expected);
+        test(f::flatten4, s, expected);
+        test(f::flatten5, s, expected);
     }
 
     @Test
