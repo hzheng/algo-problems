@@ -31,9 +31,8 @@ public class FlattenTree {
     public void flatten2(TreeNode root) {
         if (root == null) return;
 
-        TreeNode cur = root;
         Queue<TreeNode> queue = new LinkedList<>();
-        while (cur != null) {
+        for (TreeNode cur = root; cur != null; ) {
             if (cur.left == null) {
                 queue.add(cur);
                 cur = cur.right;
@@ -59,6 +58,43 @@ public class FlattenTree {
         }
     }
 
+    // Morris Traversal(space complexity is O(1))
+    // beats 29.33%
+    public void flatten3(TreeNode root) {
+        TreeNode last = null;
+        for (TreeNode cur = root; cur != null; ) {
+            if (cur.left == null) {
+                if (last != null) {
+                    last.left = cur;
+                }
+                last = cur;
+                cur = cur.right;
+                continue;
+            }
+
+            TreeNode prev = cur.left;
+            while (prev.right != null && prev.right != cur) {
+                prev = prev.right;
+            }
+            if (prev.right == null) {
+                if (last != null) {
+                    last.left = cur;
+                }
+                prev.right = cur;
+                last = cur;
+                cur = cur.left;
+            } else {
+                cur = cur.right;
+                prev.right = null;
+            }
+        }
+        // put all left nodes to the right
+        for (TreeNode n = root; n != null; n = n.right) {
+            n.right = n.left;
+            n.left = null;
+        }
+    }
+
     @FunctionalInterface
     interface Function<A> {
         public void apply(A a);
@@ -74,11 +110,16 @@ public class FlattenTree {
         FlattenTree f = new FlattenTree();
         test(f::flatten, s, expected);
         test(f::flatten2, s, expected);
+        test(f::flatten3, s, expected);
     }
 
     @Test
     public void test1() {
+        test("1", "{1}");
+        test("1,2,#,3,4,5", "{1,#,2,#,3,#,5,#,4}");
         test("1,2,5,3,4,#,6", "{1,#,2,#,3,#,4,#,5,#,6}");
+        test("1,2", "{1,#,2}");
+        test("1,2,#,3", "{1,#,2,#,3}");
     }
 
     public static void main(String[] args) {
