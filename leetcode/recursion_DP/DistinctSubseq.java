@@ -7,10 +7,9 @@ import static org.junit.Assert.*;
 // Given a string S and a string T, count the number of distinct subsequences of
 // T in S.
 public class DistinctSubseq {
-    // Time Limit Exceeded
-    public int numDistinct(String s, String t) {
-        Map<Character, List<Integer> > indexMap = new HashMap<>();
+    private List<Integer[]> getIndexListSeq(String s, String t) {
         boolean[] targetChars = new boolean[256];
+        Map<Character, List<Integer> > indexMap = new HashMap<>();
 
         for (char c : t.toCharArray()) {
             targetChars[c] = true;
@@ -26,14 +25,31 @@ public class DistinctSubseq {
             }
         }
 
-        int seqLen = t.length();
-        List<Integer[]> indexListSeq = new ArrayList<>(seqLen);
+        List<Integer[]> indexListSeq = new ArrayList<>(t.length());
         for (char c : t.toCharArray()) {
-            if (!indexMap.containsKey(c)) return 0;
+            if (!indexMap.containsKey(c)) return null;
 
             indexListSeq.add(indexMap.get(c).toArray(new Integer[0]));
         }
+        return indexListSeq;
+    }
 
+    private int nextIndex(Integer[] list, int x) {
+        int index = Arrays.binarySearch(list, x);
+        if (index >= 0) { // same array
+            index++;
+        } else { // not found, insertion point
+            index = -index - 1;
+        }
+        return (index == list.length) ? -1 : index;
+    }
+
+    // Time Limit Exceeded
+    public int numDistinct(String s, String t) {
+        List<Integer[]> indexListSeq = getIndexListSeq(s, t);
+        if (indexListSeq == null) return 0;
+
+        int seqLen = t.length();
         int count = 0;
         Stack<Integer> stack = new Stack<>();
         stack.push(-1);
@@ -64,16 +80,6 @@ public class DistinctSubseq {
             count += indexList.length - lastPos;
         }
         return count;
-    }
-
-    private int nextIndex(Integer[] list, int x) {
-        int index = Arrays.binarySearch(list, x);
-        if (index >= 0) { // same array
-            index++;
-        } else { // not found, insertion point
-            index = -index - 1;
-        }
-        return (index == list.length) ? -1 : index;
     }
 
     @FunctionalInterface
