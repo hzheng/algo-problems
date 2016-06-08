@@ -66,18 +66,56 @@ public class DistinctSubseq {
                 pos = stack.pop();
             }
             int i = stack.size();
-            int lastPos = 0;
             while (true) {
                 indexList = indexListSeq.get(i);
                 pos = nextIndex(indexList, pos);
-                lastPos = pos;
                 if (++i == seqLen || pos < 0) break;
+
                 pos = indexList[pos];
                 stack.push(pos);
             }
             if (i < seqLen || pos < 0) continue;
 
-            count += indexList.length - lastPos;
+            count += indexList.length - pos;
+        }
+        return count;
+    }
+
+    // Time Limit Exceeded
+    public int numDistinct2(String s, String t) {
+        List<Integer[]> indexListSeq = getIndexListSeq(s, t);
+        if (indexListSeq == null) return 0;
+
+        int count = 0;
+        int seqLen = t.length();
+        int[] indices = new int[seqLen];
+        indices[0] = -1;
+        for (int i = 0; i >= 0; i -= 2) {
+            int pos = indices[i];
+            Integer[] indexList = null;
+            while (i >= 0 && pos >= 0) {
+                indexList = indexListSeq.get(i);
+                if (pos < indexList[indexList.length - 1]) {
+                    pos = indexList[nextIndex(indexList, pos)];
+                    indices[i++] = pos;
+                    break;
+                }
+                if (--i < 0) return count;
+
+                pos = indices[i];
+            }
+
+            while (true) {
+                indexList = indexListSeq.get(i);
+                pos = nextIndex(indexList, pos);
+                if (++i == seqLen || pos < 0) break;
+
+                pos = indexList[pos];
+                indices[i - 1] = pos;
+            }
+            if (i < seqLen || pos < 0) continue;
+
+            count += indexList.length - pos;
         }
         return count;
     }
@@ -96,7 +134,10 @@ public class DistinctSubseq {
 
     void test(String s, String t, int expected) {
         DistinctSubseq d = new DistinctSubseq();
-        test(d::numDistinct, "numDistinct", s, t, expected);
+        if (s.length() < 120) {
+            test(d::numDistinct, "numDistinct", s, t, expected);
+            test(d::numDistinct2, "numDistinct2", s, t, expected);
+        }
     }
 
     @Test
@@ -112,6 +153,9 @@ public class DistinctSubseq {
         test("aabdbaabeeadcbbdedacbbeecbabebaeeecaeabaedadcbdbcdaabebdadbbaeab"
              + "dadeaabbabbecebbebcaddaacccebeaeedababedeacdeaaaeeaecbe",
              "bddabdcae", 10582116);
+        test("adbdadeecadeadeccaeaabdabdbcdabddddabcaaadbabaaedeeddeaeebcdeabc"
+             + "aaaeeaeeabcddcebddebeebedaecccbdcbcedbdaeaedcdebeecdaaedaacadb"
+             + "dccabddaddacdddc" , "bcddceeeebecbc", 700531452);
     }
 
     public static void main(String[] args) {
