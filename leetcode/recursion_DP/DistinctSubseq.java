@@ -127,7 +127,7 @@ public class DistinctSubseq {
         if (indexListSeq == null) return 0;
 
         int seqLen = t.length();
-        // each element of countSeq represent the count starting
+        // each element of countSeq represents the count starting
         // from the corresponding position of indexListSeq
         List<int[]> countSeq = new ArrayList<>(seqLen);
         for (Integer[] indices : indexListSeq) {
@@ -154,6 +154,46 @@ public class DistinctSubseq {
         return countSeq.get(0)[0];
     }
 
+    // beats 52.62%
+    public int numDistinct4(String s, String t) {
+        int sLen = s.length();
+        int tLen = t.length();
+
+        // counts for string s from start to pos i matches string t from start to pos j
+        int[][] dp = new int[sLen + 1][tLen + 1];
+        dp[0][0] = 1;
+        for (int i = 1; i <= sLen; i++) {
+            dp[i][0] = 1;
+        }
+
+        for (int i = 1; i <= sLen; i++) {
+            // for (int j = 1; j <= tLen; j++) { // beat rate drops 40.61%
+            for (int j = tLen; j > 0; j--) {
+                dp[i][j] = dp[i - 1][j];
+                if (s.charAt(i - 1) == t.charAt(j - 1)) {
+                    dp[i][j] += dp[i - 1][j - 1];
+                }
+            }
+        }
+        return dp[sLen][tLen];
+    }
+
+    // beats 86.29%
+    public int numDistinct5(String s, String t) {
+        int sLen = s.length();
+        int tLen = t.length();
+        int[] dp = new int[tLen + 1];
+        dp[0] = 1;
+        for (int i = 1; i <= sLen; i++) {
+            for (int j = tLen; j > 0; j--) {
+                if (s.charAt(i - 1) == t.charAt(j - 1)) {
+                    dp[j] += dp[j - 1];
+                }
+            }
+        }
+        return dp[tLen];
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -173,6 +213,8 @@ public class DistinctSubseq {
             test(d::numDistinct2, "numDistinct2", s, t, expected);
         }
         test(d::numDistinct3, "numDistinct3", s, t, expected);
+        test(d::numDistinct4, "numDistinct4", s, t, expected);
+        test(d::numDistinct5, "numDistinct5", s, t, expected);
     }
 
     @Test
@@ -190,7 +232,7 @@ public class DistinctSubseq {
              "bddabdcae", 10582116);
         test("adbdadeecadeadeccaeaabdabdbcdabddddabcaaadbabaaedeeddeaeebcdeabc"
              + "aaaeeaeeabcddcebddebeebedaecccbdcbcedbdaeaedcdebeecdaaedaacadb"
-             + "dccabddaddacdddc" , "bcddceeeebecbc", 700531452);
+             + "dccabddaddacdddc", "bcddceeeebecbc", 700531452);
     }
 
     public static void main(String[] args) {
