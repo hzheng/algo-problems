@@ -74,9 +74,9 @@ public class DistinctSubseq {
                 pos = indexList[pos];
                 stack.push(pos);
             }
-            if (i < seqLen || pos < 0) continue;
-
-            count += indexList.length - pos;
+            if (pos >= 0) {
+                count += indexList.length - pos;
+            }
         }
         return count;
     }
@@ -113,11 +113,45 @@ public class DistinctSubseq {
                 pos = indexList[pos];
                 indices[i - 1] = pos;
             }
-            if (i < seqLen || pos < 0) continue;
-
-            count += indexList.length - pos;
+            if (pos >= 0) {
+                count += indexList.length - pos;
+            }
         }
         return count;
+    }
+
+    // dynamic programming
+    // beats 95.09%
+    public int numDistinct3(String s, String t) {
+        List<Integer[]> indexListSeq = getIndexListSeq(s, t);
+        if (indexListSeq == null) return 0;
+
+        int seqLen = t.length();
+        // each element of countSeq represent the count starting
+        // from the corresponding position of indexListSeq
+        List<int[]> countSeq = new ArrayList<>(seqLen);
+        for (Integer[] indices : indexListSeq) {
+            countSeq.add(new int[indices.length]);
+        }
+
+        int[] counts = countSeq.get(seqLen - 1);
+        for (int i = counts.length - 1; i >= 0; i--) {
+            counts[i] = counts.length - i;
+        }
+        for (int i = seqLen - 2; i >= 0; i--) {
+            counts = countSeq.get(i);
+            int[] nextCounts = countSeq.get(i + 1);
+            Integer[] indices = indexListSeq.get(i);
+            Integer[] nextIndices = indexListSeq.get(i + 1);
+            for (int j = counts.length - 1; j >= 0; j--) {
+                int index = nextIndex(nextIndices, indices[j]);
+                counts[j] = (index < 0) ? 0 : nextCounts[index];
+                if (j < counts.length - 1) {
+                    counts[j] += counts[j + 1];
+                }
+            }
+        }
+        return countSeq.get(0)[0];
     }
 
     @FunctionalInterface
@@ -138,6 +172,7 @@ public class DistinctSubseq {
             test(d::numDistinct, "numDistinct", s, t, expected);
             test(d::numDistinct2, "numDistinct2", s, t, expected);
         }
+        test(d::numDistinct3, "numDistinct3", s, t, expected);
     }
 
     @Test
