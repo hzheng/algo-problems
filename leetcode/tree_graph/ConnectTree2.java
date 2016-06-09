@@ -61,6 +61,39 @@ public class ConnectTree2 {
         connect2(root.left);
     }
 
+    // one layer loop
+    // beats 32.04%
+    public void connect3(TreeLinkNode root) {
+        TreeLinkNode first = null;
+        TreeLinkNode last = null;
+        for (TreeLinkNode cur = root; cur != null; ) {
+            if (first == null) {
+                first = (cur.left != null) ? cur.left : cur.right;
+            }
+
+            if (cur.left != null) {
+                if (last != null) {
+                    last.next = cur.left;
+                }
+                last = cur.left;
+            }
+            if (cur.right != null) {
+                if (last != null) {
+                    last.next = cur.right;
+                }
+                last = cur.right;
+            }
+
+            if (cur.next != null) {
+                cur = cur.next;
+            } else {
+                cur = first;
+                last = null;
+                first = null;
+            }
+        }
+    }
+
     @FunctionalInterface
     interface Function<A> {
         public void apply(A a);
