@@ -7,8 +7,13 @@ import common.TreeLinkNode;
 
 // Populate each next pointer to point to its next right node. If there is no
 // next right node, the next pointer should be set to NULL.
+// Note:
+// You may only use constant extra space.
+// You may assume that it is a perfect binary tree (ie, all leaves are at the
+// same level, and every parent has two children).
 public class ConnectTree {
     // beats 10.93%
+    // space complexity: O(Log(N))
     public void connect(TreeLinkNode root) {
         if (root == null) return;
 
@@ -38,6 +43,7 @@ public class ConnectTree {
     }
 
     // beats 10.93%
+    // space complexity: O(Log(N))
     public void connect2(TreeLinkNode root) {
         if (root == null) return;
 
@@ -64,6 +70,37 @@ public class ConnectTree {
                 queue.offer(node.left);
             }
         }
+    }
+
+    // space complexity: O(1)
+    // beats 86.69%
+    public void connect3(TreeLinkNode root) {
+        for (TreeLinkNode prevHead = root; prevHead != null; ) {
+            TreeLinkNode nextHead = prevHead.left;
+            if (nextHead == null) return;
+
+            TreeLinkNode last = nextHead.next = prevHead.right;
+            for (TreeLinkNode prevCur = prevHead.next; prevCur != null;
+                 prevCur = prevCur.next) {
+                last.next = prevCur.left;
+                last = prevCur.left.next = prevCur.right;
+            }
+            prevHead = nextHead;
+        }
+    }
+
+    // recursion
+    // beats 32.42%
+    public void connect4(TreeLinkNode root) {
+        if (root == null || root.left == null) return;
+
+        root.left.next = root.right;
+        if (root.next != null) {
+            root.right.next = root.next.left;
+        }
+
+        connect4(root.left);
+        connect4(root.right);
     }
 
     @FunctionalInterface
