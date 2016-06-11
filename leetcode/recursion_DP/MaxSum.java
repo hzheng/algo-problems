@@ -94,6 +94,11 @@ public class MaxSum {
         return maxSum;
     }
 
+    // TODO: leetcode More practice:
+    // If you have figured out the O(n) solution, try coding another solution
+    // using the divide and conquer approach, which is more subtle.
+    // time complexity: O(N * log(N))
+
     private void test(Function<int[], Integer> maxSum, String name,
                       int expected, int ... a) {
         long t1 = System.nanoTime();
