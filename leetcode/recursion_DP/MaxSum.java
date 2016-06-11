@@ -76,6 +76,24 @@ public class MaxSum {
         return maxSum;
     }
 
+    // 编程之美
+    // beats 68.48%
+    public static int getMaxSum3(int[] nums) {
+        int n = nums.length;
+        int maxSum = nums[n - 1];
+        int start = nums[n - 1];
+        for (int i = n - 2; i >= 0; i--) {
+            if (start < 0) {
+                start = 0;
+            }
+            start += nums[i];
+            if (start > maxSum) {
+                maxSum = start;
+            }
+        }
+        return maxSum;
+    }
+
     private void test(Function<int[], Integer> maxSum, String name,
                       int expected, int ... a) {
         long t1 = System.nanoTime();
@@ -93,6 +111,7 @@ public class MaxSum {
         if (expected >= 0) {
             test(MaxSum::getMaxSum, "getMaxSum", expected, a);
             test(MaxSum::getMaxSum2, "getMaxSum2", expected, a);
+            test(MaxSum::getMaxSum3, "getMaxSum3", expected, a);
         }
     }
 
