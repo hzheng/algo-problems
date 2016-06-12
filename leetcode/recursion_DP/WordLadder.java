@@ -65,15 +65,17 @@ public class WordLadder {
     }
 
     // Cracking the Coding Interview(5ed) Problem 18.10
-    // Time Limit Exceeded
+    // beats 25.07%
     public int ladderLength2(String beginWord, String endWord,
                              Set<String> wordList) {
         if (beginWord.equals(endWord)) return 1;
 
         Queue<String> queue = new LinkedList<>();
+        // beat rate drops to 15.11% if use TreeSet
         Set<String> visited = new HashSet<>();
         queue.add(beginWord);
         visited.add(beginWord);
+        wordList.add(endWord);
         int level = 2;
         int curCount = 1;
         int nextCount = 0;
@@ -84,10 +86,10 @@ public class WordLadder {
                 curCount = nextCount - 1;
                 nextCount = 0;
             }
-            for (String w : oneEditSets(word)) {
+            for (String w : oneEditSets(word, wordList)) {
                 if (w.equals(endWord)) return level;
 
-                if (wordList.contains(w) && !visited.contains(w)) {
+                if (!visited.contains(w)) {
                     queue.add(w);
                     visited.add(w);
                     nextCount++;
@@ -97,14 +99,17 @@ public class WordLadder {
         return 0;
     }
 
-    private Set<String> oneEditSets(String word) {
-        Set<String> words = new TreeSet<>();
+    private Set<String> oneEditSets(String word, Set<String> dict) {
+        Set<String> words = new HashSet<>();
         for (int i = 0; i < word.length(); i++) {
             char[] chars = word.toCharArray();
             for (char c = 'a'; c <= 'z'; c++) {
                 if (c != word.charAt(i)) {
                     chars[i] = c;
-                    words.add(new String(chars));
+                    String str = new String(chars);
+                    if (dict.contains(str)) {
+                        words.add(str);
+                    }
                 }
             }
         }
