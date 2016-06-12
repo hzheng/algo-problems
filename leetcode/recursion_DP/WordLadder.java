@@ -65,6 +65,7 @@ public class WordLadder {
     }
 
     // Cracking the Coding Interview(5ed) Problem 18.10
+    // Time Limit Exceeded
     public int ladderLength2(String beginWord, String endWord,
                              Set<String> wordList) {
         if (beginWord.equals(endWord)) return 1;
@@ -110,6 +111,51 @@ public class WordLadder {
         return words;
     }
 
+    // beats 12.32%
+    public int ladderLength3(String beginWord, String endWord,
+                             Set<String> wordList) {
+        if (beginWord.equals(endWord)) return 1;
+
+        wordList.add(beginWord);
+        wordList.add(endWord);
+        HashSet<String> visited = new HashSet<>();
+        Queue<String> queue = new LinkedList<>();
+        queue.offer(beginWord);
+        visited.add(beginWord);
+        for (int level = 2; !queue.isEmpty(); level++) {
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                String word = queue.poll();
+                for (String nextWord : getNextWords(word, wordList)) {
+                    if (visited.contains(nextWord)) continue;
+
+                    if (nextWord.equals(endWord)) return level;
+
+                    visited.add(nextWord);
+                    queue.offer(nextWord);
+                }
+            }
+        }
+        return 0;
+    }
+
+    private List<String> getNextWords(String word, Set<String> dict) {
+        List<String> nextWords = new ArrayList<>();
+        for (char c = 'a'; c <= 'z'; c++) {
+            for (int i = 0; i < word.length(); i++) {
+                if (c == word.charAt(i)) continue;
+
+                char[] chars = word.toCharArray();
+                chars[i] = c;
+                String nextWord = new String(chars);
+                if (dict.contains(nextWord)) {
+                    nextWords.add(nextWord);
+                }
+            }
+        }
+        return nextWords;
+    }
+
     @FunctionalInterface
     interface Function<A, B, C, D> {
         public D apply(A a, B b, C c);
@@ -135,6 +181,7 @@ public class WordLadder {
         try {
             test(w::ladderLength, "ladderLength", begin, end, expected, words);
             test(w::ladderLength2, "ladderLength2", begin, end, expected, words);
+            test(w::ladderLength3, "ladderLength3", begin, end, expected, words);
         } catch (Exception e) {
             e.printStackTrace();
         }
