@@ -62,13 +62,10 @@ public class BestTransactionWithCooldown {
     // beats 50.82%
     // space complexity: O(1)
     public int maxProfit3(int[] prices) {
-        int n = prices.length;
-        if (n < 2) return 0;
-
-        int buy = -prices[0];
+        int buy = Integer.MIN_VALUE;
         int sell = 0;
-        for (int i = 1, prevSell = 0; i < prices.length; i++) {
-            int price = prices[i];
+        int prevSell = 0;
+        for (int price : prices) {
             int prevBuy = buy;
             buy = Math.max(prevSell - price, prevBuy);
             prevSell = sell;
