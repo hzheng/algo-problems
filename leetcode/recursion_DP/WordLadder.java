@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 // 1. Only one letter can be changed at a time
 // 2. Each intermediate word must exist in the word list
 public class WordLadder {
+    // DFS
     // Time Limit Exceeded
     public int ladderLength(String beginWord, String endWord,
                             Set<String> wordList) {
@@ -64,8 +65,9 @@ public class WordLadder {
         return count;
     }
 
+    // BFS is better that DFS since it guarantees the optimal result
     // Cracking the Coding Interview(5ed) Problem 18.10
-    // beats 25.07%
+    // beats 26.43%
     public int ladderLength2(String beginWord, String endWord,
                              Set<String> wordList) {
         if (beginWord.equals(endWord)) return 1;
@@ -103,8 +105,9 @@ public class WordLadder {
         Set<String> words = new HashSet<>();
         for (int i = 0; i < word.length(); i++) {
             char[] chars = word.toCharArray();
+            char ch = word.charAt(i);
             for (char c = 'a'; c <= 'z'; c++) {
-                if (c != word.charAt(i)) {
+                if (c != ch) {
                     chars[i] = c;
                     String str = new String(chars);
                     if (dict.contains(str)) {
