@@ -1,6 +1,7 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// https://leetcode.com/problems/zigzag-conversion/
 public class ZigZag {
     // beats 94.36%
     public String convert(String s, int numRows) {

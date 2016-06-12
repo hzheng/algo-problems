@@ -3,6 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// https://leetcode.com/problems/valid-sudoku/
 // Determine if a Sudoku is valid(not necessarily solvable)
 public class ValidSudoku {
     // beats 68.29%
@@ -77,6 +78,8 @@ public class ValidSudoku {
         bits[0] |= mask;
         return true;
     }
+
+    // TODO: use hash table
 
     void test(boolean expected, String[] boardStr) {
         int size = boardStr.length;

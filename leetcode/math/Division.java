@@ -76,6 +76,8 @@ public class Division {
         return sign > 0 ? res : -res;
     }
 
+    // TODO: binary search
+
     // dumped
     int countBits(int n) {
         int bits = 0;

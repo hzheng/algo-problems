@@ -6,6 +6,7 @@ import static org.junit.Assert.*;
 
 // The n-queens puzzle
 public class NQueens {
+    // https://leetcode.com/problems/n-queens/
     // beats 85.11%
     public static final char QUEEN = 'Q';
     public static final char SPACE = '.';
@@ -87,6 +88,7 @@ public class NQueens {
     }
 
     // N-Queens II
+    // https://leetcode.com/problems/n-queens-ii/
     // beats 85.11%
     // we can improve efficiency by removing board but that
     // need change class Marker's code

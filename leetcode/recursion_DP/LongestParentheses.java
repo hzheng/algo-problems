@@ -91,6 +91,8 @@ public class LongestParentheses {
         return Math.max(maxLen, s.length() - start - extraLeftParen);
     }
 
+    // TODO: add dynamci programming solution
+
     void test(String s, int expected) {
         assertEquals(expected, longestValidParentheses(s));
         assertEquals(expected, longestValidParentheses2(s));
