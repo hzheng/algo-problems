@@ -7,16 +7,16 @@ import static org.junit.Assert.*;
  * Cracking the Coding Interview(5ed) Problem 3.5:
  * Implement a MyQueue class which implements a queue using two stacks.
  */
-interface Queue {
+interface IQueue {
     void add(int i);
     Integer remove();
     Integer peek();
 }
 
-public class MyQueue implements Queue {
-    private Queue queue;
+public class MyQueue implements IQueue {
+    private IQueue queue;
 
-    public MyQueue(Queue impl) {
+    public MyQueue(IQueue impl) {
         this.queue = impl;
     }
 
@@ -32,7 +32,7 @@ public class MyQueue implements Queue {
         return queue.peek();
     }
 
-    static class QueueImpl1 implements Queue {
+    static class QueueImpl1 implements IQueue {
         Stack<Integer> inputStack = new Stack<Integer>();
         Stack<Integer> outputStack = new Stack<Integer>();
 
@@ -60,7 +60,7 @@ public class MyQueue implements Queue {
         }
     }
 
-    static class QueueImpl2 implements Queue {
+    static class QueueImpl2 implements IQueue {
         Stack<Integer> inputStack = new Stack<Integer>();
         Stack<Integer> outputStack = new Stack<Integer>();
 
@@ -87,7 +87,7 @@ public class MyQueue implements Queue {
         }
     }
 
-    public static void test(Queue queueImpl) {
+    public static void test(IQueue queueImpl) {
         MyQueue queue = new MyQueue(queueImpl);
         assertNull(queue.remove());
         int n = 100;
