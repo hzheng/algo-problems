@@ -84,7 +84,7 @@ public class WordLadder2 {
         return words;
     }
 
-    // beats 15.52%
+    // beats 36.74%
     public List<List<String> > findLadders2(String beginWord, String endWord,
                                             Set<String> wordList) {
         List<List<String> > res = new ArrayList<>();
@@ -103,12 +103,8 @@ public class WordLadder2 {
         while (!queue.isEmpty()) {
             WordNode node = queue.poll();
             String word = node.word;
-            int level = 0;
-            for (WordNode n = node; n != null; n = n.prev) {
-                visited.add(n.word);
-                level++;
-            }
-            if (found && level >= maxLevel) break;
+            visited.add(word);
+            if (found && node.level >= maxLevel) break;
 
             Set<String> adjacency;
             if (cache.containsKey(word)) {
@@ -141,10 +137,12 @@ public class WordLadder2 {
     static class WordNode {
         String word;
         WordNode prev;
+        int level;
 
         WordNode(String word, WordNode prev) {
             this.word = word;
             this.prev = prev;
+            level = (prev == null) ? 1 : prev.level + 1;
         }
     }
 
@@ -167,8 +165,7 @@ public class WordLadder2 {
                              int len, List<List<String>> res) {
         if (len == 0) {
             if (beginWord.equals(endWord)) {
-                path = new ArrayList<>(path);
-                res.add(path);
+                res.add(new ArrayList<>(path));
             }
             return;
         }
