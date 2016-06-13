@@ -32,6 +32,7 @@ public class WordLadder2 {
         }
 
         Queue<WordPath> queue = new LinkedList<>();
+        Map<String, Set<String>> cache = new HashMap<>();
         queue.add(new WordPath(beginWord, new ArrayList<>()));
         wordList.add(endWord);
         int maxLevel = Integer.MAX_VALUE;
@@ -43,7 +44,14 @@ public class WordLadder2 {
             path.add(word);
             if (found && path.size() >= maxLevel) break;
 
-            for (String w : oneEditSets(word, wordList)) {
+            Set<String> adjacency;
+            if (cache.containsKey(word)) {
+                adjacency = cache.get(word);
+            } else {
+                adjacency = oneEditSets(word, wordList);
+                cache.put(word, adjacency);
+            }
+            for (String w : adjacency) {
                 if (w.equals(endWord)) {
                     path.add(endWord);
                     res.add(new ArrayList<>(path));
@@ -76,7 +84,7 @@ public class WordLadder2 {
         return words;
     }
 
-    // Time Limit Exceeded
+    // beats 15.52%
     public List<List<String> > findLadders2(String beginWord, String endWord,
                                             Set<String> wordList) {
         List<List<String> > res = new ArrayList<>();
@@ -91,6 +99,7 @@ public class WordLadder2 {
         int maxLevel = Integer.MAX_VALUE;
         boolean found = false;
         Set<String> visited = new HashSet<>();
+        Map<String, Set<String>> cache = new HashMap<>();
         while (!queue.isEmpty()) {
             WordNode node = queue.poll();
             String word = node.word;
@@ -101,7 +110,14 @@ public class WordLadder2 {
             }
             if (found && level >= maxLevel) break;
 
-            for (String w : oneEditSets(word, wordList)) {
+            Set<String> adjacency;
+            if (cache.containsKey(word)) {
+                adjacency = cache.get(word);
+            } else {
+                adjacency = oneEditSets(word, wordList);
+                cache.put(word, adjacency);
+            }
+            for (String w : adjacency) {
                 if (w.equals(endWord)) {
                     List<String> path = new LinkedList<>();
                     while (node != null) {
@@ -132,6 +148,7 @@ public class WordLadder2 {
         }
     }
 
+    // Time Limit Exceeded
     // DFS + BFS
     public List<List<String> > findLadders3(String beginWord, String endWord,
                                             Set<String> wordList) {
@@ -140,13 +157,14 @@ public class WordLadder2 {
         for (int i = 0; res.size() == 0 && i < wordList.size(); i++) {
             List<String> path = new ArrayList<>();
             path.add(beginWord);
-            depthSearch(beginWord, endWord, wordList, path, i, res);
+            depthSearch(beginWord, endWord, wordList, new HashMap<>(), path, i, res);
         }
         return res;
     }
 
     private void depthSearch(String beginWord, String endWord, Set<String> dict,
-                             List<String> path, int len, List<List<String>> res) {
+                             Map<String, Set<String>> cache, List<String> path,
+                             int len, List<List<String>> res) {
         if (len == 0) {
             if (beginWord.equals(endWord)) {
                 path = new ArrayList<>(path);
@@ -155,10 +173,17 @@ public class WordLadder2 {
             return;
         }
 
-        for (String w : oneEditSets(beginWord, dict)) {
+        Set<String> adjacency;
+        if (cache.containsKey(beginWord)) {
+            adjacency = cache.get(beginWord);
+        } else {
+            adjacency = oneEditSets(beginWord, dict);
+            cache.put(beginWord, adjacency);
+        }
+        for (String w : adjacency) {
             if (!path.contains(w)) {
                 path.add(w);
-                depthSearch(w, endWord, dict, path, len - 1, res);
+                depthSearch(w, endWord, dict, cache, path, len - 1, res);
                 path.remove(path.size() - 1);
             }
         }
