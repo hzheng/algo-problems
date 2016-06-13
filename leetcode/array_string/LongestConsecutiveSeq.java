@@ -3,6 +3,8 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// https://leetcode.com/problems/longest-consecutive-sequence/
+//
 // Given an unsorted array of integers, find the length of the longest
 // consecutive elements sequence.
 public class  LongestConsecutiveSeq {
