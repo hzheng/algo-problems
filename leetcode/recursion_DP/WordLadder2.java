@@ -132,6 +132,38 @@ public class WordLadder2 {
         }
     }
 
+    // DFS + BFS
+    public List<List<String> > findLadders3(String beginWord, String endWord,
+                                            Set<String> wordList) {
+        List<List<String> > res = new ArrayList<>();
+        wordList.add(endWord);
+        for (int i = 0; res.size() == 0 && i < wordList.size(); i++) {
+            List<String> path = new ArrayList<>();
+            path.add(beginWord);
+            depthSearch(beginWord, endWord, wordList, path, i, res);
+        }
+        return res;
+    }
+
+    private void depthSearch(String beginWord, String endWord, Set<String> dict,
+                             List<String> path, int len, List<List<String>> res) {
+        if (len == 0) {
+            if (beginWord.equals(endWord)) {
+                path = new ArrayList<>(path);
+                res.add(path);
+            }
+            return;
+        }
+
+        for (String w : oneEditSets(beginWord, dict)) {
+            if (!path.contains(w)) {
+                path.add(w);
+                depthSearch(w, endWord, dict, path, len - 1, res);
+                path.remove(path.size() - 1);
+            }
+        }
+    }
+
     interface Function<A, B, C, D> {
         public D apply(A a, B b, C c);
     }
@@ -167,6 +199,7 @@ public class WordLadder2 {
         try {
             test(w::findLadders, "findLadders", begin, end, expected, words);
             test(w::findLadders2, "findLadders2", begin, end, expected, words);
+            test(w::findLadders3, "findLadders3", begin, end, expected, words);
         } catch (Exception e) {
             e.printStackTrace();
         }
