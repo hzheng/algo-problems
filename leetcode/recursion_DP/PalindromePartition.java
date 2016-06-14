@@ -147,6 +147,46 @@ public class PalindromePartition {
         table2[start] = min + 1;
     }
 
+    // beats 96.25%
+    public int minCut3(String s) {
+        int len = s.length();
+        char[] chars = s.toCharArray();
+        Integer[] table2 = new Integer[len];
+        fillPalindromeTable3(chars, 0, len - 1, new Boolean[len][len], table2);
+        return table2[0];
+    }
+
+    private void fillPalindromeTable3(char[] chars, int start, int end,
+                                      Boolean[][] table, Integer[] table2) {
+        if (table2[start] != null) return;
+
+        if (isPalindrome(chars, start, end, table)) {
+            table2[start] = 0;
+            return;
+        }
+
+        int min = Integer.MAX_VALUE;
+        for (int i = end - 1; i >= start; i--) {
+            if (isPalindrome(chars, start, i, table)) {
+                fillPalindromeTable3(chars, i + 1, end, table, table2);
+                min = Math.min(min, table2[i + 1]);
+                if (min == 0) break;
+            }
+        }
+        table2[start] = min + 1;
+    }
+
+    private Boolean isPalindrome(char[] chars, int start, int end,
+                                 Boolean[][] table) {
+        if (table[start][end] != null) return table[start][end];
+
+        if (chars[start] != chars[end]) return table[start][end] = false;
+
+        if (start + 2 >= end) return table[start][end] = true;
+
+        return table[start][end] = isPalindrome(chars, start + 1, end - 1, table);
+    }
+
     String[][] sort(String[][] lists) {
         Arrays.sort(lists, (a, b) -> {
             int len = Math.min(a.length, b.length);
@@ -194,6 +234,7 @@ public class PalindromePartition {
         PalindromePartition p = new PalindromePartition();
         test(p::minCut, "minCut", s, expected);
         test(p::minCut2, "minCut2", s, expected);
+        test(p::minCut3, "minCut3", s, expected);
     }
 
     @Test
