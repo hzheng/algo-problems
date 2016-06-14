@@ -51,6 +51,40 @@ public class PalindromePartition {
         return partitions;
     }
 
+    // backtracking
+    // beats 83.28%
+    public List<List<String> > partition2(String s) {
+        int len = s.length();
+        char[] chars = s.toCharArray();
+        Boolean[][] table = new Boolean[len][len];
+        for (int i = 0; i < len; i++) {
+            table[i][i] = true;
+            for (int j = i + 1; j < len; j++) {
+                fillPalindromeTable(chars, i, j, table);
+            }
+        }
+
+        List<List<String>> res = new ArrayList<>();
+    	partition2(s, 0, len, new ArrayList<>(), res, table);
+    	return res;
+    }
+
+    private void partition2(String s, int start, int end, List<String> partition,
+                            List<List<String>> res, Boolean[][] table) {
+        if (start == end) {
+    		res.add(new ArrayList<>(partition));
+    		return;
+        }
+
+        for (int i = start; i < end; i++) {
+            if (table[start][i]) {
+                partition.add(s.substring(start, i + 1));
+                partition2(s, i + 1, end, partition, res, table);
+    			partition.remove(partition.size() - 1);
+            }
+    	}
+    }
+
     private void fillPalindromeTable(char[] chars, int start, int end,
                                      Boolean[][] table) {
         if (table[start][end] != null) return;
@@ -254,6 +288,7 @@ public class PalindromePartition {
     void test(String s, String[][] expected) {
         PalindromePartition p = new PalindromePartition();
         test(p::partition, s, expected);
+        test(p::partition2, s, expected);
     }
 
     @Test
