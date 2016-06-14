@@ -187,6 +187,49 @@ public class PalindromePartition {
         return table[start][end] = isPalindrome(chars, start + 1, end - 1, table);
     }
 
+    // beats 19.28%
+    public int minCut4(String s) {
+        int len = s.length();
+        boolean palindromes[][] = new boolean[len][len];
+        int cuts[] = new int[len];
+        // unlike above solution, this time table is built from small indices,
+        // which makes life much easier
+        for (int i = 0; i < len; i++) {
+            cuts[i] = i;
+            for (int j = 0; j <= i; j++) {
+                if (s.charAt(i) == s.charAt(j)
+                    && (i - j < 2 || palindromes[j + 1][i - 1])) {
+                    palindromes[j][i] = true;
+                    cuts[i] = (j == 0) ? 0 : Math.min(cuts[i], cuts[j - 1] + 1);
+                }
+            }
+        }
+        return cuts[len - 1];
+    }
+
+    // https://leetcode.com/discuss/9476/solution-does-not-need-table-palindrome-right-uses-only-space
+    // No palindrome table, which makes space complexity: O(N)
+    // beats 97.27%
+    public int minCut5(String s) {
+        int len = s.length();
+        char[] c = s.toCharArray();
+        int[] cuts = new int[len + 1];
+        for (int i = 0; i <= len; i++) {
+            cuts[i] = i - 1;
+        }
+        for (int i = 0; i < len; i++) {
+            // odd length palindrome
+            for (int j = 0; i >= j && i + j < len && c[i - j] == c[i + j]; j++) {
+                cuts[i + j + 1] = Math.min(cuts[i + j + 1], cuts[i - j] + 1);
+            }
+            // even length palindrome
+            for (int j = 1; i + 1 >= j && i + j < len && c[i - j + 1] == c[i + j]; j++) {
+                cuts[i + j + 1] = Math.min(cuts[i + j + 1], cuts[i - j + 1] + 1);
+            }
+        }
+        return cuts[len];
+    }
+
     String[][] sort(String[][] lists) {
         Arrays.sort(lists, (a, b) -> {
             int len = Math.min(a.length, b.length);
@@ -235,6 +278,8 @@ public class PalindromePartition {
         test(p::minCut, "minCut", s, expected);
         test(p::minCut2, "minCut2", s, expected);
         test(p::minCut3, "minCut3", s, expected);
+        test(p::minCut4, "minCut4", s, expected);
+        test(p::minCut5, "minCut5", s, expected);
     }
 
     @Test
