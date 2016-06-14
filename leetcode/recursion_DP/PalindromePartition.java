@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 // Given a string s, partition s such that every substring of the partition is a
 // palindrome. Return all possible palindrome partitioning of s.
 public class PalindromePartition {
-    // beats 9.18%
+    // beats 21.86%
     public List<List<String> > partition(String s) {
         int len = s.length();
         char[] chars = s.toCharArray();
@@ -26,14 +26,13 @@ public class PalindromePartition {
 
     private List<List<String> > partition(char[] chars, int start, int end,
                                           Boolean[][] table) {
-        List<List<String> > partitions = new ArrayList<>();
-        if (start > end) {
-            partitions.add(Collections.emptyList());
-            return partitions;
-        }
-
-        if (start == end) {
-            partitions.add(Arrays.asList(String.valueOf(chars[start])));
+        List<List<String> > partitions = new LinkedList<>();
+        if (start >= end) {
+            List<String> list = new LinkedList<>();
+            if (start == end) {
+                list.add(String.valueOf(chars[start]));
+            }
+            partitions.add(list);
             return partitions;
         }
 
@@ -41,10 +40,8 @@ public class PalindromePartition {
             if (table[start][i]) {
                 String first = new String(chars, start, i - start + 1);
                 for (List<String> list : partition(chars, i + 1, end, table)) {
-                    List<String> partition = new ArrayList<>();
-                    partition.add(first);
-                    partition.addAll(list);
-                    partitions.add(partition);
+                    list.add(0, first);
+                    partitions.add(list);
                 };
             }
         }
