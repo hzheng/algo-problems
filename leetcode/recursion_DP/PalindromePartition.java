@@ -9,6 +9,9 @@ import static org.junit.Assert.*;
 //
 // Given a string s, partition s such that every substring of the partition is a
 // palindrome. Return all possible palindrome partitioning of s.
+//
+// https://leetcode.com/problems/palindrome-partitioning-ii/
+// Return the minimum cuts needed for a palindrome partitioning of s.
 public class PalindromePartition {
     // beats 21.86%
     public List<List<String> > partition(String s) {
@@ -62,6 +65,32 @@ public class PalindromePartition {
         }
     }
 
+    // Time Limit Exceeded
+    public int minCut(String s) {
+        int len = s.length();
+        char[] chars = s.toCharArray();
+        Boolean[][] table = new Boolean[len][len];
+        for (int i = 0; i < len; i++) {
+            table[i][i] = true;
+            for (int j = i + 1; j < len; j++) {
+                fillPalindromeTable(chars, i, j, table);
+            }
+        }
+        return minCut(chars, 0, len - 1, table);
+    }
+
+    private int minCut(char[] chars, int start, int end, Boolean[][] table) {
+        int min = Integer.MAX_VALUE;
+        for (int i = start; i <= end; i++) {
+            if (table[start][i]) {
+                if (i == end)  return 0;
+                if (i + 1 == end)  return 1;
+                min =  Math.min(min, minCut(chars, i + 1, end, table));
+            }
+        }
+        return min + 1;
+    }
+
     String[][] sort(String[][] lists) {
         Arrays.sort(lists, (a, b) -> {
             int len = Math.min(a.length, b.length);
@@ -96,6 +125,25 @@ public class PalindromePartition {
             {"a", "a", "bab", "a"}, {"a", "aba", "b", "a"}, {"a", "ababa"},
             {"aa", "b", "a", "b", "a"}, {"aa", "b", "aba"}, {"aa", "bab", "a"}
         });
+    }
+
+    void test(Function<String, Integer> minCut, String s, int expected) {
+        assertEquals(expected, (int)minCut.apply(s));
+    }
+
+    void test(String s, int expected) {
+        PalindromePartition p = new PalindromePartition();
+        test(p::minCut, s, expected);
+    }
+
+    @Test
+    public void test2() {
+        test("aba", 0);
+        test("aab", 1);
+        test("aababa", 1);
+        test("aabbbaccbaaba", 4);
+        test("aabbbaccbaabababac", 5);
+        test("ababababababababababababcbabababababababababababa", 0);
     }
 
     public static void main(String[] args) {
