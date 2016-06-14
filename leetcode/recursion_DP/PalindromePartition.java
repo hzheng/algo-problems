@@ -85,10 +85,17 @@ public class PalindromePartition {
         if (cache.containsKey(key)) return cache.get(key);
 
         int min = Integer.MAX_VALUE;
-        for (int i = start; i <= end; i++) {
+        for (int i = end; i >= start; i--) {
             if (table[start][i]) {
-                if (i == end)  return 0;
-                if (i + 1 == end)  return 1;
+                if (i == end) {
+                    min = -1;
+                    break;
+                }
+
+                if (i + 1 == end) {
+                    min = 0;
+                    break;
+                }
 
                 String k = "" + (i + 1) + "-" + end;
                 int m;
@@ -102,6 +109,42 @@ public class PalindromePartition {
         }
         cache.put(key, ++min);
         return min;
+    }
+
+    public int minCut2(String s) {
+        int len = s.length();
+        char[] chars = s.toCharArray();
+        Boolean[][] table = new Boolean[len][len];
+        for (int i = 0; i < len; i++) {
+            table[i][i] = true;
+            for (int j = i + 1; j < len; j++) {
+                fillPalindromeTable(chars, i, j, table);
+            }
+        }
+
+        Integer[] table2 = new Integer[len];
+        fillPalindromeTable2(0, len - 1, table, table2);
+        return table2[0];
+    }
+
+    private void fillPalindromeTable2(int start, int end,
+                                      Boolean[][] table, Integer[] table2) {
+        if (table2[start] != null) return;
+
+        if (table[start][end]) {
+            table2[start] = 0;
+            return;
+        }
+
+        int min = Integer.MAX_VALUE;
+        for (int i = end - 1; i >= start; i--) {
+            if (table[start][i]) {
+                fillPalindromeTable2(i + 1, end, table, table2);
+                min = Math.min(min, table2[i + 1]);
+                if (min == 0) break;
+            }
+        }
+        table2[start] = min + 1;
     }
 
     String[][] sort(String[][] lists) {
@@ -140,13 +183,17 @@ public class PalindromePartition {
         });
     }
 
-    void test(Function<String, Integer> minCut, String s, int expected) {
+    void test(Function<String, Integer> minCut, String name,
+              String s, int expected) {
+        long t1 = System.nanoTime();
         assertEquals(expected, (int)minCut.apply(s));
+        System.out.format("%s: %.3f ms\n", name, (System.nanoTime() - t1) * 1e-6);
     }
 
     void test(String s, int expected) {
         PalindromePartition p = new PalindromePartition();
-        test(p::minCut, s, expected);
+        test(p::minCut, "minCut", s, expected);
+        test(p::minCut2, "minCut2", s, expected);
     }
 
     @Test
@@ -157,6 +204,7 @@ public class PalindromePartition {
         test("aabbbaccbaaba", 4);
         test("aabbbaccbaabababac", 5);
         test("ababababababababababababcbabababababababababababa", 0);
+        test("aabbaa", 0);
         test("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
              + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
              + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
@@ -180,7 +228,7 @@ public class PalindromePartition {
              + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
              + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
              + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-             + "aaaaaaaaaaaaaaaaaaaaaaaaaaa", 0);
+             + "aaaaaaaaaaaaaaaaaaaaaaaaaaa", 1);
     }
 
     public static void main(String[] args) {
