@@ -164,6 +164,8 @@ public class SurroundedRegions {
         }
     }
 
+    // TODO: use iterative DFS by use of stack
+
     private char[][] convert(String[] s) {
         char[][] board = new char[s.length][];
         for (int i = 0; i < s.length; i++) {
