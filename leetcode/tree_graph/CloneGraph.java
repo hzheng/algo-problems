@@ -38,30 +38,26 @@ public class CloneGraph {
         if (node == null) return null;
 
         Queue<UndirectedGraphNode> queue = new LinkedList<>();
-        Map<Integer, UndirectedGraphNode> map = new HashMap<>();
-        UndirectedGraphNode root = clone2(node, map);
+        Map<UndirectedGraphNode, UndirectedGraphNode> map = new HashMap<>();
+        UndirectedGraphNode root = new UndirectedGraphNode(node.label);
+        map.put(node, root);
         queue.offer(node);
         while (!queue.isEmpty()) {
             UndirectedGraphNode n = queue.poll();
-            UndirectedGraphNode cloned = clone2(n, map);
+            UndirectedGraphNode cloned = map.get(n);
             for (UndirectedGraphNode neighbor : n.neighbors) {
-                if (!map.containsKey(neighbor.label)) {
+                UndirectedGraphNode clonedNeighbor = null;
+                if (map.containsKey(neighbor)) {
+                    clonedNeighbor = map.get(neighbor);
+                } else {
                     queue.offer(neighbor);
+                    clonedNeighbor = new UndirectedGraphNode(neighbor.label);
+                    map.put(neighbor, clonedNeighbor);
                 }
-                cloned.neighbors.add(clone2(neighbor, map));
+                cloned.neighbors.add(clonedNeighbor);
             }
         }
         return root;
-    }
-
-    private UndirectedGraphNode clone2(UndirectedGraphNode node,
-                                       Map<Integer, UndirectedGraphNode> map) {
-        int label = node.label;
-        if (map.containsKey(label)) return map.get(label);
-
-        UndirectedGraphNode cloned = new UndirectedGraphNode(label);
-        map.put(label, cloned);
-        return cloned;
     }
 
     void test(String s) {
