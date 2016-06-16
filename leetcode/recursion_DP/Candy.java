@@ -14,6 +14,7 @@ import static org.junit.Assert.*;
 // What is the minimum candies you must give?
 public class Candy {
     // beats 78.77%
+    // time complexity: O(N), space complexity: O(1)
     public int candy(int[] ratings) {
         int n = ratings.length;
         if (n < 2) return n;
@@ -48,6 +49,33 @@ public class Candy {
         return total;
     }
 
+    // beats 78.77%
+    // time complexity: O(N), space complexity: O(N)
+    public int candy2(int[] ratings) {
+        int n = ratings.length;
+        int[] candies = new int[n];
+        // from left to right
+        for (int i = 1; i < n; i++) {
+            if (ratings[i] > ratings[i - 1]) {
+                candies[i] = candies[i - 1] + 1;
+            }
+        }
+        // from right to left
+        for (int i = n - 2; i >= 0; i--) {
+            if (ratings[i] > ratings[i + 1] && candies[i] <= candies[i + 1]) {
+                candies[i] = candies[i + 1] + 1;
+            }
+        }
+
+        int total = n;
+        for (int candy : candies) {
+            total += candy;
+        }
+        return total;
+    }
+
+    // TODO: DP solution
+
     void test(Function<int[], Integer> candy, String name,
               int expected, int ... ratings) {
         assertEquals(expected, (int)candy.apply(ratings));
@@ -56,6 +84,7 @@ public class Candy {
     void test(int expected, int ... ratings) {
         Candy c = new Candy();
         test(c::candy, "candy", expected, ratings);
+        test(c::candy2, "candy2", expected, ratings);
     }
 
     @Test
