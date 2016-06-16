@@ -30,6 +30,25 @@ public class LinkedListCycle2 {
         return slow;
     }
 
+    // beats 17.22%
+    public ListNode detectCycle2(ListNode head) {
+        ListNode slow = head;
+        ListNode fast = head;
+        while (fast != null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+            if (fast == slow) {
+                slow = head;
+                while (fast != slow) {
+                    slow = slow.next;
+                    fast = fast.next;
+                }
+                return slow;
+            }
+        }
+        return null;
+    }
+
     void test(Function<ListNode, ListNode> detect,
               int[] n, Integer expected) {
         ListNode res = detect.apply(ListNode.byVals(n));
@@ -43,6 +62,7 @@ public class LinkedListCycle2 {
     void test(int[] n, Integer expected) {
         LinkedListCycle2 l = new LinkedListCycle2();
         test(l::detectCycle, n, expected);
+        test(l::detectCycle2, n, expected);
     }
 
     @Test
