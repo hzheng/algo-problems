@@ -3,6 +3,8 @@ package common;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 
 public class ListNode {
     public int val;
@@ -17,6 +19,20 @@ public class ListNode {
         ListNode cur = dummy;
         for (int val : vals) {
             cur.next = new ListNode(val);
+            cur = cur.next;
+        }
+        return dummy.next;
+    }
+
+    public static ListNode byVals(int... vals) {
+        ListNode dummy = new ListNode(0);
+        ListNode cur = dummy;
+        Map<Integer, ListNode> map = new HashMap<>();
+        for (int val : vals) {
+            if (!map.containsKey(val)) {
+                map.put(val, new ListNode(val));
+            }
+            cur.next = map.get(val);
             cur = cur.next;
         }
         return dummy.next;
