@@ -80,20 +80,19 @@ public class ReorderList {
     void test(Function<ListNode> reorder, int [] nums, int[] expected) {
         ListNode list = ListNode.of(nums);
         reorder.apply(list);
-        System.out.println("list "+list);
         assertArrayEquals(expected, list.toArray());
     }
 
     void test(int[] nums, int[] expected) {
         ReorderList r = new ReorderList();
-        // test(r::reorderList, nums, expected);
-        // test(r::reorderList2, nums, expected);
+        test(r::reorderList, nums, expected);
+        test(r::reorderList2, nums, expected);
         test(r::reorderList3, nums, expected);
     }
 
     @Test
     public void test1() {
-        // test(new int[] {1, 2, 3, 4}, new int[] {1, 4, 2, 3});
+        test(new int[] {1, 2, 3, 4}, new int[] {1, 4, 2, 3});
         test(new int[] {1, 2, 3, 4, 5, 6},
              new int[] {1, 6, 2, 5, 3, 4});
         test(new int[] {1, 2, 3, 4, 5, 6, 7},
