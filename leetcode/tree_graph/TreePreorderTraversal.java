@@ -45,6 +45,37 @@ public class TreePreorderTraversal {
         return res;
     }
 
+    // beats 1.61%
+    public List<Integer> preorderTraversal3(TreeNode root) {
+        Stack<TreeNode> stack = new Stack<>();
+        List<Integer> res = new ArrayList<>();
+        for (TreeNode n = root; n != null || !stack.empty(); ) {
+            if (n != null) {
+                stack.push(n);
+                res.add(n.val);
+                n = n.left;
+            } else {
+                n = stack.pop().right;
+            }
+        }
+        return res;
+    }
+
+    // beats 55.79%
+    public List<Integer> preorderTraversal4(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        if (root == null) return res;
+
+        List<Integer> left = preorderTraversal4(root.left);
+        List<Integer> right = preorderTraversal4(root.right);
+        res.add(root.val);
+        res.addAll(left);
+        res.addAll(right);
+        return res;
+    }
+
+    // TODO: Morris traversal
+
     void test(Function<TreeNode, List<Integer> > traversal,
               String s, Integer ... expected) {
         TreeNode root = TreeNode.of(s);
@@ -56,6 +87,8 @@ public class TreePreorderTraversal {
         TreePreorderTraversal t = new TreePreorderTraversal();
         test(t::preorderTraversal, s, expected);
         test(t::preorderTraversal2, s, expected);
+        test(t::preorderTraversal3, s, expected);
+        test(t::preorderTraversal4, s, expected);
     }
 
     @Test
