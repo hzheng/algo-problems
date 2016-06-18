@@ -16,7 +16,7 @@ import java.util.function.Function;
 public class FindDuplicate {
     // naive method
     // time complexity: O(N ^ 2)
-    // beats 3.80%
+    // beats 3.80% (163 ms)
     public int findDuplicate(int[] nums) {
         for (int i = 0; i < nums.length - 1; i++) {
             for (int j = i + 1; j < nums.length; j++) {
@@ -27,7 +27,7 @@ public class FindDuplicate {
     }
 
     // time complexity: O(N)
-    // beats 8.09%
+    // beats 8.09% (19 ms)
     public int findDuplicate2(int[] nums) {
         int[] bitCounts = new int[32];
         for (int n = 1; n < nums.length; n++) {
@@ -54,7 +54,7 @@ public class FindDuplicate {
     }
 
     // time complexity: O(N)
-    // beats 8.75%
+    // beats 8.75%(14 ms)
     public int findDuplicate3(int[] nums) {
         int duplicate = 0;
         for (int i = 0; i < 32; i++) {
@@ -77,7 +77,7 @@ public class FindDuplicate {
 
     // time complexity: O(N * Log(N))
     // Since N < 2 ^ 32, hence Log(N) < 32, it's actually faster than the above
-    // beats 46.53%
+    // beats 46.53%(5 ms)
     public int findDuplicate4(int[] nums) {
         int low = 1;
         int high = nums.length - 1;
@@ -98,6 +98,25 @@ public class FindDuplicate {
         return low;
     }
 
+    // Floyd's Algorithm
+    // time complexity: O(N))
+    // beats 67.66%(1 ms)
+    public int findDuplicate5(int[] nums) {
+        int slow = 0;
+        int fast = 0;
+        do {
+            slow = nums[slow];
+            fast = nums[nums[fast]];
+        } while (slow != fast);
+
+        slow = 0;
+        while (slow != fast) {
+            slow = nums[slow];
+            fast = nums[fast];
+        }
+        return slow;
+    }
+
     void test(Function<int[], Integer> find, int expected, int ... nums) {
         assertEquals(expected, (int)find.apply(nums));
     }
@@ -108,6 +127,7 @@ public class FindDuplicate {
         test(f::findDuplicate2, expected, nums);
         test(f::findDuplicate3, expected, nums);
         test(f::findDuplicate4, expected, nums);
+        test(f::findDuplicate5, expected, nums);
     }
 
     @Test
