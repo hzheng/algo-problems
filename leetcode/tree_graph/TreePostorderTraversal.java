@@ -55,6 +55,77 @@ public class TreePostorderTraversal {
         return res;
     }
 
+    // beats 7.51%
+    // modify input
+    public List<Integer> postorderTraversal3(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        if (root == null) return res;
+
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            TreeNode n = stack.peek();
+            if (n.left == null && n.right == null) {
+                res.add(stack.pop().val);
+            }
+            else {
+                if (n.right != null) {
+                    stack.push(n.right);
+                    n.right = null;
+                }
+                if (n.left != null) {
+                    stack.push(n.left);
+                    n.left = null;
+                }
+            }
+        }
+        return res;
+    }
+
+    // beats 7.51%
+    public List<Integer> postorderTraversal4(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        if (root == null) return res;
+
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        TreeNode prev = null;
+        while (!stack.isEmpty()) {
+            TreeNode cur = stack.peek();
+            if (cur.left == null && cur.right == null
+                || prev != null && (prev == cur.left || prev == cur.right)) {
+                res.add(stack.pop().val);
+                prev = cur;
+            } else {
+                if (cur.right != null) {
+                    stack.push(cur.right);
+                }
+                if (cur.left != null) {
+                    stack.push(cur.left);
+                }
+            }
+        }
+        return res;
+    }
+
+    // beats 71.01%
+    public List<Integer> postorderTraversal5(TreeNode root) {
+        LinkedList<Integer> res = new LinkedList<>();
+        Stack<TreeNode> leftChildren = new Stack<>();
+        for (TreeNode node = root; node != null; ) {
+            // res.add(0, node.val); // beat rate will drop to 7.51%
+            res.addFirst(node.val);
+            if (node.left != null) {
+                leftChildren.push(node.left);
+            }
+            node = node.right;
+            if (node == null && !leftChildren.isEmpty()) {
+                node = leftChildren.pop();
+            }
+        }
+        return res;
+    }
+
     // TODO: Morris traversal
 
     void test(Function<TreeNode, List<Integer> > traversal,
@@ -68,6 +139,9 @@ public class TreePostorderTraversal {
         TreePostorderTraversal t = new TreePostorderTraversal();
         test(t::postorderTraversal, s, expected);
         test(t::postorderTraversal2, s, expected);
+        test(t::postorderTraversal3, s, expected);
+        test(t::postorderTraversal4, s, expected);
+        test(t::postorderTraversal5, s, expected);
     }
 
     @Test
