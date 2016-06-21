@@ -23,10 +23,6 @@ class LRUCache0 {
             this.val = val;
             this.serialNum = serialNum;
         }
-
-        public String toString() {
-            return val + "|" + serialNum;
-        }
     }
 
     private int capacity;
