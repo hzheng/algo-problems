@@ -61,7 +61,7 @@ public class MinInRotatedSortedArray {
         test(4, 10, 4, 5, 6, 7, 8, 9);
         test(0, 4, 5, 6, 7, 0, 1, 2);
         test(0, 3, 4, 5, 6, 7, 0, 1, 2);
-        test(0, 7, 4, 5, 6, 7, 8, 0, 1, 2, 3);
+        test(0, 4, 5, 6, 7, 8, 0, 1, 2, 3);
     }
 
     public static void main(String[] args) {
