@@ -11,7 +11,7 @@ import common.ListNode;
 //
 // Sort a linked list in O(n log n) time using constant space complexity.
 public class SortList {
-    // beats 15.88%
+    // beats 15.88% (9 ms)
     // time complexity: O(N * log(N)), space complexity: O(log(N))
     public ListNode sortList(ListNode head) {
         if (head == null || head.next == null) return head;
@@ -53,7 +53,7 @@ public class SortList {
         return dummy.next;
     }
 
-    // beats 64.75%
+    // beats 64.75% (7 ms)
     // time complexity: O(N * log(N)), space complexity: O(log(N))
     public ListNode sortList2(ListNode head) {
         if (head == null) return head;
@@ -79,6 +79,8 @@ public class SortList {
         return merge(sort(dummy, len / 2), sort(dummy, len - len / 2));
     }
 
+    // beats 1.57% (26 ms)
+    // time complexity: O(N * log(N)), space complexity: O(1))
     public ListNode sortList3(ListNode head) {
         if (head == null) return head;
 
