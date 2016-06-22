@@ -42,6 +42,7 @@ public class EvalRPN {
 
     @Test
     public void test1() {
+        test(1, "2", "1", "-");
         test(2, "2");
         test(9, "2", "1", "+", "3", "*");
         test(6, "4", "13", "5", "/", "+");
