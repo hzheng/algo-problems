@@ -3,6 +3,8 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// https://leetcode.com/problems/search-in-rotated-sorted-array/
+//
 // Suppose a sorted array is rotated at some pivot unknown to you beforehand.
 // You may assume no duplicate exists in the array.
 public class SearchRotatedSortedArray {
@@ -15,7 +17,7 @@ public class SearchRotatedSortedArray {
         int first = nums[0];
         if (nums[right] < first) {
             while (right > left) {
-                pivot = (left + right) / 2;
+                pivot = left + (right - left) / 2;
                 if (nums[pivot] >= first) {
                     left = pivot + 1;
                 } else {
