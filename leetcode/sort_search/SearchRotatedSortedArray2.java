@@ -15,10 +15,10 @@ public class SearchRotatedSortedArray2 {
     }
 
     private int search(int nums[], int left, int right, int target) {
-        int mid = (left + right) / 2;
-        if (target == nums[mid]) return mid;
-
         if (right < left) return -1;
+
+        int mid = left + (right - left) / 2;
+        if (target == nums[mid]) return mid;
 
         if (nums[left] < nums[mid]) {
             if (target >= nums[left] && target < nums[mid]) {
@@ -55,7 +55,7 @@ public class SearchRotatedSortedArray2 {
     // beats 23.71%
     public boolean search2(int[] nums, int target) {
         for (int left = 0, right = nums.length - 1; left <= right; ) {
-            int mid = (left + right) / 2;
+            int mid = left + (right - left) / 2;
             int midVal = nums[mid];
             if (target == midVal) return true;
 

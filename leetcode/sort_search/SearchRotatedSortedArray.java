@@ -37,7 +37,7 @@ public class SearchRotatedSortedArray {
         }
         // search
         while (left <= right) {
-            int mid = (left + right) / 2;
+            int mid = left + (right - left) / 2;
             if (nums[mid] == target) return mid;
 
             if (nums[mid] < target) {
@@ -56,7 +56,7 @@ public class SearchRotatedSortedArray {
         int first = nums[0];
         int last = nums[right];
         while (left <= right) {
-            int mid = (left + right) / 2;
+            int mid = left + (right - left) / 2;
             int midVal = nums[mid];
             if (target == midVal) return mid;
 
@@ -108,7 +108,7 @@ public class SearchRotatedSortedArray {
     // beats 5.36%
     public int search4(int[] nums, int target) {
         for (int left = 0, right = nums.length - 1; left <= right; ) {
-            int mid = (left + right) / 2;
+            int mid = left + (right - left) / 2;
             int midVal = nums[mid];
             if (target == midVal) return mid;
 
