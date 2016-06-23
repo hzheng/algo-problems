@@ -24,10 +24,10 @@ public class ListNode {
         return dummy.next;
     }
 
+    static Map<Integer, ListNode> map = new HashMap<>();
     public static ListNode byVals(int... vals) {
         ListNode dummy = new ListNode(0);
         ListNode cur = dummy;
-        Map<Integer, ListNode> map = new HashMap<>();
         for (int val : vals) {
             if (!map.containsKey(val)) {
                 map.put(val, new ListNode(val));
