@@ -12,47 +12,26 @@ import static org.junit.Assert.*;
 public class FractionToDecimal {
     // beats 1.24%(16 ms)
     public String fractionToDecimal(int numerator, int denominator) {
-        if (numerator == 0) return "0";
-        if (denominator == 0) return null;
+        long[] faction = {numerator, denominator};
+        String res = preprocess(faction);
+        if (res == null || !res.endsWith(".")) return res;
 
-        long longNum = numerator;
-        long longDenom = denominator;
-        if (longDenom < 0) {
-            longDenom = -longDenom;
-            longNum = -longNum;
-        }
-        String res = "";
-        if (longNum < 0) {
-            res = "-";
-            longNum = -longNum;
-        }
-        res += longNum / longDenom;
-        longNum %= longDenom;
-        if (longNum == 0) return res;
-
-        res += "."; // decimal part
-
-        // reduce
-        long factor = gcd(longNum, longDenom);
-        longNum /= factor;
-        longDenom /= factor;
-
-        long reducedDenominator = longDenom;
+        long longDenom = faction[1];
         long factor2Count = 0;
-        while ((reducedDenominator % 2) == 0) {
+        while ((longDenom % 2) == 0) {
             factor2Count++;
-            reducedDenominator /= 2;
+            longDenom /= 2;
         }
 
         long factor5Count = 0;
-        while ((reducedDenominator % 5) == 0) {
+        while ((longDenom % 5) == 0) {
             factor5Count++;
-            reducedDenominator /= 5;
+            longDenom /= 5;
         }
 
         BigInteger nines;
         long recurCount = 0;
-        BigInteger bigDenominator = BigInteger.valueOf(reducedDenominator);
+        BigInteger bigDenominator = BigInteger.valueOf(longDenom);
         for (BigInteger tenPowers = BigInteger.TEN;; ) {
             recurCount++;
             nines = tenPowers.subtract(BigInteger.ONE);
@@ -63,7 +42,7 @@ public class FractionToDecimal {
         }
 
         BigInteger val = nines.divide(bigDenominator).multiply(
-            BigInteger.valueOf(longNum));
+            BigInteger.valueOf(faction[0]));
         long factor10Count = Math.max(factor2Count, factor5Count);
         while (factor10Count > factor2Count++) {
             val = val.multiply(new BigInteger("2"));
@@ -113,18 +92,82 @@ public class FractionToDecimal {
         return (b == 0) ? a : gcd2(a - b, b);
     }
 
+    // normalize faction s.t. it's positive, non-reduciable, and less than 1
+    private String preprocess(long[] faction) {
+        long numerator = faction[0];
+        if (numerator == 0) return "0";
+
+        long denominator = faction[1];
+        if (denominator == 0) return null;
+
+        if (denominator < 0) {
+            denominator = -denominator;
+            numerator = -numerator;
+        }
+        String res = "";
+        if (numerator < 0) {
+            res = "-";
+            numerator = -numerator;
+        }
+        res += numerator / denominator;
+        numerator %= denominator;
+        if (numerator == 0) return res;
+
+        res += "."; // decimal part
+
+        // reduce
+        long factor = gcd(numerator, denominator);
+        faction[0] = numerator / factor;
+        faction[1] = denominator / factor;
+        return res;
+    }
+
+    // beats 36.04%(4 ms)
+    public String fractionToDecimal2(int numerator, int denominator) {
+        long[] faction = {numerator, denominator};
+        String res = preprocess(faction);
+        if (res == null || !res.endsWith(".")) return res;
+
+        StringBuilder sb = new StringBuilder(res);
+        long longDenom = faction[1];
+        Map<Long, Integer> map = new HashMap<>();
+
+outer:
+        for (long longNum = faction[0]; longNum > 0; longNum %= longDenom) {
+            boolean first = true;
+            do {
+                if (first) {
+                    first = false;
+                } else {
+                    sb.append("0");
+                }
+                longNum *= 10;
+                if (map.containsKey(longNum)) {
+                    sb.insert((int)map.get(longNum), '(');
+                    sb.append(")");
+                    break outer;
+                }
+                map.put(longNum, sb.length());
+            } while (longNum < longDenom);
+            sb.append(longNum / longDenom);
+            longNum %= longDenom;
+        }
+        return sb.toString();
+    }
+
     void test(int numerator, int denominator, String expected) {
         assertEquals(expected, fractionToDecimal(numerator, denominator));
+        assertEquals(expected, fractionToDecimal2(numerator, denominator));
     }
 
     @Test
     public void test1() {
-        test(2, 3, "0.(6)");
         test(1, 90, "0.0(1)");
-        test(1, 99, "0.(01)");
         test(0, 2, "0");
         test(1, 2, "0.5");
         test(2, 1, "2");
+        test(2, 3, "0.(6)");
+        test(1, 99, "0.(01)");
         test(8, 7, "1.(142857)");
         test(87, 13, "6.(692307)");
         test(1, 17, "0.(0588235294117647)");
