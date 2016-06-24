@@ -153,9 +153,42 @@ outer:
         return res.toString();
     }
 
+    // beats 36.04%(4 ms)
+    public String fractionToDecimal3(int numerator, int denominator) {
+        if (numerator == 0) return "0";
+        if (denominator == 0) return null;
+
+        StringBuilder res = new StringBuilder();
+        if ((numerator < 0) ^ (denominator < 0)) {
+            res.append("-");
+        }
+
+        long longNum = Math.abs((long)numerator);
+        long longDenom = Math.abs((long)denominator);
+        long remainder = (longNum % longDenom) * 10;
+        res.append(longNum / longDenom);
+        if (remainder == 0) return res.toString();
+
+        res.append(".");
+        Map<Long, Integer> map = new HashMap<>();
+        while (remainder != 0) {
+            if (map.containsKey(remainder)) {
+                res.insert((int)map.get(remainder), '(');
+                res.append(")");
+                break;
+            }
+
+            map.put(remainder, res.length());
+            res.append(remainder / longDenom);
+            remainder = (remainder % longDenom) * 10;
+        }
+        return res.toString();
+    }
+
     void test(int numerator, int denominator, String expected) {
         assertEquals(expected, fractionToDecimal(numerator, denominator));
         assertEquals(expected, fractionToDecimal2(numerator, denominator));
+        assertEquals(expected, fractionToDecimal3(numerator, denominator));
     }
 
     @Test
