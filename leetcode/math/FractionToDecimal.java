@@ -13,8 +13,8 @@ public class FractionToDecimal {
     // beats 1.24%(16 ms)
     public String fractionToDecimal(int numerator, int denominator) {
         long[] faction = {numerator, denominator};
-        String res = preprocess(faction);
-        if (res == null || !res.endsWith(".")) return res;
+        StringBuilder res = preprocess(faction);
+        if (res == null || res.charAt(res.length() - 1) != '.') return "" + res;
 
         long longDenom = faction[1];
         long factor2Count = 0;
@@ -55,21 +55,21 @@ public class FractionToDecimal {
             // res += String.format("%0" + factor10Count + "d", nonRecur);
             String nonRecurStr = nonRecur.toString();
             for (long i = factor10Count - nonRecurStr.length(); i > 0; i--) {
-                res += "0";
+                res.append("0");
             }
-            res += nonRecur;
+            res.append(nonRecur);
         }
         BigInteger recur = val.mod(nines);
         if (recur.signum() > 0) {
             // res += String.format("(%0" + recurCount + "d)", recur);
             String recurStr = recur.toString();
-            res += "(";
+            res.append("(");
             for (long i = recurCount - recurStr.length(); i > 0; i--) {
-                res += "0";
+                res.append("0");
             }
-            res += recurStr + ")";
+            res.append(recurStr).append(")");
         }
-        return res;
+        return res.toString();
     }
 
     private long gcd(long a, long b) {
@@ -93,9 +93,9 @@ public class FractionToDecimal {
     }
 
     // normalize faction s.t. it's positive, non-reduciable, and less than 1
-    private String preprocess(long[] faction) {
+    private StringBuilder preprocess(long[] faction) {
         long numerator = faction[0];
-        if (numerator == 0) return "0";
+        if (numerator == 0) return new StringBuilder("0");
 
         long denominator = faction[1];
         if (denominator == 0) return null;
@@ -104,16 +104,16 @@ public class FractionToDecimal {
             denominator = -denominator;
             numerator = -numerator;
         }
-        String res = "";
+        StringBuilder res = new StringBuilder();
         if (numerator < 0) {
-            res = "-";
+            res.append("-");
             numerator = -numerator;
         }
-        res += numerator / denominator;
+        res.append(numerator / denominator);
         numerator %= denominator;
         if (numerator == 0) return res;
 
-        res += "."; // decimal part
+        res.append("."); // decimal part
 
         // reduce
         long factor = gcd(numerator, denominator);
@@ -125,10 +125,9 @@ public class FractionToDecimal {
     // beats 36.04%(4 ms)
     public String fractionToDecimal2(int numerator, int denominator) {
         long[] faction = {numerator, denominator};
-        String res = preprocess(faction);
-        if (res == null || !res.endsWith(".")) return res;
+        StringBuilder res = preprocess(faction);
+        if (res == null || res.charAt(res.length() - 1) != '.') return "" + res;
 
-        StringBuilder sb = new StringBuilder(res);
         long longDenom = faction[1];
         Map<Long, Integer> map = new HashMap<>();
 
@@ -139,20 +138,19 @@ outer:
                 if (first) {
                     first = false;
                 } else {
-                    sb.append("0");
+                    res.append("0");
                 }
                 longNum *= 10;
                 if (map.containsKey(longNum)) {
-                    sb.insert((int)map.get(longNum), '(');
-                    sb.append(")");
+                    res.insert((int)map.get(longNum), '(');
+                    res.append(")");
                     break outer;
                 }
-                map.put(longNum, sb.length());
+                map.put(longNum, res.length());
             } while (longNum < longDenom);
-            sb.append(longNum / longDenom);
-            longNum %= longDenom;
+            res.append(longNum / longDenom);
         }
-        return sb.toString();
+        return res.toString();
     }
 
     void test(int numerator, int denominator, String expected) {
