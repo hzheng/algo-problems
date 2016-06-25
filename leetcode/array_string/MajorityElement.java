@@ -3,6 +3,8 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// https://leetcode.com/problems/majority-element/
+//
 // Given an array of size n, find the majority element. The majority element is
 // the element that appears more than ⌊ n/2 ⌋ times.
 public class MajorityElement {
@@ -32,7 +34,7 @@ public class MajorityElement {
     }
 
     // beats 67.68%
-    // time complexity: O(N), space complexity: O(1
+    // time complexity: O(N), space complexity: O(1)
     public int majorityElement2(int[] nums) {
         int major = 0;
         int count = 0;
