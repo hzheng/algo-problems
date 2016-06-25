@@ -7,6 +7,7 @@ import static org.junit.Assert.*;
 // the element that appears more than ⌊ n/2 ⌋ times.
 public class MajorityElement {
     // beats 67.68%
+    // time complexity: O(N * log(N)), space complexity: O(log(N))
     public int majorityElement(int[] nums) {
         return majorityElement(nums, 0, nums.length - 1);
     }
@@ -31,6 +32,7 @@ public class MajorityElement {
     }
 
     // beats 67.68%
+    // time complexity: O(N), space complexity: O(1
     public int majorityElement2(int[] nums) {
         int major = 0;
         int count = 0;
@@ -51,9 +53,50 @@ public class MajorityElement {
         return major;
     }
 
-    void test(int expected, int... nums) {
+    // Moore's voting algorithm
+    // beats 67.68%
+    // time complexity: O(N), space complexity: O(1)
+    public int majorityElement3(int[] nums) {
+        int major = nums[0];
+        int count = 1;
+        for (int i = nums.length - 1; i > 0; i--) {
+            if (major == nums[i]) {
+                count++;
+            } else {
+                count--;
+            }
+            if (count == 0) {
+                major = nums[i];
+                count = 1;
+            }
+        }
+        return major;
+    }
+
+    // bit manipulation
+    // beats 28.89%
+    public int majorityElement4(int[] nums) {
+        int major = 0;
+        int majorCount = nums.length >> 1;
+        for (int i = 0, mask = 1; i < 32; i++, mask <<= 1) {
+            int bitCount = 0;
+            for (int num : nums) {
+                if ((num & mask) != 0) {
+                    bitCount++;
+                }
+            }
+            if (bitCount > majorCount) {
+                major |= mask;
+            }
+        }
+        return major;
+    }
+
+    void test(int expected, int ... nums) {
         assertEquals(expected, majorityElement(nums));
         assertEquals(expected, majorityElement2(nums));
+        assertEquals(expected, majorityElement3(nums));
+        assertEquals(expected, majorityElement4(nums));
     }
 
     @Test
