@@ -174,7 +174,7 @@ public class MinStack {
         assertEquals(512, obj.getMin());
     }
 
-    // @Test
+    @Test
     public void test1() {
         test1(new MinStack1());
         test1(new MinStack2());

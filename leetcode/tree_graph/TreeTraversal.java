@@ -57,7 +57,7 @@ public class TreeTraversal {
         List<Integer> res = new ArrayList<>();
         for (TreeNode n = root; n != null || !stack.empty(); n = n.right) {
             while (n != null) {
-                stack.add(n);
+                stack.push(n);
                 n = n.left;
             }
             n = stack.pop();
