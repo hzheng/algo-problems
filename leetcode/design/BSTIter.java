@@ -23,25 +23,27 @@ public class BSTIter {
 
     // beats 15.82%
     static class BSTIterator implements BSTIterable {
-        private TreeNode cur;
         private Stack<TreeNode> stack = new Stack<>();
 
         public BSTIterator(TreeNode root) {
-            cur = root;
+            pushAllLeft(root);
         }
 
         public boolean hasNext() {
-            return cur != null || !stack.empty();
+            return !stack.empty();
         }
 
         public int next() {
+            TreeNode top = stack.pop();
+            pushAllLeft(top.right);
+            return top.val;
+        }
+
+        private void pushAllLeft(TreeNode cur) {
             while (cur != null) {
                 stack.push(cur);
                 cur = cur.left;
             }
-            TreeNode top = stack.pop();
-            cur = top.right;
-            return top.val;
         }
     }
 
