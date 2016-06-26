@@ -38,8 +38,11 @@ public class LongestIncreasingSubsequence {
         int n = nums.length;
         if (n == 0) return 0;
 
-        // seq[i] is an longest increasing subsequence with smallest possible
-        // tail from nums[0] to nums[i]
+        // Let A[i,j] be the smallest possible tail out of all increasing
+        // subsequences of length j using elements nums[0] to nums[i].
+        // seq is a longest increasing subsequences of them:
+        // A[i,1]<A[i,2]<...<A[i,j], for any A[i,k](1<=k<=j) we could not find
+        // a smaller alternative.
         List<Integer> seq = new ArrayList<>();
         seq.add(nums[0]);
         for (int i = 1; i < n; i++) {
@@ -57,7 +60,7 @@ public class LongestIncreasingSubsequence {
                 if (seq.get(mid) < num) {
                     low = mid + 1;
                 } else {
-                    high = mid;
+                    high = mid; // not mid - 1!
                 }
             }
             seq.set(low, num);
