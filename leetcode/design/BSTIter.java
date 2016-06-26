@@ -21,7 +21,8 @@ public class BSTIter {
         public int next();
     }
 
-    // beats 15.82%
+    // space complexity: O(N)
+    // beats 15.82%(7 ms)
     static class BSTIterator implements BSTIterable {
         private Stack<TreeNode> stack = new Stack<>();
 
@@ -29,10 +30,12 @@ public class BSTIter {
             pushAllLeft(root);
         }
 
+        // time complexity: O(1)
         public boolean hasNext() {
             return !stack.empty();
         }
 
+        // *average* time complexity: O(1)
         public int next() {
             TreeNode top = stack.pop();
             pushAllLeft(top.right);
@@ -47,15 +50,53 @@ public class BSTIter {
         }
     }
 
-    void test1(BSTIterable iter, int... expected) {
+    // destructive solution base on Day–Stout–Warren (DSW) algorithm
+    // time complexity: O(1), space complexity: O(1)
+    // beats 93.59%(5 ms)
+    static class BSTIterator2 implements BSTIterable {
+        private TreeNode cur;
+
+        public BSTIterator2(TreeNode root) {
+            TreeNode dummy = new TreeNode(0);
+            dummy.right = root;
+            TreeNode tail = dummy;
+            TreeNode rest = tail.right;
+            while (rest != null) {
+                if (rest.left == null) {
+                    tail = rest;
+                    rest = rest.right;
+                } else {
+                    TreeNode tmp = rest.left;
+                    rest.left = tmp.right;
+                    tmp.right = rest;
+                    rest = tmp;
+                    tail.right = tmp;
+                }
+            }
+            cur = dummy.right;
+        }
+
+        public boolean hasNext() {
+            return cur != null;
+        }
+
+        public int next() {
+            int val = cur.val;
+            cur = cur.right;
+            return val;
+        }
+    }
+
+    void test1(BSTIterable iter, int ... expected) {
         for (int n : expected) {
             assertEquals(n, iter.next());
         }
         assertEquals(false, iter.hasNext());
     }
 
-    public void test(String s, int... expected) {
+    public void test(String s, int ... expected) {
         test1(new BSTIterator(TreeNode.of(s)), expected);
+        test1(new BSTIterator2(TreeNode.of(s)), expected);
     }
 
     @Test
