@@ -40,13 +40,17 @@ public class RepeatedDNA {
         if (s.length() < size) return res;
 
         Map<Integer, Integer> counts = new HashMap<>();
+        int[] charMap = new int['T' + 1];
+        charMap['C'] = 1;
+        charMap['G'] = 2;
+        charMap['T'] = 3;
         int end = s.length() - size + 1;
-        int seq = strToInt(s.substring(0, size));
+        int seq = strToInt(s.substring(0, size), charMap);
         counts.put(seq, 1);
-        int power = 1 << (size - 1) * 2;
         for (int i = size; i < s.length(); i++) {
-            seq >>= 2;
-            seq += (charToInt(s.charAt(i)) * power);
+            seq <<= 2;
+            seq |= charMap[s.charAt(i)];
+            seq &= ~(0x300000);
             if (!counts.containsKey(seq)) {
                 counts.put(seq, 1);
             } else {
@@ -60,22 +64,11 @@ public class RepeatedDNA {
         return res;
     }
 
-    private int charToInt(char c) {
-        switch (c) {
-            case 'A': return 0;
-            case 'C': return 1;
-            case 'G': return 2;
-            case 'T': return 3;
-        }
-        return -1;
-    }
-
-    private int strToInt(String s) {
+    private int strToInt(String s, int[] charMap) {
         int n = 0;
-        for (int i = s.length() - 1; i >= 0; i--) {
-        // for (int i = 0; i < s.length(); i++) {
+        for (char c : s.toCharArray()) {
             n <<= 2;
-            n += charToInt(s.charAt(i));
+            n += charMap[c];
         }
         return n;
     }
