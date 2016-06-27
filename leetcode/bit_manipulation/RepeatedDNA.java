@@ -33,29 +33,24 @@ public class RepeatedDNA {
         return res;
     }
 
-    // beats 63.66%(40 ms)
+    // beats 68.22%(39 ms)
     public List<String> findRepeatedDnaSequences2(String s) {
         List<String> res = new ArrayList<>();
         final int size = 10;
-        if (s.length() < size) return res;
-
         Map<Integer, Integer> counts = new HashMap<>();
         int[] charMap = new int['T' - 'A' + 1];
         charMap['C' - 'A'] = 1;
         charMap['G' - 'A'] = 2;
         charMap['T' - 'A'] = 3;
 
+        final int mask = ((1 << (size * 2)) - 1); // ~(0x300000)
         int seq = 0;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < s.length(); i++) {
             seq <<= 2;
             seq |= charMap[s.charAt(i) - 'A'];
-        }
-        counts.put(seq, 1);
+            if (i < size - 1) continue;
 
-        for (int i = size; i < s.length(); i++) {
-            seq <<= 2;
-            seq |= charMap[s.charAt(i) - 'A'];
-            seq &= ~(0x300000);
+            seq &= mask;
             if (!counts.containsKey(seq)) {
                 counts.put(seq, 1);
             } else {
@@ -83,6 +78,7 @@ public class RepeatedDNA {
     public void test1() {
         test("AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT", "AAAAACCCCC", "CCCCCAAAAA");
         test("AAAAAAAAAAAA", "AAAAAAAAAA");
+        test("AAAAAAA");
     }
 
     public static void main(String[] args) {
