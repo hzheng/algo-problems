@@ -33,23 +33,28 @@ public class RepeatedDNA {
         return res;
     }
 
-    // beats 43.17%(46 ms)
+    // beats 63.66%(40 ms)
     public List<String> findRepeatedDnaSequences2(String s) {
         List<String> res = new ArrayList<>();
         final int size = 10;
         if (s.length() < size) return res;
 
         Map<Integer, Integer> counts = new HashMap<>();
-        int[] charMap = new int['T' + 1];
-        charMap['C'] = 1;
-        charMap['G'] = 2;
-        charMap['T'] = 3;
-        int end = s.length() - size + 1;
-        int seq = strToInt(s.substring(0, size), charMap);
+        int[] charMap = new int['T' - 'A' + 1];
+        charMap['C' - 'A'] = 1;
+        charMap['G' - 'A'] = 2;
+        charMap['T' - 'A'] = 3;
+
+        int seq = 0;
+        for (int i = 0; i < size; i++) {
+            seq <<= 2;
+            seq |= charMap[s.charAt(i) - 'A'];
+        }
         counts.put(seq, 1);
+
         for (int i = size; i < s.length(); i++) {
             seq <<= 2;
-            seq |= charMap[s.charAt(i)];
+            seq |= charMap[s.charAt(i) - 'A'];
             seq &= ~(0x300000);
             if (!counts.containsKey(seq)) {
                 counts.put(seq, 1);
@@ -62,15 +67,6 @@ public class RepeatedDNA {
             }
         }
         return res;
-    }
-
-    private int strToInt(String s, int[] charMap) {
-        int n = 0;
-        for (char c : s.toCharArray()) {
-            n <<= 2;
-            n += charMap[c];
-        }
-        return n;
     }
 
     void test(Function<String, List<String>> find, String s, String... expected) {
