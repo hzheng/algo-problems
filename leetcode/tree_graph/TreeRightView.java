@@ -43,6 +43,7 @@ public class TreeRightView {
         return res;
     }
 
+    // BFS
     // beats 10.84%(3 ms)
     public List<Integer> rightSideView2(TreeNode root) {
         List<Integer> res = new ArrayList<>();
@@ -71,6 +72,7 @@ public class TreeRightView {
         return res;
     }
 
+    // BFS
     // beats 10.84%(3 ms)
     public List<Integer> rightSideView3(TreeNode root) {
         List<Integer> res = new ArrayList<>();
@@ -102,6 +104,7 @@ public class TreeRightView {
         return res;
     }
 
+    // BFS
     // beats 47.35%(2 ms)
     public List<Integer> rightSideView4(TreeNode root) {
         List<Integer> res = new ArrayList<>();
@@ -128,15 +131,17 @@ public class TreeRightView {
         return res;
     }
 
-    // recursion
+    // recursion(DFS)
     // http://www.jiuzhang.com/solutions/binary-tree-right-side-view/
-    // beats 47.35%(2 ms)
+    // beats 10.84%(3 ms)
     public List<Integer> rightSideView5(TreeNode root) {
         Map<Integer, Integer> values = new HashMap<>();
         dfs(values, root, 1);
 
         List<Integer> res = new ArrayList<>();
-        for (int depth = 1; values.containsKey(depth); depth++) {
+        int maxDepth = values.size();
+        //for (int depth = 1; values.containsKey(depth); depth++) {
+        for (int depth = 1; depth <= maxDepth; depth++) {
             res.add(values.get(depth));
         }
         return res;
