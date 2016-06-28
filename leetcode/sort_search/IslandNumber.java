@@ -17,7 +17,7 @@ public class IslandNumber {
 
     // BFS
     // beats 21.91%(7 ms)
-    // time complexity: O(N ^ 2), space complexity: O(1)
+    // time complexity: O(N * M), space complexity: O(1)
     public int numIslands(char[][] grid) {
         int nRow = grid.length;
         if (nRow == 0) return 0;
@@ -72,6 +72,103 @@ public class IslandNumber {
         }
     }
 
+    // DFS
+    // beats 41.51%(4 ms)
+    // time complexity: O(N * M), space complexity: O(1)
+    public int numIslands2(char[][] grid) {
+        int nRow = grid.length;
+        if (nRow == 0) return 0;
+
+        int nCol = grid[0].length;
+        int islands = 0;
+        for (int i = 0; i < nRow; i++) {
+            for (int j = 0; j < nCol; j++) {
+                if (grid[i][j] == LAND) {
+                    markIsland2(grid, nRow, nCol, i, j);
+                    islands++;
+                }
+            }
+        }
+
+        // restore grid(if omitted, beat rate will rise to 66.24%(3 ms))
+        for (int i = 0; i < nRow; i++) {
+            for (int j = 0; j < nCol; j++) {
+                if (grid[i][j] == MARK) {
+                    grid[i][j] = LAND;
+                }
+            }
+        }
+        return islands;
+    }
+
+    private void markIsland2(char[][] grid, int nRow, int nCol,
+                             int x, int y) {
+        grid[x][y] = MARK;
+        if (x > 0 && grid[x - 1][y] == LAND) {
+            markIsland2(grid, nRow, nCol, x - 1, y);
+        }
+        if (x + 1 < nRow && grid[x + 1][y] == LAND) {
+            markIsland2(grid, nRow, nCol, x + 1, y);
+        }
+        if (y > 0 && grid[x][y - 1] == LAND) {
+            markIsland2(grid, nRow, nCol, x, y - 1);
+        }
+        if (y + 1 < nCol && grid[x][y + 1] == LAND) {
+            markIsland2(grid, nRow, nCol, x, y + 1);
+        }
+    }
+
+    // http://www.programcreek.com/2014/04/leetcode-number-of-islands-java/
+    // union-find
+    // time complexity: O(N * M * log(K)), space complexity: O(N * M)
+    // beats 18.77%(8 ms)
+    public int numIslands3(char[][] grid) {
+        int nRow = grid.length;
+        if (nRow == 0) return 0;
+
+        int nCol = grid[0].length;
+        int[] root = new int[nRow * nCol];
+        int islands = 0;
+        for (int i = 0; i < nRow; i++) {
+            for (int j = 0; j < nCol; j++) {
+                if (grid[i][j] == LAND) {
+                    root[i * nCol + j] = i * nCol + j;
+                    islands++;
+                }
+            }
+        }
+
+        final int[] dx = {-1, 1, 0, 0};
+        final int[] dy = {0, 0, -1, 1};
+        for (int i = 0; i < nRow; i++) {
+            for (int j = 0; j < nCol; j++) {
+                if (grid[i][j] != LAND) continue;
+
+                for (int k = 0; k < 4; k++) {
+                    int x = i + dx[k];
+                    int y = j + dy[k];
+                    if (x >= 0 && x < nRow && y >= 0 && y < nCol
+                        && grid[x][y] == LAND) {
+                        int root1 = getRoot(root, i * nCol + j);
+                        int root2 = getRoot(root, x * nCol + y);
+                        if (root1 != root2) {
+                            root[root1] = root2;
+                            islands--;
+                        }
+                    }
+                }
+            }
+        }
+        return islands;
+    }
+
+    private int getRoot(int[] arr, int i) {
+        while (arr[i] != i) {
+            i = arr[arr[i]];
+        }
+        return i;
+    }
+
     private char[][] convert(String[] s) {
         char[][] board = new char[s.length][];
         for (int i = 0; i < s.length; i++) {
@@ -87,6 +184,8 @@ public class IslandNumber {
     void test(int expected, String ... s) {
         IslandNumber i = new IslandNumber();
         test(i::numIslands, expected, s);
+        test(i::numIslands2, expected, s);
+        test(i::numIslands3, expected, s);
     }
 
     @Test
