@@ -30,7 +30,8 @@ public class HouseRobber {
 
             maxLastTaken = Math.max(maxLastTaken, tmp + num);
         }
-        return Math.max(maxLastTaken, maxLastNotTaken);
+        // return Math.max(maxLastTaken, maxLastNotTaken);
+        return maxLastTaken;
     }
 
     // time complexity: O(N), space complexity: O(1)
