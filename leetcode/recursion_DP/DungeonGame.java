@@ -39,9 +39,82 @@ public class DungeonGame {
         }
         return minHP[0][0];
     }
-    
+
     private int min(int dungeon, int min) {
         return Math.max(1, min - dungeon);
+    }
+
+    // beats 21.49%(5 ms)
+    public int calculateMinimumHP2(int[][] dungeon) {
+        int row = dungeon.length;
+        if (row == 0) return 0;
+
+        int col = dungeon[0].length;
+        int[] minHP = new int[col];
+        minHP[col - 1] = min(dungeon[row - 1][col - 1], 1);
+        for (int j = col - 2; j >= 0; j--) {
+            minHP[j] = min(dungeon[row - 1][j], minHP[j + 1]);
+        }
+        for (int i = row - 2; i >= 0; i--) {
+            minHP[col - 1] = min(dungeon[i][col - 1], minHP[col - 1]);
+            for (int j = col - 2; j >= 0; j--) {
+                minHP[j] = min(dungeon[i][j], Math.min(minHP[j], minHP[j + 1]));
+            }
+        }
+        return minHP[0];
+    }
+
+    // binary search
+    // http://www.jiuzhang.com/solutions/dungeon-game/
+    // beats 3.33%(11 ms)
+    public int calculateMinimumHP3(int[][] dungeon) {
+        if (dungeon.length == 0) return 0;
+
+        int start = 1, end = Integer.MAX_VALUE - 1;
+        while (start < end) {
+            int mid = (end - start) / 2 + start;
+            if (canSurvive(mid, dungeon)) {
+                end = mid;
+            } else {
+                start = mid + 1;
+            }
+        }
+        return canSurvive(start, dungeon) ? start : end;
+    }
+
+    private boolean canSurvive(int health, int[][] dungeon) {
+        int row = dungeon.length;
+        int col = dungeon[0].length;
+        int[][] hp = new int[row][col];
+        hp[0][0] = dungeon[0][0] + health;
+        if (hp[0][0] <= 0) return false;
+
+        for (int i = 1; i < row; i++) {
+            hp[i][0] = hp[i - 1][0] == Integer.MIN_VALUE
+                       ? Integer.MIN_VALUE : hp[i - 1][0] + dungeon[i][0];
+            if (hp[i][0] <= 0) {
+                hp[i][0] = Integer.MIN_VALUE;
+            }
+        }
+        for (int i = 1; i < col; i++) {
+            hp[0][i] = hp[0][i - 1] == Integer.MIN_VALUE
+                       ? Integer.MIN_VALUE : hp[0][i - 1] + dungeon[0][i];
+            if (hp[0][i] <= 0) {
+                hp[0][i] = Integer.MIN_VALUE;
+            }
+        }
+        for (int i = 1; i < row; i++) {
+            for (int j = 1; j < col; j++) {
+                hp[i][j] = Math.max(hp[i - 1][j], hp[i][j - 1]);
+                if (hp[i][j] == Integer.MIN_VALUE) continue;
+
+                hp[i][j] += dungeon[i][j];
+                if (hp[i][j] <= 0) {
+                    hp[i][j] = Integer.MIN_VALUE;
+                }
+            }
+        }
+        return hp[row - 1][col - 1] > 0;
     }
 
     void test(Function<int[][], Integer> calculate, int expected, int[][] dungeon) {
@@ -51,6 +124,8 @@ public class DungeonGame {
     void test(int expected, int[][] dungeon) {
         DungeonGame d = new DungeonGame();
         test(d::calculateMinimumHP, expected, dungeon);
+        test(d::calculateMinimumHP2, expected, dungeon);
+        test(d::calculateMinimumHP3, expected, dungeon);
     }
 
     @Test
