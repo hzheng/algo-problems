@@ -41,7 +41,7 @@ public class Trie<T> {
         }
         for (; i < key.length(); i++) {
             if (cur.children == null) {
-                cur.children = new ArrayList<Trie<T>>();
+                cur.children = new ArrayList<>();
             }
             Trie<T> child = new Trie<T>(key.charAt(i));
             cur.children.add(child);
