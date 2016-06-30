@@ -131,6 +131,37 @@ public class PrimeCount {
         return count;
     }
 
+    // sieve
+    // time complexity: O(N), space complexity: O(N)
+    // beats 14.37%(56 ms)
+    // TODO: improvement
+    public int countPrimes7(int n) {
+        boolean[] isComposite = new boolean[n];
+        int[] primes = new int[n]; // can be smaller
+        int primeCount = 0;
+        for (int i = 2; i < n; i++) {
+            if (!isComposite[i]) {
+                primes[primeCount++] = i;
+            }
+            for (int j = 0; j < primeCount; j++) {
+                int multiple = primes[j] * i;
+                if (multiple >= n) break;
+
+                // all composites are deleted by its smallest prime factor,
+                // so they are only marked once, hence O(N)
+                isComposite[multiple] = true;
+                if (i % primes[j] == 0) break;
+            }
+        }
+        int count = 0;
+        for (int i = 2; i < n; i++) {
+            if (!isComposite[i]) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     void test(Function<Integer, Integer> countPrimes, String name,
               int n, int expected) {
         long t1 = System.nanoTime();
@@ -151,6 +182,7 @@ public class PrimeCount {
         }
         test(p::countPrimes5, "countPrimes5", n, expected);
         test(p::countPrimes6, "countPrimes6", n, expected);
+        test(p::countPrimes7, "countPrimes7", n, expected);
     }
 
     @Test
