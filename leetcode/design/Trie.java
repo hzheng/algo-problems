@@ -18,7 +18,7 @@ public class Trie {
         }
 
         public TrieNode getChild(char c) {
-            return children[c - 'a'];
+            return children == null ? null : children[c - 'a'];
         }
 
         public void setChild(char c, TrieNode child) {
@@ -41,14 +41,15 @@ public class Trie {
         // that starts with the given prefix.
         public abstract boolean startsWith(String prefix);
 
-        public void insert(String... words) {
+        public void insert(String ... words) {
             for (String word : words) {
                 insert(word);
             }
         }
     }
 
-    // beats 63.99%(19 ms)
+    // beat 58.92%(20 ms)
+    // beats 63.99%(19 ms) (insert0)
     static class Trie1 extends AbstractTrie {
         private TrieNode root;
 
@@ -56,7 +57,7 @@ public class Trie {
             root = new TrieNode();
         }
 
-        public void insert(String word) {
+        public void insert0(String word) {
             TrieNode cur = root;
             int i = 0;
             while (i < word.length() && cur.children != null) {
@@ -70,6 +71,17 @@ public class Trie {
                 TrieNode child = new TrieNode();
                 cur.setChild(word.charAt(i), child);
                 cur = child;
+            }
+            cur.isEnd = true;
+        }
+
+        public void insert(String word) {
+            TrieNode cur = root;
+            for (char c : word.toCharArray()) {
+                if (cur.getChild(c) == null) {
+                    cur.setChild(c, new TrieNode());
+                }
+                cur = cur.getChild(c);
             }
             cur.isEnd = true;
         }
