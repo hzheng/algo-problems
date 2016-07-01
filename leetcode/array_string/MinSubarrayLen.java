@@ -9,7 +9,6 @@ import static org.junit.Assert.*;
 // minimal length of a subarray of which the sum >= s. If there isn't one,
 // return 0 instead.
 public class MinSubarrayLen {
-    // beats 4.33%(3 ms)
     static class PartialSum {
         int len;
         int sum;
@@ -19,6 +18,9 @@ public class MinSubarrayLen {
         }
     }
 
+    // DP
+    // time complexity: O(N), space complexity: O(N)
+    // beats 4.33%(3 ms)
     public int minSubArrayLen(int s, int[] nums) {
         int n = nums.length;
         if (n == 0) return 0;
@@ -48,13 +50,86 @@ public class MinSubarrayLen {
         return minLen;
     }
 
+    // Two pointers
+    // time complexity: O(N), space complexity: O(1)
+    // beats 16.03%(1 ms)
+    public int minSubArrayLen2(int s, int[] nums) {
+        if (s <= 0) return 1;
+
+        int left = 0;
+        int sum = 0;
+        int n = nums.length;
+        int minLen = n;
+        for (int i = 0; i < n; i++) {
+            sum += nums[i];
+            if (sum < s) continue;
+
+            while (sum - nums[left] >= s) {
+                sum -= nums[left];
+                left++;
+            }
+            minLen = Math.min(minLen, i - left + 1);
+        }
+        return sum < s ? 0 : minLen;
+    }
+
+    // binary search
+    // time complexity: O(N * log(N)), space complexity: O(1)
+    // beats 4.33%(3 ms)
+    public int minSubArrayLen3(int s, int[] nums) {
+        int n = nums.length;
+        int lowLen = 1;
+        int highLen = n;
+        while (lowLen <= highLen) {
+            int mid = lowLen + (highLen - lowLen) / 2;
+            if (isEnough(nums, s, mid)) {
+                highLen = mid - 1;
+            } else {
+                lowLen = mid + 1;
+            }
+        }
+        return highLen >= n ? 0 : lowLen;
+    }
+
+    private boolean isEnough(int[] nums, int s, int len) {
+        int sum = 0;
+        for (int i = 0; i < nums.length; i++) {
+            sum += nums[i];
+            if (i >= len) {
+                sum -= nums[i - len];
+            }
+            if (sum >= s) return true;
+        }
+        return false;
+    }
+
+    @FunctionalInterface
+    interface Function<A, B, C> {
+        public C apply(A a, B b);
+    }
+
+    void test(Function<Integer, int[], Integer> minLen, String name,
+              int s, int[] nums, int expected) {
+        long t1 = System.nanoTime();
+        assertEquals(expected, (int)minLen.apply(s, nums));
+        if (nums.length > 50) {
+            System.out.format("%s: %.3f ms\n", name,
+                              (System.nanoTime() - t1) * 1e-6);
+        }
+    }
     void test(int s, int[] nums, int expected) {
-        assertEquals(expected, minSubArrayLen(s, nums));
+        MinSubarrayLen m = new MinSubarrayLen();
+        test(m::minSubArrayLen, "minSubArrayLen", s, nums, expected);
+        test(m::minSubArrayLen2, "minSubArrayLen2", s, nums, expected);
+        test(m::minSubArrayLen3, "minSubArrayLen3", s, nums, expected);
     }
 
     @Test
     public void test1() {
-        test(0, new int[] {2, 3, 1, 2, 4, 3}, 1);
+        test(1, new int[] {}, 0);
+        test(0, new int[] {2, 3}, 1);
+        test(6, new int[] {2, 3}, 0);
+        test(6, new int[] {2, 3, 1}, 3);
         test(7, new int[] {2, 3, 1, 2, 4, 3}, 2);
         test(697439, new int[] {5334,6299,4199,9663,8945,3566,9509,3124,6026,
             6250,7475,5420,9201,9501,38,5897,4411,6638,9845,161,9563,8854,3731,
