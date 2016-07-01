@@ -65,8 +65,7 @@ public class MinSubarrayLen {
             if (sum < s) continue;
 
             while (sum - nums[left] >= s) {
-                sum -= nums[left];
-                left++;
+                sum -= nums[left++];
             }
             minLen = Math.min(minLen, i - left + 1);
         }
