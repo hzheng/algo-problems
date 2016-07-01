@@ -50,16 +50,126 @@ public class CourseSchedule {
         return true;
     }
 
+    // DFS(reverse mapping: actually both will do)
+    // beats 64.12%(14 ms)
+    public boolean canFinish2(int numCourses, int[][] prerequisites) {
+        Map<Integer, List<Integer> > map = new HashMap<>();
+        for (int[] prerequisite : prerequisites) {
+            if (map.containsKey(prerequisite[1])) {
+                map.get(prerequisite[1]).add(prerequisite[0]);
+            } else {
+                List<Integer> dependants = new ArrayList<>();
+                dependants.add(prerequisite[0]);
+                map.put(prerequisite[1], dependants);
+            }
+        }
+
+        Boolean[] visited = new Boolean[numCourses];
+        for (int i = 0; i < numCourses; i++) {
+            if (!canFinish2(i, map, visited)) return false;
+        }
+        return true;
+    }
+
+    private boolean canFinish2(int course, Map<Integer, List<Integer> > map,
+                               Boolean[] visited) {
+        if (visited[course] != null) return visited[course];
+
+        visited[course] = false;
+        if (map.containsKey(course)) {
+            for (int dependant : map.get(course)) {
+                if (!canFinish2(dependant, map, visited)) return false;
+            }
+        }
+        visited[course] = true;
+        return true;
+    }
+
+    // BFS/Topological-sorting(count down independents)
+    // beats 28.61%(37 ms)
+    public boolean canFinish3(int numCourses, int[][] prerequisites) {
+        int[] dependentCount = new int[numCourses];
+        for (int[] prerequisite : prerequisites) {
+            dependentCount[prerequisite[0]]++;
+        }
+
+        Queue<Integer> independents = new LinkedList<>();
+        for (int i = 0; i < numCourses; i++) {
+            if (dependentCount[i] == 0) {
+                independents.add(i);
+            }
+        }
+
+        int independentCount = independents.size();
+        while (!independents.isEmpty()) {
+            int independent = independents.poll();
+            for (int[] prerequisite : prerequisites) {
+                if (prerequisite[1] == independent) {
+                    if (--dependentCount[prerequisite[0]] == 0) {
+                        independentCount++;
+                        independents.offer(prerequisite[0]);
+                    }
+                }
+            }
+        }
+        return independentCount == numCourses;
+    }
+
+    // BFS/Topological-sorting(inverse mapping, count down independents)
+    // beats 49.89%(23 ms)
+    public boolean canFinish4(int numCourses, int[][] prerequisites) {
+        Map<Integer, Set<Integer> > adjacencyList = new HashMap<>();
+        int[] dependentCounts = new int[numCourses];
+        for (int[] prerequisite : prerequisites) {
+            int dependant = prerequisite[0];
+            int depended = prerequisite[1];
+            if (!adjacencyList.containsKey(depended)) {
+                adjacencyList.put(depended, new HashSet<>());
+            }
+            Set<Integer> dependants = adjacencyList.get(depended);
+            if (!dependants.contains(dependant)) { // avoid duplicate count
+                dependants.add(dependant);
+                dependentCounts[dependant]++;
+            }
+        }
+
+        // can also use stack or list
+        Queue<Integer> independents = new LinkedList<>();
+        for (int i = 0; i < numCourses; i++) {
+            if (dependentCounts[i] == 0) {
+                independents.offer(i);
+            }
+        }
+
+        int dependentCount = numCourses;
+        for (; !independents.isEmpty(); dependentCount--) {
+            int independent = independents.poll();
+            if (adjacencyList.containsKey(independent)) {
+                for (int dependant : adjacencyList.get(independent)) {
+                    if (--dependentCounts[dependant] == 0) {
+                        independents.offer(dependant);
+                    }
+                }
+            }
+        }
+        return dependentCount == 0;
+    }
+
     void test(int n, int[][] prerequisites, boolean expected) {
         assertEquals(expected, canFinish(n, prerequisites));
+        assertEquals(expected, canFinish2(n, prerequisites));
+        assertEquals(expected, canFinish3(n, prerequisites));
+        assertEquals(expected, canFinish4(n, prerequisites));
     }
 
     @Test
     public void test1() {
-        test(2, new int[][] {{1, 0}}, true);
         test(2, new int[][] {{1, 0}, {0, 1}}, false);
+        test(2, new int[][] {{1, 0}}, true);
         test(5, new int[][] {{1, 2}, {1, 3}, {2, 4}, {3, 4}}, true);
         test(5, new int[][] {{1, 2}, {1, 3}, {2, 4}, {3, 4}, {4, 1}}, false);
+        test(10, new int[][] {{5, 8}, {3, 5}, {1, 9}, {4, 5},
+                              {0, 2}, {1, 9}, {7, 8}, {4, 9}}, true);
     }
 
     public static void main(String[] args) {
