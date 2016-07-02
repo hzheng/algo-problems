@@ -83,9 +83,7 @@ public class WordDictionary {
 
             for (c = 'a'; c <= 'z'; c++) {
                 TrieNode next = cur.getChild(c);
-                if (next != null) {
-                    if (search(word, next, start + 1)) return true;
-                }
+                if (next != null && search(word, next, start + 1)) return true;
             }
             return false;
         }
