@@ -10,6 +10,8 @@ import static org.junit.Assert.*;
 // where "adjacent" cells are those horizontally or vertically neighboring.
 // The same letter cell may not be used more than once in a word.
 public class WordSearch2 {
+    static final int SIZE = 26;
+
     //  Time Limit Exceeded
     public List<String> findWords(char[][] board, String[] words) {
         List<String> res = new ArrayList<>();
@@ -90,8 +92,6 @@ public class WordSearch2 {
 
     private static class Trie {
         class TrieNode {
-            static final int SIZE = 26;
-
             boolean matched = true;
 
             TrieNode[] children;
@@ -180,6 +180,101 @@ public class WordSearch2 {
         return res;
     }
 
+    // build all possible words from board, very slow
+    public List<String> findWords3(char[][] board, String[] words) {
+        int m = board.length;
+        if (m == 0) return Collections.emptyList();
+
+        int n = board[0].length;
+        Trie3 trie = new Trie3();
+
+        Set<String> wordSet = new HashSet<>();
+        int maxWord = 0;
+        for (String word : words) {
+            if (wordSet.contains(word)) continue;
+
+            wordSet.add(word);
+            maxWord = Math.max(maxWord, word.length());
+        }
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                buildTrie(board, i, j, trie, maxWord);
+            }
+        }
+
+        List<String> res = new LinkedList<>();
+        for (String word : wordSet) {
+            if (trie.search(word)) {
+                res.add(word);
+            }
+        }
+        return res;
+    }
+
+    private void buildTrie(char[][] board, int row, int col, Trie3 trie, int len) {
+        if (len == 0) return;
+
+        char c = board[row][col];
+        if (c == 0) return;
+
+        Trie3.TrieNode cur = trie.cur;
+        trie.insert(c);
+        board[row][col] = 0;
+
+        if (row > 0) {
+            buildTrie(board, row - 1, col, trie, len - 1);
+        }
+        if (row + 1 < board.length) {
+            buildTrie(board, row + 1, col, trie, len - 1);
+        }
+        if (col > 0) {
+            buildTrie(board, row, col - 1, trie, len - 1);
+        }
+        if (col + 1 < board[0].length) {
+            buildTrie(board, row, col + 1, trie, len - 1);
+        }
+        board[row][col] = c;
+        trie.cur = cur;
+    }
+
+    private static class Trie3 {
+        class TrieNode {
+            TrieNode[] children = new TrieNode[SIZE];
+
+            public TrieNode getChild(char c) {
+                return children[c - 'a'];
+            }
+
+            public void setChild(char c, TrieNode child) {
+                children[c - 'a'] = child;
+            }
+        }
+
+        private TrieNode root = new TrieNode();
+
+        private TrieNode cur = root;
+
+        private boolean search(String word) {
+            TrieNode cur = root;
+            for (char c : word.toCharArray()) {
+                cur = cur.getChild(c);
+                if (cur == null) return false;
+            }
+            return true;
+        }
+
+        public void reset() {
+            cur = root;
+        }
+
+        private void insert(char c) {
+            if (cur.getChild(c) == null) {
+                cur.setChild(c, new TrieNode());
+            }
+            cur = cur.getChild(c);
+        }
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -205,6 +300,9 @@ public class WordSearch2 {
         WordSearch2 w = new WordSearch2();
         test(w::findWords, "findWords", boardStr, words, expected);
         test(w::findWords2, "findWords2", boardStr, words, expected);
+        if (words.length < 10) {
+            test(w::findWords3, "findWords3", boardStr, words, expected);
+        }
     }
 
     @Test
