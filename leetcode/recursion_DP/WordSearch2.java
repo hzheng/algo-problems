@@ -263,15 +263,103 @@ public class WordSearch2 {
             return true;
         }
 
-        public void reset() {
-            cur = root;
-        }
-
         private void insert(char c) {
             if (cur.getChild(c) == null) {
                 cur.setChild(c, new TrieNode());
             }
             cur = cur.getChild(c);
+        }
+    }
+
+    // DFS with pruning, reverse Trie(build from target instead of source)
+    // beats 37.47%(68 ms)
+    public List<String> findWords4(char[][] board, String[] words) {
+        int m = board.length;
+        if (m == 0) return Collections.emptyList();
+
+        int n = board[0].length;
+        boolean[][] visited = new boolean[m][n];
+        Set<String> res = new HashSet<>();
+        Trie4 trie = new Trie4();
+        for (String word : words) {
+            trie.insert(word);
+        }
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                findWords(board, visited, "", i, j, trie, res);
+            }
+        }
+        return new ArrayList<>(res);
+    }
+
+    public void findWords(char[][] board, boolean[][] visited, String word,
+                          int x, int y, Trie4 trie, Set<String> res) {
+        if (x < 0 || x >= board.length
+           || y < 0 || y >= board[0].length || visited[x][y]) return;
+
+        word += board[x][y];
+        if (!trie.startsWith(word)) return;
+
+        if (trie.search(word)) {
+            res.add(word);
+        }
+
+        visited[x][y] = true;
+        findWords(board, visited, word, x - 1, y, trie, res);
+        findWords(board, visited, word, x + 1, y, trie, res);
+        findWords(board, visited, word, x, y - 1, trie, res);
+        findWords(board, visited, word, x, y + 1, trie, res);
+        visited[x][y] = false;
+    }
+
+    private static class Trie4 {
+        class TrieNode {
+            boolean isEnd;
+
+            TrieNode[] children = new TrieNode[SIZE];
+
+            public TrieNode getChild(char c) {
+                return children == null ? null : children[c - 'a'];
+            }
+
+            public void setChild(char c, TrieNode child) {
+                if (children == null) {
+                    children = new TrieNode[SIZE];
+                }
+                children[c - 'a'] = child;
+            }
+        }
+
+        private TrieNode root = new TrieNode();
+
+        public void insert(String word) {
+            TrieNode cur = root;
+            for (char c : word.toCharArray()) {
+                if (cur.getChild(c) == null) {
+                    cur.setChild(c, new TrieNode());
+                }
+                cur = cur.getChild(c);
+            }
+            cur.isEnd = true;
+        }
+
+        public boolean search(String word) {
+            TrieNode res = doSearch(word);
+            return res != null && res.isEnd;
+        }
+
+        public boolean startsWith(String prefix) {
+            return doSearch(prefix) != null;
+        }
+
+        private TrieNode doSearch(String word) {
+            TrieNode cur = root;
+            for (char c : word.toCharArray()) {
+                if (cur == null || cur.children == null) return null;
+
+                cur = cur.getChild(c);
+            }
+            return cur;
         }
     }
 
@@ -303,6 +391,7 @@ public class WordSearch2 {
         if (words.length < 10) {
             test(w::findWords3, "findWords3", boardStr, words, expected);
         }
+        test(w::findWords4, "findWords4", boardStr, words, expected);
     }
 
     @Test
@@ -317,37 +406,38 @@ public class WordSearch2 {
         test(new String[] {"aaaa", "aaaa", "aaaa", "aaaa", "bcde", "fghi",
                            "jklm", "nopq", "rstu", "vwxy", "zzzz"},
              new String[] {
-                 "aaaaaaaaaaaaaaaa", "aaaaaaaaaaaaaaab", "aaaaaaaaaaaaaaac",
-                 "aaaaaaaaaaaaaaad", "aaaaaaaaaaaaaaae","aaaaaaaaaaaaaaaf",
-                 "aaaaaaaaaaaaaaag", "aaaaaaaaaaaaaaah", "aaaaaaaaaaaaaaai",
-                 "aaaaaaaaaaaaaaaj", "aaaaaaaaaaaaaaak", "aaaaaaaaaaaaaaal",
-                 "aaaaaaaaaaaaaaam", "aaaaaaaaaaaaaaan", "aaaaaaaaaaaaaaao",
-                 "aaaaaaaaaaaaaaap", "aaaaaaaaaaaaaaaq", "aaaaaaaaaaaaaaar",
-                 "aaaaaaaaaaaaaaas", "aaaaaaaaaaaaaaat", "aaaaaaaaaaaaaaau",
-                 "aaaaaaaaaaaaaaav", "aaaaaaaaaaaaaaaw", "aaaaaaaaaaaaaaax",
-                 "aaaaaaaaaaaaaaay", "aaaaaaaaaaaaaaaz", "aaaaaaaaaaaaaaae",
-                 "aaaaaaaaaaaaaaaf", "aaaaaaaaaaaaaaag", "aaaaaaaaaaaaaaah",
-                 "aaaaaaaaaaaaaaai", "aaaaaaaaaaaaaaaj", "aaaaaaaaaaaaaaak",
-                 "aaaaaaaaaaaaaaal", "aaaaaaaaaaaaaaam", "aaaaaaaaaaaaaaan",
-                 "aaaaaaaaaaaaaaao", "aaaaaaaaaaaaaaap", "aaaaaaaaaaaaaaaq",
-                 "aaaaaaaaaaaaaaar", "aaaaaaaaaaaaaaas", "aaaaaaaaaaaaaaat",
-                 "aaaaaaaaaaaaaaau", "aaaaaaaaaaaaaaav", "aaaaaaaaaaaaaaaw",
-                 "aaaaaaaaaaaaaaax", "aaaaaaaaaaaaaaay", "aaaaaaaaaaaaaaaz",
-                 "aaaaaaaaaaaaaabb", "aaaaaaaaaaaaaabc", "aaaaaaaaaaaaaabd",
-                 "aaaaaaaaaaaaaabe", "aaaaaaaaaaaaaabf", "aaaaaaaaaaaaaabg",
-                 "aaaaaaaaaaaaaabh", "aaaaaaaaaaaaaabi", "aaaaaaaaaaaaaabj",
-                 "aaaaaaaaaaaaaabk", "aaaaaaaaaaaaaabl", "aaaaaaaaaaaaaabm",
-                 "aaaaaaaaaaaaaabn", "aaaaaaaaaaaaaabo", "aaaaaaaaaaaaaabp",
-                 "aaaaaaaaaaaaaabq", "aaaaaaaaaaaaaabr", "aaaaaaaaaaaaaabs",
-                 "aaaaaaaaaaaaaabt", "aaaaaaaaaaaaaabu", "aaaaaaaaaaaaaabv",
-                 "aaaaaaaaaaaaaabw", "aaaaaaaaaaaaaabx", "aaaaaaaaaaaaaaby",
-                 "aaaaaaaaaaaaaabz", "aaaaaaaaaaaaaaca", "aaaaaaaaaaaaaacb",
-                 "aaaaaaaaaaaaaacc", "aaaaaaaaaaaaaacd", "aaaaaaaaaaaaaace",
-                 "aaaaaaaaaaaaaafg", "aaaaaaaaaaaaaafh", "aaaaaaaaaaaaaafi",
-                 "aaaaaaaaaaaaaafj", "aaaaaaaaaaaaaafk", "aaaaaaaaaaaaaafl"},
-                 "aaaaaaaaaaaaaaaa", "aaaaaaaaaaaaaaab", "aaaaaaaaaaaaaaac",
-                 "aaaaaaaaaaaaaaad", "aaaaaaaaaaaaaaae", "aaaaaaaaaaaaaabc",
-                 "aaaaaaaaaaaaaabf", "aaaaaaaaaaaaaacb", "aaaaaaaaaaaaaacd");
+            "aaaaaaaaaaaaaaaa", "aaaaaaaaaaaaaaab", "aaaaaaaaaaaaaaac",
+            "aaaaaaaaaaaaaaad", "aaaaaaaaaaaaaaae","aaaaaaaaaaaaaaaf",
+            "aaaaaaaaaaaaaaag", "aaaaaaaaaaaaaaah", "aaaaaaaaaaaaaaai",
+            "aaaaaaaaaaaaaaaj", "aaaaaaaaaaaaaaak", "aaaaaaaaaaaaaaal",
+            "aaaaaaaaaaaaaaam", "aaaaaaaaaaaaaaan", "aaaaaaaaaaaaaaao",
+            "aaaaaaaaaaaaaaap", "aaaaaaaaaaaaaaaq", "aaaaaaaaaaaaaaar",
+            "aaaaaaaaaaaaaaas", "aaaaaaaaaaaaaaat", "aaaaaaaaaaaaaaau",
+            "aaaaaaaaaaaaaaav", "aaaaaaaaaaaaaaaw", "aaaaaaaaaaaaaaax",
+            "aaaaaaaaaaaaaaay", "aaaaaaaaaaaaaaaz", "aaaaaaaaaaaaaaae",
+            "aaaaaaaaaaaaaaaf", "aaaaaaaaaaaaaaag", "aaaaaaaaaaaaaaah",
+            "aaaaaaaaaaaaaaai", "aaaaaaaaaaaaaaaj", "aaaaaaaaaaaaaaak",
+            "aaaaaaaaaaaaaaal", "aaaaaaaaaaaaaaam", "aaaaaaaaaaaaaaan",
+            "aaaaaaaaaaaaaaao", "aaaaaaaaaaaaaaap", "aaaaaaaaaaaaaaaq",
+            "aaaaaaaaaaaaaaar", "aaaaaaaaaaaaaaas", "aaaaaaaaaaaaaaat",
+            "aaaaaaaaaaaaaaau", "aaaaaaaaaaaaaaav", "aaaaaaaaaaaaaaaw",
+            "aaaaaaaaaaaaaaax", "aaaaaaaaaaaaaaay", "aaaaaaaaaaaaaaaz",
+            "aaaaaaaaaaaaaabb", "aaaaaaaaaaaaaabc", "aaaaaaaaaaaaaabd",
+            "aaaaaaaaaaaaaabe", "aaaaaaaaaaaaaabf", "aaaaaaaaaaaaaabg",
+            "aaaaaaaaaaaaaabh", "aaaaaaaaaaaaaabi", "aaaaaaaaaaaaaabj",
+            "aaaaaaaaaaaaaabk", "aaaaaaaaaaaaaabl", "aaaaaaaaaaaaaabm",
+            "aaaaaaaaaaaaaabn", "aaaaaaaaaaaaaabo", "aaaaaaaaaaaaaabp",
+            "aaaaaaaaaaaaaabq", "aaaaaaaaaaaaaabr", "aaaaaaaaaaaaaabs",
+            "aaaaaaaaaaaaaabt", "aaaaaaaaaaaaaabu", "aaaaaaaaaaaaaabv",
+            "aaaaaaaaaaaaaabw", "aaaaaaaaaaaaaabx", "aaaaaaaaaaaaaaby",
+            "aaaaaaaaaaaaaabz", "aaaaaaaaaaaaaaca", "aaaaaaaaaaaaaacb",
+            "aaaaaaaaaaaaaacc", "aaaaaaaaaaaaaacd", "aaaaaaaaaaaaaace",
+            "aaaaaaaaaaaaaafg", "aaaaaaaaaaaaaafh", "aaaaaaaaaaaaaafi",
+            "aaaaaaaaaaaaaafj", "aaaaaaaaaaaaaafk", "aaaaaaaaaaaaaafl"
+        },
+             "aaaaaaaaaaaaaaaa", "aaaaaaaaaaaaaaab", "aaaaaaaaaaaaaaac",
+             "aaaaaaaaaaaaaaad", "aaaaaaaaaaaaaaae", "aaaaaaaaaaaaaabc",
+             "aaaaaaaaaaaaaabf", "aaaaaaaaaaaaaacb", "aaaaaaaaaaaaaacd");
     }
 
     public static void main(String[] args) {
