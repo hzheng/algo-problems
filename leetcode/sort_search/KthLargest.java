@@ -35,7 +35,7 @@ public class KthLargest {
 
     // divide and conquer(Median of medians)
     // time complexity: O(N), space complexity: O(N)
-    // beats 69.64%(8 ms)
+    // beats 74.53%(6 ms)
     public int findKthLargest3(int[] nums, int k) {
         int n = nums.length;
         return findKthSmallest(nums, 0, n - 1, n - k + 1);
@@ -43,8 +43,7 @@ public class KthLargest {
 
     private int findKthSmallest(int[] nums, int start, int end, int k) {
         int len = end - start + 1;
-        int pivotIndex = findPivot(nums, start, end, len / 2 + 1);
-        int pivot = nums[pivotIndex];
+        int pivot = nums[findPivot(nums, start, end, len / 2 + 1)];
         int i = start;
         for (int j = end; i < j; ) {
             while (i < j && nums[i] < pivot) {
@@ -68,7 +67,7 @@ public class KthLargest {
         int len = end - start + 1;
         if (len <= 5) {
             Arrays.sort(nums, start, end + 1);
-            return Math.max(0, start + k - 1);
+            return start + k - 1;
         }
 
         for (int i = 0; i < len / 5; i++) {
