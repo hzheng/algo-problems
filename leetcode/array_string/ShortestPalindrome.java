@@ -48,7 +48,7 @@ public class ShortestPalindrome {
     // time complexity: O(N ^ 2)
     // Time Limit Exceeded
     public String shortestPalindrome2(String s) {
-        for (int right = s.length() - 1; ; right--) {
+        for (int right = s.length() - 1;; right--) {
             boolean isPalindrome = true;
             for (int i = 0, j = right; i < j; i++, j--) {
                 if (s.charAt(i) != s.charAt(j)) {
@@ -61,7 +61,7 @@ public class ShortestPalindrome {
     }
 
     // Manacher's algorithm
-    // time complexity: O(N)
+    // time complexity: O(N), space complexity: O(N)
     // beats 60.08%(10 ms)
     public String shortestPalindrome3(String s) {
         int l = s.length();
@@ -116,6 +116,59 @@ public class ShortestPalindrome {
         return cs2;
     }
 
+    // recursion
+    // time complexity: O(N ^ 2), space complexity: O(N)
+    // beats 86.74%(4 ms)
+    public String shortestPalindrome4(String s) {
+        int i = 0;
+        for (int j = s.length() - 1; j >= 0; j--) {
+            if (s.charAt(i) == s.charAt(j)) {
+                i++;
+            }
+        }
+        if (i == s.length()) return s;
+
+        String suffix = s.substring(i);
+        String prefix = new StringBuilder(suffix).reverse().toString();
+        return prefix + shortestPalindrome(s.substring(0, i)) + suffix;
+    }
+
+    // time complexity: O(N ^ 2), space complexity: O(1)
+    // beats 63.40%(9 ms)
+    public String shortestPalindrome5(String s) {
+        int end = s.length() - 1;
+        int palindromeEnd = 0;
+        while (palindromeEnd <= end) {
+            end = (palindromeEnd == 0) ? end : palindromeEnd - 1;
+            palindromeEnd = 0;
+            for (int i = end; i >= 0; i--) {
+                if (s.charAt(i) == s.charAt(palindromeEnd)) {
+                    palindromeEnd++;
+                }
+            }
+        }
+        return new StringBuilder(s.substring(palindromeEnd)).reverse()
+               .append(s).toString();
+    }
+
+    // KMP algorithm
+    // time complexity: O(N), space complexity: O(N)
+    // beats 35.08%(17 ms)
+    public String shortestPalindrome6(String s) {
+        String t = s + "#" + new StringBuilder(s).reverse().toString();
+        int len = t.length();
+        int[] pos = new int[len];
+        for (int i = 1; i < len; i++) {
+            int lastPos = pos[i - 1];
+            while (lastPos > 0 && t.charAt(lastPos) != t.charAt(i)) {
+                lastPos = pos[lastPos - 1];
+            }
+            pos[i] = lastPos + ((t.charAt(lastPos) == t.charAt(i)) ? 1 : 0);
+        }
+        return new StringBuilder(s.substring(pos[len - 1])).reverse()
+               .append(s).toString();
+    }
+
     void test(Function<String, String> shortestPalindrome, String name,
               String s, String expected) {
         long t1 = System.nanoTime();
@@ -131,17 +184,21 @@ public class ShortestPalindrome {
         test(p::shortestPalindrome, "shortestPalindrome", s, expected);
         test(p::shortestPalindrome2, "shortestPalindrome2", s, expected);
         test(p::shortestPalindrome3, "shortestPalindrome3", s, expected);
+        test(p::shortestPalindrome4, "shortestPalindrome4", s, expected);
+        test(p::shortestPalindrome5, "shortestPalindrome5", s, expected);
+        test(p::shortestPalindrome6, "shortestPalindrome6", s, expected);
     }
 
     @Test
     public void test1() {
         test("aa", "aa");
         test("abb", "bbabb");
-        test("aacecaaa", "aaacecaaa");
         test("abcd", "dcbabcd");
         test("aba", "aba");
         test("a", "a");
         test("ab", "bab");
+        test("aacecaaa", "aaacecaaa");
+        test("cbbcbdacbbc", "cbbcadbcbbcbdacbbc");
         test("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     }
