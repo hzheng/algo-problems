@@ -153,19 +153,22 @@ public class ShortestPalindrome {
 
     // KMP algorithm
     // time complexity: O(N), space complexity: O(N)
-    // beats 35.08%(17 ms)
+    // beats 41.71%(15 ms)
     public String shortestPalindrome6(String s) {
         String t = s + "#" + new StringBuilder(s).reverse().toString();
         int len = t.length();
-        int[] pos = new int[len];
-        for (int i = 1; i < len; i++) {
-            int lastPos = pos[i - 1];
-            while (lastPos > 0 && t.charAt(lastPos) != t.charAt(i)) {
-                lastPos = pos[lastPos - 1];
+        // length of the longest prefix of t that is a suffix of t[0..i].
+        int[] failTable = new int[len];
+        for (int suffixPtr = 1; suffixPtr < len; suffixPtr++) {
+            int prefixPtr = failTable[suffixPtr - 1];
+            while (prefixPtr > 0 && t.charAt(prefixPtr) != t.charAt(suffixPtr)) {
+                prefixPtr = failTable[prefixPtr - 1];
             }
-            pos[i] = lastPos + ((t.charAt(lastPos) == t.charAt(i)) ? 1 : 0);
+            if (t.charAt(prefixPtr) == t.charAt(suffixPtr)) {
+                failTable[suffixPtr] = prefixPtr + 1;
+            }
         }
-        return new StringBuilder(s.substring(pos[len - 1])).reverse()
+        return new StringBuilder(s.substring(failTable[len - 1])).reverse()
                .append(s).toString();
     }
 
