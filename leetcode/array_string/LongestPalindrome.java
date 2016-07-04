@@ -109,7 +109,7 @@ public class LongestPalindrome {
         if (s == null || s.length() == 0) return "";
 
         char[] s2 = addBoundaries(s.toCharArray());
-        int[] p = new int[s2.length];
+        int[] p = new int[s2.length]; // max palindrome at i
         int center = 0; // center of the max palindrome currently known
         int rBound = 0; // right-most boundary of the palindrome at 'center'
         int m = 0, n = 0;   // The walking indices to compare 2 elements
