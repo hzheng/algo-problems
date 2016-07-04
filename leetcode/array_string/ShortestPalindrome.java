@@ -62,14 +62,15 @@ public class ShortestPalindrome {
 
     // Manacher's algorithm
     // time complexity: O(N)
-    // beats 55.39%(11 ms)
+    // beats 60.08%(10 ms)
     public String shortestPalindrome3(String s) {
+        int l = s.length();
         char[] s2 = addBoundaries(s.toCharArray());
-        int[] maxPalindrome = new int[s2.length]; // max palindrome at i
+        int[] maxPalindrome = new int[l + 1]; // max palindrome at i
         int center = 0; // center of the max palindrome currently known
         int rBound = 0; // right-most boundary of the palindrome at 'center'
         int m = 0, n = 0;  // walking indices to compare 2 elements
-        for (int i = 1; i < s2.length; i++) {
+        for (int i = 1; i <= l; i++) {
             if (i > rBound) { // reset
                 maxPalindrome[i] = 0;
                 m = i - 1;
@@ -95,7 +96,7 @@ public class ShortestPalindrome {
         }
         // find the longest one
         int len = 0;
-        for (int i = 1; i < s2.length; i++) {
+        for (int i = 1; i <= l; i++) {
             int curLen = maxPalindrome[i];
             if (curLen == i && len < curLen) {
                 len = curLen;
