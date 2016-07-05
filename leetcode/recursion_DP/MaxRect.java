@@ -3,6 +3,8 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// https://leetcode.com/problems/maximal-rectangle/
+//
 // Given a 2D binary matrix filled with 0's and 1's, find the largest rectangle
 // containing all ones and return its area.
 public class MaxRect {
@@ -40,7 +42,7 @@ public class MaxRect {
     }
 
     private int maxArea(int[] heights) {
-        Stack<Integer> stack = new Stack<Integer>();
+        Stack<Integer> stack = new Stack<>();
         int max = 0;
         for (int i = 0; i <= heights.length; ) {
             if (stack.empty()
