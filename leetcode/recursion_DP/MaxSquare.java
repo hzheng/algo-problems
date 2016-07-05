@@ -8,6 +8,7 @@ import static org.junit.Assert.*;
 // Given a 2D binary matrix filled with 0's and 1's, find the largest square
 // containing all 1's and return its area.
 public class MaxSquare {
+    // time complexity: O(M * N ^ 2), space complexity: O(N)
     // beats 83.29%(10 ms)
     public int maximalSquare(char[][] matrix) {
         int m = matrix.length;
@@ -67,8 +68,72 @@ public class MaxSquare {
         return Math.max(max, Math.min(n - front, heights2[front]));
     }
 
-    public void testMaxSide(int expected, int... nums) {
+    public void testMaxSide(int expected, int ... nums) {
         assertEquals(expected, maxSide(nums));
+    }
+
+    // time complexity: O(M * N), space complexity: O(M * N)
+    // beats 67.69%(13 ms)
+    public int maximalSquare2(char[][] matrix) {
+        int m = matrix.length;
+        if (m == 0) return 0;
+
+        int n = matrix[0].length;
+        // largest square side that ends at (i, j)
+        int[][] sides = new int[m][n];
+        int maxSide = 0;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (matrix[i][j] == '1') {
+                    sides[i][j] = 1;
+                    maxSide = 1;
+                }
+            }
+        }
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                if (sides[i][j] == 0) continue;
+
+                sides[i][j] = 1 + Math.min(sides[i - 1][j],
+                                           Math.min(sides[i][j - 1],
+                                                    sides[i - 1][j - 1]));
+                maxSide = Math.max(maxSide, sides[i][j]);
+            }
+        }
+        return maxSide * maxSide;
+    }
+
+    // time complexity: O(M * N), space complexity: O(N)
+    // beats 67.69%(13 ms)
+    public int maximalSquare3(char[][] matrix) {
+        int m = matrix.length;
+        if (m == 0) return 0;
+
+        int n = matrix[0].length;
+        int[][] sides = new int[2][n];
+        int maxSide = 0;
+        for (int j = 0; j < n; j++) {
+            if (matrix[0][j] == '1') {
+                sides[0][j] = 1;
+                maxSide = 1;
+            }
+        }
+        for (int i = 1; i < m; i++) {
+            int k = i % 2;
+            sides[k][0] = matrix[i][0] - '0';
+            maxSide = Math.max(sides[k][0], maxSide);
+            for (int j = 1; j < n; j++) {
+                if (matrix[i][j] == '0') {
+                    sides[k][j] = 0;
+                } else {
+                    sides[k][j] = Math.min(sides[1 - k][j],
+                                           Math.min(sides[k][j - 1],
+                                                    sides[1 - k][j - 1])) + 1;
+                    maxSide = Math.max(sides[k][j], maxSide);
+                }
+            }
+        }
+        return maxSide * maxSide;
     }
 
     @Test
@@ -88,13 +153,17 @@ public class MaxSquare {
             matrix[i] = matrixStr[i].toCharArray();
         }
         assertEquals(expected, maximalSquare(matrix));
+        assertEquals(expected, maximalSquare2(matrix));
+        assertEquals(expected, maximalSquare3(matrix));
     }
 
     @Test
     public void test1() {
+        test(1, "1");
         test(4, "10100", "10111", "11111", "10010");
         test(4, "10110", "10111", "11111", "10010");
         test(9, "10111", "10111", "11111", "10010");
+        test(4, "101101","111111","011011","111010","011111","110111");
     }
 
     public static void main(String[] args) {
