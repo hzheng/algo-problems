@@ -22,6 +22,9 @@ import static org.junit.Assert.*;
 // The input list is already sorted in ascending order by the left x position Li.
 // The output list must be sorted by the x position.
 public class Skyline {
+    // TODO: https://briangordon.github.io/2014/08/the-skyline-problem.html
+    // TODO:binary indexed tree
+
     // time complexity: O(N * log(N))(?), space complexity: O(N)
     // beats 95.26%(13 ms)
     public List<int[]> getSkyline(int[][] buildings) {
@@ -207,7 +210,83 @@ public class Skyline {
         return res;
     }
 
-    // TODO: https://briangordon.github.io/2014/08/the-skyline-problem.html
+
+    // Segment tree
+    // https://discuss.leetcode.com/topic/49110/java-segment-tree-solution-47-ms
+    // beats 83.54%(39 ms)
+    public List<int[]> getSkyline5(int[][] buildings) {
+        Set<Integer> endpoints = new HashSet<>();
+        for (int[] building : buildings) {
+            endpoints.add(building[0]);
+            endpoints.add(building[1]);
+        }
+
+        List<Integer> pointList = new ArrayList<>(endpoints);
+        Collections.sort(pointList);
+
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < pointList.size(); i++) {
+            map.put(pointList.get(i), i);
+        }
+
+        Node segments = Node.create(0, pointList.size() - 1);
+        for (int[] building : buildings) {
+            segments.add(map.get(building[0]), map.get(building[1]), building[2]);
+        }
+
+        List<int[]> res = new ArrayList<>();
+        getSkyline(segments, pointList, res);
+        if (pointList.size() > 0) {
+            res.add(new int[] {pointList.get(pointList.size() - 1), 0});
+        }
+        return res;
+    }
+
+    private void getSkyline(Node node, List<Integer> points, List<int[]> res) {
+        if (node == null) return;
+
+        if (node.left == null
+            && (res.size() == 0 || res.get(res.size() - 1)[1] != node.height)) {
+            res.add(new int[] {points.get(node.start), node.height});
+        } else {
+            getSkyline(node.left, points, res);
+            getSkyline(node.right, points, res);
+        }
+    }
+
+    private static class Node {
+        int start, end, height;
+        Node left, right;
+
+        public Node(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+
+        static Node create(int start, int end){
+            if (start > end) return null;
+
+            Node node = new Node(start, end);
+            if (start + 1 < end) {
+                int mid = start + (end - start) / 2;
+                node.left = create(start, mid);
+                node.right = create(mid, end);
+            }
+            return node;
+        }
+
+        void add(int start, int end, int h) {
+            if (start >= this.end || end <= this.start || h < height) return;
+
+            if (left == null) {
+                height = Math.max(height, h);
+            } else {
+                left.add(start, end, h);
+                right.add(start, end, h);
+                height = Math.min(left.height, right.height);
+            }
+        }
+    }
 
     void test(Function<int[][], List<int[]> >getSkyline,
               int[][] buildings, int[][] expected) {
@@ -221,6 +300,7 @@ public class Skyline {
         test(s::getSkyline2, buildings, expected);
         test(s::getSkyline3, buildings, expected);
         test(s::getSkyline4, buildings, expected);
+        test(s::getSkyline5, buildings, expected);
     }
 
     @Test
