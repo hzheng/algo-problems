@@ -72,8 +72,50 @@ public class Calculator2 {
         return num;
     }
 
+    // beats 94.10%(15 ms)
+    public int calculate2(String s) {
+        Boolean multiply = null;
+        int sign = 1;
+        int lastOperand = 0;
+        int res = 0;
+        int len = s.length();
+        for (int i = 0; i < len; i++) {
+            char c = s.charAt(i);
+            switch (c) {
+            case ' ': continue;
+            case '*':
+                multiply = Boolean.TRUE;
+                break;
+            case '/':
+                multiply = Boolean.FALSE;
+                break;
+            case '+': case '-':
+                res += sign * lastOperand;
+                sign = (c == '+') ? 1 : -1;
+                multiply = null;
+                break;
+            default: // assume digits
+                int num = c - '0';
+                while (++i < len && Character.isDigit(s.charAt(i))) {
+                    num = num * 10 + s.charAt(i) - '0';
+                }
+                i--;
+
+                if (multiply == null) {
+                    lastOperand = num;
+                } else if (multiply == Boolean.TRUE) {
+                    lastOperand *= num;
+                } else {
+                    lastOperand /= num;
+                }
+            }
+        }
+        return res + sign * lastOperand;
+    }
+
     void test(String s, int expected) {
         assertEquals(expected, calculate(s));
+        assertEquals(expected, calculate2(s));
     }
 
     @Test
