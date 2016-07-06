@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.function.Function;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -21,6 +22,7 @@ import static org.junit.Assert.*;
 // The input list is already sorted in ascending order by the left x position Li.
 // The output list must be sorted by the x position.
 public class Skyline {
+    // time complexity: O(N * log(N))(?), space complexity: O(N)
     // beats 95.26%(13 ms)
     public List<int[]> getSkyline(int[][] buildings) {
         int n = buildings.length;
@@ -82,9 +84,45 @@ public class Skyline {
         return res;
     }
 
-    void test(int[][] buildings, int[][] expected) {
-        int[][] res = getSkyline(buildings).toArray(new int[0][0]);
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    // beats 26.43%(290 ms)
+    public List<int[]> getSkyline2(int[][] buildings) {
+        List<int[]> heights = new ArrayList<>();
+        for(int[] building : buildings) {
+            heights.add(new int[] {building[0], -building[2]});
+            heights.add(new int[] {building[1], building[2]});
+        }
+        Collections.sort(heights, (a, b) -> (a[0] != b[0])
+                         ? a[0] - b[0] : a[1] - b[1]);
+        Queue<Integer> queue = new PriorityQueue<>((a, b) -> b - a);
+        queue.offer(0);
+        int lastH = 0;
+        List<int[]> res = new ArrayList<>();
+        for (int[] h : heights) {
+            if (h[1] < 0) { // left vertex
+                queue.offer(-h[1]);
+            } else { // right vertex
+                queue.remove(h[1]); // coming here means the building is done
+            }
+            int curH = queue.peek();
+            if (lastH != curH) {
+                res.add(new int[] {h[0], curH});
+                lastH = curH;
+            }
+        }
+        return res;
+    }
+
+    void test(Function<int[][], List<int[]> >getSkyline,
+              int[][] buildings, int[][] expected) {
+        int[][] res = getSkyline.apply(buildings).toArray(new int[0][0]);
         assertArrayEquals(expected, res);
+    }
+
+    void test(int[][] buildings, int[][] expected) {
+        Skyline s = new Skyline();
+        test(s::getSkyline, buildings, expected);
+        test(s::getSkyline2, buildings, expected);
     }
 
     @Test
