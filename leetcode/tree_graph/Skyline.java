@@ -113,6 +113,64 @@ public class Skyline {
         return res;
     }
 
+    // divide and conquer
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    // beats 97.13%(10 ms)
+    public List<int[]> getSkyline3(int[][] buildings) {
+        if (buildings.length == 0) return Collections.emptyList();
+
+        return getSkyline(0, buildings.length - 1, buildings);
+    }
+
+    private List<int[]> getSkyline(int start, int end, int[][] buildings) {
+        if (start == end) {
+            return Arrays.asList(
+                new int[] {buildings[start][0], buildings[start][2]},
+                new int[] {buildings[start][1], 0});
+        }
+
+        int mid = start + (end - start) / 2;
+        return merge(getSkyline(start, mid, buildings),
+                     getSkyline(mid + 1, end, buildings));
+    }
+
+    private List<int[]> merge(List<int[]> left, List<int[]> right) {
+        List<int[]> res = new ArrayList<>();
+        int i = 0;
+        int j = 0;
+        int leftSize = left.size();
+        int rightSize = right.size();
+        for (int leftH = 0, rightH = 0, maxH = 0; i < leftSize && j < rightSize; ) {
+            int[] leftPt = left.get(i);
+            int[] rightPt = right.get(j);
+            if (leftPt[0] < rightPt[0]) {
+                leftH = leftPt[1];
+                i++;
+            } else if (leftPt[0] > rightPt[0]) {
+                rightH = rightPt[1];
+                j++;
+            } else {
+                leftH = leftPt[1];
+                rightH = rightPt[1];
+                i++;
+                j++;
+            }
+            if (maxH != Math.max(leftH, rightH)) {
+                maxH = Math.max(leftH, rightH);
+                res.add(new int[] {Math.min(leftPt[0], rightPt[0]), maxH});
+            }
+        }
+        while (i < leftSize) {
+            res.add(new int[] {left.get(i)[0], left.get(i)[1]});
+            i++;
+        }
+        while (j < rightSize) {
+            res.add(new int[] {right.get(j)[0], right.get(j)[1]});
+            j++;
+        }
+        return res;
+    }
+
     void test(Function<int[][], List<int[]> >getSkyline,
               int[][] buildings, int[][] expected) {
         int[][] res = getSkyline.apply(buildings).toArray(new int[0][0]);
@@ -123,10 +181,12 @@ public class Skyline {
         Skyline s = new Skyline();
         test(s::getSkyline, buildings, expected);
         test(s::getSkyline2, buildings, expected);
+        test(s::getSkyline3, buildings, expected);
     }
 
     @Test
     public void test1() {
+        test(new int[][] {{0, 2, 3}}, new int[][] {{0, 3}, {2, 0}});
         test(new int[][] {{3, 10, 20}, {3, 9, 19}, {3, 8, 18}, {3, 7, 17},
                           {3, 6, 16}, {3, 5, 15}, {3, 4, 14}},
              new int[][] {{3, 20}, {10, 0}});
