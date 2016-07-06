@@ -84,6 +84,7 @@ public class Skyline {
         return res;
     }
 
+    // https://discuss.leetcode.com/topic/22482/short-java-solution
     // time complexity: O(N * log(N)), space complexity: O(N)
     // beats 26.43%(290 ms)
     public List<int[]> getSkyline2(int[][] buildings) {
@@ -113,10 +114,45 @@ public class Skyline {
         return res;
     }
 
+    // beats 69.085(119 ms)
+    // TreeMap remove opeartion is more efficient than PriorityQueue
+    public List<int[]> getSkyline3(int[][] buildings) {
+        List<int[]> heights = new ArrayList<>();
+        for(int[] building : buildings) {
+            heights.add(new int[] {building[0], -building[2]});
+            heights.add(new int[] {building[1], building[2]});
+        }
+        Collections.sort(heights, (a, b) -> (a[0] != b[0])
+                         ? a[0] - b[0] : a[1] - b[1]);
+        SortedMap<Integer, Integer> map = new TreeMap<>(Collections.reverseOrder());
+        map.put(0, 1);
+        int lastH = 0;
+        List<int[]> res = new ArrayList<>();
+        for (int[] h : heights) {
+            if (h[1] < 0) { // left vertex
+                Integer cnt = map.get(-h[1]);
+                map.put(-h[1], (cnt == null) ? 1 : cnt + 1);
+            } else { // right vertex
+                Integer cnt = map.get(h[1]);
+                if (cnt == 1) {
+                    map.remove(h[1]);
+                } else {
+                    map.put(h[1], cnt - 1);
+                }
+            }
+            int curH = map.firstKey();
+            if (lastH != curH) {
+                res.add(new int[] {h[0], curH});
+                lastH = curH;
+            }
+        }
+        return res;
+    }
+
     // divide and conquer
     // time complexity: O(N * log(N)), space complexity: O(N)
     // beats 97.13%(10 ms)
-    public List<int[]> getSkyline3(int[][] buildings) {
+    public List<int[]> getSkyline4(int[][] buildings) {
         if (buildings.length == 0) return Collections.emptyList();
 
         return getSkyline(0, buildings.length - 1, buildings);
@@ -171,6 +207,8 @@ public class Skyline {
         return res;
     }
 
+    // TODO: https://briangordon.github.io/2014/08/the-skyline-problem.html
+
     void test(Function<int[][], List<int[]> >getSkyline,
               int[][] buildings, int[][] expected) {
         int[][] res = getSkyline.apply(buildings).toArray(new int[0][0]);
@@ -182,6 +220,7 @@ public class Skyline {
         test(s::getSkyline, buildings, expected);
         test(s::getSkyline2, buildings, expected);
         test(s::getSkyline3, buildings, expected);
+        test(s::getSkyline4, buildings, expected);
     }
 
     @Test
