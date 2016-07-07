@@ -27,7 +27,7 @@ public class MyQueue {
             stack1.push(x);
         }
 
-        // time complexity: O(N)
+        // time complexity: Amortized O(1), Worst-case O(n).
         public void pop() {
             shift();
             stack2.pop();
@@ -159,12 +159,14 @@ public class MyQueue {
     public void test1() {
         test1(new MyQueue1());
         test1(new MyQueue2());
+        test1(new MyQueue3());
     }
 
     @Test
     public void test2() {
         test2(new MyQueue1());
         test2(new MyQueue2());
+        test1(new MyQueue3());
     }
 
     public static void main(String[] args) {
