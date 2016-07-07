@@ -62,6 +62,39 @@ public class MyStack {
         }
     }
 
+    // beats 35.94%(117 ms)
+    static class MyStack1_2 implements IMyStack {
+        Queue<Integer> queue1 = new LinkedList<>();
+        Queue<Integer> queue2 = new LinkedList<>();
+        int top;
+
+        // time complexity: O(1)
+        public void push(int x) {
+            top = x;
+            queue1.offer(x);
+        }
+
+        // time complexity: O(N)
+        public void pop() {
+            for (int i = queue1.size(); i > 1; i--) {
+                top = queue1.poll();
+                queue2.offer(top);
+            }
+            queue1.poll();
+            Queue<Integer> tmp = queue1;
+            queue1 = queue2;
+            queue2 = tmp;
+        }
+
+        public int top() {
+            return top;
+        }
+
+        public boolean empty() {
+            return queue1.isEmpty();
+        }
+    }
+
     // beats 99.93%(92 ms)
     static class MyStack2 implements IMyStack {
         Queue<Integer> queue1 = new LinkedList<>();
@@ -86,12 +119,41 @@ public class MyStack {
             queue1.poll();
         }
 
+        // time complexity: O(1)
         public int top() {
             return queue1.peek();
         }
 
         public boolean empty() {
             return queue1.isEmpty();
+        }
+    }
+
+    // One queue
+    // beats 52.11%(113 ms)
+    static class MyStack3 implements IMyStack {
+        Queue<Integer> queue = new LinkedList<>();
+
+        // time complexity: O(N)
+        public void push(int x) {
+            queue.offer(x);
+            for (int size = queue.size(); size > 1; size--) {
+                queue.offer(queue.poll());
+            }
+        }
+
+        // time complexity: O(1)
+        public void pop() {
+            queue.poll();
+        }
+
+        // time complexity: O(1)
+        public int top() {
+            return queue.peek();
+        }
+
+        public boolean empty() {
+            return queue.isEmpty();
         }
     }
 
@@ -139,7 +201,9 @@ public class MyStack {
     @Test
     public void test1() {
         test1(new MyStack1());
+        test1(new MyStack1_2());
         test1(new MyStack2());
+        test1(new MyStack3());
     }
 
     @Test
