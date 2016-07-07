@@ -123,6 +123,9 @@ public class ValidBst {
         test("2147483647", true);
         test("-2147483648", true);
         test("2147483647,2147483647", false);
+        test("6,4,8,3,5,7,9,2", true);
+        test("6,4,8,3,5,7,9,2,#,1", false);
+        test("6,4,8,3,5,7,9,2,#,#,#,#,#,#,#,1", true);
     }
 
     public static void main(String[] args) {
