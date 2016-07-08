@@ -16,7 +16,7 @@ public class CountDigitOne {
         int digits = 0;
         int firstDigit = 0;
         int power = 1;
-        for (int i = n; ; i /= 10, power *= 10) {
+        for (int i = n;; i /= 10, power *= 10) {
             digits++;
             if (i < 10) {
                 firstDigit = i;
@@ -41,7 +41,7 @@ public class CountDigitOne {
     public int countDigitOne2(int n) {
         int digits = 1;
         int power = 1;
-        for (int i = n; i >= 10; i /= 10, power *= 10, digits++) ;
+        for (int i = n; i >= 10; i /= 10, power *= 10, digits++);
         int total = 0;
 
         for (int i = n; i > 0; power /= 10, digits--) {
@@ -57,10 +57,37 @@ public class CountDigitOne {
         return total;
     }
 
+    // https://discuss.leetcode.com/topic/18054/4-lines-o-log-n-c-java-python
+    // beats 20.14%(0 ms)
+    public int countDigitOne3(int n) {
+        int count = 0;
+        for (long power = 1; power <= n; power *= 10) {
+            long left = n / power; // left part 1's(split by power)
+            count += (left + 8) / 10 * power; // full streak
+            if (left % 10 == 1) { // partial streak
+                count += n % power + 1;
+            }
+        }
+        return count;
+    }
+
+    // another recursion
+    // beats 20.14%(0 ms)
+    public int countDigitOne4(int n) {
+        if (n < 1) return 0;
+
+        int power = 1;
+        for (int i = n; i >= 10; i /= 10, power *= 10);
+        int firstDigit = n / power;
+        int count = firstDigit * countDigitOne4(power - 1) + countDigitOne4(n % power);
+        return count += (firstDigit > 1) ? power : (n % power) + 1;
+    }
 
     void test(int n, int expected) {
         assertEquals(expected, countDigitOne(n));
         assertEquals(expected, countDigitOne2(n));
+        assertEquals(expected, countDigitOne3(n));
+        assertEquals(expected, countDigitOne4(n));
     }
 
     @Test
@@ -74,6 +101,7 @@ public class CountDigitOne {
         test(20, 12);
         test(21, 13);
         test(100, 21);
+        test(500, 200);
         test(129, 63);
         test(141006540, 159616096);
         test(1410065408, 1737167499);
