@@ -1,5 +1,4 @@
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 import common.ListNode;
 
@@ -58,10 +57,48 @@ public class PalindromeLinkedList {
         return prev;
     }
 
+    // stack
+    // time complexity: O(N), space complexity: O(N)
+    // beats 3.42%(9 ms)
+    public boolean isPalindrome3(ListNode head) {
+        if (head == null) return true;
+
+        ListNode slow = head;
+        for (ListNode fast = head.next; fast != null && fast.next != null;
+             slow = slow.next, fast = fast.next.next) {}
+        Stack<Integer> stack = new Stack<>();
+        for (ListNode n = slow.next; n != null; n = n.next) {
+            stack.push(n.val);
+        }
+        for (ListNode n = head; !stack.isEmpty(); n = n.next) {
+            if (!stack.pop().equals(n.val)) return false;
+        }
+        return true;
+    }
+
+    // recursion
+    // time complexity: O(N), space complexity: O(N)
+    // 12.51%(6 ms)
+    public boolean isPalindrome4(ListNode head) {
+        return isPalindrome(new ListNode[]{head}, head);
+    }
+
+    private boolean isPalindrome(ListNode[] first, ListNode last) {
+        if (last == null) return true;
+
+        if (!isPalindrome(first, last.next)) return false;
+
+        boolean res = first[0].val == last.val;
+        first[0] = first[0].next;
+        return res;
+    }
+
     void test(int[] nums, boolean expected) {
         ListNode list = ListNode.of(nums);
         assertEquals(expected, isPalindrome(list));
         assertEquals(expected, isPalindrome2(list));
+        assertEquals(expected, isPalindrome3(list));
+        assertEquals(expected, isPalindrome4(list));
     }
 
     @Test
