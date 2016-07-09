@@ -90,6 +90,22 @@ public class ProductofArrayExceptSelf {
     }
 
     // beats 47.45%(2 ms)
+    public int[] productExceptSelf3_2(int[] nums) {
+        int n = nums.length;
+        int[] res = new int[n];
+        res[0] = 1;
+        for (int i = 1; i < n; i++) {
+            res[i] = res[i - 1] * nums[i - 1];
+        }
+        int rightProduct = 1;
+        for (int i = n - 1; i >= 0; i--) {
+            res[i] *= rightProduct;
+            rightProduct *= nums[i];
+        }
+        return res;
+    }
+
+    // beats 47.45%(2 ms)
     public int[] productExceptSelf4(int[] nums) {
         int n = nums.length;
         int[] res = new int[n];
@@ -106,11 +122,30 @@ public class ProductofArrayExceptSelf {
         return res;
     }
 
+    // recursion
+    public int[] productExceptSelf5(int[] nums) {
+        multiply(nums, 1, 0, nums.length);
+        return nums;
+    }
+
+    private int multiply(int[] nums, int fwdProduct, int start, int end) {
+        int revProduct = 1;
+        if (start < end) {
+            revProduct = multiply(nums, fwdProduct * nums[start], start + 1, end);
+            int cur = nums[start];
+            nums[start] = fwdProduct * revProduct;
+            revProduct *= cur;
+        }
+        return revProduct;
+    }
+
     void test(int[] nums, int ... expected) {
         assertArrayEquals(expected, productExceptSelf(nums));
         assertArrayEquals(expected, productExceptSelf2(nums));
         assertArrayEquals(expected, productExceptSelf3(nums));
+        assertArrayEquals(expected, productExceptSelf3_2(nums));
         assertArrayEquals(expected, productExceptSelf4(nums));
+        assertArrayEquals(expected, productExceptSelf5(nums));
     }
 
     @Test
