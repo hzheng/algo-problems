@@ -13,7 +13,8 @@ import static org.junit.Assert.*;
 // Integers in each row are sorted in ascending from left to right.
 // Integers in each column are sorted in ascending from top to bottom.
 public class MatrixSearch2 {
-    // beats 2.28%(52 ms)
+    // time complexity: O(N ^ 1.58) (T(n) = 3T(n/2) + c)
+    // beats 4.19%(36 ms)
     public boolean searchMatrix(int[][] matrix, int target) {
         int m = matrix.length;
         int n = matrix[0].length;
@@ -24,32 +25,14 @@ public class MatrixSearch2 {
                                  int y1, int y2, int target) {
         if (x1 > x2 || y1 > y2) return false;
 
-        if (y1 == y2) {
-            return Arrays.binarySearch(matrix[y1], x1, x2 + 1, target) >= 0;
-        }
-
-        if (x1 == x2) {
-            while (y1 <= y2) {
-                int mid = y1 + (y2 - y1) / 2;
-                if (matrix[mid][x1] == target) return true;
-
-                if (matrix[mid][x1] < target) {
-                    y1 = mid + 1;
-                } else {
-                    y2 = mid - 1;
-                }
-            }
-            return false;
-        }
-
         int midX = (x1 + x2) / 2;
         int midY = (y1 + y2) / 2;
         if (target == matrix[midY][midX]) return true;
 
         if (target < matrix[midY][midX]) {
-            return searchMatrix(matrix, x1, midX, y1, midY, target)
-                   || searchMatrix(matrix, x1, midX - 1, midY + 1, y2, target)
-                   || searchMatrix(matrix, midX + 1, x2, y1, midY - 1, target);
+            return searchMatrix(matrix, x1, midX - 1, y1, midY - 1, target)
+                   || searchMatrix(matrix, x1, midX - 1, midY, y2, target)
+                   || searchMatrix(matrix, midX, x2, y1, midY - 1, target);
         } else {
             return searchMatrix(matrix, midX + 1, x2, y1, midY, target)
                    || searchMatrix(matrix, x1, midX, midY + 1, y2, target)
@@ -57,19 +40,8 @@ public class MatrixSearch2 {
         }
     }
 
-    @FunctionalInterface
-    interface Function<A, B, C> {
-        public C apply(A a, B b);
-    }
-
-    private void test(Function<int[][], Integer, Boolean> f, String name,
-                      int[][] matrix, int x, boolean expected) {
-        long t1 = System.nanoTime();
-        assertEquals(expected, f.apply(matrix, x));
-        // System.out.format("%s: %.3f ms\n", name, (System.nanoTime() - t1) * 1e-6);
-    }
-
     // from Cracking the Coding Interview(5ed) Problem
+    // time complexity: O(N)  (T(n) = 2T(n/2) + c lg n)
     // beats 8.52%(28 ms)
     public boolean searchMatrix2(int[][] matrix, int target) {
         Coordinate origin = new Coordinate(0, 0);
@@ -172,11 +144,44 @@ public class MatrixSearch2 {
         }
     }
 
+    // time complexity: O(M + N)
+    // beats 54.45%(13 ms)
+    public boolean searchMatrix3(int[][] matrix, int target) {
+        int m = matrix.length;
+        int n = matrix[0].length;
+        for (int i = m - 1, j = 0; i >= 0 && j < n; ) {
+            if (target == matrix[i][j]) return true;
+
+            if (target < matrix[i][j]) {
+                i--;
+            } else {
+                j++;
+            }
+        }
+        return false;
+    }
+
+    // iterate row and binary search column
+    // time complexity: O(M * log(N))
+
+    @FunctionalInterface
+    interface Function<A, B, C> {
+        public C apply(A a, B b);
+    }
+
+    private void test(Function<int[][], Integer, Boolean> f, String name,
+                      int[][] matrix, int x, boolean expected) {
+        long t1 = System.nanoTime();
+        assertEquals(expected, f.apply(matrix, x));
+        // System.out.format("%s: %.3f ms\n", name, (System.nanoTime() - t1) * 1e-6);
+    }
+
     private void test(int[][] matrix, int[] tgts, int[] expected) {
         MatrixSearch2 m = new MatrixSearch2();
         for (int i = 0; i < tgts.length; i++) {
             test(m::searchMatrix, "searchMatrix", matrix, tgts[i], expected[i] > 0);
             test(m::searchMatrix2, "searchMatrix2", matrix, tgts[i], expected[i] > 0);
+            test(m::searchMatrix3, "searchMatrix3", matrix, tgts[i], expected[i] > 0);
         }
     }
 
