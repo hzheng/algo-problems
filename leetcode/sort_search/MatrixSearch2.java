@@ -48,12 +48,12 @@ public class MatrixSearch2 {
 
         if (target < matrix[midY][midX]) {
             return searchMatrix(matrix, x1, midX, y1, midY, target)
-            || searchMatrix(matrix, x1, midX - 1, midY + 1, y2, target)
-            || searchMatrix(matrix, midX + 1, x2, y1, midY - 1, target);
+                   || searchMatrix(matrix, x1, midX - 1, midY + 1, y2, target)
+                   || searchMatrix(matrix, midX + 1, x2, y1, midY - 1, target);
         } else {
             return searchMatrix(matrix, midX + 1, x2, y1, midY, target)
-            || searchMatrix(matrix, x1, midX, midY + 1, y2, target)
-            || searchMatrix(matrix, midX + 1, x2, midY + 1, y2, target);
+                   || searchMatrix(matrix, x1, midX, midY + 1, y2, target)
+                   || searchMatrix(matrix, midX + 1, x2, midY + 1, y2, target);
         }
     }
 
@@ -69,10 +69,114 @@ public class MatrixSearch2 {
         // System.out.format("%s: %.3f ms\n", name, (System.nanoTime() - t1) * 1e-6);
     }
 
+    // from Cracking the Coding Interview(5ed) Problem
+    // beats 8.52%(28 ms)
+    public boolean searchMatrix2(int[][] matrix, int target) {
+        Coordinate origin = new Coordinate(0, 0);
+        Coordinate dest = new Coordinate(matrix.length - 1, matrix[0].length - 1);
+        return findElement(matrix, origin, dest, target) != null;
+    }
+
+    private Coordinate findElement(int[][] matrix, Coordinate origin, Coordinate dest, int x) {
+        if (!origin.inbounds(matrix) || !dest.inbounds(matrix)) return null;
+        if (matrix[origin.row][origin.column] == x) return origin;
+        if (!origin.isBefore(dest)) return null;
+
+        /* Set start to start of diagonal and end to the end of the diagonal. Since
+         * the grid may not be square, the end of the diagonal may not equal dest.
+         */
+        Coordinate start = (Coordinate)origin.clone();
+        int diagDist = Math.min(dest.row - origin.row, dest.column - origin.column);
+        Coordinate end = new Coordinate(start.row + diagDist, start.column + diagDist);
+        Coordinate p = new Coordinate(0, 0);
+
+        /* binary search on the diagonal, looking for the first element greater than x */
+        while (start.isBefore(end)) {
+            p.setToAverage(start, end);
+            if (x > matrix[p.row][p.column]) {
+                start.row = p.row + 1;
+                start.column = p.column + 1;
+            } else {
+                end.row = p.row - 1;
+                end.column = p.column - 1;
+            }
+        }
+
+        /* Split the grid into quadrants. Search the bottom left and the top right. */
+        return partitionAndSearch(matrix, origin, dest, start, x);
+    }
+
+    private Coordinate partitionAndSearch(int[][] matrix,
+                                          Coordinate origin,
+                                          Coordinate dest,
+                                          Coordinate pivot, int elem) {
+        Coordinate lowerLeftOrigin = new Coordinate(pivot.row, origin.column);
+        Coordinate lowerLeftDest = new Coordinate(dest.row, pivot.column - 1);
+        Coordinate upperRightOrigin = new Coordinate(origin.row, pivot.column);
+        Coordinate upperRightDest = new Coordinate(pivot.row - 1, dest.column);
+
+        Coordinate lowerLeft = findElement(matrix, lowerLeftOrigin, lowerLeftDest, elem);
+        if (lowerLeft == null) {
+            return findElement(matrix, upperRightOrigin, upperRightDest, elem);
+        }
+        return lowerLeft;
+    }
+
+    static class Coordinate implements Cloneable {
+        int row;
+        int column;
+
+        public Coordinate(int r, int c) {
+            row = r;
+            column = c;
+        }
+
+        public boolean inbounds(int[][] matrix) {
+            return row >= 0 && column >= 0 &&
+                   row < matrix.length && column < matrix[0].length;
+        }
+
+        public boolean isBefore(Coordinate p) {
+            return row <= p.row && column <= p.column;
+        }
+
+        public Object clone() {
+            return new Coordinate(row, column);
+        }
+
+        public void setToAverage(Coordinate min, Coordinate max) {
+            row = (min.row + max.row) / 2;
+            column = (min.column + max.column) / 2;
+        }
+
+        public Coordinate middle(Coordinate min, Coordinate max) {
+            return new Coordinate((min.row + max.row) / 2,
+                                  (min.column + max.column) / 2);
+        }
+
+        @Override
+        public String toString() {
+            return "(" + row + "," + column + ")";
+        }
+
+        @Override
+        public boolean equals(Object that) {
+            if (!(that instanceof Coordinate)) return false;
+            Coordinate other = (Coordinate)that;
+            return (row == other.row) && (column == other.column);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(row, column);
+        }
+    }
+
     private void test(int[][] matrix, int[] tgts, int[] expected) {
         MatrixSearch2 m = new MatrixSearch2();
         for (int i = 0; i < tgts.length; i++) {
             test(m::searchMatrix, "searchMatrix", matrix, tgts[i], expected[i] > 0);
+            test(m::searchMatrix2, "searchMatrix2", matrix, tgts[i], expected[i] > 0);
         }
     }
 
