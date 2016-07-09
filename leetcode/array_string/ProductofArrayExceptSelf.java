@@ -122,7 +122,7 @@ public class ProductofArrayExceptSelf {
         return res;
     }
 
-    // recursion
+    // recursion(modify input)
     public int[] productExceptSelf5(int[] nums) {
         multiply(nums, 1, 0, nums.length);
         return nums;
@@ -139,13 +139,31 @@ public class ProductofArrayExceptSelf {
         return revProduct;
     }
 
+    // one loop except intialization(from leetcode)
+    public int[] productExceptSelf6(int[] nums) {
+        int n = nums.length;
+        int[] res = new int[n];
+        for (int i = 0; i < n; i++) {
+            res[i] = 1;
+        }
+        for (int i = 0, j = n - 1, leftProduct = 1, rightProduct = 1;
+             i < n; ++i, --j) {
+            res[i] *= leftProduct;
+            leftProduct *= nums[i];
+            res[j] *= rightProduct;
+            rightProduct *= nums[j];
+        }
+        return res;
+    }
+
     void test(int[] nums, int ... expected) {
         assertArrayEquals(expected, productExceptSelf(nums));
         assertArrayEquals(expected, productExceptSelf2(nums));
         assertArrayEquals(expected, productExceptSelf3(nums));
         assertArrayEquals(expected, productExceptSelf3_2(nums));
         assertArrayEquals(expected, productExceptSelf4(nums));
-        assertArrayEquals(expected, productExceptSelf5(nums));
+        assertArrayEquals(expected, productExceptSelf5(nums.clone()));
+        assertArrayEquals(expected, productExceptSelf6(nums));
     }
 
     @Test
