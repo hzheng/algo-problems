@@ -72,7 +72,7 @@ public class MaxSlidingWindow {
 
         int[] res = new int[n - k + 1];
         Deque<Integer> maxQ = new LinkedList<>();
-        for (int i = 0; i < n; i++){
+        for (int i = 0; i < n; i++) {
             if (!maxQ.isEmpty() && maxQ.peekFirst() == i - k) {
                 maxQ.poll();
             }
@@ -107,11 +107,37 @@ public class MaxSlidingWindow {
         return res;
     }
 
+    // https://discuss.leetcode.com/topic/26480/o-n-solution-in-java-with-two-simple-pass-in-the-array/2
+    // time complexity: O(N), space complexity: O(N)
+    // beats 92.61%(11 ms)
+    public int[] maxSlidingWindow5(int[] nums, int k) {
+        int n = nums.length;
+        if (n == 0) return new int[0];
+
+        int[] maxLeft = new int[n];
+        int[] maxRight = new int[n];
+        maxLeft[0] = nums[0];
+        maxRight[n - 1] = nums[n - 1];
+        for (int i = 1; i < n; i++) {
+            maxLeft[i] = (i % k == 0) ? nums[i] : Math.max(maxLeft[i - 1], nums[i]);
+
+            int j = n - i - 1;
+            maxRight[j] = (j % k == 0) ? nums[j] : Math.max(maxRight[j + 1], nums[j]);
+        }
+
+        int[] res = new int[n - k + 1];
+        for (int i = 0; i + k <= n; i++) {
+            res[i] = Math.max(maxRight[i], maxLeft[i + k - 1]);
+        }
+        return res;
+    }
+
     void test(int[] nums, int k, int[] expected) {
         assertArrayEquals(expected, maxSlidingWindow(nums, k));
         assertArrayEquals(expected, maxSlidingWindow2(nums, k));
         assertArrayEquals(expected, maxSlidingWindow3(nums, k));
         assertArrayEquals(expected, maxSlidingWindow4(nums, k));
+        assertArrayEquals(expected, maxSlidingWindow5(nums, k));
     }
 
     @Test
