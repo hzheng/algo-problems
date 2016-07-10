@@ -8,7 +8,7 @@ public class Combination {
     // beats 30.91%
     public List<List<Integer> > combine(int n, int k) {
         List<List<Integer> > res = new ArrayList<>();
-        combine(n, k, res, new ArrayList<Integer>());
+        combine(n, k, res, new ArrayList<>());
         return res;
     }
 
@@ -16,7 +16,7 @@ public class Combination {
                          List<Integer> cur) {
         int count = cur.size();
         if (count == k) {
-            res.add(new ArrayList<Integer>(cur));
+            res.add(new ArrayList<>(cur));
             return;
         }
 

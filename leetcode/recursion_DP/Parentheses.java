@@ -37,7 +37,7 @@ public class Parentheses {
     // beats 87.70% in leetcode
     public static List<String> parentheses2(int count) {
         char[] str = new char[count * 2];
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         addParen2(list, count, count, str, 0);
         return list;
     }
@@ -61,7 +61,7 @@ public class Parentheses {
     // rewrite <tt>parentheses2</tt> by bit operation
     public static List<String> parenthesesBit(int count) {
         char[] str = new char[count * 2];
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         long[] bits = new long[1];
         if (count < 32)
             addParenBit(list, count, count, bits, 0, count * 2);
