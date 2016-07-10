@@ -88,6 +88,113 @@ public class DiffWaysToCompute {
         return stack.peek()[0];
     }
 
+    // beats 20.77%(9 ms)
+    public List<Integer> diffWaysToCompute2(String input) {
+        List<Integer> res = new ArrayList<>();
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            if (c >= '0' && c <= '9') continue;
+
+            List<Integer> leftRes = diffWaysToCompute(input.substring(0, i));
+            List<Integer> rightRes = diffWaysToCompute(input.substring(i + 1));
+            for (Integer m : leftRes) {
+                for (Integer n : rightRes) {
+                    if (c == '+') {
+                        res.add(m + n);
+                    } else if (c == '-') {
+                        res.add(m - n);
+                    } else if (c == '*') {
+                        res.add(m * n);
+                    }
+                }
+            }
+        }
+        if (res.size() == 0) {
+            res.add(Integer.parseInt(input));
+        }
+        return res;
+    }
+
+    // beats 20.77%(9 ms)
+    public List<Integer> diffWaysToCompute3(String input) {
+        int len = input.length();
+        char[] cs = input.toCharArray();
+        List<Object> expression = new ArrayList<>();
+        for (int i = 0; i < len; i++) {
+            int n = 0;
+            while (i < len && Character.isDigit(cs[i])) {
+                n *= 10;
+                n += cs[i++] - '0';
+            }
+            expression.add(n);
+            if (i < len) {
+                expression.add(cs[i]);
+            }
+        }
+        return diffWaysToCompute3(expression, 0, expression.size() - 1);
+    }
+
+    private List<Integer> diffWaysToCompute3(List<Object> expression, int start, int end) {
+        if (start == end) return Arrays.asList((Integer)expression.get(start));
+
+        List<Integer> res = new ArrayList<>();
+        for (int i = start; i <= end; i++) {
+            Object oper = expression.get(i);
+            if (!(oper instanceof Character)) continue;
+
+            char c = ((Character)oper).charValue();
+            List<Integer> leftRes = diffWaysToCompute3(expression, start, i - 1);
+            List<Integer> rightRes = diffWaysToCompute3(expression, i + 1, end);
+            for (Integer m : leftRes) {
+                for (Integer n : rightRes) {
+                    if (c == '+') {
+                        res.add(m + n);
+                    } else if (c == '-') {
+                        res.add(m - n);
+                    } else if (c == '*') {
+                        res.add(m * n);
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    // beats 84.68%(4 ms)
+    public List<Integer> diffWaysToCompute4(String input) {
+        return diffWaysToCompute4(input, new HashMap<>());
+    }
+
+    private List<Integer> diffWaysToCompute4(String s,
+                                             Map<String, List<Integer>> cache) {
+        if (cache.containsKey(s)) return cache.get(s);
+
+        List<Integer> res = new ArrayList<>();
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c >= '0' && c <= '9') continue;
+
+            List<Integer> leftRes = diffWaysToCompute4(s.substring(0, i), cache);
+            List<Integer> rightRes = diffWaysToCompute4(s.substring(i + 1), cache);
+            for (Integer m : leftRes) {
+                for (Integer n : rightRes) {
+                    if (c == '+') {
+                        res.add(m + n);
+                    } else if (c == '-') {
+                        res.add(m - n);
+                    } else if (c == '*') {
+                        res.add(m * n);
+                    }
+                }
+            }
+        }
+        if (res.size() == 0) {
+            res.add(Integer.parseInt(s));
+        }
+        cache.put(s, res);
+        return res;
+    }
+
     void test(Function<String, List<Integer> > compute,
               String s, int ... expected) {
         List<Integer> res = compute.apply(s);
@@ -98,6 +205,9 @@ public class DiffWaysToCompute {
     void test(String s, int ... expected) {
         DiffWaysToCompute d = new DiffWaysToCompute();
         test(d::diffWaysToCompute, s, expected);
+        test(d::diffWaysToCompute2, s, expected);
+        test(d::diffWaysToCompute3, s, expected);
+        test(d::diffWaysToCompute4, s, expected);
     }
 
     @Test
