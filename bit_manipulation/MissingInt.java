@@ -23,7 +23,7 @@ import bit_manipulation.BitInteger;
 public class MissingInt {
     public static int findMissing(List<BitInteger> array) {
         int missing = 0;
-        List<BitInteger> buffer = new LinkedList<BitInteger>(array);
+        List<BitInteger> buffer = new LinkedList<>(array);
         for (int i = 0; buffer.size() > 0; i++) {
             missing |= (findMissing(buffer, i)) << i;
         }
@@ -90,8 +90,8 @@ public class MissingInt {
         int size = array.size();
         if (size == 0) return -1;
 
-        List<BitInteger> ones = new ArrayList<BitInteger>(size / 2);
-        List<BitInteger> zeros = new ArrayList<BitInteger>(size / 2);
+        List<BitInteger> ones = new ArrayList<>(size / 2);
+        List<BitInteger> zeros = new ArrayList<>(size / 2);
         for (BitInteger i : array) {
             if (i.get(col) == 0) {
                 zeros.add(i);
@@ -116,8 +116,8 @@ public class MissingInt {
     private static int findMissingRecursive(List<BitInteger> input, int col) {
         if (col >= BitInteger.INTEGER_SIZE) return 0;
 
-        List<BitInteger> oneBits = new ArrayList<BitInteger>(input.size() / 2);
-        List<BitInteger> zeroBits = new ArrayList<BitInteger>(input.size() / 2);
+        List<BitInteger> oneBits = new ArrayList<>(input.size() / 2);
+        List<BitInteger> zeroBits = new ArrayList<>(input.size() / 2);
         for (BitInteger t : input) {
             if (t.get(col) == 0) {
                 zeroBits.add(t);
@@ -135,7 +135,7 @@ public class MissingInt {
     }
 
     private List<BitInteger> initArray(int n, int missing) {
-        List<BitInteger> array = new ArrayList<BitInteger>();
+        List<BitInteger> array = new ArrayList<>();
 
         for (int i = 1; i <= n; i++) {
             array.add(new BitInteger(i == missing ? 0 : i));
