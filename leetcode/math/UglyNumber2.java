@@ -154,12 +154,55 @@ public class UglyNumber2 {
         return res;
     }
 
+    // https://stackoverflow.com/questions/4600048/nth-ugly-number
+    // beats 9.67%(94 ms)
+    public int nthUglyNumber5(int n) {
+        SortedSet<Long> next = new TreeSet<>();  // may overflow if not use long
+        next.add(1L);
+        for (int i = 1;; ++i) {
+            long res = next.first();
+            if (i >= n) return (int)res;
+
+            next.remove(res);
+            next.add(res * 2);
+            next.add(res * 3);
+            next.add(res * 5);
+        }
+    }
+
+    // beats 30.11%(37 ms)
+    public int nthUglyNumber6(int n) {
+        if (n == 1) return 1;
+
+        Queue<Long> pq = new PriorityQueue<>();
+        pq.offer(2L);
+        pq.offer(3L);
+        pq.offer(5L);
+        for (int i = 2; ; i++) {
+            long res = pq.poll();
+            if (i >= n) return (int)res;
+
+            pq.offer(res * 2);
+            if (res % 2 > 0) {
+                pq.offer(res * 3);
+                if (res % 3 > 0 && res % 5 == 0) {
+                    pq.offer(res * 5);
+                }
+            }
+        }
+    }
+
+    // TODO: https://stackoverflow.com/questions/4600048/nth-ugly-number
+    // time complexity: O(N ^ (2/3)), space complexity: O(N)
+
     void test(int ... expected) {
         for (int i = 0; i < expected.length; i++) {
             assertEquals(expected[i], nthUglyNumber(i + 1));
             assertEquals(expected[i], nthUglyNumber2(i + 1));
             assertEquals(expected[i], nthUglyNumber3(i + 1));
             assertEquals(expected[i], nthUglyNumber4(i + 1));
+            assertEquals(expected[i], nthUglyNumber5(i + 1));
+            assertEquals(expected[i], nthUglyNumber6(i + 1));
         }
     }
 
