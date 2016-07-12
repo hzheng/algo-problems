@@ -154,6 +154,44 @@ public class PerfectSquares {
         }
     }
 
+    // DP
+    // beats 60.85%(68 ms)
+    public int numSquares6(int n) {
+        int[] table = new int[n + 1];
+        Arrays.fill(table, n);
+        for (int i = 0; i * i <= n; i++){
+            table[i * i] = 1;
+        }
+        for (int i = 1; i <= n; i++){
+            for (int j = 1; ; j++) {
+                int composite = i + j * j;
+                if (composite > n) break;
+
+                table[composite] = Math.min(table[i] + 1, table[composite]);
+            }
+        }
+        return table[n];
+    }
+
+    // beats 24.33%(108 ms)
+    public int numSquares7(int n) {
+        int[] table = new int[n + 1];
+        Arrays.fill(table, n);
+        for (int i = 1; i <= n; i++){
+            for (int j = 1; ; j++) {
+                int square = j * j;
+                if (i < square) break;
+
+                if (i == square) {
+                    table[i] = 1;
+                } else {
+                    table[i] = Math.min(table[i], table[i - square] + 1);
+                }
+            }
+        }
+        return table[n];
+    }
+
     void test(Function<Integer, Integer> numSquares, String name,
               int n, int expected) {
         long t1 = System.nanoTime();
@@ -174,6 +212,8 @@ public class PerfectSquares {
             test(p::numSquares4, "numSquares4", n, expected);
         }
         test(p::numSquares5, "numSquares5", n, expected);
+        test(p::numSquares6, "numSquares6", n, expected);
+        test(p::numSquares7, "numSquares7", n, expected);
     }
 
     @Test
