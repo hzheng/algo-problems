@@ -68,6 +68,7 @@ public class HIndex {
         return papers;
     }
 
+    // counting sort
     // time complexity: O(N), space complexity: O(N)
     // beats 58.47%(1 ms)
     public int hIndex4(int[] citations) {
