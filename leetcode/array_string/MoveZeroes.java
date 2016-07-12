@@ -25,6 +25,7 @@ public class MoveZeroes {
         }
     }
 
+    // beats 23.31%(1 ms)
     public void moveZeroes2(int[] nums) {
         int nonzeroPos = 0;
         for (int num : nums) {
@@ -37,21 +38,37 @@ public class MoveZeroes {
         }
     }
 
+    // beats 23.31%(1 ms)
+    public void moveZeroes3(int[] nums) {
+        for (int i = -1, j = 0; j < nums.length; j++) {
+            if (nums[j] != 0) {
+                swap(++i, j, nums);
+            }
+        }
+    }
+
+    private void swap(int i, int j, int[] nums) {
+        int tmp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = tmp;
+    }
+
     @FunctionalInterface
     interface Function<A> {
         public void apply(A a);
     }
 
-    void test(Function<int[]> move, int[] nums, int... expected) {
+    void test(Function<int[]> move, int[] nums, int ... expected) {
         int[] res = nums.clone();
         move.apply(res);
         assertArrayEquals(expected, res);
     }
 
-    void test(int[] nums, int... expected) {
+    void test(int[] nums, int ... expected) {
         MoveZeroes m = new MoveZeroes();
         test(m::moveZeroes, nums, expected);
         test(m::moveZeroes2, nums, expected);
+        test(m::moveZeroes3, nums, expected);
     }
 
     @Test
