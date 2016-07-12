@@ -51,6 +51,7 @@ public class PerfectSquares {
         return table[n];
     }
 
+    // Lagrange's four-square theorem
     // time complexity: O(N ^ (1.5)), space complexity: O(N)
     // beats 71.36%(66 ms)
     public int numSquares3(int n) {
@@ -92,7 +93,7 @@ public class PerfectSquares {
         Queue<Integer> queue = new LinkedList<>();
         add(queue, n, squares);
 
-        for (int level = 2; ; level++) {
+        for (int level = 2;; level++) {
             int size = queue.size();
             for (int i = 0; i < size; i++) {
                 int cur = queue.poll();
@@ -104,7 +105,7 @@ public class PerfectSquares {
     }
 
     private boolean add(Queue<Integer> queue, int n, int[] squares) {
-        for (int i = 1; ; i++) {
+        for (int i = 1;; i++) {
             int left = n - squares[i];
             if (left == 0) return true;
             if (left < 0) return false;
@@ -129,7 +130,7 @@ public class PerfectSquares {
         Set<Integer> added = new HashSet<>();
         add(queue, n, squares, added);
 
-        for (int level = 2; ; level++) {
+        for (int level = 2;; level++) {
             int size = queue.size();
             for (int i = 0; i < size; i++) {
                 int cur = queue.poll();
@@ -142,7 +143,7 @@ public class PerfectSquares {
 
     private boolean add(Queue<Integer> queue, int n, int[] squares,
                         Set<Integer> added) {
-        for (int i = 1; ; i++) {
+        for (int i = 1;; i++) {
             int left = n - squares[i];
             if (left == 0) return true;
             if (left < 0) return false;
@@ -159,11 +160,11 @@ public class PerfectSquares {
     public int numSquares6(int n) {
         int[] table = new int[n + 1];
         Arrays.fill(table, n);
-        for (int i = 0; i * i <= n; i++){
+        for (int i = 0; i * i <= n; i++) {
             table[i * i] = 1;
         }
-        for (int i = 1; i <= n; i++){
-            for (int j = 1; ; j++) {
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1;; j++) {
                 int composite = i + j * j;
                 if (composite > n) break;
 
@@ -173,23 +174,43 @@ public class PerfectSquares {
         return table[n];
     }
 
-    // beats 24.33%(108 ms)
+    // Lagrange's four-square theorem & Legendre's three-square theorem
+    // time complexity: O(N ^ (0.5)), space complexity: O(1)
+    // beats 97.12%(2 ms)
     public int numSquares7(int n) {
-        int[] table = new int[n + 1];
-        Arrays.fill(table, n);
-        for (int i = 1; i <= n; i++){
-            for (int j = 1; ; j++) {
-                int square = j * j;
-                if (i < square) break;
+        while (n % 4 == 0) {
+            n /= 4;
+        }
 
-                if (i == square) {
-                    table[i] = 1;
-                } else {
-                    table[i] = Math.min(table[i], table[i - square] + 1);
-                }
+        if (n % 8 == 7) return 4;
+
+        for (int i = 0; i * i <= n; i++) {
+            int j = (int)Math.sqrt(n - i * i);
+            if (i * i + j * j == n) {
+                return (i > 0 ? 1 : 0) + (j > 0 ? 1 : 0);
             }
         }
-        return table[n];
+        return 3;
+    }
+
+    // beats 97.12%(2 ms)
+    public int numSquares8(int n) {
+        if (isSquare(n)) return 1;
+
+        while ((n & 3) == 0) {
+            n >>= 2;
+        }
+        if ((n & 7) == 7) return 4;
+
+        for(int i = 1; i * i <= n; i++) {
+            if (isSquare(n - i * i)) return 2;
+        }
+        return 3;
+    }
+
+    boolean isSquare(int n) {
+        int sqrt = (int)(Math.sqrt(n));
+        return sqrt * sqrt == n;
     }
 
     void test(Function<Integer, Integer> numSquares, String name,
@@ -214,6 +235,7 @@ public class PerfectSquares {
         test(p::numSquares5, "numSquares5", n, expected);
         test(p::numSquares6, "numSquares6", n, expected);
         test(p::numSquares7, "numSquares7", n, expected);
+        test(p::numSquares8, "numSquares8", n, expected);
     }
 
     @Test
