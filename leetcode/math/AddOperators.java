@@ -118,7 +118,7 @@ public class AddOperators {
                 }
                 for (String rightExpr : addOperators2(rightNum, partialVal - target)) {
                     rightExpr = rightExpr.replace('+', ' ')
-                                         .replace('-', '+').replace(' ', '-');
+                                .replace('-', '+').replace(' ', '-');
                     res.add(leftExpr + "-" + rightExpr);
                 }
             }
@@ -161,6 +161,46 @@ public class AddOperators {
         return sb.toString();
     }
 
+    // backtracking
+    // https://discuss.leetcode.com/topic/24523/java-standard-backtrace-ac-solutoin-short-and-clear/2
+    // beats 81.59%(186 ms)
+    public List<String> addOperators3(String num, int target) {
+        List<String> res = new ArrayList<>();
+        addOperators3(res, new StringBuilder(), num, 0, target, 0, 0);
+        return res;
+    }
+
+    private void addOperators3(List<String> res, StringBuilder path, String num,
+                               int pos, int target, long prevVal, long multed) {
+        if (pos == num.length()) {
+            if (target == prevVal) {
+                res.add(path.toString());
+            }
+            return;
+        }
+        for (int i = pos; i < num.length(); i++) {
+            if (i != pos && num.charAt(pos) == '0') break;
+
+            long cur = Long.parseLong(num.substring(pos, i + 1));
+            int len = path.length();
+            if (pos == 0) {
+                addOperators3(res, path.append(cur), num, i + 1, target, cur, cur);
+                path.setLength(len);
+            }
+            else {
+                addOperators3(res, path.append("+").append(cur), num, i + 1,
+                              target, prevVal + cur, cur);
+                path.setLength(len);
+                addOperators3(res, path.append("-").append(cur), num, i + 1,
+                              target, prevVal - cur, -cur);
+                path.setLength(len);
+                addOperators3(res, path.append("*").append(cur), num, i + 1,
+                              target, prevVal - multed + multed * cur, multed * cur);
+                path.setLength(len);
+            }
+        }
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -182,6 +222,7 @@ public class AddOperators {
         AddOperators a = new AddOperators();
         test(a::addOperators, "addOperators", num, x, expected);
         test(a::addOperators2, "addOperators2", num, x, expected);
+        test(a::addOperators3, "addOperators3", num, x, expected);
     }
 
     @Test
