@@ -88,7 +88,7 @@ public class AddOperators {
         return res + sign * lastOperand;
     }
 
-    // beats 0.83%(915 ms)
+    // beats 7.80%(319 ms)
     public List<String> addOperators2(String num, int target) {
         int len = num.length();
         if (len == 0) return Collections.emptyList();
@@ -101,27 +101,22 @@ public class AddOperators {
         }
         for (int i = 1; i <= len; i++) {
             for (int multCode = (1 << (i - 1)) - 1; multCode >= 0; multCode--) {
-                String leftExpr = multiplyStr(num.substring(0, i), multCode);
+                int[] partialValOut = {0};
+                String leftExpr = multiplyStr(num.substring(0, i), multCode, partialValOut);
                 if (leftExpr == null) continue;
 
-                int partialVal = 1;
-                try {
-                    for (String factor : leftExpr.split("\\*")) {
-                        partialVal *= Integer.parseInt(factor);
-                    }
-                } catch (NumberFormatException e) {
-                    continue;
-                }
+                int partialVal = partialValOut[0];
                 if (i == len) {
                     if (multCode != 0 && partialVal == target) {
                         res.add(leftExpr);
                     }
                     continue;
                 }
-                for (String rightExpr : addOperators2(num.substring(i), target - partialVal)) {
+                String rightNum = num.substring(i);
+                for (String rightExpr : addOperators2(rightNum, target - partialVal)) {
                     res.add(leftExpr + "+" + rightExpr);
                 }
-                for (String rightExpr : addOperators2(num.substring(i), partialVal - target)) {
+                for (String rightExpr : addOperators2(rightNum, partialVal - target)) {
                     rightExpr = rightExpr.replace('+', ' ')
                                          .replace('-', '+').replace(' ', '-');
                     res.add(leftExpr + "-" + rightExpr);
@@ -131,13 +126,18 @@ public class AddOperators {
         return res;
     }
 
-    private String multiplyStr(String num, int code) {
+    private String multiplyStr(String num, int code, int[] product) {
         StringBuilder sb = new StringBuilder();
         sb.append(num.charAt(0));
         int len = num.length();
+        long longProduct = 1;
+        long n = num.charAt(0) - '0';
         for (int i = 1; i < len; i++) {
-            switch (code & 1) {
-            case 0:
+            if ((code & 1) == 1) {
+                sb.append("*");
+                longProduct *= n;
+                n = 0;
+            } else {
                 if (num.charAt(i - 1) == '0') {
                     for (int j = sb.length() - 2;; j--) {
                         if (j < 0) return null;
@@ -148,14 +148,16 @@ public class AddOperators {
                         if (c != '0') break;
                     }
                 }
-                break;
-            case 1:
-                sb.append("*");
-                break;
             }
-            sb.append(num.charAt(i));
+            char c = num.charAt(i);
+            n = n * 10 + c - '0';
+            sb.append(c);
             code >>= 1;
         }
+        longProduct *= n;
+        if (longProduct > Integer.MAX_VALUE) return null;
+
+        product[0] = (int)longProduct;
         return sb.toString();
     }
 
