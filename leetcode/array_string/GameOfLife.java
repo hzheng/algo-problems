@@ -35,10 +35,10 @@ public class GameOfLife {
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 switch (liveNeighbors(board, i, j, m, n)) {
-                    case 2:
+                case 2:
                     board[i][j] |= (board[i][j] << 1);
                     break;
-                    case 3:
+                case 3:
                     board[i][j] |= mask;
                     break;
                 }
@@ -84,6 +84,100 @@ public class GameOfLife {
         return count;
     }
 
+    // https://discuss.leetcode.com/topic/29054/easiest-java-solution-with-explanation/2
+    // beats 12.39%(1 ms)
+    public void gameOfLife2(int[][] board) {
+        int m = board.length;
+        if (m == 0) return;
+
+        int n = board[0].length;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                int lives = liveNeighbors2(board, m, n, i, j);
+                if (board[i][j] == 1 && lives >= 2 && lives <= 3) {
+                    board[i][j] = 3;
+                } else if (board[i][j] == 0 && lives == 3) {
+                    board[i][j] = 2;
+                }
+            }
+        }
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                board[i][j] >>= 1;
+            }
+        }
+    }
+
+    private int liveNeighbors2(int[][] board, int m, int n, int i, int j) {
+        int lives = 0;
+        for (int x = Math.max(i - 1, 0); x <= Math.min(i + 1, m - 1); x++) {
+            for (int y = Math.max(j - 1, 0); y <= Math.min(j + 1, n - 1); y++) {
+                lives += board[x][y] & 1;
+            }
+        }
+        lives -= board[i][j] & 1;
+        return lives;
+    }
+
+    // https://discuss.leetcode.com/topic/26112/c-o-1-space-o-mn-time/2
+    // beats 12.39%(1 ms)
+    public void gameOfLife3(int[][] board) {
+        int m = board.length;
+        if (m == 0) return;
+
+        int n = board[0].length;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                int count = 0;
+                for (int r = Math.max(i - 1, 0); r < Math.min(i + 2, m); r++) {
+                    for (int c = Math.max(j - 1, 0); c < Math.min(j + 2, n); c++) {
+                        count += board[r][c] & 1;
+                    }
+                }
+                if (count == 3 || count - board[i][j] == 3) {
+                    board[i][j] |= 2;
+                }
+            }
+        }
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                board[i][j] >>= 1;
+            }
+        }
+    }
+
+    // beats 12.39%(1 ms)
+    public void gameOfLife4(int[][] board) {
+        int m = board.length;
+        if (m == 0) return;
+
+        int n = board[0].length;
+        int[] dx = {-1, -1, 0, 1, 1, 1, 0, -1};
+        int[] dy = {0, 1, 1, 1, 0, -1, -1, -1};
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                int count = 0;
+                for (int k = 0; k < 8; k++) {
+                    int x = i + dx[k];
+                    int y = j + dy[k];
+                    if (x >= 0 && x < m && y >= 0 && y < n) {
+                        count += (board[x][y] & 1);
+                    }
+                }
+                if (count == 3 || count == 2 && (board[i][j] & 1) == 1) {
+                    board[i][j] |= 2;
+                }
+            }
+        }
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                board[i][j] >>= 1;
+            }
+        }
+    }
+
     void print(int[][] board) {
         int m = board.length;
         int n = board[0].length;
@@ -109,6 +203,9 @@ public class GameOfLife {
     void test(int[][] board, int[][] expected) {
         GameOfLife g = new GameOfLife();
         test(g::gameOfLife, "gameOfLife", board, expected);
+        test(g::gameOfLife2, "gameOfLife2", board, expected);
+        test(g::gameOfLife3, "gameOfLife3", board, expected);
+        test(g::gameOfLife4, "gameOfLife4", board, expected);
     }
 
     @Test
