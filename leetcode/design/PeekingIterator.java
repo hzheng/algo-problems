@@ -1,8 +1,7 @@
 import java.util.*;
 
-import org.junit.*;
+import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.rules.*;
 
 // https://leetcode.com/problems/implement-queue-using-stacks/
 //
@@ -13,14 +12,14 @@ public class PeekingIterator {
         public Integer peek();
     }
 
-    // beats 7.56%(128 ms)
+    // beats 35.46%(116 ms)
     static class MyIterator implements IPeekingIterator {
         Iterator<Integer> itr;
         Integer first;
 
         public MyIterator(Iterator<Integer> iterator) {
             itr = iterator;
-            updateFirst();
+            first = itr.hasNext() ? itr.next() : null;
         }
 
         @Override
@@ -33,21 +32,13 @@ public class PeekingIterator {
             if (first == null) throw new NoSuchElementException();
 
             Integer nextEl = first;
-            updateFirst();
+            first = itr.hasNext() ? itr.next() : null;
             return nextEl;
         }
 
         @Override
         public boolean hasNext() {
             return first != null;
-        }
-
-        private void updateFirst() {
-            if (itr.hasNext()) {
-                first = itr.next();
-            } else {
-                first = null;
-            }
         }
     }
 
@@ -85,9 +76,6 @@ public class PeekingIterator {
             return peeked || itr.hasNext();
         }
     }
-
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
 
     void test1(IPeekingIterator obj) {
         assertEquals(1, (int)obj.peek());
