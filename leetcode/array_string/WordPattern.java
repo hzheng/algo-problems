@@ -19,6 +19,7 @@ public class WordPattern {
         for (int i = 0; i < words.length; i++) {
             char c = pattern.charAt(i);
             String word = words[i];
+            // if (map.containsValue(word)) { // slower?
             if (map.values().contains(word)) {
                 if (!word.equals(map.get(c))) return false;
             } else {
@@ -53,9 +54,47 @@ public class WordPattern {
         return true;
     }
 
+    // beats 21.21%(3 ms)
+    public boolean wordPattern3(String pattern, String str) {
+        String[] words = str.split(" ");
+        if (pattern.length() != words.length) return false;
+
+        Map<Object, Integer> map = new HashMap<>();
+        for (int i = 0; i < words.length; i++) {
+            char c = pattern.charAt(i);
+            String word = words[i];
+            if (!Objects.equals(map.put(c, i), map.put(word, i))) return false;
+            // we cannot use object == instead of equals unless i less than 128
+            // if (map.put(c, i) != map.put(word, i)) return false;
+        }
+        return true;
+    }
+
+    // beats 21.21%(3 ms)
+    public boolean wordPattern4(String pattern, String str) {
+        String[] words = str.split(" ");
+        if (pattern.length() != words.length) return false;
+
+        Map<Character, String> map = new HashMap<>();
+        for (int i = 0; i < words.length; i++) {
+            char c = pattern.charAt(i);
+            String word = words[i];
+            if (map.containsKey(c)) {
+                if (!word.equals(map.get(c))) return false;
+            } else {
+                if (map.containsValue(word)) return false;
+
+                map.put(c, word);
+            }
+        }
+        return true;
+    }
+
     void test(String pattern, String str, boolean expected) {
         assertEquals(expected, wordPattern(pattern, str));
         assertEquals(expected, wordPattern2(pattern, str));
+        assertEquals(expected, wordPattern3(pattern, str));
+        assertEquals(expected, wordPattern4(pattern, str));
     }
 
     @Test
