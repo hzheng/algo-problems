@@ -17,11 +17,15 @@ public class MedianFinder {
         public double findMedian();
     }
 
-    // beats 8.82%(102 ms)
+    // beats 63.85%(36 ms)
     static class MedianFinder1 implements IMedianFinder {
-        PriorityQueue<Integer> minMaxQ = new PriorityQueue<>((p, q) -> q - p);
+        // lambda expression make beat rate drop to 8.82%(102 ms)
+        // PriorityQueue<Integer> minMaxQ = new PriorityQueue<>((p, q) -> q - p);
+        PriorityQueue<Integer> minMaxQ = new PriorityQueue<>(
+            Collections.reverseOrder());
         PriorityQueue<Integer> maxMinQ = new PriorityQueue<>();
 
+        // time complexity: O(log(N))
         public void addNum(int num) {
             int size = minMaxQ.size();
             if (size == 0 || (size == maxMinQ.size())) {
@@ -45,10 +49,57 @@ public class MedianFinder {
             }
         }
 
+        // time complexity: O(1)
         public double findMedian() {
             if (minMaxQ.size() > maxMinQ.size()) return minMaxQ.peek();
 
             return (minMaxQ.peek() + maxMinQ.peek()) / 2d;
+        }
+    }
+
+    // beats 28.07%(48 ms)
+    static class MedianFinder2 implements IMedianFinder {
+        PriorityQueue<Integer> minMaxQ = new PriorityQueue<>(
+            Collections.reverseOrder());
+        PriorityQueue<Integer> maxMinQ = new PriorityQueue<>();
+
+        // time complexity: O(log(N))
+        public void addNum(int num) {
+            minMaxQ.offer(num);
+            maxMinQ.offer(minMaxQ.poll());
+            if (minMaxQ.size() < maxMinQ.size()) {
+                minMaxQ.offer(maxMinQ.poll());
+            }
+        }
+
+        // time complexity: O(1)
+        public double findMedian() {
+            if (minMaxQ.size() != maxMinQ.size()) return minMaxQ.peek();
+
+            return (minMaxQ.peek() + maxMinQ.peek()) / 2d;
+        }
+    }
+
+    // Use negative number for minMaxQ without reverseOrder
+    // problem: may overflow
+    static class MedianFinder3 implements IMedianFinder {
+        PriorityQueue<Integer> small = new PriorityQueue<>();
+        PriorityQueue<Integer> large = new PriorityQueue<>();
+
+        // time complexity: O(log(N))
+        public void addNum(int num) {
+            small.offer(num);
+            large.offer(-small.poll());
+            if (small.size() < large.size()) {
+                small.offer(-large.poll());
+            }
+        }
+
+        // time complexity: O(1)
+        public double findMedian() {
+            if (small.size() != large.size()) return small.peek();
+
+            return (small.peek() - large.peek()) / 2d;
         }
     }
 
@@ -69,13 +120,27 @@ public class MedianFinder {
         assertEquals(2, obj.findMedian(), delta);
     }
 
-    void test(Integer ... nums) {
+    // @Test
+    public void test1() {
         test1(new MedianFinder1());
+        test1(new MedianFinder2());
+        test1(new MedianFinder3());
+    }
+
+    void test2(IMedianFinder obj) {
+        double delta = 1e-6;
+        obj.addNum(Integer.MIN_VALUE);
+        assertEquals(Integer.MIN_VALUE, obj.findMedian(), delta);
+        obj.addNum(0);
+        obj.addNum(1);
+        assertEquals(0, obj.findMedian(), delta);
     }
 
     @Test
-    public void test1() {
-        test(1, 2, 3);
+    public void test2() {
+        test2(new MedianFinder1());
+        test2(new MedianFinder2());
+        // test2(new MedianFinder3());
     }
 
     public static void main(String[] args) {
