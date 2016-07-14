@@ -40,6 +40,7 @@ public class BullsAndCows {
         // return String.format("%dA%dB", bulls, cows); // beats 19.84%(19 ms)
     }
 
+    // one pass one array
     // beats 64.03%(4 ms)
     public String getHint2(String secret, String guess) {
         int bulls = 0;
@@ -51,15 +52,12 @@ public class BullsAndCows {
             if (secretDigit == guessDigit) {
                 bulls++;
             } else {
-                if (count[secretDigit] < 0) {
+                if (count[secretDigit]++ < 0) {
                     cows++;
                 }
-                count[secretDigit]++;
-
-                if (count[guessDigit] > 0) {
+                if (count[guessDigit]-- > 0) {
                     cows++;
                 }
-                count[guessDigit]--;
             }
         }
         return bulls + "A" + cows + "B";
