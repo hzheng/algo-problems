@@ -103,6 +103,93 @@ public class MedianFinder {
         }
     }
 
+    // Binary Search Tree
+    // https://discuss.leetcode.com/topic/40917/18ms-beats-100-java-solution-with-bst
+    // beats 98.88%(20 ms)
+    static class MedianFinder4 implements IMedianFinder {
+        static class TreeNode {
+            int val;
+            TreeNode parent, left, right;
+            TreeNode(int val, TreeNode parent) {
+                this.val = val;
+                this.parent = parent;
+            }
+
+            void add(int num) {
+                if (num >= val) {
+                    if (right == null) {
+                        right = new TreeNode(num, this);
+                    } else {
+                        right.add(num);
+                    }
+                } else {
+                    if (left == null) {
+                        left = new TreeNode(num, this);
+                    } else {
+                        left.add(num);
+                    }
+                }
+            }
+
+            TreeNode next() {
+                TreeNode node = this;
+                if (right != null) {
+                    node = right;
+                    while (node.left != null) {
+                        node = node.left;
+                    }
+                } else {
+                    while (node.parent.right == node) {
+                        node = node.parent;
+                    }
+                    node = node.parent;
+                }
+                return node;
+            }
+
+            TreeNode prev() {
+                TreeNode node = this;
+                if (left != null) {
+                    node = left;
+                    while (node.right != null) {
+                        node = node.right;
+                    }
+                } else {
+                    while (node.parent.left == node) {
+                        node = node.parent;
+                    }
+                    node = node.parent;
+                }
+                return node;
+            }
+        }
+
+        private int count;
+        private TreeNode root;
+        private TreeNode cur;
+
+        public void addNum(int num) {
+            count++;
+            if (root == null) {
+                root = new TreeNode(num, null);
+                cur = root;
+            } else {
+                root.add(num);
+                if (count % 2 == 1) {
+                    if (cur.val <= num) {
+                        cur = cur.next();
+                    }
+                } else if (cur.val > num) {
+                    cur = cur.prev();
+                }
+            }
+        }
+
+        public double findMedian() {
+            return (count % 2 == 0) ? (cur.next().val + cur.val) / 2d : cur.val;
+        }
+    }
+
     void test1(IMedianFinder obj) {
         double delta = 1e-6;
         obj.addNum(1);
@@ -125,6 +212,7 @@ public class MedianFinder {
         test1(new MedianFinder1());
         test1(new MedianFinder2());
         test1(new MedianFinder3());
+        test1(new MedianFinder4());
     }
 
     void test2(IMedianFinder obj) {
@@ -141,6 +229,7 @@ public class MedianFinder {
         test2(new MedianFinder1());
         test2(new MedianFinder2());
         // test2(new MedianFinder3());
+        test2(new MedianFinder4());
     }
 
     public static void main(String[] args) {
