@@ -97,12 +97,72 @@ public class CodecTree {
         }
     }
 
+    // http://www.geeksforgeeks.org/serialize-deserialize-binary-tree/
+    // A simple solution is to store both Inorder and Preorder traversals.
+    // This solution requires space twice the size of Binary Tree. We can save
+    // space by storing Preorder traversal and a marker for NULL pointers.
+
+    // beats 99.06%(8 ms)
+    static class Codec2 implements Codec {
+        private static final String NULL = "#";
+
+        public String serialize(TreeNode root) {
+            StringBuilder output = new StringBuilder();
+            serialize(root, output);
+            return output.toString();
+        }
+
+        private void serialize(TreeNode root, StringBuilder output) {
+            if (root == null) {
+                output.append(NULL).append(" ");
+                return;
+            }
+
+            output.append(root.val).append(" ");
+            serialize(root.left, output);
+            serialize(root.right, output);
+        }
+
+        static class NodeIndex {
+            TreeNode node;
+            int start;
+            NodeIndex(int start) {
+                this.start = start;
+            }
+        }
+
+        public TreeNode deserialize(String data) {
+            return deserialize(data, new NodeIndex(0), data.length()).node;
+        }
+
+        private NodeIndex deserialize(String data, NodeIndex index, int end) {
+            int start = index.start;
+            while (index.start < end && data.charAt(index.start) != ' ') {
+                index.start++;
+            }
+
+            String val = data.substring(start, index.start++);
+            if (val.equals(NULL)) return index; //new NodeIndex(index.start);
+
+            index.node = new TreeNode(Integer.parseInt(val));
+            NodeIndex left = deserialize(data, new NodeIndex(index.start), end);
+            index.node.left = left.node;
+            NodeIndex right = deserialize(data, new NodeIndex(left.start), end);
+            index.node.right = right.node;
+            index.start = right.start;
+            return index;
+        }
+    }
+
     void test1(String s) {
-        Codec[] codecs = {new Codec1()};
+        Codec[] codecs = {new Codec1(), new Codec2()};
         TreeNode root = TreeNode.of(s);
         for (Codec codec : codecs) {
             String serialized = codec.serialize(root);
+            System.out.println(codec.getClass().getName()
+                               + ": serialized len="+ serialized.length());
             TreeNode deserialized = codec.deserialize(serialized);
+
             assertEquals(root.toString(), deserialized.toString());
         }
     }
