@@ -11,6 +11,8 @@ import common.TreeNode;
 //
 // Design an algorithm to serialize and deserialize a binary tree.
 public class CodecTree {
+    private static final String NULL = "#";
+
     static interface Codec {
         // Encodes a tree to a single string.
         public String serialize(TreeNode root);
@@ -104,8 +106,6 @@ public class CodecTree {
 
     // beats 99.06%(8 ms)
     static class Codec2 implements Codec {
-        private static final String NULL = "#";
-
         public String serialize(TreeNode root) {
             StringBuilder output = new StringBuilder();
             serialize(root, output);
@@ -154,8 +154,69 @@ public class CodecTree {
         }
     }
 
+    // beats 98.8%(10 ms)
+    static class Codec3 implements Codec {
+        private static final String NULL = "#";
+
+        public String serialize(TreeNode root) {
+            StringBuilder output = new StringBuilder();
+            serialize(root, output);
+            return output.toString();
+        }
+
+        private void serialize(TreeNode root, StringBuilder output) {
+            if (root == null) {
+                output.append(NULL).append(" ");
+                return;
+            }
+
+            output.append(root.val).append(" ");
+            serialize(root.left, output);
+            serialize(root.right, output);
+        }
+
+        public TreeNode deserialize(String data) {
+            return deserialize(new StringTokenizer(data, " "));
+        }
+
+        private TreeNode deserialize(StringTokenizer tokenizer) {
+            // if (!tokenizer.hasMoreTokens()) return null;
+            String val = tokenizer.nextToken();
+            if (val.equals(NULL)) return null;
+
+            TreeNode root = new TreeNode(Integer.parseInt(val));
+            root.left = deserialize(tokenizer);
+            root.right = deserialize(tokenizer);
+            return root;
+        }
+    }
+
+    // beats 5.15%(114 ms)
+    static class Codec4 implements Codec {
+        public String serialize(TreeNode root) {
+            if (root == null) return NULL;
+
+            return root.val + " " + serialize(root.left) + " " + serialize(root.right);
+        }
+
+
+        public TreeNode deserialize(String data) {
+            return deserialize(new Scanner(data));
+        }
+
+        private TreeNode deserialize(Scanner scanner) {
+            String next = scanner.next();
+            if (next.equals(NULL)) return null;
+
+            TreeNode root = new TreeNode(Integer.parseInt(next));
+            root.left = deserialize(scanner);
+            root.right = deserialize(scanner);
+            return root;
+        }
+    }
+
     void test1(String s) {
-        Codec[] codecs = {new Codec1(), new Codec2()};
+        Codec[] codecs = {new Codec1(), new Codec2(), new Codec3(), new Codec4()};
         TreeNode root = TreeNode.of(s);
         for (Codec codec : codecs) {
             String serialized = codec.serialize(root);
