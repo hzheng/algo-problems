@@ -157,6 +157,87 @@ public class RemoveInvalidParentheses {
         }
     }
 
+    // https://discuss.leetcode.com/topic/34875/easy-short-concise-and-fast-java-dfs-3-ms-solution/2
+    // beats 79.88%(3 ms)
+    public List<String> removeInvalidParentheses3(String s) {
+        List<String> res = new ArrayList<>();
+        removeParens(s, res, 0, 0, true);
+        return res;
+    }
+
+    private void removeParens(String s, List<String> res,
+                              int lastI, int lastJ, boolean leftToRight) {
+        char paren1 = leftToRight ? '(' : ')';
+        char paren2 = leftToRight ? ')' : '(';
+        int len = s.length();
+        for (int parenDiff = 0, i = lastI; i < len; ++i) {
+            if (s.charAt(i) == paren1) {
+                parenDiff++;
+            } else if (s.charAt(i) == paren2) {
+                parenDiff--;
+            }
+            if (parenDiff >= 0) continue;
+
+            for (int j = lastJ; j <= i; ++j) {
+                if (s.charAt(j) == paren2
+                    && (j == lastJ || s.charAt(j - 1) != paren2)) {
+                    removeParens(s.substring(0, j) + s.substring(j + 1, len),
+                                 res, i, j, leftToRight);
+                }
+            }
+            return;
+        }
+
+        String reversed = new StringBuilder(s).reverse().toString();
+        if (leftToRight) { // finished left to right
+            removeParens(reversed, res, 0, 0, false);
+        } else { // finished right to left
+            res.add(reversed);
+        }
+    }
+
+    // BFS(non-recursion)
+    // https://discuss.leetcode.com/topic/28827/share-my-java-bfs-solution
+    // beats 41.59%(103 ms)
+    public List<String> removeInvalidParentheses4(String s) {
+        List<String> res = new ArrayList<>();
+        Set<String> visited = new HashSet<>();
+        Queue<String> queue = new LinkedList<>();
+
+        queue.add(s);
+        visited.add(s);
+        boolean found = false;
+        while (!queue.isEmpty()) {
+            s = queue.poll();
+            if (isValid(s)) {
+                res.add(s);
+                found = true;
+            }
+            if (found) continue;
+
+            for (int i = 0; i < s.length(); i++) {
+                if (s.charAt(i) != '(' && s.charAt(i) != ')') continue;
+
+                String candidate = s.substring(0, i) + s.substring(i + 1);
+                if (!visited.contains(candidate)) {
+                    queue.add(candidate);
+                    visited.add(candidate);
+                }
+            }
+        }
+        return res;
+    }
+
+    private boolean isValid(String s) {
+        int count = 0;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == '(') count++;
+            if (c == ')' && count-- == 0) return false;
+        }
+        return count == 0;
+    }
+
     void test(Function<String, List<String> > remove, String name,
               String s, String ... expected) {
         long t1 = System.nanoTime();
@@ -174,6 +255,8 @@ public class RemoveInvalidParentheses {
         RemoveInvalidParentheses r = new RemoveInvalidParentheses();
         test(r::removeInvalidParentheses, "removeInvalidParentheses", s, expected);
         test(r::removeInvalidParentheses2, "removeInvalidParentheses2", s, expected);
+        test(r::removeInvalidParentheses3, "removeInvalidParentheses3", s, expected);
+        test(r::removeInvalidParentheses4, "removeInvalidParentheses4", s, expected);
     }
 
     @Test
