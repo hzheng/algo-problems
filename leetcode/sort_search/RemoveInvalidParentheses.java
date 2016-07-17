@@ -10,27 +10,28 @@ import static org.junit.Assert.*;
 // Remove the minimum number of invalid parentheses in order to make the input
 // string valid. Return all possible results.
 public class RemoveInvalidParentheses {
-    // beats
+    // beats 66.26%(10 ms)
     public List<String> removeInvalidParentheses(String s) {
-        int len = s.length();
         List<String> leftRes = new ArrayList<>();
         int end1 = removeRightParentheses(s, leftRes);
-        if (end1 >= len) return leftRes;
-
-        s = reverse(s.substring(end1));
+        if (end1 >= s.length()) return leftRes;
 
         List<String> rightRes = new ArrayList<>();
-        int end2 = removeRightParentheses(s, rightRes);
-        if (rightRes.isEmpty()) {
-            rightRes = Arrays.asList(s);
+        removeRightParentheses(reverse(s.substring(end1)), rightRes);
+
+        List<String> res = new LinkedList<>();
+        for (String s1 : leftRes) {
+            for (String s2 : rightRes) {
+                res.add(s1 + reverse(s2));
+            }
         }
-        return compose(leftRes, rightRes);
+        return res;
     }
 
     private int removeRightParentheses(String s, List<String> res) {
         int len = s.length();
-        int leftParens = 0;
         int diff = 0;
+        int leftParens = 0;
         int rightParens = 0;
         SortedMap<Integer, Integer> map = new TreeMap<>();
         int rightParensToRemoved = 0;
@@ -112,19 +113,6 @@ public class RemoveInvalidParentheses {
     private String reverse(String s) {
         s = new StringBuilder(s).reverse().toString();
         return s.replace('(', (char)0).replace(')', '(').replace((char)0, ')');
-    }
-
-    private List<String> compose(List<String> l1, List<String> l2) {
-        if (l2.size() == 0) return l1;
-        if (l1.size() == 0) return l2;
-
-        List<String> res = new LinkedList<>();
-        for (String s1 : l1) {
-            for (String s2 : l2) {
-                res.add(s1 + reverse(s2));
-            }
-        }
-        return res;
     }
 
     void test(Function<String, List<String> > remove,
