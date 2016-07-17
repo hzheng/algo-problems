@@ -13,71 +13,72 @@ public class RemoveInvalidParentheses {
     // beats 66.26%(10 ms)
     public List<String> removeInvalidParentheses(String s) {
         List<String> leftRes = new ArrayList<>();
-        int end1 = removeRightParentheses(s, leftRes);
+        int end1 = removeParentheses(s, leftRes, true);
         if (end1 >= s.length()) return leftRes;
 
         List<String> rightRes = new ArrayList<>();
-        removeRightParentheses(reverse(s.substring(end1)), rightRes);
+        StringBuilder sb = new StringBuilder(s.substring(end1)).reverse();
+        removeParentheses(sb.toString(), rightRes, false);
 
         List<String> res = new LinkedList<>();
-        for (String s1 : leftRes) {
-            for (String s2 : rightRes) {
-                res.add(s1 + reverse(s2));
+        for (String left : leftRes) {
+            for (String right : rightRes) {
+                res.add(left + new StringBuilder(right).reverse());
             }
         }
         return res;
     }
 
-    private int removeRightParentheses(String s, List<String> res) {
+    private int removeParentheses(String s, List<String> res, boolean isRight) {
         int len = s.length();
         int diff = 0;
-        int leftParens = 0;
-        int rightParens = 0;
+        char paren1 = isRight ? '(' : ')';
+        char paren2 = isRight ? ')' : '(';
+        int parens1 = 0;
+        int parens2 = 0;
         SortedMap<Integer, Integer> map = new TreeMap<>();
-        int rightParensToRemoved = 0;
-        int invalidRightParenEnd = 0;
+        int parensToRemoved = 0;
+        int surplusParenEnd = 0;
         for (int i = 0; i < len; i++) {
             char c = s.charAt(i);
-            if (c == '(') {
-                leftParens++;
+            if (c == paren1) {
+                parens1++;
                 diff--;
-            } else {
-                if (c == ')') {
-                    rightParens++;
-                    map.put(i, ++diff);
-                }
+            } else if (c == paren2) {
+                parens2++;
+                map.put(i, ++diff);
             }
-            if (rightParens >= leftParens) {
+            if (parens2 >= parens1) {
                 for (++i; i < len; i++) {
                     c = s.charAt(i);
-                    if (c == '(') break;
+                    if (c == paren1) break;
 
-                    if (c == ')') {
-                        rightParens++;
+                    if (c == paren2) {
+                        parens2++;
                         map.put(i, ++diff);
                     }
                 }
-                invalidRightParenEnd = i--;
-                rightParensToRemoved = diff;
-                leftParens = 0;
-                rightParens = 0;
+                surplusParenEnd = i--;
+                parensToRemoved = diff;
+                parens1 = 0;
+                parens2 = 0;
             }
         }
-        if (rightParensToRemoved > 0) { // remove invalid right parentheses
-            int firstRightParen = map.firstKey();
-            StringBuilder sb = new StringBuilder(s.substring(0, firstRightParen));
-            removeRightParentheses(s, firstRightParen, invalidRightParenEnd - 1, 0,
-                                   rightParensToRemoved, map, sb, res);
+        if (parensToRemoved > 0) { // remove invalid parentheses
+            int firstParen = map.firstKey();
+            StringBuilder sb = new StringBuilder(s.substring(0, firstParen));
+            removeParentheses(s, firstParen, surplusParenEnd - 1, 0,
+                              parensToRemoved, map, sb, res, isRight);
         } else {
-            res.add(s.substring(0, invalidRightParenEnd));
+            res.add(s.substring(0, surplusParenEnd));
         }
-        return invalidRightParenEnd;
+        return surplusParenEnd;
     }
 
-    private void removeRightParentheses(String s, int start, int end,
-                                        int removed, int toRemoved,
-                                        SortedMap<Integer, Integer> map,
-                                        StringBuilder sb, List<String> res) {
+    private void removeParentheses(String s, int start, int end, int removed,
+                                   int toRemoved, SortedMap<Integer, Integer> map,
+                                   StringBuilder sb, List<String> res,
+                                   boolean isRight) {
         if (toRemoved == 0) {
             if (start <= end) {
                 sb.append(s.substring(start, end + 1));
@@ -88,13 +89,13 @@ public class RemoveInvalidParentheses {
         if (start > end) return;
 
         int parenEnd = start;
-        while (parenEnd <= end && s.charAt(parenEnd) == ')') {
+        char paren = isRight ? ')' : '(';
+        while (parenEnd <= end && s.charAt(parenEnd) == paren) {
             parenEnd++;
         }
         int next = end + 1;
         if (parenEnd < end) {
-            SortedMap<Integer, Integer> subMap = map.tailMap(parenEnd + 1);
-            next = subMap.firstKey();
+            next = map.tailMap(parenEnd + 1).firstKey();
         }
         int minParens = Math.max(0, map.get(parenEnd - 1) - removed);
         int maxParens = Math.min(parenEnd - start, toRemoved);
@@ -104,15 +105,10 @@ public class RemoveInvalidParentheses {
             if (parenEnd < next) {
                 sb.append(s.substring(parenEnd, next));
             }
-            removeRightParentheses(s, next, end, removed + delete,
-                                   toRemoved - delete, map, sb, res);
+            removeParentheses(s, next, end, removed + delete,
+                              toRemoved - delete, map, sb, res, isRight);
             sb.setLength(len);
         }
-    }
-
-    private String reverse(String s) {
-        s = new StringBuilder(s).reverse().toString();
-        return s.replace('(', (char)0).replace(')', '(').replace((char)0, ')');
     }
 
     void test(Function<String, List<String> > remove,
