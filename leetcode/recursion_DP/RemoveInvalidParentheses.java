@@ -111,9 +111,59 @@ public class RemoveInvalidParentheses {
         }
     }
 
-    void test(Function<String, List<String> > remove,
+    // DFS
+    // beats 9.82%(230 ms)
+    public List<String> removeInvalidParentheses2(String s) {
+        List<String> res = new ArrayList<>();
+        removeInvalidParentheses2(s, "", 0, 0, new int[] {0}, res);
+        if (res.size() == 0) {
+            res.add("");
+        }
+        return res;
+    }
+
+    private void removeInvalidParentheses2(String src, String dest,
+                                           int parenDiff, int leftParens,
+                                           int[] maxPairs, List<String> res) {
+        if (src.length() == 0) {
+            if (parenDiff == 0 && dest.length() != 0) {
+                maxPairs[0] = Math.max(maxPairs[0], leftParens);
+                if (leftParens == maxPairs[0] && !res.contains(dest)) {
+                    res.add(dest);
+                }
+            }
+            return;
+        }
+
+        String stripped = src.substring(1);
+        switch (src.charAt(0)) {
+        case '(':
+            removeInvalidParentheses2(stripped, dest + '(', parenDiff + 1,
+                                      leftParens + 1, maxPairs, res);
+            removeInvalidParentheses2(stripped, dest, parenDiff,
+                                      leftParens, maxPairs, res);
+            break;
+        case ')':
+            if (parenDiff > 0) {
+                removeInvalidParentheses2(stripped, dest + ')', parenDiff - 1,
+                                          leftParens, maxPairs, res);
+            }
+            removeInvalidParentheses2(stripped, dest, parenDiff,
+                                      leftParens, maxPairs, res);
+            break;
+        default:
+            removeInvalidParentheses2(stripped, dest + src.charAt(0), parenDiff,
+                                      leftParens, maxPairs, res);
+        }
+    }
+
+    void test(Function<String, List<String> > remove, String name,
               String s, String ... expected) {
+        long t1 = System.nanoTime();
         List<String> res = remove.apply(s);
+        if (s.length() > 15) {
+            System.out.format("%s: %.3f ms\n", name, (System.nanoTime() - t1) * 1e-6);
+        }
         Collections.sort(res);
         Arrays.sort(expected);
         // System.out.println(res + "<->" + Arrays.toString(expected));
@@ -122,7 +172,8 @@ public class RemoveInvalidParentheses {
 
     void test(String s, String ... expected) {
         RemoveInvalidParentheses r = new RemoveInvalidParentheses();
-        test(r::removeInvalidParentheses, s, expected);
+        test(r::removeInvalidParentheses, "removeInvalidParentheses", s, expected);
+        test(r::removeInvalidParentheses2, "removeInvalidParentheses2", s, expected);
     }
 
     @Test
