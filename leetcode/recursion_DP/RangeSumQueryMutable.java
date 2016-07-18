@@ -230,6 +230,76 @@ public class RangeSumQueryMutable {
         }
     }
 
+    // https://discuss.leetcode.com/topic/29918/17-ms-java-solution-with-segment-tree
+    // beats 17.33(16 ms)
+    class NumArray6 implements INumArray {
+        class SegmentTreeNode {
+            int start, end;
+            SegmentTreeNode left, right;
+            int sum;
+
+            SegmentTreeNode(int start, int end) {
+                this.start = start;
+                this.end = end;
+            }
+        }
+
+        SegmentTreeNode root = null;
+
+        public NumArray6(int[] nums) {
+            root = buildTree(nums, 0, nums.length - 1);
+        }
+
+        private SegmentTreeNode buildTree(int[] nums, int start, int end) {
+            if (start > end) return null;
+
+            SegmentTreeNode node = new SegmentTreeNode(start, end);
+            if (start == end) {
+                node.sum = nums[start];
+            } else {
+                int mid = start  + (end - start) / 2;
+                node.left = buildTree(nums, start, mid);
+                node.right = buildTree(nums, mid + 1, end);
+                node.sum = node.left.sum + node.right.sum;
+            }
+            return node;
+        }
+
+        public void update(int i, int val) {
+            update(root, i, val);
+        }
+
+        private void update(SegmentTreeNode root, int pos, int val) {
+            if (root.start == root.end) {
+                root.sum = val;
+            } else {
+                int mid = root.start + (root.end - root.start) / 2;
+                if (pos <= mid) {
+                    update(root.left, pos, val);
+                } else {
+                    update(root.right, pos, val);
+                }
+                root.sum = root.left.sum + root.right.sum;
+            }
+        }
+
+        public int sumRange(int i, int j) {
+            return sumRange(root, i, j);
+        }
+
+        private int sumRange(SegmentTreeNode root, int start, int end) {
+            if (root.end == end && root.start == start) return root.sum;
+
+            int mid = root.start + (root.end - root.start) / 2;
+            if (end <= mid) return sumRange(root.left, start, end);
+
+            if (start > mid) return sumRange(root.right, start, end);
+
+            return sumRange(root.right, mid + 1, end)
+                   + sumRange(root.left, start, mid);
+        }
+    }
+
     void test(INumArray obj, int[] query1, int[] update, int[] query2) {
         assertEquals(query1[2], obj.sumRange(query1[0], query1[1]));
         for (int i = 0; i < update.length - 1; i++) {
@@ -244,6 +314,7 @@ public class RangeSumQueryMutable {
         test(new NumArray3(nums.clone()), query1, update, query2);
         test(new NumArray4(nums.clone()), query1, update, query2);
         test(new NumArray5(nums.clone()), query1, update, query2);
+        test(new NumArray6(nums.clone()), query1, update, query2);
     }
 
     @Test
