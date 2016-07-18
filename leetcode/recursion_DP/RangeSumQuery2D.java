@@ -13,7 +13,7 @@ public class RangeSumQuery2D {
         public int sumRegion(int row1, int col1, int row2, int col2);
     }
 
-    // beats 5.16%(9 ms)
+    // beats 11.19%(8 ms)
     class NumMatrix implements INumMatrix {
         private int[][] sums;
 
@@ -33,8 +33,6 @@ public class RangeSumQuery2D {
 
         // time complexity: O(M)
         public int sumRegion(int row1, int col1, int row2, int col2) {
-            if (sums == null) return 0;
-
             int sum = 0;
             for (int i = row1; i <= row2; i++) {
                 sum += sums[i][col2 + 1] - sums[i][col1];
@@ -43,7 +41,7 @@ public class RangeSumQuery2D {
         }
     }
 
-    // beats 5.16%(9 ms)
+    // beats 11.19%(8 ms)
     class NumMatrix2 implements INumMatrix {
         private int[][] sums;
 
@@ -64,8 +62,6 @@ public class RangeSumQuery2D {
 
         // time complexity: O(1)
         public int sumRegion(int row1, int col1, int row2, int col2) {
-            if (sums == null) return 0;
-
             return sums[row2 + 1][col2 + 1] - sums[row2 + 1][col1]
                    - sums[row1][col2 + 1] + sums[row1][col1];
         }
