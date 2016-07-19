@@ -28,24 +28,30 @@ public class SuperUglyNumber {
         }
     }
 
-    static class UglyNumber {
+    static class UglyNumber implements Comparable<UglyNumber> {
         int val;
         int index;
         UglyNumber(int val, int index) {
             this.val = val;
             this.index = index;
         }
+
+        public int compareTo(UglyNumber that) {
+            return val - that.val;
+        }
     }
 
-    // beats 4.93%(136 ms)
+    // time complexity: O(N * log(K))
+    // beats 20.65%(57 ms)
     public int nthSuperUglyNumber2(int n, int[] primes) {
         int[] ugly = new int[n];
         ugly[0] = 1;
-        int m = primes.length;
-        int[] indices = new int[m];
-        PriorityQueue<UglyNumber> next = new PriorityQueue<>(
-            (a, b) -> a.val - b.val);
-        for (int i = 0; i < m; i++) {
+        int k = primes.length;
+        int[] indices = new int[k];
+        // PriorityQueue<UglyNumber> next = new PriorityQueue<>(
+        //     (a, b) -> a.val - b.val); // lambda is very slow(136 ms)
+        PriorityQueue<UglyNumber> next = new PriorityQueue<>();
+        for (int i = 0; i < k; i++) {
             next.add(new UglyNumber(primes[i], i));
         }
 
@@ -62,10 +68,59 @@ public class SuperUglyNumber {
         return ugly[n - 1];
     }
 
+    // time complexity: O(N * K)
+    // beats 59.01%(31 ms)
+    public int nthSuperUglyNumber3(int n, int[] primes) {
+        int k = primes.length;
+        int[] ugly = new int[n];
+        int[] multIndex = new int[k];
+        ugly[0] = 1;
+        for (int i = 1; i < n; i++) {
+            int min = Integer.MAX_VALUE;
+            for (int j = 0; j < k; j++) {
+                min = Math.min(min, primes[j] * ugly[multIndex[j]]);
+            }
+            ugly[i] = min;
+
+            for (int j = 0; j < k; j++) {
+                if (primes[j] * ugly[multIndex[j]] == min) {
+                    multIndex[j]++;
+                }
+            }
+        }
+        return ugly[n - 1];
+    }
+
+    // https://discuss.leetcode.com/topic/34841/java-three-methods-23ms-36-ms-58ms-with-heap-performance-explained
+    // time complexity: O(N * K)
+    // 98.11%(21 ms)
+    public int nthSuperUglyNumber4(int n, int[] primes) {
+        int[] ugly = new int[n];
+        int k = primes.length;
+        int[] multIndex = new int[k];
+        int[] val = new int[k];
+        Arrays.fill(val, 1);
+        int next = 1;
+        for (int i = 0; i < n; i++) {
+            ugly[i] = next;
+            next = Integer.MAX_VALUE;
+            for (int j = 0; j < k; j++) {
+                //skip duplicate and avoid extra multiplication
+                if (val[j] == ugly[i]) {
+                    val[j] = ugly[multIndex[j]++] * primes[j];
+                }
+                next = Math.min(next, val[j]);
+            }
+        }
+        return ugly[n - 1];
+    }
+
     void test(int[] primes, int ... expected) {
         for (int i = 0; i < expected.length; i++) {
             assertEquals(expected[i], nthSuperUglyNumber(i + 1, primes));
             assertEquals(expected[i], nthSuperUglyNumber2(i + 1, primes));
+            assertEquals(expected[i], nthSuperUglyNumber3(i + 1, primes));
+            assertEquals(expected[i], nthSuperUglyNumber4(i + 1, primes));
         }
     }
 
@@ -91,6 +146,8 @@ public class SuperUglyNumber {
         SuperUglyNumber s = new SuperUglyNumber();
         test(s::nthSuperUglyNumber, "nthSuperUglyNumber", expected, n, primes);
         test(s::nthSuperUglyNumber2, "nthSuperUglyNumber2", expected, n, primes);
+        test(s::nthSuperUglyNumber3, "nthSuperUglyNumber3", expected, n, primes);
+        test(s::nthSuperUglyNumber4, "nthSuperUglyNumber4", expected, n, primes);
     }
 
     @Test
