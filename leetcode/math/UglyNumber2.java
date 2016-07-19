@@ -159,7 +159,7 @@ public class UglyNumber2 {
     public int nthUglyNumber5(int n) {
         SortedSet<Long> next = new TreeSet<>();  // may overflow if not use long
         next.add(1L);
-        for (int i = 1;; ++i) {
+        for (int i = 1;; i++) {
             long res = next.first();
             if (i >= n) return (int)res;
 
