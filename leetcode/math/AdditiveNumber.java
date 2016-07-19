@@ -90,9 +90,41 @@ public class AdditiveNumber {
                isAdditive(num, start + sumLen, second, third, len);
     }
 
+    // beats 74.34%(2 ms)
+    public boolean isAdditiveNumber3(String num) {
+        int len = num.length();
+        if (len < 3) return false;
+
+        int max1 = len / 2;
+        if (num.charAt(0) == '0') {
+            max1 = 1;
+        }
+        for (int i = 1; i <= max1; ++i) {
+            int max2 = len - i;
+            if (num.charAt(i) == '0') {
+                max2 = i + 1;
+            }
+            for (int j = i + 1; j <= max2; ++j) {
+                if (isAdditive(num, 0, i, j)) return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isAdditive(String num, int i, int j, int k) {
+        long first = Long.parseLong(num.substring(i, j));
+        long second = Long.parseLong(num.substring(j, k));
+        String sum = String.valueOf(first + second);
+        if (!num.substring(k).startsWith(sum)) return false;
+
+        return (k + sum.length() == num.length())
+               || isAdditive(num, j, k, k + sum.length());
+    }
+
     void test(String num, boolean expected) {
         assertEquals(expected, isAdditiveNumber(num));
         assertEquals(expected, isAdditiveNumber2(num));
+        assertEquals(expected, isAdditiveNumber3(num));
     }
 
     @Test
