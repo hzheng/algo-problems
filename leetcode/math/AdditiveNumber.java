@@ -104,7 +104,7 @@ public class AdditiveNumber {
             if (num.charAt(i) == '0') {
                 max2 = i + 1;
             }
-            for (int j = i + 1; j <= max2; ++j) {
+            for (int j = i + 1; j <= max2; j++) {
                 if (isAdditive(num, 0, i, j)) return true;
             }
         }
@@ -121,10 +121,46 @@ public class AdditiveNumber {
                || isAdditive(num, j, k, k + sum.length());
     }
 
+    // non-recursion
+    // beats 74.34%(2 ms)
+    public boolean isAdditiveNumber4(String num) {
+        int len = num.length();
+        if (len < 3) return false;
+
+        int max1 = len / 2;
+        if (num.charAt(0) == '0') {
+            max1 = 1;
+        }
+        for (int i = 1; i <= max1; ++i) {
+            int max2 = len - i;
+            if (num.charAt(i) == '0') {
+                max2 = i + 1;
+            }
+            long firstNum = Long.parseLong(num.substring(0, i));
+            for (int j = i + 1; j <= max2; j++) {
+                long first = firstNum;
+                long second = Long.parseLong(num.substring(i, j));
+                int k = j;
+                while (k < len) {
+                    long sum = first + second;
+                    String sumStr = String.valueOf(sum);
+                    if (!num.substring(k).startsWith(sumStr)) break;
+
+                    first = second;
+                    second = sum;
+                    k += sumStr.length();
+                }
+                if (k == len) return true;
+            }
+        }
+        return false;
+    }
+
     void test(String num, boolean expected) {
         assertEquals(expected, isAdditiveNumber(num));
         assertEquals(expected, isAdditiveNumber2(num));
         assertEquals(expected, isAdditiveNumber3(num));
+        assertEquals(expected, isAdditiveNumber4(num));
     }
 
     @Test
