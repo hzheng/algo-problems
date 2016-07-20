@@ -45,6 +45,42 @@ public class CountSmaller {
         return res;
     }
 
+    // Binary Indexed Tree
+    // https://discuss.leetcode.com/topic/39656/short-java-binary-index-tree-beat-97-33-with-detailed-explanation/2
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    // beats 98.38%(7 ms)
+    // although it's fastest(no sorting process like above solution), but if
+    // range of numbers is large, it will take much memory
+    public List<Integer> countSmaller1(int[] nums) {
+        List<Integer> res = new LinkedList<>();
+        int n = nums.length;
+        if (n == 0) return res;
+
+        int min = Integer.MAX_VALUE;
+        int max = Integer.MIN_VALUE;
+        for (int i = 0; i < n; i++) {
+            min = Math.min(min, nums[i]);
+        }
+        int[] nums2 = new int[n];
+        for (int i = 0; i < n; i++) {
+            nums2[i] = nums[i] - min + 1;
+            max = Math.max(nums2[i], max);
+        }
+
+        int[] bit = new int[max + 1];
+        for (int i = n - 1; i >= 0; i--) {
+            int count = 0;
+            for (int j = nums2[i] - 1; j > 0; j -= (j & -j)) {
+                count += bit[j];
+            }
+            res.add(0, count);
+            for (int j = nums2[i]; j < bit.length; j += j & -j) {
+                bit[j]++;
+            }
+        }
+        return res;
+    }
+
     // Binary Search Tree
     // time complexity: average: O(N * log(N)) Worse case: O(N  ^ 2)
     // https://discuss.leetcode.com/topic/31422/easiest-java-solution
@@ -232,6 +268,47 @@ public class CountSmaller {
         return (sorted.get(low) >= target) ? low : high;
     }
 
+    // Divide and Conquer & bit manipulation
+    // https://discuss.leetcode.com/topic/31924/o-nlogn-divide-and-conquer-java-solution-based-on-bit-by-bit-comparison
+    // time complexity: O(N), space complexity: O(N)
+    // beats 18.03%(62 ms)
+    public List<Integer> countSmaller6(int[] nums) {
+        int n = nums.length;
+        List<Integer> res = new ArrayList<>(n);
+        List<Integer> index = new ArrayList<>(n);
+        for (int i = n - 1; i >= 0; i--) {
+        	res.add(0);
+        	index.add(i);
+        }
+        countSmaller(nums, index, 1 << 31, res);
+        return res;
+    }
+
+    private void countSmaller(int[] nums, List<Integer> index, int mask,
+                              List<Integer> res) {
+    	if (mask == 0 || index.size() <= 1) return;
+
+        int n = index.size();
+    	List<Integer> highGroup = new ArrayList<>(n);
+    	List<Integer> lowGroup = new ArrayList<>(n);
+    	int highBit = (mask < 0 ? 0 : mask);
+    	for (int j = 0; j < n; j++) {
+            int i = index.get(j);
+    		if ((nums[i] & mask) == highBit) {
+    			res.set(i, res.get(i) + lowGroup.size());
+    			highGroup.add(i);
+    		} else {
+    			lowGroup.add(i);
+    		}
+    	}
+    	countSmaller(nums, lowGroup, mask >>> 1, res);
+    	countSmaller(nums, highGroup, mask >>> 1, res);
+    }
+
+    // TODO: Segment Tree
+    // https://discuss.leetcode.com/topic/47633/java-clear-segment-tree-solution
+    // https://discuss.leetcode.com/topic/31154/complicated-segmentree-solution-hope-to-find-a-better-one
+
     void test(Function<int[], List<Integer> > count, String name,
               int[] nums, Integer ... expected) {
         long t1 = System.nanoTime();
@@ -242,10 +319,12 @@ public class CountSmaller {
     void test(int[] nums, Integer ... expected) {
         CountSmaller c = new CountSmaller();
         test(c::countSmaller, "countSmaller", nums, expected);
+        test(c::countSmaller1, "countSmaller1", nums, expected);
         test(c::countSmaller2, "countSmaller2", nums, expected);
         test(c::countSmaller3, "countSmaller3", nums, expected);
         test(c::countSmaller4, "countSmaller4", nums, expected);
         test(c::countSmaller5, "countSmaller5", nums, expected);
+        test(c::countSmaller6, "countSmaller6", nums, expected);
     }
 
     @Test
