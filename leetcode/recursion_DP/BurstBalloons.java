@@ -117,6 +117,17 @@ public class BurstBalloons {
                 }
             }
         }
+        // or:
+        // for (int j = 2; j < n; j++) {
+        //     for (int i = j - 2; i >= 0; i--) { // must be in reverse order!
+        //         for (int k = i + 1; k < j; k++) {
+        //             dp[i][j] = Math.max(dp[i][j],
+        //                                 nums2[i] * nums2[k] * nums2[j]
+        //                                 + dp[i][k] + dp[k][j]);
+        //
+        //         }
+        //     }
+        // }
         return dp[0][n - 1];
     }
 
