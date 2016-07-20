@@ -98,8 +98,9 @@ public class CountSmaller {
     }
 
     // Binary Search Tree
-    // time complexity: average: O(N * log(N)) Worse case: O(N  ^ 2)
     // https://discuss.leetcode.com/topic/31405/9ms-short-java-bst-solution-get-answer-when-building-bst/2
+    // time complexity: average: O(N * log(N)) Worse case: O(N  ^ 2)
+    // beats 89.05(9 ms)
     public List<Integer> countSmaller3(int[] nums) {
         Integer[] res = new Integer[nums.length];
         Node root = null;
@@ -138,6 +139,99 @@ public class CountSmaller {
         }
     }
 
+    // Merge Sort
+    // https://discuss.leetcode.com/topic/31162/mergesort-solution/9
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    // beats 31.22%(47 ms)
+    public List<Integer> countSmaller4(int[] nums) {
+        int n = nums.length;
+        List<Integer> res = new ArrayList<>(Collections.nCopies(n, 0));
+        List<NumWithPos> numWithPos = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            numWithPos.add(new NumWithPos(nums[i], i));
+        }
+        numWithPos = sort(numWithPos);
+        for (NumWithPos num : numWithPos) {
+            res.set(num.pos, num.shift);
+        }
+        return res;
+    }
+
+    private List<NumWithPos> sort(List<NumWithPos> unsorted) {
+        int size = unsorted.size();
+        if (size <= 1) return unsorted;
+
+        List<NumWithPos> l1 = sort(unsorted.subList(0, size / 2));
+        List<NumWithPos> l2 = sort(unsorted.subList(size / 2, size));
+        List<NumWithPos> sorted = new ArrayList<>();
+        int i = 0;
+        int j = 0;
+        while (i < l1.size() && j < l2.size()) {
+            if (l1.get(i).val <= l2.get(j).val) {
+                sorted.add((i++) + j, l1.get(i - 1).shift(j));
+            } else {
+                sorted.add((j++) + i, l2.get(j - 1));
+            }
+        }
+        while (i < l1.size()) {
+            sorted.add(l1.get(i++).shift(j));
+        }
+        while (j < l2.size()) {
+            sorted.add(l2.get(j++));
+        }
+        return sorted;
+    }
+
+    static class NumWithPos {
+        int val;
+        int pos;
+        int shift;
+
+        NumWithPos(int val, int pos) {
+            this.val = val;
+            this.pos = pos;
+        }
+
+        NumWithPos shift(int val){
+            this.shift += val;
+            return this;
+        }
+    }
+
+    // Binary Search
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    // beats 28.23%(52 ms)
+    public List<Integer> countSmaller5(int[] nums) {
+        Integer[] res = new Integer[nums.length];
+        List<Integer> sorted = new ArrayList<>();
+        for (int i = nums.length - 1; i >= 0; i--) {
+            int index = find(sorted, nums[i]);
+            res[i] = index;
+            sorted.add(index, nums[i]);
+        }
+        return Arrays.asList(res);
+    }
+
+    private int find(List<Integer> sorted, int target) {
+        if (sorted.size() == 0) return 0;
+
+        int low = 0;
+        int high = sorted.size() - 1;
+        if (sorted.get(high) < target) return high + 1;
+
+        if (sorted.get(low) >= target) return 0;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (sorted.get(mid) < target) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+        return (sorted.get(low) >= target) ? low : high;
+    }
+
     void test(Function<int[], List<Integer> > count, String name,
               int[] nums, Integer ... expected) {
         long t1 = System.nanoTime();
@@ -150,6 +244,8 @@ public class CountSmaller {
         test(c::countSmaller, "countSmaller", nums, expected);
         test(c::countSmaller2, "countSmaller2", nums, expected);
         test(c::countSmaller3, "countSmaller3", nums, expected);
+        test(c::countSmaller4, "countSmaller4", nums, expected);
+        test(c::countSmaller5, "countSmaller5", nums, expected);
     }
 
     @Test
