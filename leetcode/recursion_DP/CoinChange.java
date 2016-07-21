@@ -183,6 +183,59 @@ public class CoinChange {
         return (minCost == Integer.MAX_VALUE) ? -1 : minCost;
     }
 
+    // Dynamic Programming(Bottom up, iterative)
+    // compared to coinChange4, loop coin first then amount
+    // Time complexity : O(S * n). S is amount, n is denomination count.
+    // Space complexity: O(S)
+    // beats 91.72%(20 ms)
+    public int coinChange7(int[] coins, int amount) {
+        int[] dp = new int[amount + 1];
+        Arrays.fill(dp, amount + 1);
+        dp[0] = 0;
+        for (int coin : coins) {
+            for (int i = coin; i <= amount; i++) {
+                dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+            }
+        }
+        return dp[amount] > amount ? -1 : dp[amount];
+    }
+
+    // BFS
+    // beats 18.33%(44 ms)
+    public int coinChange8(int[] coins, int amount) {
+        if (amount == 0) return 0;
+
+        boolean[] visited = new boolean[amount + 1];
+        visited[0] = true;
+        // although using Set makes runtime to 274ms, it's useful
+        // when amount is too large for creating array
+        // Set<Integer> visited = new HashSet<>();
+        // visited.add(0);
+        Queue<Integer> values = new LinkedList<>();
+        values.offer(0);
+        for (int level = 1; !values.isEmpty(); level++) {
+            int size = values.size();
+            for (int i = 0; i < size; i++) {
+                int v = values.poll();
+                for (int coin : coins) {
+                    int val = v + coin;
+                    if (val == amount) return level;
+
+                    // if (val <= amount && !visited.contains(val)) {
+                        // visited.add(val);
+                    if (val <= amount && !visited[val]) {
+                        visited[val] = true;
+                        values.offer(val);
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    // TODO: two-dimensional DP
+    // https://en.wikipedia.org/wiki/Change-making_problem
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -210,6 +263,8 @@ public class CoinChange {
         test(c::coinChange3, "coinChange3", expected, amount, coins);
         test(c::coinChange4, "coinChange4", expected, amount, coins);
         test(c::coinChange5, "coinChange5", expected, amount, coins);
+        test(c::coinChange7, "coinChange7", expected, amount, coins);
+        test(c::coinChange8, "coinChange8", expected, amount, coins);
     }
 
     @Test
