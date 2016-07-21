@@ -37,7 +37,7 @@ public class CoinChange {
         return min > amount ? -1 : min;
     }
 
-    // Dynamic Programming
+    // Dynamic Programming(Top Down, recursive)
     // Time Limit Exceeded
     public int coinChange2(int[] coins, int amount) {
         int n = coins.length;
@@ -79,7 +79,7 @@ public class CoinChange {
         return min;
     }
 
-    // Dynamic Programming
+    // Dynamic Programming(Bottom up, iterative)
     // beats 3.60%(261 ms)
     public int coinChange3(int[] coins, int amount) {
         int n = coins.length;
@@ -110,6 +110,79 @@ public class CoinChange {
         return dp[amount];
     }
 
+    // Dynamic Programming(Bottom up, iterative)
+    // from leetcode
+    // Time complexity : O(S * n). S is amount, n is denomination count.
+    // Space complexity: O(S)
+    // beats 74.39%(25 ms)
+    public int coinChange4(int[] coins, int amount) {
+        int n = coins.length;
+        int[] dp = new int[amount + 1];
+        Arrays.fill(dp, amount + 1);
+        dp[0] = 0;
+        Arrays.sort(coins); // to support the following inner loop shortcut
+        for (int i = 1; i <= amount; i++) {
+            for (int j = 0; j < n && coins[j] <= i; j++) {
+                dp[i] = Math.min(dp[i], dp[i - coins[j]] + 1);
+            }
+        }
+        return dp[amount] > amount ? -1 : dp[amount];
+    }
+
+    // Dynamic Programming(Top Down, recursive)
+    // from leetcode
+    // Time complexity : O(S * n). S is amount, n is denomination count.
+    // Space complexity: O(S)
+    // beats 12.81%(51 ms)
+    public int coinChange5(int[] coins, int amount) {
+        return amount < 1 ? 0 : coinChange(coins, amount, new int[amount]);
+    }
+
+    private int coinChange(int[] coins, int amount, int[] count) {
+        if (amount < 0) return -1;
+
+        if (amount == 0) return 0;
+
+        if (count[amount - 1] != 0) return count[amount - 1];
+
+        int min = Integer.MAX_VALUE;
+        for (int coin : coins) {
+            int res = coinChange(coins, amount - coin, count);
+            if (res >= 0 && res < min) {
+                min = res + 1;
+            }
+        }
+        count[amount - 1] = (min == Integer.MAX_VALUE) ? -1 : min;
+        return count[amount - 1];
+    }
+
+    // brute force
+    // from leetcode
+    // Time complexity : O(S ^ n). S is amount, n is denomination count.
+    // Space complexity: O(n)
+    // Time Limit Exceeded
+    public int coinChange6(int[] coins, int amount) {
+        return coinChange(0, coins, amount);
+    }
+
+    private int coinChange(int idxCoin, int[] coins, int amount) {
+        if (amount == 0) return 0;
+
+        if (idxCoin >= coins.length || amount <= 0) return -1;
+
+        int maxVal = amount / coins[idxCoin];
+        int minCost = Integer.MAX_VALUE;
+        for (int i = 0; i <= maxVal; i++) {
+            if (amount >= i * coins[idxCoin]) {
+                int res = coinChange(idxCoin + 1, coins, amount - i * coins[idxCoin]);
+                if (res != -1) {
+                    minCost = Math.min(minCost, res + i);
+                }
+            }
+        }
+        return (minCost == Integer.MAX_VALUE) ? -1 : minCost;
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -129,9 +202,14 @@ public class CoinChange {
         coins = coins.clone();
         if (amount <= 1000) {
             test(c::coinChange, "coinChange", expected, amount, coins);
+            if (amount <= 100) {
+                test(c::coinChange6, "coinChange6", expected, amount, coins);
+            }
         }
         test(c::coinChange2, "coinChange2", expected, amount, coins);
         test(c::coinChange3, "coinChange3", expected, amount, coins);
+        test(c::coinChange4, "coinChange4", expected, amount, coins);
+        test(c::coinChange5, "coinChange5", expected, amount, coins);
     }
 
     @Test
