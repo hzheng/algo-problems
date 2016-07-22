@@ -117,33 +117,33 @@ public class RemoveDuplicateLetters {
     }
 
     // https://discuss.leetcode.com/topic/35686/clean-and-easy-understand-java-stack-solution-with-explanation
-    // beats 71.41%(7 ms)
+    // beats 81.45%(6 ms)
     public String removeDuplicateLetters3(String s) {
         boolean[] visited = new boolean[26];
         int[] counts = new int[26];
         for (char c : s.toCharArray()) {
             counts[c - 'a']++;
         }
-        Deque<Character> deque = new LinkedList<>();
+        Stack<Character> stack = new Stack<>();
         for (char c : s.toCharArray()) {
             int index = c - 'a';
             counts[index]--;
             if (visited[index]) continue;
 
-            while (!deque.isEmpty()) {
-                char d = deque.peekLast();
+            while (!stack.isEmpty()) {
+                char d = stack.peek();
                 if (d > c && counts[d - 'a'] > 0) {
-                    visited[deque.pollLast() - 'a'] = false;
+                    visited[stack.pop() - 'a'] = false;
                 } else break;
             }
 
-            deque.offerLast(c);
+            stack.push(c);
             visited[index] = true;
         }
 
         StringBuilder sb = new StringBuilder();
-        while (!deque.isEmpty()) {
-            sb.append(deque.pollFirst());
+        for (char c : stack) {
+            sb.append(c);
         }
         return sb.toString();
     }
