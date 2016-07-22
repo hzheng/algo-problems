@@ -217,6 +217,34 @@ public class RemoveDuplicateLetters {
         return minLastPos;
     }
 
+    // https://discuss.leetcode.com/topic/32172/c-simple-solution-easy-understanding/2
+    // no stack/deque
+    // beats 96.90%(3 ms)
+    public String removeDuplicateLetters6(String s) {
+        boolean[] visited = new boolean[26];
+        int[] counts = new int[26];
+        for (char c : s.toCharArray()) {
+            counts[c - 'a']++;
+        }
+        StringBuilder sb = new StringBuilder("0"); // less than any letter
+        for (char c : s.toCharArray()) {
+            int index = c - 'a';
+            counts[index]--;
+            if (visited[index]) continue;
+
+            while (true) {
+                char end = sb.charAt(sb.length() - 1);
+                if (c < end && counts[end - 'a'] > 0) {
+                    visited[end - 'a'] = false;
+                    sb.deleteCharAt(sb.length() - 1);
+                } else break;
+            }
+            sb.append(c);
+            visited[index] = true;
+        }
+        return sb.substring(1);
+    }
+
     void test(Function<String, String> remove, String name,
               String s, String expected) {
         long t1 = System.nanoTime();
@@ -235,6 +263,7 @@ public class RemoveDuplicateLetters {
         test(r::removeDuplicateLetters3, "removeDuplicateLetters3", s, expected);
         test(r::removeDuplicateLetters4, "removeDuplicateLetters4", s, expected);
         test(r::removeDuplicateLetters5, "removeDuplicateLetters5", s, expected);
+        test(r::removeDuplicateLetters6, "removeDuplicateLetters6", s, expected);
     }
 
     @Test
