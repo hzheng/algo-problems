@@ -55,7 +55,7 @@ public class RemoveDuplicateLetters {
     }
 
     // Deque
-    // beats 52.55%(11 ms)
+    // beats 57.50%(9 ms)
     public String removeDuplicateLetters2(String s) {
         int[] counts = new int[26];
         for (char c : s.toCharArray()) {
@@ -67,6 +67,9 @@ public class RemoveDuplicateLetters {
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             int index = c - 'a';
+            int count = counts[index];
+            if (count == 0) continue;
+
             if (deque.isEmpty()) {
                 if (counts[index] == 1) {
                     sb.append(c);
@@ -77,9 +80,6 @@ public class RemoveDuplicateLetters {
             }
             // deque is not empty
             char d = deque.peekLast();
-            int count = counts[index];
-            if (count == 0) continue;
-
             if (count == 1 || (count == 2 && c == d)
                 || (c < d && !deque.contains(c))) {
                 while (!deque.isEmpty()) {
@@ -89,38 +89,30 @@ public class RemoveDuplicateLetters {
                         deque.pollLast();
                     } else break;
                 }
-                if (count == 1) {
-                    dequeToBuffer(deque, sb, counts);
-                    sb.append(c);
-                } else {
+                if (count != 1) {
                     i--;
+                    continue;
                 }
+
+                while (!deque.isEmpty()) {
+                    d = deque.pollFirst();
+                    sb.append(d);
+                    counts[d - 'a'] = 0;
+                }
+                sb.append(c);
             } else if (c > d) {
                 deque.offerLast(c);
             } else if (c == d) {
                 counts[c - 'a']--;
-            } else if (--counts[c - 'a'] == 1) {
-                while (true) {
+            } else if (--counts[c - 'a'] == 1) { // deque contains c
+                while (c != d) {
                     d = deque.pollFirst();
                     sb.append(d);
                     counts[d - 'a'] = 0;
-                    if (d == c) break;
                 }
             }
         }
-        dequeToBuffer(deque, sb, counts);
         return sb.toString();
-    }
-
-    private void dequeToBuffer(Deque<Character> deque, StringBuilder sb,
-                               int[] counts) {
-        while (!deque.isEmpty()) {
-            char d = deque.pollFirst();
-            if (counts[d - 'a'] > 0) {
-                sb.append(d);
-                counts[d - 'a'] = 0;
-            }
-        }
     }
 
     void test(Function<String, String> remove, String name,
@@ -142,6 +134,7 @@ public class RemoveDuplicateLetters {
 
     @Test
     public void test1() {
+        test("bccc", "bc");
         test("bcbac", "bac");
         test("cbacdcbc", "acdb");
         test("abacb", "abc");
