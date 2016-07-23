@@ -86,7 +86,7 @@ public class CreateMaxNumber {
         return dp;
     }
 
-    // beats 81.92(19 ms)
+    // beats 92.87(17 ms) or: 81.21%(19ms)
     public int[] maxNumber2(int[] nums1, int[] nums2, int k) {
         int[] max = new int[k];
         int[][] dp1 = createDp(nums1);
@@ -112,26 +112,25 @@ public class CreateMaxNumber {
         int n2 = nums2.length;
         int end1 = n1 - (k - start) + (n2 - i2);
         int end2 = n2 - (k - start) + (n1 - i1);
-        if (i1 >= n1) return -dp2[i2][Math.min(n2 - 1, end2)] - 1;
 
-        int index1 = dp1[i1][Math.min(n1 - 1, end1)];
-        int maxDigit1 = nums1[index1];
-
-        if (i2 >= n2) return dp1[i1][Math.min(n1 - 1, end1)] + 1;
+        int index1 = (i1 < n1) ? dp1[i1][Math.min(n1 - 1, end1)] : -1;
+        if (i2 >= n2) return index1 + 1;
 
         int index2 = dp2[i2][Math.min(n2 - 1, end2)];
-        int maxDigit2 = nums2[index2];
+        if (i1 >= n1) return -(index2 + 1);
 
-        if (maxDigit1 > maxDigit2) return index1 + 1;
+        int max1 = nums1[index1];
+        int max2 = nums2[index2];
+        if (max1 > max2) return index1 + 1;
+        if (max1 < max2) return -(index2 + 1);
 
-        if (maxDigit2 > maxDigit1) return -(index2 + 1);
-
+        // at this point, next candidates are the same
         int nextMax1 = -1;
         int nextIndex1 = -1;
         if (index1 + 1 < n1) {
             nextIndex1 = dp1[index1 + 1][Math.min(n1 - 1, end1 + 1)];
             nextMax1 = nums1[nextIndex1];
-        } else { // finised, use the other
+        } else { // finished, use the other
             nextMax1 = nums2[dp2[index2][Math.min(n2 - 1, end2 + i1 - index1)]];
         }
 
@@ -140,37 +139,38 @@ public class CreateMaxNumber {
         if (index2 + 1 < n2) {
             nextIndex2 = dp2[index2 + 1][Math.min(n2 - 1, end2 + 1)];
             nextMax2 = nums2[nextIndex2];
-        } else { // finised, use the other
+        } else { // finished, use the other
             nextMax2 = nums1[dp1[index1][Math.min(n1 - 1, end1 + i2 - index2)]];
         }
 
         if (nextMax1 < nextMax2) return -(index2 + 1);
+        if (nextMax1 > nextMax2 || max1 > nextMax1) return index1 + 1;
 
-        if (nextMax1 > nextMax2 || maxDigit1 > nextMax1) return index1 + 1;
+        // at this point, next candidates and next's next candidates are the
+        // same and the former <= the latter.
 
-        // FIXME: performance booster, but too complex and may has bugs
-        if (maxDigit1 == nextMax1 && nextIndex1 >= 0 && nextIndex2 >= 0) {
-            if (maxDigit1 == nums1[dp1[index1][n1 - 1]]
-                && maxDigit1 == nums2[dp2[index2][n2 - 1]]) { // global max
-                int count1 = 0;
-                int last1 = 0;
-                for (; nextIndex1 + 1 < n1; count1++) {
-                    nextIndex1 = dp1[nextIndex1 + 1][Math.min(n1 - 1, end1 + count1)];
-                    if ((last1 = nums1[nextIndex1]) < maxDigit1) break;
-                }
-                int count2 = 0;
-                int last2 = 0;
-                for (; nextIndex2 + 1 < n2; count2++) {
-                    nextIndex2 = dp2[nextIndex2 + 1][Math.min(n2 - 1, end2 + count2)];
-                    if ((last2 = nums2[nextIndex2]) < maxDigit1) break;
-                }
-                if (count1 > count2) return index1 + 1;
-                if (count1 < count2) return -(index2 + 1);
-
-                return (last1 > last2) ? index1 + 1 : -(index2 + 1);
+        // FIXME: performance booster, but too complex and may have bugs
+        if (max1 == nums1[dp1[index1][n1 - 1]]
+            && max1 == nums2[dp2[index2][n2 - 1]]) { // global max
+            int count1 = 0;
+            int last1 = 0;
+            for (; nextIndex1 + 1 < n1; count1++) {
+                nextIndex1 = dp1[nextIndex1 + 1][Math.min(n1 - 1, end1 + count1)];
+                if ((last1 = nums1[nextIndex1]) < max1) break;
             }
+            int count2 = 0;
+            int last2 = 0;
+            for (; nextIndex2 + 1 < n2; count2++) {
+                nextIndex2 = dp2[nextIndex2 + 1][Math.min(n2 - 1, end2 + count2)];
+                if ((last2 = nums2[nextIndex2]) < max1) break;
+            }
+
+            if (count1 > count2) return index1 + 1;
+            if (count1 < count2) return -(index2 + 1);
+            return (last1 > last2) ? (index1 + 1) : -(index2 + 1);
         }
 
+        // no luck, resort to recursion
         int i11 = index1 + 1;
         int i12 = i2;
         int i21 = i1;
@@ -372,6 +372,65 @@ public class CreateMaxNumber {
              6, 9, 7, 9, 7, 2, 6, 3, 0, 5, 3, 6, 0, 5, 9, 3, 9, 1, 1, 0, 0, 8, 1,
              4, 3, 0, 4, 3, 7, 7, 7, 4, 6, 4, 0, 0, 5, 7, 3, 2, 8, 5, 1, 4, 5, 8,
              5, 6, 7, 5, 7, 3, 3, 9, 6, 8, 1, 5, 1, 1, 1, 0, 3);
+
+        test(600, new int[] {
+            2, 0, 2, 1, 2, 2, 2, 2, 0, 1, 0, 0, 2, 0, 2, 0, 2, 1, 0, 1, 1, 0, 1,
+            0, 1, 2, 1, 1, 1, 0, 1, 2, 2, 1, 0, 0, 1, 2, 1, 2, 2, 1, 1, 0, 1, 2,
+            0, 2, 0, 1, 2, 0, 2, 1, 1, 1, 2, 0, 0, 1, 0, 2, 1, 2, 0, 1, 0, 0, 0,
+            1, 2, 1, 0, 1, 1, 2, 0, 2, 2, 0, 0, 1, 1, 2, 2, 1, 1, 2, 2, 1, 0, 1,
+            2, 0, 1, 2, 2, 0, 0, 0, 2, 0, 2, 0, 2, 2, 0, 1, 1, 1, 1, 2, 2, 2, 2,
+            0, 0, 2, 2, 2, 2, 0, 2, 0, 1, 0, 0, 2, 1, 0, 0, 2, 0, 2, 1, 1, 1, 1,
+            0, 1, 2, 0, 2, 1, 0, 1, 1, 1, 0, 0, 2, 2, 2, 0, 2, 1, 1, 1, 2, 2, 0,
+            0, 2, 2, 2, 2, 2, 0, 2, 0, 2, 0, 2, 0, 0, 1, 0, 1, 1, 0, 0, 2, 1, 1,
+            2, 2, 2, 1, 2, 2, 0, 0, 2, 1, 0, 2, 1, 2, 1, 1, 1, 0, 2, 0, 1, 1, 2,
+            1, 1, 0, 0, 1, 0, 1, 2, 2, 2, 0, 2, 2, 1, 0, 1, 2, 1, 2, 0, 2, 2, 0,
+            1, 2, 2, 1, 2, 2, 1, 1, 2, 2, 2, 2, 2, 1, 2, 0, 1, 1, 1, 2, 2, 2, 0,
+            2, 0, 2, 0, 2, 1, 1, 0, 2, 2, 2, 1, 0, 2, 1, 2, 2, 2, 0, 1, 1, 1, 1,
+            1, 1, 0, 0, 0, 2, 2, 0, 1, 2, 1, 0, 0, 2, 2, 2, 2, 1, 0, 2, 0, 1, 2,
+            0
+        }, new int[] {
+            1, 1, 1, 0, 0, 1, 1, 0, 2, 1, 0, 1, 2, 1, 0, 2, 2, 1, 0, 2, 0, 1, 1,
+            0, 0, 2, 2, 0, 1, 0, 2, 0, 2, 2, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 2, 1,
+            0, 2, 1, 1, 2, 1, 2, 2, 0, 2, 1, 0, 2, 0, 0, 2, 0, 2, 2, 1, 0, 1, 0,
+            0, 2, 1, 1, 1, 2, 2, 0, 0, 0, 1, 1, 2, 0, 2, 2, 0, 1, 0, 2, 1, 0, 2,
+            1, 1, 1, 0, 1, 1, 2, 0, 2, 0, 1, 1, 2, 0, 2, 0, 1, 2, 1, 0, 2, 0, 1,
+            0, 0, 0, 1, 2, 1, 2, 0, 1, 2, 2, 1, 1, 0, 1, 2, 1, 0, 0, 1, 0, 2, 2,
+            1, 2, 2, 0, 0, 0, 2, 0, 0, 0, 1, 0, 2, 0, 2, 1, 0, 0, 1, 2, 0, 1, 1,
+            0, 1, 0, 2, 2, 2, 1, 1, 0, 1, 1, 2, 1, 0, 2, 2, 2, 1, 2, 2, 2, 2, 0,
+            1, 1, 0, 1, 2, 1, 2, 2, 0, 0, 0, 0, 0, 1, 1, 1, 2, 1, 2, 1, 1, 0, 1,
+            2, 0, 1, 2, 1, 2, 2, 2, 2, 0, 0, 0, 0, 2, 0, 1, 2, 0, 1, 1, 1, 1, 0,
+            1, 2, 2, 1, 0, 1, 2, 2, 1, 2, 2, 2, 0, 2, 0, 1, 1, 2, 0, 0, 2, 2, 0,
+            1, 0, 2, 1, 0, 0, 1, 1, 1, 1, 0, 0, 2, 2, 2, 2, 0, 0, 1, 2, 1, 1, 2,
+            0, 1, 2, 1, 0, 2, 0, 0, 2, 1, 1, 0, 2, 1, 1, 2, 2, 0, 1, 0, 2, 0, 1,
+            0
+        },
+             2, 1, 1, 1, 0, 2, 1, 2, 2, 2, 2, 0, 1, 0, 0, 2, 0, 2, 0, 2, 1, 0, 1,
+             1, 0, 1, 0, 1, 2, 1, 1, 1, 0, 1, 2, 2, 1, 0, 0, 1, 2, 1, 2, 2, 1, 1,
+             0, 1, 2, 0, 2, 0, 1, 2, 0, 2, 1, 1, 1, 2, 0, 0, 1, 1, 0, 2, 1, 0, 1,
+             2, 1, 0, 2, 2, 1, 0, 2, 0, 1, 1, 0, 0, 2, 2, 0, 1, 0, 2, 0, 2, 2, 2,
+             2, 1, 1, 1, 1, 0, 0, 1, 0, 2, 1, 2, 0, 1, 0, 0, 0, 1, 2, 1, 0, 1, 1,
+             2, 0, 2, 2, 0, 0, 1, 1, 2, 2, 1, 1, 2, 2, 1, 0, 1, 2, 0, 1, 2, 2, 0,
+             0, 0, 2, 0, 2, 0, 2, 2, 0, 1, 1, 1, 1, 2, 2, 2, 2, 0, 0, 2, 2, 2, 2,
+             0, 2, 0, 1, 0, 0, 2, 1, 0, 0, 2, 0, 2, 1, 1, 1, 1, 0, 1, 2, 0, 2, 1,
+             0, 1, 1, 1, 0, 0, 2, 2, 2, 0, 2, 1, 1, 1, 2, 2, 0, 0, 2, 2, 2, 2, 2,
+             0, 2, 0, 2, 0, 2, 0, 0, 1, 0, 1, 1, 0, 0, 2, 1, 1, 2, 2, 2, 1, 2, 2,
+             0, 0, 2, 1, 0, 2, 1, 2, 1, 1, 1, 0, 2, 0, 1, 1, 2, 1, 1, 0, 0, 1, 0,
+             1, 2, 2, 2, 0, 2, 2, 1, 0, 1, 2, 1, 2, 0, 2, 2, 0, 1, 2, 2, 1, 2, 2,
+             1, 1, 2, 2, 2, 2, 2, 1, 2, 0, 1, 1, 1, 2, 2, 2, 0, 2, 0, 2, 0, 2, 1,
+             1, 0, 2, 2, 2, 1, 0, 2, 1, 2, 2, 2, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 2,
+             2, 0, 1, 2, 1, 0, 0, 2, 2, 2, 2, 1, 0, 2, 0, 1, 2, 0, 0, 0, 0, 2, 1,
+             0, 2, 1, 1, 2, 1, 2, 2, 0, 2, 1, 0, 2, 0, 0, 2, 0, 2, 2, 1, 0, 1, 0,
+             0, 2, 1, 1, 1, 2, 2, 0, 0, 0, 1, 1, 2, 0, 2, 2, 0, 1, 0, 2, 1, 0, 2,
+             1, 1, 1, 0, 1, 1, 2, 0, 2, 0, 1, 1, 2, 0, 2, 0, 1, 2, 1, 0, 2, 0, 1,
+             0, 0, 0, 1, 2, 1, 2, 0, 1, 2, 2, 1, 1, 0, 1, 2, 1, 0, 0, 1, 0, 2, 2,
+             1, 2, 2, 0, 0, 0, 2, 0, 0, 0, 1, 0, 2, 0, 2, 1, 0, 0, 1, 2, 0, 1, 1,
+             0, 1, 0, 2, 2, 2, 1, 1, 0, 1, 1, 2, 1, 0, 2, 2, 2, 1, 2, 2, 2, 2, 0,
+             1, 1, 0, 1, 2, 1, 2, 2, 0, 0, 0, 0, 0, 1, 1, 1, 2, 1, 2, 1, 1, 0, 1,
+             2, 0, 1, 2, 1, 2, 2, 2, 2, 0, 0, 0, 0, 2, 0, 1, 2, 0, 1, 1, 1, 1, 0,
+             1, 2, 2, 1, 0, 1, 2, 2, 1, 2, 2, 2, 0, 2, 0, 1, 1, 2, 0, 0, 2, 2, 0,
+             1, 0, 2, 1, 0, 0, 1, 1, 1, 1, 0, 0, 2, 2, 2, 2, 0, 0, 1, 2, 1, 1, 2,
+             0, 1, 2, 1, 0, 2, 0, 0, 2, 1, 1, 0, 2, 1, 1, 2, 2, 0, 1, 0, 2, 0, 1,
+             0, 0);
     }
 
     public static void main(String[] args) {
