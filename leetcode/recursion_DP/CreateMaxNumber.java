@@ -200,6 +200,52 @@ public class CreateMaxNumber {
         }
     }
 
+    // https://discuss.leetcode.com/topic/32272/share-my-greedy-solution
+    // time complexity: O((M+N)^3), space complexity: O(K)
+    // beats 71.24%(20 ms)
+    public int[] maxNumber3(int[] nums1, int[] nums2, int k) {
+        int n1 = nums1.length;
+        int n2 = nums2.length;
+        int[] max = new int[k];
+        for (int i = Math.max(0, k - n2); i <= k && i <= n1; i++) {
+            int[] candidate = merge(maxArray(nums1, i), maxArray(nums2, k - i), k);
+            if (compare(candidate, 0, max, 0)) {
+                max = candidate;
+            }
+        }
+        return max;
+    }
+
+    private int[] merge(int[] nums1, int[] nums2, int k) {
+        int[] res = new int[k];
+        for (int i1 = 0, i2 = 0, i = 0; i < k; i++) {
+            res[i] = compare(nums1, i1, nums2, i2) ? nums1[i1++] : nums2[i2++];
+        }
+        return res;
+    }
+
+    private boolean compare(int[] nums1, int i1, int[] nums2, int i2) {
+        while (i1 < nums1.length && i2 < nums2.length && nums1[i1] == nums2[i2]) {
+            i1++;
+            i2++;
+        }
+        return i2 == nums2.length || (i1 < nums1.length && nums1[i1] > nums2[i2]);
+    }
+
+    private int[] maxArray(int[] nums, int k) {
+        int n = nums.length;
+        int[] res = new int[k];
+        for (int i = 0, j = 0; i < n; i++) {
+            while (n - i + j > k && j > 0 && res[j - 1] < nums[i]) {
+                j--;
+            }
+            if (j < k) {
+                res[j++] = nums[i];
+            }
+        }
+        return res;
+    }
+
     @FunctionalInterface
     interface Function<A, B, C, D> {
         public D apply(A a, B b, C c);
@@ -220,6 +266,7 @@ public class CreateMaxNumber {
             test(c::maxNumber, "maxNumber", k, nums1, nums2, expected);
         }
         test(c::maxNumber2, "maxNumber2", k, nums1, nums2, expected);
+        test(c::maxNumber3, "maxNumber3", k, nums1, nums2, expected);
     }
 
     @Test
