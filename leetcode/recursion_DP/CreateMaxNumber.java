@@ -86,6 +86,7 @@ public class CreateMaxNumber {
         return dp;
     }
 
+    // Dynamic Programming
     // beats 92.87(17 ms) or: 81.21%(19ms)
     public int[] maxNumber2(int[] nums1, int[] nums2, int k) {
         int[] max = new int[k];
@@ -200,6 +201,7 @@ public class CreateMaxNumber {
         }
     }
 
+    // Merge
     // https://discuss.leetcode.com/topic/32272/share-my-greedy-solution
     // time complexity: O((M+N)^3), space complexity: O(K)
     // beats 71.24%(20 ms)
@@ -246,6 +248,35 @@ public class CreateMaxNumber {
         return res;
     }
 
+    // Merge + Dynamic Programming
+    // beats 23.53%(32 ms)
+    public int[] maxNumber4(int[] nums1, int[] nums2, int k) {
+        int[] max = new int[k];
+        int n1 = nums1.length;
+        int n2 = nums2.length;
+        int[][] dp1 = createDp(nums1);
+        int[][] dp2 = createDp(nums2);
+
+        for (int i = Math.max(0, k - n2); i <= k && i <= n1; i++) {
+            int[] candidate = merge(maxArray(nums1, i, dp1),
+                                    maxArray(nums2, k - i, dp2), k);
+            if (compare(candidate, 0, max, 0)) {
+                max = candidate;
+            }
+        }
+        return max;
+    }
+
+    private int[] maxArray(int[] nums, int k, int[][] dp) {
+        int n = nums.length;
+        int[] res = new int[k];
+        for (int i = 0, j = 0, end = n - k; i < k; i++, j++, end++) {
+            j = dp[j][Math.min(n - 1, end)];
+            res[i] = nums[j];
+        }
+        return res;
+    }
+
     @FunctionalInterface
     interface Function<A, B, C, D> {
         public D apply(A a, B b, C c);
@@ -267,6 +298,7 @@ public class CreateMaxNumber {
         }
         test(c::maxNumber2, "maxNumber2", k, nums1, nums2, expected);
         test(c::maxNumber3, "maxNumber3", k, nums1, nums2, expected);
+        test(c::maxNumber4, "maxNumber4", k, nums1, nums2, expected);
     }
 
     @Test
