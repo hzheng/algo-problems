@@ -73,7 +73,6 @@ public class PowerOf3 {
 
     // beats 19.68%(21 ms)
     public boolean isPowerOfThree9(int n) {
-        System.out.println("n="+n+"|"+ (Math.log10(n) / Math.log10(3) % 1));
         return Math.log10(n) / Math.log10(3) % 1 == 0;
     }
 
