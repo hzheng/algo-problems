@@ -51,6 +51,7 @@ public class OddEvenList {
     }
 
     // from leetcode
+    // beats 3.44%(1 ms)
     public ListNode oddEvenList3(ListNode head) {
         if (head == null) return null;
 

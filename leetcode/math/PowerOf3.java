@@ -58,6 +58,8 @@ public class PowerOf3 {
     // beats 3.08%(78 ms)
     public boolean isPowerOfThree7(int n) {
         return n > 0 && Integer.toString(n, 3).matches("10*");
+        // or:
+        // return Integer.toString(n, 3).matches("^10*$");
     }
 
     // beats 19.68%(21 ms)
@@ -74,6 +76,8 @@ public class PowerOf3 {
     // beats 19.68%(21 ms)
     public boolean isPowerOfThree9(int n) {
         return Math.log10(n) / Math.log10(3) % 1 == 0;
+        // safer version:
+        // return (Math.log(n) / Math.log(3) + epsilon) % 1 <= 2 * epsilon;
     }
 
     void test(int n, boolean expected) {
