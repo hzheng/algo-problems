@@ -38,12 +38,11 @@ public class OddEvenList {
     public ListNode oddEvenList2(ListNode head) {
         ListNode oddDummy = new ListNode(0);
         ListNode evenDummy = new ListNode(0);
-        ListNode[] heads = new ListNode[]{oddDummy, evenDummy};
+        ListNode[] heads = new ListNode[] {oddDummy, evenDummy};
         ListNode cur = head;
         for (int i = 0; cur != null; i = 1 - i) {
             ListNode next = cur.next;
-            ListNode node = heads[i];
-            heads[i] = node.next = cur;
+            heads[i] = heads[i].next = cur;
             cur.next = null;
             cur = next;
         }
@@ -51,11 +50,27 @@ public class OddEvenList {
         return oddDummy.next;
     }
 
+    // from leetcode
+    public ListNode oddEvenList3(ListNode head) {
+        if (head == null) return null;
+
+        ListNode odd = head;
+        ListNode evenHead = head.next;
+        for (ListNode even = evenHead; even != null && even.next != null;
+             even = even.next) {
+            odd.next = even.next;
+            odd = odd.next;
+            even.next = odd.next;
+        }
+        odd.next = evenHead;
+        return head;
+    }
+
     void test(Function<ListNode, ListNode> oddEvenList,
               int [] nums, int[] expected) {
         nums = nums.clone();
         ListNode res = oddEvenList.apply(ListNode.of(nums));
-        int[] resArray = res == null ? new int[]{} : res.toArray();
+        int[] resArray = res == null ? new int[] {} : res.toArray();
         // System.out.println(Arrays.toString(resArray));
         assertArrayEquals(expected, resArray);
     }
@@ -64,6 +79,7 @@ public class OddEvenList {
         OddEvenList o = new OddEvenList();
         test(o::oddEvenList, nums, expected);
         test(o::oddEvenList2, nums, expected);
+        test(o::oddEvenList3, nums, expected);
     }
 
     @Test
