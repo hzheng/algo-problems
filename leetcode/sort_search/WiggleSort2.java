@@ -12,6 +12,7 @@ import static org.junit.Assert.*;
 // Follow Up:
 // Can you do it in O(n) time and/or in-place with O(1) extra space?
 public class WiggleSort2 {
+    // time complexity: O(N), space complexity: O(1)
     // beats 49.13%(20 ms)
     public void wiggleSort(int[] nums) {
         int n = nums.length;
@@ -33,6 +34,7 @@ public class WiggleSort2 {
         if (tieIndex < 0) return;
 
         int tieVal = nums[tieIndex];
+        // FIXME: may have bug
         for (int i = 0, j = tieIndex + tieIndex % 2; i < n && j < n; i++) {
             if (nums[i] == tieVal) continue;
 
@@ -75,14 +77,135 @@ public class WiggleSort2 {
         nums[j] = tmp;
     }
 
+    // median of median + three-way partitioning
+    // https://discuss.leetcode.com/topic/41464/step-by-step-explanation-of-index-mapping-in-java
+    // time complexity: O(N), space complexity: O(1)
+    // beats 49.13%(20 ms)
+    public void wiggleSort2(int[] nums) {
+        int n = nums.length;
+        int median = findKthSmallest(nums, 0, n - 1, n / 2 + 1);
+        for (int i = 0, left = 0, right = n - 1; i <= right; i++) {
+            int index = mapIndex(i, n);
+            if (nums[index] > median) {
+                swap(nums, mapIndex(left++, n), index);
+            }
+            else if (nums[index] < median) {
+                swap(nums, mapIndex(right--, n), index);
+                i--;
+            }
+        }
+    }
+
+    // map indices like: 0, 1, 2, 3, 4, 5  to  1, 3, 5, 0, 2, 4
+    private int mapIndex(int index, int n) {
+        return (1 + 2 * index) % (n | 1);
+    }
+
+    // from KthLargest.java
+    private int findKthSmallest(int[] nums, int start, int end, int k) {
+        int len = end - start + 1;
+        int pivot = nums[findPivot(nums, start, end, len / 2 + 1)];
+        int i = start;
+        for (int j = end; i < j; ) {
+            while (i < j && nums[i] < pivot) {
+                i++;
+            }
+            while (i < j && nums[j] > pivot) {
+                j--;
+            }
+            if (i < j) {
+                swap(nums, i++, j--);
+            }
+        }
+        if (i + 1 == k + start) return pivot;
+
+        if (i + 1 > k + start) return findKthSmallest(nums, start, i - 1, k);
+
+        return findKthSmallest(nums, i, end, k - i + start);
+    }
+
+    // from KthLargest.java(note that the pivot is a ONLY Approximate value)
+    private int findPivot(int[] nums, int start, int end, int k) {
+        int len = end - start + 1;
+        if (len <= 5) {
+            Arrays.sort(nums, start, end + 1);
+            return start + k - 1;
+        }
+
+        for (int i = 0; i < len / 5; i++) {
+            int left = start + 5 * i;
+            int right = Math.min(left + 4, end);
+            int median = findPivot(nums, left, right, 3);
+            swap(nums, median, start + i); // put median at start
+        }
+        return findPivot(nums, start, start + len / 5, len / 10 + 1);
+    }
+
+    // time complexity: O(N ^ 2), space complexity: O(N)
+    // beats 1.88%(249 ms)
+    public void wiggleSort3(int[] nums) {
+        int n = nums.length;
+        int median = getMedian(nums, n);
+        for (int i = 0, left = 0, right = n - 1; i <= right; i++) {
+            int index = mapIndex(i, n);
+            if (nums[index] > median) {
+                swap(nums, mapIndex(left++, n), index);
+            }
+            else if (nums[index] < median) {
+                swap(nums, mapIndex(right--, n), index);
+                i--;
+            }
+        }
+    }
+
+    // beats 5.22%(184 ms)
+    private int getMedian(int[] nums, int n) {
+        for (int start = 0, end = n - 1, target = n / 2; ;) {
+            swap(nums, start, (start + end) / 2);
+            int swapIndex = start;
+            for (int i = start + 1; i <= end; i++) {
+                if (nums[i] >= nums[start]) {
+                    swap(nums, ++swapIndex, i);
+                }
+            }
+            swap(nums, start, swapIndex);
+            if (swapIndex - start == target) return nums[swapIndex];
+
+            if (swapIndex - start > target) {
+                end = swapIndex - 1;
+            } else {
+                target -= (swapIndex - start + 1);
+                start = swapIndex + 1;
+            }
+        }
+    }
+
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    // beats 64.35%(7 ms)
+    public void wiggleSort4(int[] nums) {
+        Arrays.sort(nums);
+
+        int n = nums.length;
+        int[] buffer = new int[n];
+        for (int i = 0, j = (n + 1) / 2, k = n; i < n; i++) {
+            buffer[i] = (i & 1) == 0 ?  nums[--j] : nums[--k];
+        }
+        System.arraycopy(buffer, 0, nums, 0, n);
+    }
+
     @FunctionalInterface
     interface Function<A> {
         public void apply(A a);
     }
 
-    void test(Function<int[]> sort, int[] nums, int ... expected) {
+    void test(Function<int[]> sort, String name, int[] nums, int ... expected) {
         nums = nums.clone();
+        long t1 = System.nanoTime();
         sort.apply(nums);
+        if (nums.length > 1000) {
+            System.out.format("%s: %.3f ms\n", name,
+                              (System.nanoTime() - t1) * 1e-6);
+        }
         for (int i = 1; i < nums.length; i += 2) {
             assertTrue("left smaller index: " + (i - 1), nums[i] > nums[i - 1]);
             if (i < nums.length - 1) {
@@ -93,7 +216,10 @@ public class WiggleSort2 {
 
     void test(int[] nums, int ... expected) {
         WiggleSort2 w = new WiggleSort2();
-        test(w::wiggleSort, nums, expected);
+        test(w::wiggleSort, "wiggleSort", nums, expected);
+        test(w::wiggleSort2, "wiggleSort2", nums, expected);
+        test(w::wiggleSort3, "wiggleSort3", nums, expected);
+        test(w::wiggleSort4, "wiggleSort4", nums, expected);
     }
 
     @Test
