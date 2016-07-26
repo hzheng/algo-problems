@@ -1,7 +1,4 @@
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -47,12 +44,57 @@ public class LongestIncreasingPath {
         return memo[i][j] = max + 1;
     }
 
+    // Topological Sort
+    // beats 2.95%(164ms) or 5.21%(95 ms)
+    public int longestIncreasingPath2(int[][] matrix) {
+        int m = matrix.length;
+        if (m == 0) return 0;
+
+        int n = matrix[0].length;
+        int len = 0;
+        Queue<Long> removeList = new LinkedList<>();
+        for (int count = m * n; count > 0; len++) {
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    int val = matrix[i][j];
+                    if (val == Integer.MIN_VALUE) continue;
+
+                    boolean canDelete = true;
+                    for (int[] shift : shifts) {
+                        int x = i + shift[0];
+                        if (x < 0 || x >= m) continue;
+
+                        int y = j + shift[1];
+                        if (y < 0 || y >= n) continue;
+
+                        if (matrix[x][y] > val) {
+                            canDelete = false;
+                            break;
+                        }
+                    }
+                    if (canDelete) {
+                        removeList.add((((long)i) << 32) | j);
+                    }
+                }
+            }
+
+            while (!removeList.isEmpty()) {
+                long pos = removeList.poll();
+                matrix[(int)(pos >> 32)][(int)pos] = Integer.MIN_VALUE;
+                count--;
+            }
+        }
+        return len;
+    }
+
     private void test(int[][] matrix, int expected) {
         assertEquals(expected, longestIncreasingPath(matrix));
+        assertEquals(expected, longestIncreasingPath2(matrix));
     }
 
     @Test
     public void test1() {
+        test(new int[][] {{1, 2}}, 2);
         test(new int[][] {{9, 9, 4},
                           {6, 6, 8},
                           {2, 2, 1}}, 4);
