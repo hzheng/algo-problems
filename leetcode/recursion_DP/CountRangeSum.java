@@ -12,63 +12,143 @@ import static org.junit.Assert.*;
 // Note:
 // A naive algorithm of O(n ^ 2) is trivial. You MUST do better than that.
 public class CountRangeSum {
+    // Divide and Conquer + Binary Search
     // time complexity: O(N * log(N) ^ 2), space complexity: O(N)
-    // beats 34.27%(42 ms)
+    // beats 41.33%(37 ms)
     public int countRangeSum(int[] nums, int lower, int upper) {
         int n = nums.length;
+        if (n == 0) return 0;
 
-        long[] dp = new long[n + 1];
+        long[] sums = new long[n + 1];
         for (int i = 0; i < n; i++) {
-            dp[i + 1] = dp[i] + nums[i];
+            sums[i + 1] = sums[i] + nums[i];
         }
-        return countRangeSum(nums, lower, upper, 0, n, dp, new long[n / 2]);
+        return countRangeSum(nums, lower, upper, 0, n, sums, new long[n / 2]);
     }
 
     private int countRangeSum(int[] nums, int lower, int upper,
-                              int start, int end, long[] dp, long[] buffer) {
-        int size = end - start;
-        if (size <= 0) return 0;
-
-        if (size == 1) {
+                              int start, int end, long[] sums, long[] buffer) {
+        int size = (end - start) / 2;
+        if (size == 0) {
             return nums[start] >= lower && nums[start] <= upper ? 1 : 0;
         }
 
-        size /= 2;
         int mid = start + size;
-        int count = countRangeSum(nums, lower, upper, start, mid, dp, buffer)
-                    + countRangeSum(nums, lower, upper, mid, end, dp, buffer);
+        int count = countRangeSum(nums, lower, upper, start, mid, sums, buffer)
+                    + countRangeSum(nums, lower, upper, mid, end, sums, buffer);
 
-        System.arraycopy(dp, start, buffer, 0, size);
+        System.arraycopy(sums, start, buffer, 0, size);
         Arrays.sort(buffer, 0, size);
         for (int i = mid; i < end; i++) {
-            int minPos = Arrays.binarySearch(buffer, 0, size, dp[i + 1] - upper);
-            if (minPos >= 0) {
-                for (int j = minPos - 1; j >= 0; j--, minPos--) {
-                    if (buffer[j] != buffer[j + 1]) break; // may repeat
-                }
-            } else {
+            int minPos = Arrays.binarySearch(buffer, 0, size, sums[i + 1] - upper);
+            if (minPos < 0) {
                 minPos = -minPos - 1;
                 if (minPos == size) continue;
+            } else { // in case of duplicates
+                for (int j = minPos - 1; j >= 0 && buffer[j] == buffer[j + 1];
+                     j--, minPos--) {}
             }
 
-            int maxPos = Arrays.binarySearch(buffer, 0, size, dp[i + 1] - lower);
-            if (maxPos >= 0) {
-                for (int j = maxPos + 1; j < size; j++, maxPos++) {
-                    if (buffer[j] != buffer[j - 1]) break; // may repeat
-                }
-                count += maxPos - minPos + 1;
-            } else {
+            int maxPos = Arrays.binarySearch(buffer, minPos, size, sums[i + 1] - lower);
+            if (maxPos < 0) {
                 maxPos = -maxPos - 1;
-                if (maxPos > 0) {
-                    count += maxPos - minPos;
-                }
+                if (maxPos <= 0) continue;
+            } else { // in case of duplicates
+                for (int j = ++maxPos; j < size && buffer[j] == buffer[j - 1];
+                     j++, maxPos++) {}
             }
+            count += maxPos - minPos;
         }
         return count;
     }
 
+    // Merge Sort processing
+    // https://discuss.leetcode.com/topic/33738/share-my-solution/2
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    // beats 60.48%(16 ms)
+    public int countRangeSum2(int[] nums, int lower, int upper) {
+        int n = nums.length;
+        long[] sums = new long[n + 1];
+        for (int i = 0; i < n; ++i) {
+            sums[i + 1] = sums[i] + nums[i];
+        }
+        return countInMergeSort(sums, 0, n + 1, lower, upper, new long[n + 1]);
+    }
+
+    private int countInMergeSort(long[] sums, int start, int end,
+                                 int lower, int upper, long[] buffer) {
+        int size = end - start;
+        if (size <= 1) return 0;
+
+        int mid = start + size / 2;
+        int count = countInMergeSort(sums, start, mid, lower, upper, buffer)
+                    + countInMergeSort(sums, mid, end, lower, upper, buffer);
+        int k = mid;
+        for (int i = start, j = 0, left = mid, right = mid; i < mid; i++, j++) {
+            while (left < end && sums[left] - sums[i] < lower) left++;
+            while (right < end && sums[right] - sums[i] <= upper) right++;
+            while (k < end && sums[k] < sums[i]) buffer[j++] = sums[k++];
+            buffer[j] = sums[i];
+            count += right - left;
+        }
+        System.arraycopy(buffer, 0, sums, start, k - start);
+        return count;
+    }
+
+    // Binary Indexed Tree
+    // https://discuss.leetcode.com/topic/33749/an-o-n-log-n-solution-via-fenwick-tree
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    // beats 35.65%(41 ms)
+    public int countRangeSum3(int[] nums, int lower, int upper) {
+        int n = nums.length;
+        if (n == 0) return 0;
+
+        long[] sums = new long[n + 1];
+        long[] bounds = new long[n * 3 + 2];
+        bounds[1] = Long.MIN_VALUE; // make sure no number gets a 0-index.
+        for (int i = 0, j = 2; i < n; i++) {
+            sums[i + 1] = sums[i] + nums[i];
+            bounds[j++] = sums[i + 1];
+            bounds[j++] = lower + sums[i] - 1;
+            bounds[j++] = upper + sums[i];
+        }
+        Arrays.sort(bounds);
+
+        int[] bit = new int[bounds.length];
+        for (int i = 0; i <= n; i++) {
+            add(bit, Arrays.binarySearch(bounds, sums[i]), 1);
+        }
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            add(bit, Arrays.binarySearch(bounds, sums[i]), -1);
+            count += sum(bit, Arrays.binarySearch(bounds, upper + sums[i]));
+            count -= sum(bit, Arrays.binarySearch(bounds, lower + sums[i] - 1));
+        }
+        return count;
+    }
+
+    private void add(int[] bit, int i, int delta) {
+        for (; i < bit.length; i += (i & -i)) {
+            bit[i] += delta;
+        }
+    }
+
+    private int sum(int[] bit, int i) {
+        int sum = 0;
+        for (; i > 0; i -= (i & -i)) {
+            sum += bit[i];
+        }
+        return sum;
+    }
+
+    // TODO: Segment Tree
+    // TODO: BST
+    // TODO: Order Statistic Tree
+
     void test(int[] nums, int lower, int upper, int expected) {
         assertEquals(expected, countRangeSum(nums, lower, upper));
+        assertEquals(expected, countRangeSum2(nums, lower, upper));
+        assertEquals(expected, countRangeSum3(nums, lower, upper));
     }
 
     @Test
