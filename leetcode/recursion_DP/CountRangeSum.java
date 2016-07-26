@@ -141,6 +141,51 @@ public class CountRangeSum {
         return sum;
     }
 
+    // https://maskray.me/leetcode/count-of-range-sum.cc
+    // beats 47.18%(31 ms)
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    public int countRangeSum4(int[] nums, int lower, int upper) {
+        int n = nums.length;
+        if (n == 0) return 0;
+
+        int[] bit = new int[n + 1];
+        long[] sums = new long[n + 1];
+        for (int i = 0; i < n; i++) {
+            sums[i + 1] = sums[i] + nums[i];
+        }
+        Arrays.sort(sums, 0, n + 1);
+        long prefixSum = 0;
+        int count = 0;
+        add(bit, bound(sums, 0, n + 1, 0, true));
+        for (int num : nums) {
+            prefixSum += num;
+            int maxPos = bound(sums, 0, n + 1, prefixSum - lower, false);
+            int minPos = bound(sums, 0, n + 1, prefixSum - upper, true);
+            count += sum2(bit, maxPos) - sum2(bit, minPos);
+            add(bit, bound(sums, 0, n + 1, prefixSum, true));
+        }
+        return count;
+    }
+
+    private void add(int[] bit, int i) {
+        for (; i < bit.length; i |= (i + 1)) { // fill the lowest 0 bit
+            bit[i]++;
+        }
+    }
+
+    private int sum2(int[] bit, int i) {
+        int sum = 0;
+        for (; i > 0; i &= (i - 1)) { // zero the lowest 1 bit
+            sum += bit[i - 1];
+        }
+        return sum;
+    }
+
+    private int bound(long[] nums, int start, int end, long x, boolean lower) {
+        int pos = Arrays.binarySearch(nums, start, end, x);
+        return (pos >= 0) ? (lower ? pos : pos + 1) : -pos - 1;
+    }
+
     // TODO: Segment Tree
     // TODO: BST
     // TODO: Order Statistic Tree
@@ -149,6 +194,7 @@ public class CountRangeSum {
         assertEquals(expected, countRangeSum(nums, lower, upper));
         assertEquals(expected, countRangeSum2(nums, lower, upper));
         assertEquals(expected, countRangeSum3(nums, lower, upper));
+        assertEquals(expected, countRangeSum4(nums, lower, upper));
     }
 
     @Test
