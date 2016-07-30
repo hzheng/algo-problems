@@ -14,15 +14,15 @@ import static org.junit.Assert.*;
 // You may assume all tickets form at least one valid itinerary.
 public class ReconstructItinerary {
     // DFS + backtracking
-    // beats 24.01%(23 ms)
+    // beats 37.55%(19 ms)
     public List<String> findItinerary(String[][] tickets) {
-        Map<String, List<String> > map = new TreeMap<>();
+        Map<String, List<String> > map = new HashMap<>();
         for (String[] ticket : tickets) {
-            String key = ticket[0];
-            if (map.containsKey(key)) {
-                map.get(key).add(ticket[1]);
+            String departure = ticket[0];
+            if (map.containsKey(departure)) {
+                map.get(departure).add(ticket[1]);
             } else {
-                map.put(key, new ArrayList<>(Arrays.asList(ticket[1])));
+                map.put(departure, new ArrayList<>(Arrays.asList(ticket[1])));
             }
         }
 
@@ -40,24 +40,89 @@ public class ReconstructItinerary {
     private boolean findItinerary(String departure, int len,
                                   Map<String, List<String> > map,
                                   List<String> iternary) {
-        List<String> tickets = map.getOrDefault(departure, Collections.emptyList());
-        for (int i = 0; i < tickets.size(); i++) {
-            String arrival = tickets.get(i);
+        List<String> arrivals = map.getOrDefault(departure, Collections.emptyList());
+        for (int i = 0; i < arrivals.size(); i++) {
+            String arrival = arrivals.get(i);
             if (arrival == null) continue;
 
             iternary.add(arrival);
-            tickets.set(i, null);
+            arrivals.set(i, null);
             if (findItinerary(arrival, len, map, iternary)) return true;
 
             // backtracking
             iternary.remove(iternary.size() - 1);
-            tickets.set(i, arrival);
+            arrivals.set(i, arrival);
         }
         return iternary.size() == len;
     }
 
+    // DFS + Greedy
+    // Hierholzer's algorithm
+    // beats 83.50%(11 ms)
+    public List<String> findItinerary2(String[][] tickets) {
+        Map<String, Queue<String> > map = new HashMap<>();
+        for (String[] ticket : tickets) {
+            String departure = ticket[0];
+            if (!map.containsKey(departure)) {
+                map.put(departure, new PriorityQueue<>());
+            }
+            map.get(departure).offer(ticket[1]);
+        }
+
+        List<String> iternary = new LinkedList<>();
+        findItinerary2("JFK", map, iternary);
+        return iternary;
+    }
+
+    private void findItinerary2(String departure,
+                                Map<String, Queue<String> > map,
+                                List<String> iternary) {
+        Queue<String> arrivals = map.get(departure);
+        if (arrivals != null) {
+            while (!arrivals.isEmpty()) {
+                findItinerary2(arrivals.poll(), map, iternary);
+            }
+        }
+        iternary.add(0, departure);
+    }
+
+    // https://discuss.leetcode.com/topic/36370/short-ruby-python-java-c/2
+    // iterative version
+    // beats 33.70%(20 ms)
+    public List<String> findItinerary3(String[][] tickets) {
+        Map<String, Queue<String> > map = new HashMap<>();
+        for (String[] ticket : tickets) {
+            // targets.computeIfAbsent(
+            //     ticket[0], k -> new PriorityQueue<>()).add(ticket[1]);
+            String departure = ticket[0];
+            if (!map.containsKey(departure)) {
+                map.put(departure, new PriorityQueue<>());
+            }
+            map.get(departure).offer(ticket[1]);
+        }
+        
+        List<String> itinerary = new LinkedList<>();
+        Stack<String> stack = new Stack<>();
+        stack.push("JFK");
+        while (!stack.empty()) {
+            while (true) {
+                String departure = stack.peek();
+                if (!map.containsKey(departure)) break;
+
+                Queue<String> arrivals = map.get(departure);
+                if (arrivals.isEmpty()) break;
+
+                stack.push(arrivals.poll());
+            }
+            itinerary.add(0, stack.pop());
+        }
+        return itinerary;
+    }
+
     void test(String[][] tickets, String ... expected) {
         assertArrayEquals(expected, findItinerary(tickets).toArray());
+        assertArrayEquals(expected, findItinerary2(tickets).toArray());
+        assertArrayEquals(expected, findItinerary3(tickets).toArray());
     }
 
     @Test
