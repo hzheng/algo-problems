@@ -111,7 +111,7 @@ public class PatchArray {
             unfinished.add(i);
         }
 
-        // TODO: keep invariant: maxSum <= n / 2
+        // TODO: keep invariant: maxSum >= n / 2
         while (!unfinished.isEmpty()) {
             int min = unfinished.first();
             if (combine(base, unfinished, min)) continue;
@@ -316,6 +316,24 @@ public class PatchArray {
         return false;
     }
 
+    // greedy
+    // beats 12.62%(1 ms)
+    public int minPatches4(int[] nums, int n) {
+        int cur = 0;
+        int len = nums.length;
+        int patches = 0;
+        for (long target = 0; target < n; ) {
+            if (cur < len && nums[cur] <= target + 1) {
+                target += nums[cur];
+                cur++;
+            } else {
+                patches++; // patching the target
+                target += target + 1; // old target contains prefix sum
+            }
+        }
+        return patches;
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -342,10 +360,12 @@ public class PatchArray {
         if (nums.length < 100) {
             test(p::minPatches3, "minPatches3", expected, nums, n);
         }
+        test(p::minPatches4, "minPatches4", expected, nums, n);
     }
 
     @Test
     public void test1() {
+        test(5, new int[] {1, 8, 10}, 104);
         test(1, new int[] {1, 3}, 6);
         test(2, new int[] {1, 5}, 8);
         test(2, new int[] {1, 5, 10}, 9);
@@ -357,7 +377,6 @@ public class PatchArray {
         test(3, new int[] {1, 3, 8, 10}, 46);
         test(4, new int[] {1, 3, 8, 10}, 96);
         test(4, new int[] {1, 8, 10}, 103);
-        test(5, new int[] {1, 8, 10}, 104);
         test(4, new int[] {1, 8, 10}, 63);
         test(7, new int[] {1, 3, 8, 10}, 960);
         test(11, new int[] {1, 3, 8, 10}, 9600);
@@ -372,15 +391,6 @@ public class PatchArray {
 
     @Test
     public void test2() {
-        test(1,  new int[] {2, 3, 3, 4, 6, 8, 8, 10, 10, 10, 12, 13, 13, 14, 15,
-                            15, 16, 17, 19, 20, 20, 21, 21, 21, 23, 23, 24, 25,
-                            26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32,
-                            32, 36, 36, 38, 41, 41, 41, 43, 44, 46, 46, 46, 48,
-                            48, 49, 50, 51, 51, 52, 52, 53, 54, 55, 56, 56, 58,
-                            58, 58, 59, 60, 60, 60, 61, 63, 63, 66, 66, 70, 70,
-                            73, 74, 74, 75, 78, 80, 81, 83, 85, 87, 87, 89, 89,
-                            89, 90, 90, 92, 92, 96, 98},  60844);
-
         test(1,  new int[] {1, 3, 4, 5, 8, 10, 15, 19, 28, 28, 31, 33, 38, 41,
                             42, 44, 46, 47, 51, 57, 58, 60, 60, 62, 65, 65, 68,
                             71, 73, 73, 75, 76, 80, 83, 83, 84, 92, 95, 100, 100},
@@ -391,6 +401,14 @@ public class PatchArray {
         test(4,  new int[] {9, 10, 20, 29, 34, 34, 35, 35, 37, 39, 41, 42, 43,
                             47, 59, 60, 65, 69, 74, 78, 81, 81, 85, 88, 89, 97,
                             100, 100},  85);
+        test(5,  new int[] {2, 3, 3, 4, 6, 8, 8, 10, 10, 10, 12, 13, 13, 14, 15,
+                            15, 16, 17, 19, 20, 20, 21, 21, 21, 23, 23, 24, 25,
+                            26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32,
+                            32, 36, 36, 38, 41, 41, 41, 43, 44, 46, 46, 46, 48,
+                            48, 49, 50, 51, 51, 52, 52, 53, 54, 55, 56, 56, 58,
+                            58, 58, 59, 60, 60, 60, 61, 63, 63, 66, 66, 70, 70,
+                            73, 74, 74, 75, 78, 80, 81, 83, 85, 87, 87, 89, 89,
+                            89, 90, 90, 92, 92, 96, 98},  60844);
     }
 
     public static void main(String[] args) {
