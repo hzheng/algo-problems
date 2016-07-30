@@ -317,18 +317,17 @@ public class PatchArray {
     }
 
     // greedy
+    // time complexity: O(N), space complexity: O(1)
     // beats 12.62%(1 ms)
     public int minPatches4(int[] nums, int n) {
         int cur = 0;
-        int len = nums.length;
         int patches = 0;
-        for (long target = 0; target < n; ) {
-            if (cur < len && nums[cur] <= target + 1) {
-                target += nums[cur];
-                cur++;
+        for (long target = 1; target <= n; ) {
+            if (cur < nums.length && nums[cur] <= target) {
+                target += nums[cur++];
             } else {
                 patches++; // patching the target
-                target += target + 1; // old target contains prefix sum
+                target <<= 1; // old target contains prefix sum
             }
         }
         return patches;
