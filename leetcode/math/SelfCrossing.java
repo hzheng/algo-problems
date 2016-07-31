@@ -17,17 +17,14 @@ public class SelfCrossing {
         if (n < 4) return false;
 
         for (int i = 2; i < n; i++) {
-            if (x[i] > x[i - 2]) continue;
+            if (x[i] > x[i - 2]) continue; // keep expanding
 
             if (++i >= n) return false;
 
-            int diff = 0;
-            if (i >= 4 && (x[i - 1] + (i >= 5 ? x[i - 5] : 0)) >= x[i - 3]) {
-                diff = x[i - 4];
-            }
-
-            if (x[i - 2] - x[i] <= diff) return true;
-
+            if (i >= 4 && (x[i - 3] - x[i - 1] <= (i >= 5 ? x[i - 5] : 0))) {
+                if (x[i - 2] - x[i] <= x[i - 4]) return true;
+            } else if (x[i - 2] <= x[i]) return true;
+            // come to shrinking process
             while (++i < n) {
                 if (x[i - 2] <= x[i]) return true;
             }
@@ -35,8 +32,47 @@ public class SelfCrossing {
         return false;
     }
 
-    void test(boolean expected, int... nums) {
+    // https://discuss.leetcode.com/topic/38014/java-oms-with-explanation
+    public boolean isSelfCrossing2(int[] x) {
+        int n = x.length;
+        if (n < 4) return false;
+
+        for (int i = 3; i < n; i++) {
+            // Fourth line crosses first line and onward
+            //     i-2
+            // i-1┌─┐
+            //    └─┼─>i
+            //     i-3
+            if (x[i] >= x[i - 2] && x[i - 1] <= x[i - 3]) return true;
+
+            // Fifth line meets first line and onward
+            //      i-2
+            // i-1 ┌────┐
+            //     └─══>┘i-3
+            //     i  i-4      (i overlapped i-4)
+            if (i >= 4 && x[i - 1] == x[i - 3] && x[i] + x[i - 4] >= x[i - 2]) {
+                return true;
+            }
+
+            // Sixth line crosses first line and onward
+            //   i-4
+            //    ┌──┐
+            //    │i<┼─┐
+            // i-3│ i-5│i-1
+            //    └────┘
+            //     i-2
+            if (i >= 5 && x[i - 1] <= x[i - 3] && x[i - 4] <= x[i - 2]
+                && x[i - 1] >= x[i - 3] - x[i - 5]
+                && x[i] >= x[i - 2] - x[i - 4]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void test(boolean expected, int ... nums) {
         assertEquals(expected, isSelfCrossing(nums));
+        assertEquals(expected, isSelfCrossing2(nums));
     }
 
     @Test
