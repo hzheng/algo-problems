@@ -85,6 +85,45 @@ public class NestedIterator {
         }
     }
 
+    // stack
+    // https://discuss.leetcode.com/topic/42042/simple-java-solution-using-a-stack-with-explanation
+    // the solution in the link has design problem: hasNext shouldn't change state.
+    // beats 10.27%(12 ms)
+    static class NestedIterator2 implements Iterator<Integer> {
+        private Stack<NestedInteger> stack = new Stack<>();
+
+        public NestedIterator2(List<NestedInteger> nestedList) {
+            for (int i = nestedList.size() - 1; i >= 0; i--) {
+                stack.push(nestedList.get(i));
+            }
+            prepareNext();
+        }
+
+        private void prepareNext() {
+            while (!stack.isEmpty()) {
+                NestedInteger cur = stack.peek();
+                if (cur.isInteger()) return;
+
+                stack.pop();
+                for (int i = cur.getList().size() - 1; i >= 0; i--) {
+                    stack.push(cur.getList().get(i));
+                }
+            }
+        }
+
+        @Override
+        public Integer next() {
+            Integer val = stack.pop().getInteger();
+            prepareNext();
+            return val;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !stack.isEmpty();
+        }
+    }
+
     static class NestedIntegerImpl implements NestedInteger {
         List<NestedInteger> list;
         Integer num;
@@ -140,7 +179,12 @@ public class NestedIterator {
         for (Object[] n : nested) {
             nestedList.add(new NestedIntegerImpl(n));
         }
-        Iterator<Integer> itr = new NestedIterator1(nestedList);
+
+        test1(expected, new NestedIterator1(nestedList));
+        test1(expected, new NestedIterator2(nestedList));
+    }
+
+    void test1(int[] expected, Iterator<Integer> itr) {
         int i = 0;
         while (itr.hasNext()) {
             assertEquals(expected[i++], (int)itr.next());
