@@ -55,7 +55,7 @@ public class HouseRobber3 {
         return root == null ? 0 : rob(root.left, memo) + rob(root.right, memo);
     }
 
-    // Recursion + Memoization + Greedy
+    // Recursion + Memoization
     // beats 51.19%(1 ms)
     public int rob3(TreeNode root) {
         int[] res = doRob(root);
@@ -73,12 +73,12 @@ public class HouseRobber3 {
         return res;
     }
 
+    // Recursion + Memoization
+    // beats 51.19%(1 ms)
     public int rob4(TreeNode root) {
         return doRob4(root)[1];
     }
 
-    // Recursion + Memoization + Greedy
-    // beats 51.19%(1 ms)
     private int[] doRob4(TreeNode root){
         int[] res = new int[2];
         if (root != null) {
