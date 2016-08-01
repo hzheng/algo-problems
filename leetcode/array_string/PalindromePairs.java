@@ -29,7 +29,8 @@ public class PalindromePairs {
         }
     }
 
-    // beats 26.15%(208 ms)
+    // Trie + backtracking
+    // beats 32.41%(172 ms)
     public List<List<Integer> > palindromePairs(String[] words) {
         int len = words.length;
         if (len == 0) return Collections.emptyList();
@@ -40,6 +41,7 @@ public class PalindromePairs {
         }
         Set<List<Integer> > res = new HashSet<>();
         palindromePairs(words, reversed, res, true);
+        // TODO: avoid call twice
         palindromePairs(reversed, words, res, false);
         return new ArrayList<>(res);
     }
@@ -52,11 +54,10 @@ public class PalindromePairs {
             insert(root, reversed[i], i);
         }
         for (int i = 0; i < len; i++) {
-            String word = words[i];
-            TrieNode node = search(root, word);
-            if (node == null) continue;
-
-            findPalindrome(node, i, new StringBuilder(), res, dir);
+            TrieNode node = search(root, words[i]);
+            if (node != null) {
+                findPalindrome(node, i, new StringBuilder(), res, dir);
+            }
         }
     }
 
@@ -86,11 +87,9 @@ public class PalindromePairs {
     private void findPalindrome(TrieNode node, int index, StringBuilder sb,
                                 Set<List<Integer> > res, boolean dir) {
         TrieNode[] children = node.children;
-        if (node.index >= 0) {
-            if (node.index != index && isPalindrome(sb)) {
-                res.add(dir ? Arrays.asList(index, node.index)
+        if (node.index >= 0 && node.index != index && isPalindrome(sb)) {
+            res.add(dir ? Arrays.asList(index, node.index)
                         : Arrays.asList(node.index, index));
-            }
         }
 
         if (children == null) return;
@@ -106,13 +105,57 @@ public class PalindromePairs {
     }
 
     private boolean isPalindrome(StringBuilder sb) {
-        if (sb.length() == 0) return true;
-
         for (int i = 0, j = sb.length() - 1; i < j; i++, j--) {
             if (sb.charAt(i) != sb.charAt(j)) return false;
         }
         return true;
     }
+
+    // Hash Table
+    // https://discuss.leetcode.com/topic/39631/accepted-short-java-solution-using-hashmap
+    // time complexity: O(N * K ^ 2)
+    // beats 16.69%(261 ms)
+    public List<List<Integer>> palindromePairs2(String[] words) {
+        List<List<Integer>> res = new LinkedList<>();
+        int len = words.length;
+        if (len == 0) return res;
+
+        Map<String, Integer> map = new HashMap<>();
+        for (int i = 0; i < len; i++) {
+            map.put(words[i], i);
+        }
+
+        for (int i = 0; i < len; i++) {
+            String word = words[i];
+            for (int left = 0, right = 0; left <= right; ) {
+                String s = word.substring(left, right);
+                Integer j = map.get(new StringBuilder(s).reverse().toString());
+                if (j != null && i != j) {
+                    if (left == 0 && isPalindrome(word.substring(right))) {
+                        res.add(Arrays.asList(new Integer[]{i, j}));
+                    } else if (left > 0 && isPalindrome(word.substring(0, left))) {
+                        res.add(Arrays.asList(new Integer[]{j, i}));
+                    }
+                }
+                if (right < word.length()) {
+                    right++;
+                } else {
+                    left++;
+                }
+            }
+        }
+        return res;
+    }
+
+    private boolean isPalindrome(String s) {
+        for (int i = 0, j = s.length() - 1; i < j; i++, j--) {
+            if (s.charAt(i) != s.charAt(j)) return false;
+        }
+        return true;
+    }
+
+    // TODO: Manacher algorithm
+    // https://discuss.leetcode.com/topic/39512/java-naive-154-ms-o-nk-2-r-and-126-ms-o-nk-r-manacher-suffixes-prefixes
 
     void test(Function<String[], List<List<Integer>>> pairs,
               Integer [][] expected, String ... words) {
@@ -138,6 +181,7 @@ public class PalindromePairs {
     void test(Integer[][] expected, String ... words) {
         PalindromePairs p = new PalindromePairs();
         test(p::palindromePairs, expected, words);
+        test(p::palindromePairs2, expected, words);
     }
 
     @Test
