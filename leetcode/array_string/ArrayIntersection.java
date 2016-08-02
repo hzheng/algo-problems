@@ -9,6 +9,7 @@ import static org.junit.Assert.*;
 // Note:
 // Each element in the result must be unique.
 public class ArrayIntersection {
+    // Hash Table
     // time complexity: O(N), space complexity: O(N)
     // beats 35.29%(7 ms)
     public int[] intersection(int[] nums1, int[] nums2) {
@@ -30,6 +31,7 @@ public class ArrayIntersection {
         return res;
     }
 
+    // Sort + Two Pointers
     // time complexity: O(N * log(N)), space complexity: O(N)
     // beats 35.29%(7 ms)
     public int[] intersection2(int[] nums1, int[] nums2) {
@@ -60,6 +62,26 @@ public class ArrayIntersection {
         return res;
     }
 
+    // Sort + Binary Search
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    // beats 56.97%(6 ms)
+    public int[] intersection3(int[] nums1, int[] nums2) {
+        Arrays.sort(nums1);
+        Set<Integer> intersection = new HashSet<>();
+        for (int num : nums2) {
+            if (Arrays.binarySearch(nums1, num) >= 0) {
+                intersection.add(num);
+            }
+        }
+
+        int[] res = new int[intersection.size()];
+        int i = 0;
+        for (int x : intersection) {
+            res[i++] = x;
+        }
+        return res;
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -67,7 +89,7 @@ public class ArrayIntersection {
 
     void test(Function<int[], int[], int[]> intersection,
               int[] nums1, int[] nums2, int... expected) {
-        int[] res = intersection.apply(nums1, nums2);
+        int[] res = intersection.apply(nums1.clone(), nums2.clone());
         Arrays.sort(res);
         assertArrayEquals(expected, res);
     }
@@ -76,12 +98,14 @@ public class ArrayIntersection {
         ArrayIntersection a = new ArrayIntersection();
         test(a::intersection, nums1, nums2, expected);
         test(a::intersection2, nums1, nums2, expected);
+        test(a::intersection3, nums1, nums2, expected);
     }
 
     @Test
     public void test1() {
         test(new int[] {1, 2, 2, 1}, new int[] {2, 2}, 2);
         test(new int[] {1, 2, 3, 4, 5, 6}, new int[] {2, 7, 5, 2, 3}, 2, 3, 5);
+        test(new int[] {4, 9, 5}, new int[] {9, 4, 9, 8, 4}, 4, 9);
     }
 
     public static void main(String[] args) {
