@@ -12,67 +12,55 @@ import static org.junit.Assert.*;
 public class ArrayIntersection2 {
     // Hash Table
     // time complexity: O(N), space complexity: O(N)
-    // beats 31.97%(8 ms)
+    // beats 53.11%(7 ms)
     public int[] intersection(int[] nums1, int[] nums2) {
         Map<Integer, Integer> map = new HashMap<>();
         for (int num : nums1) {
             map.put(num, map.getOrDefault(num, 0) + 1);
         }
 
-        List<Integer> intersection = new LinkedList<>();
+        int[] intersection = new int[nums1.length];
+        int n = 0;
         for (int num : nums2) {
             int count = map.getOrDefault(num, 0);
             if (count > 0) {
-                intersection.add(num);
+                intersection[n++] = num;
                 map.put(num, --count);
             }
         }
-        int[] res = new int[intersection.size()];
-        int i = 0;
-        for (int x : intersection) {
-            res[i++] = x;
-        }
-        return res;
+        return Arrays.copyOf(intersection, n);
     }
 
     // Sort + Two Pointers
     // time complexity: O(N * log(N)), space complexity: O(N)
-    // beats 64.68%(6 ms)
+    // beats 84.91%(4 ms)
     public int[] intersection2(int[] nums1, int[] nums2) {
         Arrays.sort(nums1);
         Arrays.sort(nums2);
-        List<Integer> intersection = new LinkedList<>();
         int n1 = nums1.length;
         int n2 = nums2.length;
+        int n = 0;
+        int[] intersection = new int[n1];
         for (int i = 0, j = 0; i < n1 && j < n2; ) {
             if (nums1[i] < nums2[j]) {
                 i++;
-            } else if (nums1[i] > nums2[j]) {
-                j++;
-            } else {
-                int size = intersection.size();
-                intersection.add(nums1[i]);
-                i++;
-                j++;
+            } else if (nums1[i] == nums2[j++]) {
+                intersection[n++] = nums1[i++];
             }
         }
-        int[] res = new int[intersection.size()];
-        int i = 0;
-        for (int x : intersection) {
-            res[i++] = x;
-        }
-        return res;
+        return Arrays.copyOf(intersection, n);
     }
 
     // Sort + Binary Search
     // time complexity: O(N * log(N)), space complexity: O(N)
-    // beats 53.11%(7 ms)
+    // beats 69.57%(5 ms)
     public int[] intersection3(int[] nums1, int[] nums2) {
         Arrays.sort(nums1);
         Arrays.sort(nums2);
-        List<Integer> intersection = new LinkedList<>();
         int n1 = nums1.length;
         int n2 = nums2.length;
+        int n = 0;
+        int[] intersection = new int[n1];
         for (int i = 0; i < n2; i++) {
             int num = nums2[i];
             int j = Arrays.binarySearch(nums1, num);
@@ -82,7 +70,7 @@ public class ArrayIntersection2 {
                 j--;
             }
             while (i < n2 && j < n1 && nums2[i] == num && nums1[j] == num) {
-                intersection.add(num);
+                intersection[n++] = num;
                 i++;
                 j++;
             }
@@ -91,13 +79,7 @@ public class ArrayIntersection2 {
             }
             i--;
         }
-
-        int[] res = new int[intersection.size()];
-        int i = 0;
-        for (int x : intersection) {
-            res[i++] = x;
-        }
-        return res;
+        return Arrays.copyOf(intersection, n);
     }
 
     interface Function<A, B, C> {

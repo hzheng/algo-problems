@@ -34,33 +34,28 @@ public class ArrayIntersection {
 
     // Sort + Two Pointers
     // time complexity: O(N * log(N)), space complexity: O(N)
-    // beats 35.29%(7 ms)
+    // beats 89.70%(5 ms)
     public int[] intersection2(int[] nums1, int[] nums2) {
         Arrays.sort(nums1);
         Arrays.sort(nums2);
-        List<Integer> intersection = new LinkedList<>();
         int n1 = nums1.length;
         int n2 = nums2.length;
+        int n = 0;
+        int[] intersection = new int[n1];
         for (int i = 0, j = 0; i < n1 && j < n2; ) {
             if (nums1[i] < nums2[j]) {
                 i++;
             } else if (nums1[i] > nums2[j]) {
                 j++;
             } else {
-                int size = intersection.size();
-                if (size == 0 || nums1[i] != intersection.get(size - 1)) {
-                    intersection.add(nums1[i]);
+                if (n == 0 || nums1[i] != intersection[n - 1]) {
+                    intersection[n++] = nums1[i];
                 }
                 i++;
                 j++;
             }
         }
-        int[] res = new int[intersection.size()];
-        int i = 0;
-        for (int x : intersection) {
-            res[i++] = x;
-        }
-        return res;
+        return Arrays.copyOf(intersection, n);
     }
 
     // Sort + Binary Search
