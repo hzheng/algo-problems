@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.stream.*;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -82,6 +83,13 @@ public class ArrayIntersection {
         return res;
     }
 
+    // FP
+    // beats 0.75%(125 ms)
+    public int[] intersection4(int[] nums1, int[] nums2) {
+        Set<Integer> set = Arrays.stream(nums2).boxed().collect(Collectors.toSet());
+        return Arrays.stream(nums1).distinct().filter(e -> set.contains(e)).toArray();
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -99,6 +107,7 @@ public class ArrayIntersection {
         test(a::intersection, nums1, nums2, expected);
         test(a::intersection2, nums1, nums2, expected);
         test(a::intersection3, nums1, nums2, expected);
+        test(a::intersection4, nums1, nums2, expected);
     }
 
     @Test
