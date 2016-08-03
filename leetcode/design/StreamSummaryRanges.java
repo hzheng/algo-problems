@@ -118,6 +118,84 @@ public class StreamSummaryRanges {
         }
     }
 
+    static class Node2 {
+        Node2[] children = new Node2[2];
+        int[] val;
+
+        public Node2(int v) {
+            val = new int[] {v, v};
+        }
+
+        public void insert(int v) {
+            Node2 node = this;
+            while (true) {
+                int[] val = node.val;
+                if (v + 1 < val[0]) {
+                    if (node.children[0] != null) {
+                        node = node.children[0];
+                        continue;
+                    }
+                    node.children[0] = new Node2(v);
+                } else if (v - 1 > val[1]) {
+                    if (node.children[1] != null) {
+                        node = node.children[1];
+                        continue;
+                    }
+                    node.children[1] = new Node2(v);
+                } else if (v + 1 == val[0]) {
+                    node.val[0]--;
+                    node.merge(0);
+                } else if (v - 1 == val[1]) {
+                    node.val[1]++;
+                    node.merge(1);
+                }
+                return;
+            }
+        }
+
+        private void merge(int index) {
+            Node2 node = children[index];
+            if (node == null) return;
+
+            Node2 parent = this;
+            while (node.children[1 - index] != null) {
+                parent = node;
+                node = node.children[1 - index];
+            }
+            if (val[index] + index * 2 - 1 == node.val[1 - index]) {
+                val[index] = node.val[index];
+                parent.children[(parent == this) ? index : 1 - index]
+                    = node.children[index];
+            }
+        }
+    }
+
+    // beats 41.12%(230 ms)
+    static class SummaryRanges2 implements SummaryRanges {
+        private Node2 root = new Node2(-2);
+
+        public SummaryRanges2() {
+        }
+
+        public void addNum(int val) {
+            root.insert(val);
+        }
+
+        public List<Interval> getIntervals() {
+            List<Interval> res = new ArrayList<>();
+            getIntervals(root.children[1], res);
+            return res;
+        }
+
+        private void getIntervals(Node2 node, List<Interval> res) {
+            if (node == null) return;
+
+            getIntervals(node.children[0], res);
+            res.add(new Interval(node.val[0], node.val[1]));
+            getIntervals(node.children[1], res);
+        }
+    }
+
     void test1(SummaryRanges summary, int[] nums, int[][] ... expected) {
         int i = 0;
         for (int num : nums) {
@@ -135,6 +213,7 @@ public class StreamSummaryRanges {
 
     void test1(int[] nums, int[][] ... expected) {
         test1(new SummaryRanges1(), nums, expected);
+        test1(new SummaryRanges2(), nums, expected);
     }
 
     @Test
