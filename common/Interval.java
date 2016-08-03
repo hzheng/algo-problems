@@ -17,4 +17,8 @@ public class Interval {
     public String toString() {
         return "[" + start + "," + end + "]";
     }
+
+    public boolean equals(int[] nums) {
+        return nums.length == 2 && start == nums[0] && end == nums[1];
+    }
 }
