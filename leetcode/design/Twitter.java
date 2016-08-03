@@ -31,27 +31,26 @@ public class Twitter {
         public void unfollow(int followerId, int followeeId);
     }
 
-    static class Tweet implements Comparable<Tweet> {
-        int id;
-        int timestamp;
-
-        public Tweet(int id, int timestamp) {
-            this.id = id;
-            this.timestamp = timestamp;
-        }
-
-        public int compareTo(Tweet other) {
-            return other.timestamp - timestamp;
-        }
-    }
-
-    // beats 46.34%(189 ms)
+    // beats 50.15%(187 ms)
     static class Twitter1 implements ITwitter {
+        static class Tweet implements Comparable<Tweet> {
+            int id;
+            int timestamp;
+
+            public Tweet(int id, int timestamp) {
+                this.id = id;
+                this.timestamp = timestamp;
+            }
+
+            public int compareTo(Tweet other) {
+                return other.timestamp - timestamp;
+            }
+        }
 
         static class User {
             int id;
             Set<User> followees = new HashSet<>();
-            List<Tweet> tweets = new ArrayList<>();
+            List<Tweet> tweets = new LinkedList<>();
 
             public User(int id) {
                 this.id = id;
@@ -69,18 +68,18 @@ public class Twitter {
             }
 
             public void postTweet(int tweetId, int tweetNo) {
-                tweets.add(new Tweet(tweetId, tweetNo));
+                tweets.add(0, new Tweet(tweetId, tweetNo));
+                if (tweets.size() > 10) {
+                    tweets.remove(tweets.size() - 1);
+                }
             }
 
             public List<Integer> getNewsFeed(int n) {
                 List<Tweet> topFeeds = new ArrayList<>();
                 for (User followee : followees) {
-                    List<Tweet> feeds = followee.tweets;
-                    for (int i = feeds.size() - 1, count = n;
-                         i >= 0 && count > 0; count--, i--) {
-                        topFeeds.add(feeds.get(i));
-                    }
+                    topFeeds.addAll(followee.tweets);
                 }
+                // alternatively, we could use k-way merge sort by means of heap
                 Collections.sort(topFeeds);
                 List<Integer> feeds = new ArrayList<>();
                 int i = 1;
