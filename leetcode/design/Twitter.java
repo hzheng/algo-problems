@@ -31,21 +31,22 @@ public class Twitter {
         public void unfollow(int followerId, int followeeId);
     }
 
+    static class Tweet implements Comparable<Tweet> {
+        int id;
+        int timestamp;
+
+        public Tweet(int id, int timestamp) {
+            this.id = id;
+            this.timestamp = timestamp;
+        }
+
+        public int compareTo(Tweet other) {
+            return other.timestamp - timestamp;
+        }
+    }
+
     // beats 46.34%(189 ms)
     static class Twitter1 implements ITwitter {
-        static class Tweet implements Comparable<Tweet> {
-            int id;
-            int timestamp;
-
-            public Tweet(int id, int timestamp) {
-                this.id = id;
-                this.timestamp = timestamp;
-            }
-
-            public int compareTo(Tweet other) {
-                return other.timestamp - timestamp;
-            }
-        }
 
         static class User {
             int id;
@@ -95,7 +96,13 @@ public class Twitter {
 
         private int tweetNo = 0;
 
+        private int feedCount = 10;
+
         public Twitter1() {
+        }
+
+        public Twitter1(int feedCount) {
+            this.feedCount = feedCount;
         }
 
         private User getUser(int userId) {
@@ -110,7 +117,7 @@ public class Twitter {
         }
 
         public List<Integer> getNewsFeed(int userId) {
-            return getUser(userId).getNewsFeed(3 /*10*/);
+            return getUser(userId).getNewsFeed(feedCount);
         }
 
         public void follow(int followerId, int followeeId) {
@@ -132,14 +139,12 @@ public class Twitter {
         }
         int i = 1;
         for (Integer[] feeds : expected) {
-            System.out.println(i+"===="+Arrays.toString(expected));
             assertArrayEquals(feeds, twitter.getNewsFeed(i++).toArray(new Integer[0]));
-            System.out.println("passed "+(i-1));
         }
     }
 
     void test(int[][] posts, int[][] follows, Integer[] ... expected) {
-        test(new Twitter1(), posts, follows, expected);
+        test(new Twitter1(3), posts, follows, expected);
     }
 
     @Test
