@@ -4,22 +4,9 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import common.Interval;
+
 // Given a collection of intervals, merge all overlapping intervals.
-class Interval {
-    int start;
-    int end;
-    Interval() {
-        start = 0; end = 0;
-    }
-
-    Interval(int s, int e) {
-        start = s; end = e;
-    }
-
-    public String toString() {
-        return "[" + start + "," + end + "]";
-    }
-}
 
 public class MergeIntervals {
     // beats 1.36%

@@ -3,25 +3,11 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import common.Interval;
+
 // Given a set of non-overlapping intervals, insert a new interval into the
 // intervals (merge if necessary).
 // The intervals were initially sorted according to their start times.
-class Interval {
-    int start;
-    int end;
-    Interval() {
-        start = 0; end = 0;
-    }
-
-    Interval(int s, int e) {
-        start = s; end = e;
-    }
-
-    public String toString() {
-        return "[" + start + "," + end + "]";
-    }
-}
-
 public class InsertInterval {
     // beats 97.70%
     public List<Interval> insert(List<Interval> intervals, Interval newInterval) {
