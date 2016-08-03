@@ -196,6 +196,75 @@ public class StreamSummaryRanges {
         }
     }
 
+    // https://discuss.leetcode.com/topic/46887/java-solution-using-treemap-real-o-logn-per-adding
+    // beats 24.70%(239 ms)
+    static class SummaryRanges3 implements SummaryRanges {
+        NavigableMap<Integer, Interval> map = new TreeMap<>();
+
+        public SummaryRanges3() {
+        }
+
+        public void addNum(int val) {
+            if (map.containsKey(val)) return;
+
+            Integer low = map.lowerKey(val);
+            Integer high = map.higherKey(val);
+            if (low != null && high != null && map.get(low).end + 1 == val
+                && high == val + 1) {
+                map.get(low).end = map.get(high).end;
+                map.remove(high);
+            } else if (low != null && map.get(low).end + 1 >= val) {
+                map.get(low).end = Math.max(map.get(low).end, val);
+            } else if (high != null && high == val + 1) {
+                map.put(val, new Interval(val, map.get(high).end));
+                map.remove(high);
+            } else {
+                map.put(val, new Interval(val, val));
+            }
+        }
+
+        public List<Interval> getIntervals() {
+            return new ArrayList<>(map.values());
+        }
+    }
+
+    // beats 52.41%(224 ms)
+    static class SummaryRanges4 implements SummaryRanges {
+        private NavigableSet<Interval> intervals;
+
+        public SummaryRanges4() {
+            intervals = new TreeSet<>(new Comparator<Interval>() {
+                public int compare(Interval a, Interval b) {
+                    return a.start - b.start;
+                }
+            });
+        }
+
+        public void addNum(int val) {
+            Interval interval = new Interval(val, val);
+            Interval low = intervals.lower(interval);
+            if (low != null) {
+                if (low.end >= val) return;
+
+                if (low.end + 1 == val) {
+                    interval.start = low.start;
+                    intervals.remove(low);
+                }
+            }
+            
+            Interval high = intervals.higher(interval);
+            if (high != null && high.start == val + 1) {
+                interval.end = high.end;
+                intervals.remove(high);
+            }
+            intervals.add(interval);
+        }
+
+        public List<Interval> getIntervals() {
+            return new ArrayList<>(intervals);
+        }
+    }
+
     void test1(SummaryRanges summary, int[] nums, int[][] ... expected) {
         int i = 0;
         for (int num : nums) {
@@ -214,6 +283,8 @@ public class StreamSummaryRanges {
     void test1(int[] nums, int[][] ... expected) {
         test1(new SummaryRanges1(), nums, expected);
         test1(new SummaryRanges2(), nums, expected);
+        test1(new SummaryRanges3(), nums, expected);
+        test1(new SummaryRanges4(), nums, expected);
     }
 
     @Test
