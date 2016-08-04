@@ -68,6 +68,36 @@ public class LongestIncreasingSubsequence {
         return seq.size();
     }
 
+    // beats 89.51%(1 ms)
+    public int lengthOfLIS3(int[] nums) {
+        int n = nums.length;
+        if (n == 0) return 0;
+
+        int[] seq = new int[n];
+        seq[0] = nums[0];
+        int length = 1;
+        for (int i = 1; i < n; i++) {
+            int num = nums[i];
+            if (num > seq[length - 1]) {
+                seq[length++] = num;
+                continue;
+            }
+
+            int low = 0;
+            int high = length - 1;
+            while (low < high) {
+                int mid = low + (high - low) / 2;
+                if (seq[mid] < num) {
+                    low = mid + 1;
+                } else {
+                    high = mid;
+                }
+            }
+            seq[low] = num;
+        }
+        return length;
+    }
+
     void test(Function<int[], Integer> length, int expected, int... nums) {
         assertEquals(expected, (int)length.apply(nums));
     }
@@ -76,6 +106,7 @@ public class LongestIncreasingSubsequence {
         LongestIncreasingSubsequence l = new LongestIncreasingSubsequence();
         test(l::lengthOfLIS, expected, nums);
         test(l::lengthOfLIS2, expected, nums);
+        test(l::lengthOfLIS3, expected, nums);
     }
 
     @Test
