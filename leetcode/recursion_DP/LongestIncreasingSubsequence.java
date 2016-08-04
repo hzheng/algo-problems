@@ -98,6 +98,23 @@ public class LongestIncreasingSubsequence {
         return length;
     }
 
+    // beats 69.02%(3 ms)
+    public int lengthOfLIS4(int[] nums) {
+        int[] seq = new int[nums.length];
+        int len = 0;
+        for (int num : nums) {
+            int index = Arrays.binarySearch(seq, 0, len, num);
+            if (index < 0) {
+                index = -(index + 1);
+            }
+            seq[index] = num;
+            if (index == len) {
+                len++;
+            }
+        }
+        return len;
+    }
+
     void test(Function<int[], Integer> length, int expected, int... nums) {
         assertEquals(expected, (int)length.apply(nums));
     }
@@ -107,6 +124,7 @@ public class LongestIncreasingSubsequence {
         test(l::lengthOfLIS, expected, nums);
         test(l::lengthOfLIS2, expected, nums);
         test(l::lengthOfLIS3, expected, nums);
+        test(l::lengthOfLIS4, expected, nums);
     }
 
     @Test

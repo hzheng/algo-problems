@@ -41,11 +41,8 @@ public class RussianDollEnvelopes {
 
     // http://www.algorithmist.com/index.php/Longest_Increasing_Subsequence
     // time complexity: O(N ^ log(N)), space complexity: O(N)
-    // beats 79.89%(23 ms)
+    // beats 93.39%(21 ms)
     public int maxEnvelopes2(int[][] envelopes) {
-        int n = envelopes.length;
-        if (n == 0) return 0;
-
         Arrays.sort(envelopes, new Comparator<int[]>() {
             public int compare(int[] a, int[] b) {
                 int diff = a[0] - b[0];
@@ -54,26 +51,18 @@ public class RussianDollEnvelopes {
             }
         });
 
-        int[][] seq = new int[n][];
-        seq[0] = envelopes[0];
-        int len = 1;
-        for (int i = 1; i < n; i++) {
-            int[] envelope = envelopes[i];
-            if (envelope[1] > seq[len - 1][1]) {
-                seq[len++] = envelope;
-                continue;
+        int n = envelopes.length;
+        int[] seq = new int[n];
+        int len = 0;
+        for (int[] envelope : envelopes){
+            int index = Arrays.binarySearch(seq, 0, len, envelope[1]);
+            if (index < 0) {
+                index = -(index + 1);
             }
-            int low = 0;
-            int high = len - 1;
-            while (low < high) {
-                int mid = low + (high - low) / 2;
-                if (seq[mid][1] < envelope[1]) {
-                    low = mid + 1;
-                } else {
-                    high = mid;
-                }
+            seq[index] = envelope[1];
+            if (index == len) {
+                len++;
             }
-            seq[low] = envelope;
         }
         return len;
     }
