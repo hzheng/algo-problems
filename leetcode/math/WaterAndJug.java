@@ -100,9 +100,11 @@ public class WaterAndJug {
     // Big picture: all actions are either emptying a jug or fully filling one,
     // hence result must be linear combinations of x and y, and its sufficient
     // and necessary condition is its GCD is divisible by z.
+    // https://en.wikipedia.org/wiki/B%C3%A9zout%27s_identity
     // beats 22.45%(0 ms)
     public boolean canMeasureWater3(int x, int y, int z) {
         return x + y == z || (x + y > z && z % gcd(x, y) == 0);
+        // return z == 0 || x + y >= z && z % gcd(x, y) == 0;
     }
 
     private int gcd(int a, int b) {
@@ -128,6 +130,7 @@ public class WaterAndJug {
 
     @Test
     public void test1() {
+        test(0, 0, 0, true);
         test(1, 0, 1, true);
         test(2, 0, 1, false);
         test(1, 1, 12, false);
