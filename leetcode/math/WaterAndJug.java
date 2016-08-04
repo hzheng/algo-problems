@@ -93,15 +93,46 @@ public class WaterAndJug {
         return false;
     }
 
+    // Math
+    // From above queue generation, we know all generated liters are of
+    // the form a * x + b * y - (k * m) % y
+    // where m = x % y, a >= 0, b <= 1, k >= 0
+    // Big picture: all actions are either emptying a jug or fully filling one,
+    // hence result must be linear combinations of x and y, and its sufficient
+    // and necessary condition is its GCD is divisible by z.
+    // beats 22.45%(0 ms)
+    public boolean canMeasureWater3(int x, int y, int z) {
+        return x + y == z || (x + y > z && z % gcd(x, y) == 0);
+    }
+
+    private int gcd(int a, int b) {
+        if (a < b) return gcd(b, a);
+        if (b == 0) return a;
+
+        if ((a & 1) == 0) {
+            if ((b & 1) == 0) return gcd(a >> 1, b >> 1) << 1;
+
+            return gcd(a >> 1, b);
+        }
+
+        return ((b & 1) == 0) ? gcd(a, b >> 1) : gcd(a - b, b);
+    }
+
     void test(int x, int y, int z, boolean expected) {
         if (x + y < 1000) {
             assertEquals(expected, canMeasureWater(x, y, z));
         }
         assertEquals(expected, canMeasureWater2(x, y, z));
+        assertEquals(expected, canMeasureWater3(x, y, z));
     }
 
     @Test
     public void test1() {
+        test(1, 0, 1, true);
+        test(2, 0, 1, false);
+        test(1, 1, 12, false);
+        test(6, 4, 1, false);
+        test(6, 5, 1, true);
         test(3, 5, 4, true);
         test(2, 6, 5, false);
         test(3, 3, 5, false);
