@@ -40,6 +40,7 @@ public class KSmallestPairs {
     }
 
     // Min Heap
+    // https://discuss.leetcode.com/topic/50885/simple-java-o-klogk-solution-with-explanation/2
     // time complexity: O(K * log(K)), space complexity: O(K)
     // beats 96.42%(7 ms)
     public List<int[]> kSmallestPairs2(int[] nums1, int[] nums2, int k) {
@@ -66,9 +67,38 @@ public class KSmallestPairs {
         return res;
     }
 
+    // Min Heap
+    // https://discuss.leetcode.com/topic/50481/clean-16ms-c-o-n-space-o-klogn-time-solution-using-priority-queue/2
+    // time complexity: O(K * log(min(N, K)), space complexity: O(K)
+    // beats 59.78%(12 ms)
+    public List<int[]> kSmallestPairs3(int[] nums1, int[] nums2, int k) {
+        PriorityQueue<int[]> pq = new PriorityQueue<>(new Comparator<int[]>() {
+            public int compare(int[] a, int[] b) {
+                return nums1[a[0]] + nums2[a[1]] - nums1[b[0]] - nums2[b[1]];
+            }
+        });
+        List<int[]> res = new ArrayList<>();
+        int n1 = Math.min(nums1.length, k);
+        int n2 = Math.min(nums2.length, k);
+        if (n1 == 0 || n2 == 0) return res;
+
+        pq.offer(new int[]{0, 0});
+        while (k-- > 0 && !pq.isEmpty()) {
+            int[] index = pq.poll();
+            res.add(new int[] {nums1[index[0]], nums2[index[1]]});
+            if (index[0] + 1 < n1) {
+                pq.offer(new int[]{index[0] + 1, index[1]});
+            }
+            if (index[0] == 0 && index[1] + 1 < n2) { // avoid duplicate
+                pq.offer(new int[]{index[0], index[1] + 1});
+            }
+        }
+        return res;
+    }
+
     // time complexity: O(K * min(M, N, K)), space complexity: O(max(M, N, K))
     // beats 50.12%(16 ms)
-    public List<int[]> kSmallestPairs3(int[] nums1, int[] nums2, int k) {
+    public List<int[]> kSmallestPairs4(int[] nums1, int[] nums2, int k) {
         int n1 = Math.min(nums1.length, k);
         int n2 = Math.min(nums2.length, k);
         k = Math.min(k, n1 * n2);
@@ -108,6 +138,7 @@ public class KSmallestPairs {
         test(p::kSmallestPairs, nums1, nums2, k, expected);
         test(p::kSmallestPairs2, nums1, nums2, k, expected);
         test(p::kSmallestPairs3, nums1, nums2, k, expected);
+        test(p::kSmallestPairs4, nums1, nums2, k, expected);
     }
 
     @Test
