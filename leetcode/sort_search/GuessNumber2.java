@@ -1,8 +1,8 @@
 import java.util.*;
+import java.util.function.Function;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import java.util.function.Function;
 
 // https://leetcode.com/problems/guess-number-higher-or-lower-ii/
 //
@@ -12,7 +12,7 @@ import java.util.function.Function;
 // wrong, you pay $x. You win the game when you guess the number I picked.
 // Given a particular n ≥ 1, find out how much money you need to have to guarantee a win.
 public class GuessNumber2 {
-    // Memoization
+    // Memoization (Top-Down)
     // time complexity: O(N ^ 3), space complexity: O(N ^ 2)
     // beats 0%(816 ms)
     public int getMoneyAmount(int n) {
@@ -36,6 +36,7 @@ public class GuessNumber2 {
     }
 
     // Memoization (Top-Down)
+    // time complexity: O(N ^ 3), space complexity: O(N ^ 2)
     // beats 64.82%(16 ms)
     public int getMoneyAmount2(int n) {
         return getMoneyAmount2(1, n, new int[n + 1][n + 1]);
@@ -55,7 +56,8 @@ public class GuessNumber2 {
     }
 
     // Dynamic Programming(Bottom-up)
-    // beats 64.82%(16 ms)
+    // time complexity: O(N ^ 3), space complexity: O(N ^ 2)
+    // beats 83.09%(14 ms)
     public int getMoneyAmount3(int n) {
         if (n < 2) return 0;
 
@@ -73,6 +75,76 @@ public class GuessNumber2 {
         return dp[1][n];
     }
 
+    // Dynamic Programming(Bottom-up)
+    // time complexity: O(N ^ 3), space complexity: O(N ^ 2)
+    // beats 83.09%(14 ms)
+    public int getMoneyAmount4(int n) {
+        if (n < 2) return 0;
+
+        int[][] dp = new int[n + 1][n + 1];
+        for (int step = 1; step < n; step++) {
+            for (int i = 1; i + step <= n; i++) {
+                int j = i;
+                int min = Integer.MAX_VALUE;
+                for (; j < i + step; j++) {
+                    if (dp[i][j - 1] > dp[j + 1][i + step]) break;
+
+                    min = Math.min(min, dp[j + 1][i + step] + j);
+                }
+                dp[i][i + step] = Math.min(min, dp[i][j - 1] + j);
+            }
+        }
+        return dp[1][n];
+    }
+
+    // Dynamic Programming(Bottom-up)
+    // time complexity: O(N ^ 3), space complexity: O(N ^ 2)
+    // beats 23.70%(21 ms)
+    public int getMoneyAmount5(int n) {
+        if (n < 2) return 0;
+
+        int[][] dp = new int[n + 1][n + 1];
+        for (int j = 2; j <= n; j++) {
+            dp[j - 1][j] = j - 1;
+            for (int i = j - 2; i > 0; i--) {
+                int min = Integer.MAX_VALUE;
+                for (int k = i + 1; k < j; k++) {
+                    min = Math.min(min, k + Math.max(
+                                       dp[i][k - 1], dp[k + 1][j]));
+                }
+                dp[i][j] = min;
+            }
+        }
+        return dp[1][n];
+    }
+
+    // http://artofproblemsolving.com/community/c296841h1273742
+    // time complexity: O(N ^ 2), space complexity: O(N ^ 2)
+    // beats 15.66%(22 ms)
+    public int getMoneyAmount6(int n) {
+        if (n < 2) return 0;
+
+        int[][] dp = new int[n + 1][n + 1];
+        for (int j = 2; j <= n; j++) {
+            Deque<int[]> mins = new LinkedList<>();
+            for (int i = j - 1, k = i; i > 0; i--) {
+                while (dp[i][k - 1] > dp[k + 1][j]) {
+                    if (!mins.isEmpty() && mins.peekFirst()[1] == k) {
+                        mins.pollFirst();
+                    }
+                    k--; // k is the max split point s.t left is less than right
+                }
+                int min = i + dp[i + 1][j];
+                while (!mins.isEmpty() && min < mins.peekLast()[0]) {
+                    mins.pollLast();
+                }
+                mins.offerLast(new int[] {min, i});
+                dp[i][j] = Math.min(dp[i][k] + k + 1, mins.peekFirst()[0]);
+            }
+        }
+        return dp[1][n];
+    }
+
     void test(Function<Integer, Integer> getMoneyAmount, String name,
               int n, int expected) {
         long t1 = System.nanoTime();
@@ -85,16 +157,18 @@ public class GuessNumber2 {
 
     void test(int n, int expected) {
         GuessNumber2 g = new GuessNumber2();
-        if (n <= 200) {
+        if (n <= 100) {
             test(g::getMoneyAmount, "getMoneyAmount", n, expected);
         }
         test(g::getMoneyAmount2, "getMoneyAmount2", n, expected);
         test(g::getMoneyAmount3, "getMoneyAmount3", n, expected);
+        test(g::getMoneyAmount4, "getMoneyAmount4", n, expected);
+        test(g::getMoneyAmount5, "getMoneyAmount5", n, expected);
+        test(g::getMoneyAmount6, "getMoneyAmount6", n, expected);
     }
 
     @Test
     public void test1() {
-        test(20, 49);
         test(0, 0);
         test(1, 0);
         test(2, 1);
@@ -106,6 +180,7 @@ public class GuessNumber2 {
         test(8, 12);
         test(9, 14);
         test(10, 16);
+        test(20, 49);
         test(50, 172);
         test(100, 400);
         test(200, 952);
