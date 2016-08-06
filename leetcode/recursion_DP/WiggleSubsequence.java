@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 // Given a sequence of integers, return the length of the longest subsequence
 // that is a wiggle sequence.
 public class WiggleSubsequence {
-    // Dynamic Programming + Greedy
+    // Dynamic Programming
     // time complexity: O(N), space complexity: O(N)
     // beats 20.93%(1 ms)
     public int wiggleMaxLength(int[] nums) {
@@ -39,8 +39,69 @@ public class WiggleSubsequence {
         return len;
     }
 
+    // Dynamic Programming
+    // time complexity: O(N), space complexity: O(1)
+    // beats 56.36%(0 ms)
+    public int wiggleMaxLength2(int[] nums) {
+        return Math.max(wiggleMaxLength2(nums, 1), wiggleMaxLength2(nums, 0));
+    }
+
+    private int wiggleMaxLength2(int[] nums, int bit) {
+        int last = (bit == 0) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+        int len = 0;
+        for (int num : nums) {
+            if ((len & 1) == bit && num > last
+                || (len & 1) == (1 - bit) && num < last) {
+                len++;
+            }
+            last = num;
+        }
+        return len;
+    }
+
+    // Dynamic Programming
+    // https://leetcode.com/articles/wiggle-subsequence/
+    // time complexity: O(N), space complexity: O(1)
+    // beats 56.36%(0 ms)
+    public int wiggleMaxLength3(int[] nums) {
+        if (nums.length < 2) return nums.length;
+
+        int down = 1;
+        int up = 1;
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] > nums[i - 1]) {
+                up = down + 1;
+            } else if (nums[i] < nums[i - 1]) {
+                down = up + 1;
+            }
+        }
+        return Math.max(down, up);
+    }
+
+    // Gready
+    // https://leetcode.com/articles/wiggle-subsequence/
+    // time complexity: O(N), space complexity: O(1)
+    // beats 56.36%(0 ms)
+    public int wiggleMaxLength4(int[] nums) {
+        if (nums.length < 2) return nums.length;
+
+        int prevDiff = nums[1] - nums[0];
+        int count = (prevDiff != 0) ? 2 : 1;
+        for (int i = 2; i < nums.length; i++) {
+            int diff = nums[i] - nums[i - 1];
+            if ((diff > 0 && prevDiff <= 0) || (diff < 0 && prevDiff >= 0)) {
+                count++;
+                prevDiff = diff;
+            }
+        }
+        return count;
+    }
+
     void test(int[] nums, int expected) {
         assertEquals(expected, wiggleMaxLength(nums));
+        assertEquals(expected, wiggleMaxLength2(nums));
+        assertEquals(expected, wiggleMaxLength3(nums));
+        assertEquals(expected, wiggleMaxLength4(nums));
     }
 
     @Test
