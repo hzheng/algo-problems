@@ -35,14 +35,14 @@ public class GuessNumber2 {
         return min;
     }
 
-    // beats 35.91%(19 ms)
+    // Memoization (Top-Down)
+    // beats 64.82%(16 ms)
     public int getMoneyAmount2(int n) {
         return getMoneyAmount2(1, n, new int[n + 1][n + 1]);
     }
 
     private int getMoneyAmount2(int start, int end, int[][] memo) {
         if (start >= end) return 0;
-        if (start + 1 == end) return start;
 
         if (memo[start][end] > 0) return memo[start][end];
 
@@ -54,24 +54,25 @@ public class GuessNumber2 {
         return memo[start][end] = min;
     }
 
+    // Dynamic Programming(Bottom-up)
+    // beats 64.82%(16 ms)
     public int getMoneyAmount3(int n) {
         if (n < 2) return 0;
-        if (n == 2) return 1;
 
         int[][] dp = new int[n + 1][n + 1];
-        for (int i = 1; i <= n; i++) {
-            for (int j = i + 1; i <= n; j++) {
-                int money = Integer.MAX_VALUE;
-
-
+        for (int step = 1; step < n; step++) {
+            for (int i = 1; i + step <= n; i++) {
+                int min = Integer.MAX_VALUE;
+                for (int j = i; j < i + step; j++) {
+                    min = Math.min(min, j + Math.max(
+                                       dp[i][j - 1], dp[j + 1][i + step]));
+                }
+                dp[i][i + step] = min;
             }
         }
-        for (int[] a:dp) System.out.println(Arrays.toString(a));
-
         return dp[1][n];
     }
 
-    // for (int[] a:dp) System.out.println(Arrays.toString(a));
     void test(Function<Integer, Integer> getMoneyAmount, String name,
               int n, int expected) {
         long t1 = System.nanoTime();
@@ -88,6 +89,7 @@ public class GuessNumber2 {
             test(g::getMoneyAmount, "getMoneyAmount", n, expected);
         }
         test(g::getMoneyAmount2, "getMoneyAmount2", n, expected);
+        test(g::getMoneyAmount3, "getMoneyAmount3", n, expected);
     }
 
     @Test
