@@ -78,7 +78,7 @@ public class WiggleSubsequence {
         return Math.max(down, up);
     }
 
-    // Gready
+    // Greedy
     // https://leetcode.com/articles/wiggle-subsequence/
     // time complexity: O(N), space complexity: O(1)
     // beats 56.36%(0 ms)
