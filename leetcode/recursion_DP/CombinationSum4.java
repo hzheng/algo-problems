@@ -102,6 +102,7 @@ public class CombinationSum4 {
     }
 
     // beats N/A(48 ms)
+    // time complexity: O(?), space complexity: O(N * T)
     public int combinationSum4_2(int[] nums, int target) {
         int n = nums.length;
         if (n == 0 || target <= 0) return 0;
@@ -144,6 +145,21 @@ public class CombinationSum4 {
         }
     }
 
+    // time complexity: O(N * T), space complexity: O(T)
+    // beats N/A(6 ms)
+    public int combinationSum4_3(int[] nums, int target) {
+        int[] dp = new int[target + 1];
+        dp[0] = 1;
+        for (int sum = 1; sum <= target; sum++) {
+            for (int num : nums) {
+                if (sum >= num) {
+                    dp[sum] += dp[sum - num];
+                }
+            }
+        }
+        return dp[target];
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -161,6 +177,7 @@ public class CombinationSum4 {
             test(sum::combinationSum4, nums, target, expected);
         }
         test(sum::combinationSum4_2, nums, target, expected);
+        test(sum::combinationSum4_3, nums, target, expected);
     }
 
     @Test
@@ -170,7 +187,6 @@ public class CombinationSum4 {
         test(new int[] {1, 2, 3, 4}, 4, 8);
         test(new int[] {1, 50}, 100, 53);
         test(new int[] {1, 50}, 200, 28730);
-        // test(new int[] {1, 2, 50}, 200, 1396632869);
         test(new int[] {10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130,
                         140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240,
                         250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350,
