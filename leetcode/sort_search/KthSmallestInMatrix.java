@@ -67,7 +67,7 @@ public class KthSmallestInMatrix {
     }
 
     // time complexity: O(N * log(N)), space complexity: O(N)
-    // beats N/A(22 ms)
+    // beats N/A(21 ms)
     public int kthSmallest2(int[][] matrix, int k) {
         int n = matrix.length;
         int m = (int)Math.sqrt(k);
@@ -87,10 +87,12 @@ public class KthSmallestInMatrix {
             if (colIndex < 0) {
                 colIndex = -colIndex - 2;
                 if (colIndex < 0) break;
-            } else {
-                while (colIndex + 1 < n && matrix[i][colIndex + 1] == pivot) {
-                    colIndex++;
-                }
+            // the following 'else' part may be needed in case of duplicate pivots
+            // even the code is accepted without it
+            // } else {
+                // while (colIndex + 1 < n && matrix[i][colIndex + 1] == pivot) {
+                //     colIndex++;
+                // }
             }
             count += colIndex + 1;
             pq.offer(new int[] {i, colIndex});
