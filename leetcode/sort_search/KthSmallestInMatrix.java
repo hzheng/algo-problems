@@ -46,24 +46,24 @@ public class KthSmallestInMatrix {
 
         int i = m - 1;
         for (; i > 0; i--) {
-           for (int j = i - 1; j >= 0; j--) { // add two sides
-               pq.offer(matrix[j][i]);
-               pq.offer(matrix[i][j]);
-           }
+            for (int j = i - 1; j >= 0; j--) { // add two sides
+                pq.offer(matrix[j][i]);
+                pq.offer(matrix[i][j]);
+            }
 
-           int corner = matrix[i - 1][i - 1];
-           while (needRemove > 0 && !pq.isEmpty() && pq.peek() >= corner) {
-               pq.poll();
-               needRemove--;
-           }
-           if (needRemove == 0) break;
+            int corner = matrix[i - 1][i - 1];
+            while (needRemove > 0 && !pq.isEmpty() && pq.peek() >= corner) {
+                pq.poll();
+                needRemove--;
+            }
+            if (needRemove == 0) break;
 
-           pq.offer(corner);
-       }
-       while (needRemove-- > 0) {
-           pq.poll();
-       }
-       return i == 0 ? pq.peek() : Math.max(pq.peek(), matrix[i - 1][i - 1]);
+            pq.offer(corner);
+        }
+        while (needRemove-- > 0) {
+            pq.poll();
+        }
+        return i == 0 ? pq.peek() : Math.max(pq.peek(), matrix[i - 1][i - 1]);
     }
 
     // time complexity: O(N * log(N)), space complexity: O(N)
@@ -105,6 +105,28 @@ public class KthSmallestInMatrix {
         return matrix[pos[0]][pos[1]];
     }
 
+    // time complexity: O(N * log(K)), space complexity: O(K)
+    // beats N/A(42 ms)
+    public int kthSmallest3(int[][] matrix, int k) {
+        int n = matrix.length;
+        PriorityQueue<int[]> pq = new PriorityQueue<>(new Comparator<int[]>() {
+            public int compare(int[] a, int[] b) {
+                return matrix[a[0]][a[1]] - matrix[b[0]][b[1]];
+            }
+        });
+        for(int i = 0; i < n; i++) {
+            pq.offer(new int[]{0, i});
+        }
+        for(int i = 0; i < k - 1; i++) {
+            int[] pos = pq.poll();
+            if (pos[0] + 1 < n) {
+                pq.offer(new int[]{pos[0] + 1, pos[1]});
+            }
+        }
+        int[] pos = pq.peek();
+        return matrix[pos[0]][pos[1]];
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -121,6 +143,7 @@ public class KthSmallestInMatrix {
         KthSmallestInMatrix k = new KthSmallestInMatrix();
         test(k::kthSmallest, matrix, expected);
         test(k::kthSmallest2, matrix, expected);
+        test(k::kthSmallest3, matrix, expected);
     }
 
     @Test
