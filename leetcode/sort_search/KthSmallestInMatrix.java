@@ -10,8 +10,8 @@ import static org.junit.Assert.*;
 // Note:
 // You may assume k is always valid, 1 ≤ k ≤ n ^ 2.
 public class KthSmallestInMatrix {
-    // time complexity: O(N ^ 2)
-    // beats N/A(38 ms)
+    // time complexity: O(N ^ 2), space complexity: O(N)
+    // beats N/A(42 ms)
     public int kthSmallest(int[][] matrix, int k) {
         if (k == 1) return matrix[0][0];
 
@@ -66,6 +66,45 @@ public class KthSmallestInMatrix {
        return i == 0 ? pq.peek() : Math.max(pq.peek(), matrix[i - 1][i - 1]);
     }
 
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    // beats N/A(22 ms)
+    public int kthSmallest2(int[][] matrix, int k) {
+        int n = matrix.length;
+        int m = (int)Math.sqrt(k);
+        if (m * m < k) {
+            m++;
+        }
+        int pivot = matrix[m - 1][m - 1];
+        PriorityQueue<int[]> pq = new PriorityQueue<>(new Comparator<int[]>() {
+            public int compare(int[] a, int[] b) {
+                return matrix[b[0]][b[1]] - matrix[a[0]][a[1]];
+            }
+        });
+
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            int colIndex = Arrays.binarySearch(matrix[i], pivot);
+            if (colIndex < 0) {
+                colIndex = -colIndex - 2;
+                if (colIndex < 0) break;
+            } else {
+                while (colIndex + 1 < n && matrix[i][colIndex + 1] == pivot) {
+                    colIndex++;
+                }
+            }
+            count += colIndex + 1;
+            pq.offer(new int[] {i, colIndex});
+        }
+        for (int needRemove = count - k; needRemove > 0; needRemove--) {
+            int[] pos = pq.poll();
+            if (pos[1] > 0) {
+                pq.offer(new int[] {pos[0], pos[1] - 1});
+            }
+        }
+        int[] pos = pq.peek();
+        return matrix[pos[0]][pos[1]];
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -81,12 +120,15 @@ public class KthSmallestInMatrix {
     void test(int[][] matrix, int[] ... expected) {
         KthSmallestInMatrix k = new KthSmallestInMatrix();
         test(k::kthSmallest, matrix, expected);
+        test(k::kthSmallest2, matrix, expected);
     }
 
     @Test
     public void test1() {
         test(new int[][] {{-5}}, new int[] {1, -5});
         test(new int[][] {{1, 2}, {1, 3}}, new int[] {4, 3});
+        test(new int[][] {{1, 2, 6}, {3, 6, 10}, new int[] {7, 11, 12}},
+             new int[] {4, 6}, new int[] {5, 6}, new int[] {6, 7});
         test(new int[][] {{1, 3, 4}, {1, 8, 8}, {4, 12, 17}}, new int[] {5, 4});
         test(new int[][] {{1,  5,  9, 10}, {10, 11, 13, 14}, {12, 13, 15, 16},
                           {13, 14, 15, 18}},
