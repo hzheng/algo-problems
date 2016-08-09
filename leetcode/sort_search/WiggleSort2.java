@@ -160,7 +160,7 @@ public class WiggleSort2 {
 
     // beats 5.22%(184 ms)
     private int getMedian(int[] nums, int n) {
-        for (int start = 0, end = n - 1, target = n / 2; ;) {
+        for (int start = 0, end = n - 1, target = n / 2;; ) {
             swap(nums, start, (start + end) / 2);
             int swapIndex = start;
             for (int i = start + 1; i <= end; i++) {
@@ -193,6 +193,18 @@ public class WiggleSort2 {
         System.arraycopy(buffer, 0, nums, 0, n);
     }
 
+    // if no duplicates, or wiggle inequality is not strict,
+    // the following simple code will work.
+    public void wiggleSort5(int[] nums) {
+        int n = nums.length;
+        for (int i = 0; i + 1 < n; i++) {
+            if ((i & 1) != 0 && nums[i] < nums[i + 1]
+                || (i & 1) == 0 && nums[i] > nums[i + 1]) {
+                swap(nums, i, i + 1);
+            }
+        }
+    }
+
     @FunctionalInterface
     interface Function<A> {
         public void apply(A a);
@@ -220,6 +232,7 @@ public class WiggleSort2 {
         test(w::wiggleSort2, "wiggleSort2", nums, expected);
         test(w::wiggleSort3, "wiggleSort3", nums, expected);
         test(w::wiggleSort4, "wiggleSort4", nums, expected);
+        // test(w::wiggleSort5, "wiggleSort5", nums, expected);
     }
 
     @Test
