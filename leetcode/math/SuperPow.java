@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 public class SuperPow {
     static final int MOD = 1337;
 
-    // beats 95.65%(2 ms)
+    // beats 94.57%(3 ms)
     public int superPow(int a, int[] b) {
         if (a == 1 || b.length == 1 && b[0] == 0) return 1;
 
@@ -25,7 +25,7 @@ public class SuperPow {
         for (int num : b) {
             modIndex = (modIndex * 10 + num) % cycle;
         }
-        return modules[modIndex - 1];
+        return modules[(modIndex > 0 ? modIndex : cycle) - 1];
     }
 
     // beats 84.70%(6 ms)
@@ -41,7 +41,7 @@ public class SuperPow {
 
     private int fastPow(int a, int b, int mod) {
         int pow = 1;
-        for (int x = a, y = b; y > 0; y >>= 1) {
+        for (int x = a % mod, y = b; y > 0; y >>= 1) {
             if ((y & 1) != 0) {
                 pow = pow * x % mod;
             }
@@ -88,11 +88,41 @@ public class SuperPow {
         return modPow(x % MOD, n / 2) * modPow(x % MOD, n - n / 2) % MOD;
     }
 
+    // Euler Theorem: https://en.wikipedia.org/wiki/Euler%27s_theorem
+    // beats 94.57%(3 ms)
+    public int superPow5(int a, int[] b) {
+        if (a == 1 || b.length == 1 && b[0] == 0) return 1;
+
+        final int mod = MOD;
+        final int factor1 = 7; // one of 1337's prime factor
+        final int factor2 = mod / factor1; // the other one(which is 191)
+        // calculate phi value : totient function
+        int phi = 0; // result: 1140
+        for (int i = 1; i < mod; i++) {
+            if (i % factor1 != 0 && i % factor2 != 0) {
+                phi++;
+            }
+        }
+
+        int exp = 0;
+        for (int num : b) {
+            exp = (exp * 10 + num) % phi;
+        }
+        if (exp == 0) {
+            if (a % factor1 != 0 && a % factor2 != 0) return 1;
+
+            // exceptional case: a is NOT coprime to 1337 and b is divisible by phi
+            exp = phi;
+        }
+        return fastPow(a, exp, mod);
+    }
+
     void test(int a, int[] b, int expected) {
         assertEquals(expected, superPow(a, b));
         assertEquals(expected, superPow2(a, b));
         assertEquals(expected, superPow3(a, b));
         assertEquals(expected, superPow4(a, b));
+        assertEquals(expected, superPow5(a, b));
     }
 
     @Test
@@ -105,6 +135,13 @@ public class SuperPow {
         test(23, new int[] {3, 1, 9}, 450);
         test(21892, new int[] {3, 0, 1, 9}, 199);
         test(9821892, new int[] {9, 8, 7, 6, 8, 6, 0, 2, 4, 3, 0, 1, 9}, 1028);
+        // test cases: a is NOT coprime to 1337
+        test(14, new int[] {2, 2, 8, 0}, 574);
+        test(14, new int[] {1, 1, 4, 0}, 574);
+        test(14, new int[] {1, 1, 4, 1}, 14);
+        test(14, new int[] {1, 0, 0, 0, 0}, 889);
+        test(191, new int[] {2, 2, 8, 0}, 764);
+        test(191, new int[] {2, 2, 8, 1}, 191);
     }
 
     public static void main(String[] args) {
