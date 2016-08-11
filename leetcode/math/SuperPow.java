@@ -89,20 +89,16 @@ public class SuperPow {
     }
 
     // Euler Theorem: https://en.wikipedia.org/wiki/Euler%27s_theorem
-    // beats 94.57%(3 ms)
+    // beats 95.65%(2 ms)
     public int superPow5(int a, int[] b) {
         if (a == 1 || b.length == 1 && b[0] == 0) return 1;
 
         final int mod = MOD;
         final int factor1 = 7; // one of 1337's prime factor
-        final int factor2 = mod / factor1; // the other one(which is 191)
-        // calculate phi value : totient function
-        int phi = 0; // result: 1140
-        for (int i = 1; i < mod; i++) {
-            if (i % factor1 != 0 && i % factor2 != 0) {
-                phi++;
-            }
-        }
+        final int factor2 = 191; // mod / factor1
+        // phi(Euler totient value): 1337 - 191 - 7 + 1
+        // or phi(1337) = phi(191) * phi(7) = (191 - 1) * (7 - 1)
+        final int phi = 1140;
 
         int exp = 0;
         for (int num : b) {
