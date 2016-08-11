@@ -1,12 +1,13 @@
-// https://leetcode.com/problems/insert-delete-getrandom-o1/
-
-import common.Interval;
 import java.awt.geom.Arc2D;
 import java.util.*;
 import java.util.Random;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import common.Interval;
+
+// https://leetcode.com/problems/insert-delete-getrandom-o1/
 //
 // Design a data structure that supports all following operations in average O(1) time.
 
@@ -79,7 +80,6 @@ public class RandomizedSet {
 
         public boolean remove(int val) {
             if (!map.containsKey(val)) return false;
-
 
             int seq = map.remove(val);
             int last = list.remove(list.size() - 1);
