@@ -98,6 +98,7 @@ public class LongestIncreasingSubsequence {
         return length;
     }
 
+    // Solution of Choice
     // beats 69.02%(3 ms)
     public int lengthOfLIS4(int[] nums) {
         int[] seq = new int[nums.length];
