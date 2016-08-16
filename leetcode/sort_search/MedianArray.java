@@ -6,9 +6,9 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 // https://leetcode.com/problems/median-of-two-sorted-arrays/
+
 // Find the median of the two sorted arrays. The overall run time complexity
 // should be O(log(m+n)).
-
 public class MedianArray {
     // beats 6.24%
     // time complexity: O(log(M + N))
@@ -160,7 +160,7 @@ public class MedianArray {
         } else if (l1 == 1) { // l2 is odd and > 1
             return (Math.max(nums2[mid2 - 1],
                              Math.min(nums1[start1], nums2[mid2 + 1]))
-                     + nums2[mid2]) / 2d;
+                    + nums2[mid2]) / 2d;
         }
 
         if (l1 == 2) {
@@ -337,7 +337,7 @@ public class MedianArray {
 
     private int findPos(double x, int[] nums, int start, int end) {
         while (end > start) {
-            int mid = (start + end) / 2;
+            int mid = (start + end) >>> 1;
             // if (nums[mid] == x) return mid;
             if (nums[mid] < x) {
                 start = mid + 1;
@@ -348,12 +348,87 @@ public class MedianArray {
         return start;
     }
 
+    // Solution of Choice
+    // https://discuss.leetcode.com/topic/16797/very-concise-o-log-min-m-n-iterative-solution-with-detailed-explanation
+    // beats 9.33%(7 ms)
+    public double findMedianSortedArrays5(int[] nums1, int[] nums2) {
+        int n1 = nums1.length;
+        int n2 = nums2.length;
+        if (n1 < n2) return findMedianSortedArrays5(nums2, nums1);
+
+        if (n2 == 0) {
+            return n1 == 0 ? 0 : (nums1[(n1 - 1) / 2] + nums1[n1 / 2]) / 2d;
+        }
+
+        for (int low = 0, high = n2 * 2; low <= high; ) {
+            int mid2 = (low + high) >>> 1;
+            int mid1 = n1 + n2 - mid2;
+            double l1 = (mid1 == 0) ? Integer.MIN_VALUE : nums1[(mid1 - 1) / 2];
+            double l2 = (mid2 == 0) ? Integer.MIN_VALUE : nums2[(mid2 - 1) / 2];
+            double r1 = (mid1 == n1 * 2) ? Integer.MAX_VALUE : nums1[mid1 / 2];
+            double r2 = (mid2 == n2 * 2) ? Integer.MAX_VALUE : nums2[mid2 / 2];
+
+            if (l1 > r2) {
+                low = mid2 + 1;
+            } else if (l2 > r1) {
+                high = mid2 - 1;
+            } else return (Math.max(l1, l2) + Math.min(r1, r2)) / 2d;
+        }
+        return -1;
+    }
+
+    // https://discuss.leetcode.com/topic/4996/share-my-o-log-min-m-n-solution-with-explanation
+    public double findMedianSortedArrays6(int[] nums1, int[] nums2) {
+        int n1 = nums1.length;
+        int n2 = nums2.length;
+        if (n1 > n2) return findMedianSortedArrays6(nums2, nums1);
+
+        if (n1 == 0) {
+            return n2 == 0 ? 0 : (nums2[(n2 - 1) / 2] + nums2[n2 / 2]) / 2d;
+        }
+
+        int half_len = (n1 + n2 + 1) >>> 1;
+        for (int low = 0, high = n1; low <= high; ) {
+            int i = (low + high) >>> 1;
+            int j = half_len - i;
+            if (j > 0 && i < n1 && nums2[j - 1] > nums1[i]) {
+                low = i + 1;
+            } else if (i > 0 && j < n2 && nums1[i - 1] > nums2[j]) {
+                high = i - 1;
+            } else {
+                int maxLeft = 0;
+                if (i == 0) {
+                    maxLeft = nums2[j - 1];
+                } else if (j == 0) {
+                    maxLeft = nums1[i - 1];
+                } else {
+                    maxLeft = Math.max(nums1[i - 1], nums2[j - 1]);
+                }
+
+                if ((n1 + n2) % 2 == 1) return maxLeft;
+
+                int minRight;
+                if (i == n1) {
+                    minRight = nums2[j];
+                } else if (j == n2) {
+                    minRight = nums1[i];
+                } else {
+                    minRight = Math.min(nums1[i], nums2[j]);
+                }
+                return (maxLeft + minRight) / 2d;
+            }
+        }
+        return -1;
+    }
+
     private void test(int[] nums1, int[] nums2, double expected) {
         assertEquals(expected, findMedianSortedArrays(nums1, nums2), 1e-8);
         assertEquals(expected, findMedianArraysSlow(nums1, nums2), 1e-8);
         assertEquals(expected, findMedianSortedArrays2(nums1, nums2), 1e-8);
         // assertEquals(expected, findMedianSortedArrays3(nums1, nums2), 1e-8);
         assertEquals(expected, findMedianSortedArrays4(nums1, nums2), 1e-8);
+        assertEquals(expected, findMedianSortedArrays5(nums1, nums2), 1e-8);
+        assertEquals(expected, findMedianSortedArrays6(nums1, nums2), 1e-8);
     }
 
     @Test
@@ -390,6 +465,10 @@ public class MedianArray {
         //              findMedianSortedArrays3(nums1, nums2), 1e-8);
         assertEquals(expected,
                      findMedianSortedArrays4(nums1, nums2), 1e-8);
+        assertEquals(expected,
+                     findMedianSortedArrays5(nums1, nums2), 1e-8);
+        assertEquals(expected,
+                     findMedianSortedArrays6(nums1, nums2), 1e-8);
     }
 
     @Test
@@ -413,7 +492,9 @@ public class MedianArray {
                         int[] a1, int[] a2) {
         long t1 = System.nanoTime();
         double median = findMedian.apply(a1, a2);
-        System.out.format("%s: %.3f ms\n", name, (System.nanoTime() - t1) * 1e-6);
+        if (a1.length + a2.length > 1000) {
+            System.out.format("%s: %.3f ms\n", name, (System.nanoTime() - t1) * 1e-6);
+        }
         return median;
     }
 
@@ -439,7 +520,7 @@ public class MedianArray {
                                       "findMedianSortedArraysIterative", nums1, nums2);
         double slowMedian = test(ma::findMedianArraysSlow,
                                  "findMedianArraysSlow", nums1, nums2);
-        if (l1 < 1000 && l2 < 1000) { // may case stack overflow
+        if (l1 < 1000 && l2 < 1000) { // may cause stack overflow
             double kthMedian = test(ma::findMedianSortedArrays2,
                                     "findMedianSortedArrays2", nums1, nums2);
             assertEquals(kthMedian, fastMedian, 1e-8);
@@ -452,12 +533,18 @@ public class MedianArray {
         double median4 = test(ma::findMedianSortedArrays4,
                               "findMedianSortedArrays4", nums1, nums2);
         assertEquals(median4, fastMedian, 1e-8);
+        double median5 = test(ma::findMedianSortedArrays5,
+                              "findMedianSortedArrays5", nums1, nums2);
+        assertEquals(median5, fastMedian, 1e-8);
+        double median6 = test(ma::findMedianSortedArrays6,
+                              "findMedianSortedArrays6", nums1, nums2);
+        assertEquals(median6, fastMedian, 1e-8);
         System.out.println("====================");
     }
 
     @Test
     public void test3() {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             test(5, 10);
             test(10, 10);
             test(10, 100);

@@ -1,8 +1,13 @@
 import java.util.*;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+// https://leetcode.com/problems/longest-substring-without-repeating-characters/
+//
 // Find the length of the longest substring without repeating characters.
 public class LongestNoRepeatSubstring {
-    // beats 30.1%
+    // beats 34.82%(21 ms)
     public int lengthOfLongestSubstring(String s) {
         int maxLen = 0;
         int start = 0;
@@ -23,7 +28,7 @@ public class LongestNoRepeatSubstring {
         return Math.max(strLen - start, maxLen);
     }
 
-    // beats 56%
+    // beats 66.41%(17 ms)
     public int lengthOfLongestSubstring2(String s) {
         int maxLen = 0;
         int start = 0;
@@ -43,49 +48,78 @@ public class LongestNoRepeatSubstring {
         return Math.max(strLen - start, maxLen);
     }
 
-    // from the answer 1
+    // Two Pointers
+    // https://leetcode.com/articles/longest-substring-without-repeating-characters/
     public int lengthOfLongestSubstring3(String s) {
         int n = s.length();
         Set<Character> set = new HashSet<>();
-        int ans = 0, i = 0, j = 0;
-        while (i < n && j < n) {
+        int res = 0;
+        for (int i = 0, j = 0; i < n && j < n; ) {
             // try to extend the range [i, j]
             if (!set.contains(s.charAt(j))) {
                 set.add(s.charAt(j++));
-                ans = Math.max(ans, j - i);
+                res = Math.max(res, j - i);
             }
             else {
                 set.remove(s.charAt(i++));
             }
         }
-        return ans;
+        return res;
     }
 
-    // from the answer 2
+    // Two Pointers
+    // https://leetcode.com/articles/longest-substring-without-repeating-characters/
     public int lengthOfLongestSubstring4(String s) {
-        int n = s.length(), ans = 0;
+        int n = s.length();
+        int res = 0;
         Map<Character, Integer> map = new HashMap<>(); // current index of character
         // try to extend the range [i, j]
-        for (int j = 0, i = 0; j < n; ++j) {
-            if (map.containsKey(s.charAt(j))) {
-                i = Math.max(map.get(s.charAt(j)), i);
+        for (int i = 0, j = 0; j < n; j++) {
+            char c = s.charAt(j);
+            if (map.containsKey(c)) {
+                i = Math.max(map.get(c), i);
             }
-            ans = Math.max(ans, j - i + 1);
-            map.put(s.charAt(j), j + 1);
+            res = Math.max(res, j - i + 1);
+            map.put(c, j + 1);
         }
-        return ans;
+        return res;
     }
 
-    // from the answer 3
+    // Solution of Choice
+    // Two Pointers
+    // https://leetcode.com/articles/longest-substring-without-repeating-characters/
+    // beats 98.52%(4 ms)
     public int lengthOfLongestSubstring5(String s) {
-        int n = s.length(), ans = 0;
+        int n = s.length();
+        int res = 0;
         int[] index = new int[128]; // current index of character
         // try to extend the range [i, j]
-        for (int j = 0, i = 0; j < n; ++j) {
-            i = Math.max(index[s.charAt(j)], i);
-            ans = Math.max(ans, j - i + 1);
-            index[s.charAt(j)] = j + 1;
+        for (int i = 0, j = 0; j < n; j++) {
+            char c = s.charAt(j);
+            i = Math.max(i, index[c]);
+            res = Math.max(res, j - i + 1);
+            index[c] = j + 1;
         }
-        return ans;
+        return res;
+    }
+
+    void test(String s, int expected) {
+        assertEquals(expected, lengthOfLongestSubstring(s));
+        assertEquals(expected, lengthOfLongestSubstring2(s));
+        assertEquals(expected, lengthOfLongestSubstring3(s));
+        assertEquals(expected, lengthOfLongestSubstring4(s));
+        assertEquals(expected, lengthOfLongestSubstring5(s));
+    }
+
+    @Test
+    public void test1() {
+        test("abcabcbb", 3);
+        test("bbbbb", 1);
+        test("pwwkew", 3);
+        test("c", 1);
+    }
+
+    public static void main(String[] args) {
+        org.junit.runner.JUnitCore.main("LongestNoRepeatSubstring");
     }
 }
