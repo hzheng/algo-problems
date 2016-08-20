@@ -351,6 +351,7 @@ public class MedianArray {
     // Solution of Choice
     // https://discuss.leetcode.com/topic/16797/very-concise-o-log-min-m-n-iterative-solution-with-detailed-explanation
     // beats 9.33%(7 ms)
+    // time complexity: O(log(min(M, N))), space complexity: O(1)
     public double findMedianSortedArrays5(int[] nums1, int[] nums2) {
         int n1 = nums1.length;
         int n2 = nums2.length;
@@ -378,6 +379,7 @@ public class MedianArray {
     }
 
     // https://discuss.leetcode.com/topic/4996/share-my-o-log-min-m-n-solution-with-explanation
+    // time complexity: O(log(min(M, N))), space complexity: O(1)
     public double findMedianSortedArrays6(int[] nums1, int[] nums2) {
         int n1 = nums1.length;
         int n2 = nums2.length;

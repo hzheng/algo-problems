@@ -186,7 +186,7 @@ public class ConcatenationSubstring {
         }
     }
 
-    // beats 91.26%
+    // beats 91.26%(16 ms)
     public List<Integer> findSubstring3(String s, String[] words) {
         if (s.isEmpty() || words.length == 0) return Collections.emptyList();
 
@@ -270,42 +270,32 @@ public class ConcatenationSubstring {
         }
     } // WordIndices
 
-    // http://www.jiuzhang.com/solutions/substring-with-concatenation-of-all-words/
     // Time Limit Exceeded
     public List<Integer> findSubstring4(String s, String[] words) {
-        List<Integer> result = new ArrayList<Integer>();
         Map<String, Integer> toFind = new HashMap<>();
-        Map<String, Integer> found = new HashMap<>();
-        int m = words.length;
-        int n = words[0].length();
-        for (int i = 0; i < m; i++) {
-            if (!toFind.containsKey(words[i])) {
-                toFind.put(words[i], 1);
+        for (String word : words) {
+            toFind.put(word, toFind.getOrDefault(word, 0) + 1);
+        }
+
+        List<Integer> res = new ArrayList<>();
+        int len = s.length();
+        int wordCount = words.length;
+        int slice = words[0].length();
+        for (int i = 0; i < len - wordCount * slice + 1; i++) {
+            Map<String, Integer> found = new HashMap<>();
+            int j = 0;
+            for (; j < wordCount; j++) {
+                String word = s.substring(i + j * slice, i + (j + 1) * slice);
+                if (!toFind.containsKey(word)) break;
+
+                found.put(word, found.getOrDefault(word, 0) + 1);
+                if (found.get(word) > toFind.get(word)) break;
             }
-            else {
-                toFind.put(words[i], toFind.get(words[i]) + 1);
+            if (j == wordCount) {
+                res.add(i);
             }
         }
-        for (int i = 0; i <= s.length() - n * m; i++) {
-            found.clear();
-            int j;
-            for (j = 0; j < m; j++) {
-                int k = i + j * n;
-                String stub = s.substring(k, k + n);
-                if (!toFind.containsKey(stub)) break;
-                if(!found.containsKey(stub)) {
-                    found.put(stub, 1);
-                }
-                else {
-                    found.put(stub, found.get(stub) + 1);
-                }
-                if (found.get(stub) > toFind.get(stub)) break;
-            }
-            if (j == m) {
-                result.add(i);
-            }
-        }
-        return result;
+        return res;
     }
 
     @FunctionalInterface

@@ -3,9 +3,10 @@ import java.util.Arrays;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// https://leetcode.com/problems/longest-palindromic-substring/
+//
 // Given a string S, find the longest palindromic substring. Assume the maximum
 // length of S is 1000, and there exists 1 unique longest palindromic substring.
-
 public class LongestPalindrome {
     // time complexity: O(N ^ 2), space complexity: O(N ^ 2)
     // Time Limit Exceeded
@@ -73,14 +74,14 @@ public class LongestPalindrome {
         return s.substring(maxIndex - maxLen, maxIndex);
     }
 
-    // from the solution
     // https://leetcode.com/articles/longest-palindromic-substring/
     // time complexity: O(N ^ 2), space complexity: O(1)
     public String longestPalindrome3(String s) {
         int l = s.length();
         if (l == 0) return "";
 
-        int start = 0, end = 0;
+        int start = 0;
+        int end = 0;
         for (int i = 0; i < l; i++) {
             int len1 = expandAroundCenter(s, i, i);
             int len2 = expandAroundCenter(s, i, i + 1);
@@ -102,6 +103,7 @@ public class LongestPalindrome {
         return right - left - 1;
     }
 
+    // Solution of Choice
     // from https://en.wikipedia.org/wiki/Longest_palindromic_substring
     // time complexity: O(N), space complexity: O(N ^ 2)
     // beats 96.88%
