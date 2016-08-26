@@ -10,7 +10,8 @@ import common.TreeNode;
 //
 // Given a binary tree, return the preorder traversal of its nodes' values.
 public class TreePreorderTraversal {
-    // beats 55.79%
+    // beats 53.27%(1 ms)
+    // time complexity: O(N), space complexity: O(N)
     public List<Integer> preorderTraversal(TreeNode root) {
         List<Integer> res = new ArrayList<>();
         preorderTraversal(root, res);
@@ -25,7 +26,8 @@ public class TreePreorderTraversal {
         preorderTraversal(root.right, res);
     }
 
-    // beats 1.61%
+    // beats 1.55%(2 ms)
+    // time complexity: O(N), space complexity: O(N)
     public List<Integer> preorderTraversal2(TreeNode root) {
         List<Integer> res = new ArrayList<>();
         if (root == null) return res;
@@ -45,7 +47,8 @@ public class TreePreorderTraversal {
         return res;
     }
 
-    // beats 1.61%
+    // beats 1.55%(2 ms)
+    // time complexity: O(N), space complexity: O(N)
     public List<Integer> preorderTraversal3(TreeNode root) {
         Stack<TreeNode> stack = new Stack<>();
         List<Integer> res = new ArrayList<>();
@@ -61,7 +64,8 @@ public class TreePreorderTraversal {
         return res;
     }
 
-    // beats 55.79%
+    // beats 53.27%(1 ms)
+    // time complexity: O(N), space complexity: O(N)
     public List<Integer> preorderTraversal4(TreeNode root) {
         List<Integer> res = new ArrayList<>();
         if (root == null) return res;
@@ -74,7 +78,34 @@ public class TreePreorderTraversal {
         return res;
     }
 
-    // TODO: Morris traversal
+    // Solution of Choice
+    // Morris traversal
+    // time complexity: O(N), space complexity: O(1)
+    // beats 53.27%(1 ms)
+    public List<Integer> preorderTraversal5(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        if (root == null) return res;
+
+        for (TreeNode cur = root, prev = null; cur != null; ) {
+            if (cur.left == null) {
+                res.add(cur.val);
+                cur = cur.right;
+            } else {
+                for (prev = cur.left; prev.right != null && prev.right != cur; ) {
+                    prev = prev.right;
+                }
+                if (prev.right == null) {
+                    res.add(cur.val);
+                    prev.right = cur;
+                    cur = cur.left;
+                } else {
+                    prev.right = null; // recover the tree
+                    cur = cur.right;
+                }
+            }
+        }
+        return res;
+    }
 
     void test(Function<TreeNode, List<Integer> > traversal,
               String s, Integer ... expected) {
@@ -89,6 +120,7 @@ public class TreePreorderTraversal {
         test(t::preorderTraversal2, s, expected);
         test(t::preorderTraversal3, s, expected);
         test(t::preorderTraversal4, s, expected);
+        test(t::preorderTraversal5, s, expected);
     }
 
     @Test
