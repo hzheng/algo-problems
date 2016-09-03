@@ -5,7 +5,7 @@ import java.util.stream.IntStream;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/median-of-two-sorted-arrays/
+// LC004: https://leetcode.com/problems/median-of-two-sorted-arrays/
 
 // Find the median of the two sorted arrays. The overall run time complexity
 // should be O(log(m+n)).

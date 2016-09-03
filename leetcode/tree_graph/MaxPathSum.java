@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 import common.TreeNode;
 import java.util.function.Function;
 
-// https://leetcode.com/problems/binary-tree-maximum-path-sum/
+// LC124: https://leetcode.com/problems/binary-tree-maximum-path-sum/
 //
 // Given a binary tree, find the maximum path sum.
 // For this problem, a path is defined as any sequence of nodes from some

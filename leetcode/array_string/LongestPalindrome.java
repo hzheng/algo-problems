@@ -3,7 +3,7 @@ import java.util.Arrays;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/longest-palindromic-substring/
+// LC005: https://leetcode.com/problems/longest-palindromic-substring/
 //
 // Given a string S, find the longest palindromic substring. Assume the maximum
 // length of S is 1000, and there exists 1 unique longest palindromic substring.

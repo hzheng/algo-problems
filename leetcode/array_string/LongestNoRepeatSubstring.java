@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/longest-substring-without-repeating-characters/
+// LC003: https://leetcode.com/problems/longest-substring-without-repeating-characters/
 //
 // Find the length of the longest substring without repeating characters.
 public class LongestNoRepeatSubstring {

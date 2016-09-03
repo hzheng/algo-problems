@@ -3,8 +3,9 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/valid-anagram/
+// LC242: https://leetcode.com/problems/valid-anagram/
 //
+// Given two strings s and t, determine if t is an anagram of s.
 // You may assume the string contains only lowercase alphabets.
 public class ValidAnagram {
     // Solution of Choice
