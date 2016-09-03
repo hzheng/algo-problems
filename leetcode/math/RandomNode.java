@@ -17,6 +17,7 @@ import common.ListNode;
 public class RandomNode {
     private Random rand = new Random();
 
+    // Solution of Choice
     // beats N/A(145 ms)
     public int getRandom(ListNode head) {
         ListNode chosen = null;

@@ -7,6 +7,7 @@ import static org.junit.Assert.*;
 //
 // You may assume the string contains only lowercase alphabets.
 public class ValidAnagram {
+    // Solution of Choice
     // beats 91.83%(4 ms)
     public boolean isAnagram(String s, String t) {
         int[] counts = new int[26];

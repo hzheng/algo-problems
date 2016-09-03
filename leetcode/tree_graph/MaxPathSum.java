@@ -7,12 +7,15 @@ import static org.junit.Assert.*;
 import common.TreeNode;
 import java.util.function.Function;
 
+// https://leetcode.com/problems/binary-tree-maximum-path-sum/
+//
 // Given a binary tree, find the maximum path sum.
 // For this problem, a path is defined as any sequence of nodes from some
 // starting node to any node in the tree along the parent-child connections.
 // The path does not need to go through the root
 public class MaxPathSum {
-    // beats 29.58%
+    // Solution of Choice
+    // beats 32.06%(2 ms)
     public int maxPathSum(TreeNode root) {
         int[] max = {Integer.MIN_VALUE};
         maxPathSum(root, max);
@@ -22,17 +25,10 @@ public class MaxPathSum {
     private int maxPathSum(TreeNode root, int[] max) {
         if (root == null) return 0;
 
-        int sum = root.val;
-        int left = maxPathSum(root.left, max);
-        int right = maxPathSum(root.right, max);
-        if (left > 0) {
-            sum += left;
-        }
-        if (right > 0) {
-            sum += right;
-        }
-        max[0] = Math.max(max[0], sum);
-        return root.val + Math.max(0, Math.max(left, right));
+        int left = Math.max(0, maxPathSum(root.left, max));
+        int right = Math.max(0, maxPathSum(root.right, max));
+        max[0] = Math.max(max[0], root.val + left + right);
+        return root.val + Math.max(left, right);
     }
 
     void test(Function<TreeNode, Integer> maxPathSum, String s, int expected) {
