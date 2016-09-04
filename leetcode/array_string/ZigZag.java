@@ -1,19 +1,19 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/zigzag-conversion/
+// LC006: https://leetcode.com/problems/zigzag-conversion/
 public class ZigZag {
-    // beats 94.36%
+    // Solution of Choice
+    // beats 91.35%(6 ms)
     public String convert(String s, int numRows) {
         int len = s.length();
         if (len == 0 || numRows <= 1) return s;
 
         char[] t = new char[len];
-        int module = 2 * numRows - 2;
+        final int module = 2 * numRows - 2;
         int index = 0;
         for (int row = 0; row < numRows; row++) {
-            int i = row;
-            for (; i < len; i += module) {
+            for (int i = row; i < len; i += module) {
                 t[index++] = s.charAt(i);
                 if (row > 0 && row < (numRows - 1)) {
                     int j = i + module - 2 * row;
