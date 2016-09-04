@@ -1,8 +1,11 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC008: https://leetcode.com/problems/string-to-integer-atoi/
+//
+// Implement atoi to convert a string to an integer.
 public class Atoi {
-    // beats 14.48% (35.97% if use str.trim)
+    // beats 14.48% (5 ms) (35.97% 4 ms if use str.trim)
     public int myAtoi(String str) {
         if (str == null) return 0;
         // str = str.trim();
@@ -72,8 +75,37 @@ public class Atoi {
         return x * sign;
     }
 
+    // Solution of Choice
+    // https://discuss.leetcode.com/topic/2666/my-simple-solution
+    // beats 81.44%(3 ms)
+    public int myAtoi2(String str) {
+        int len = str.length();
+        if (len == 0) return 0;
+
+        int i = 0;
+        while (str.charAt(i) == ' ') i++;
+
+        int sign = 1;
+        if (str.charAt(i) == '-' || str.charAt(i) == '+') {
+            sign = str.charAt(i++) == '-' ? -1 : 1;
+        }
+        int res = 0;
+        final int maxVal = Integer.MAX_VALUE / 10;
+        for (; i < len; i++) {
+            int digit = str.charAt(i) - '0';
+            if (digit < 0 || digit > 9) break;
+
+            if (res > maxVal || (res == maxVal && digit > 7)) {
+                return (sign == 1) ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+            }
+            res = 10 * res + digit;
+        }
+        return res * sign;
+    }
+
     void test(String x, int expected) {
         assertEquals(expected, myAtoi(x));
+        assertEquals(expected, myAtoi2(x));
     }
 
     @Test
