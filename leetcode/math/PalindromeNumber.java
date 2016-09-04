@@ -1,6 +1,9 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC009: https://leetcode.com/problems/palindrome-number/
+//
+// Determine whether an integer is a palindrome. Do this without extra space.
 public class PalindromeNumber {
     // beats 23.73%
     public boolean isPalindrome(int x) {
@@ -41,7 +44,7 @@ public class PalindromeNumber {
         return true;
     }
 
-    // beats 74.26%
+    // beats 75.99%(11 ms)
     public boolean isPalindrome3(int x) {
         if (x < 0) return false;
 
@@ -65,16 +68,32 @@ public class PalindromeNumber {
         return true;
     }
 
+    // Solution of Choice
+    // https://discuss.leetcode.com/topic/8090/9-line-accepted-java-code-without-the-need-of-handling-overflow/19
+    // beats 50.41%(12 ms)
+    public boolean isPalindrome4(int x) {
+        if (x < 0 || (x != 0 && x % 10 == 0)) return false;
+
+        int reversed = 0;
+        int y = x;
+        for (; y > reversed; y /= 10) {
+            reversed = reversed * 10 + y % 10;
+        }
+        return (y == reversed || y == reversed / 10);
+    }
+
     void test(int x, boolean expected) {
         assertEquals(expected, isPalindrome(x));
         assertEquals(expected, isPalindrome2(x));
         assertEquals(expected, isPalindrome3(x));
+        assertEquals(expected, isPalindrome4(x));
     }
 
     @Test
     public void test1() {
         test(0, true);
         test(-1, false);
+        test(30, false);
         test(3, true);
         test(33, true);
         test(23, false);
