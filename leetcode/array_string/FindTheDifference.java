@@ -25,8 +25,34 @@ public class FindTheDifference {
         return 0;
     }
 
+    // beats N/A(8 ms)
+    public char findTheDifference2(String s, String t) {
+        char res = 0;
+        for (char c : t.toCharArray()) {
+            res ^= c;
+        }
+        for (char c : s.toCharArray()) {
+            res ^= c;
+        }
+        return res;
+    }
+
+    // Solution of Choice
+    // beats N/A(7 ms)
+    public char findTheDifference3(String s, String t) {
+        int len = s.length();
+        char res = t.charAt(len);
+        for (int i = len - 1; i >= 0; i--) {
+            res ^= s.charAt(i);
+            res ^= t.charAt(i);
+        }
+        return res;
+    }
+
     void test(String s, String t, char expected) {
         assertEquals(expected, findTheDifference(s, t));
+        assertEquals(expected, findTheDifference2(s, t));
+        assertEquals(expected, findTheDifference3(s, t));
     }
 
     @Test
