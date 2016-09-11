@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
-// https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/
+// LC235: https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/
 //
 // Given a binary search tree, find the lowest common ancestor of two nodes.
 public class LCAOfBST {
@@ -21,6 +21,7 @@ public class LCAOfBST {
         return root;
     }
 
+    // Solution of Choice
     // beats 44.22%(10 ms)
     // non-recursion
     public TreeNode lowestCommonAncestor2(TreeNode root, TreeNode p, TreeNode q) {
