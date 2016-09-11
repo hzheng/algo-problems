@@ -23,23 +23,14 @@ public class LengthLongestPath {
         Stack<Integer> dirs = new Stack<>();
         int maxPath = 0;
         for (String line : input.split("\n")) {
-            int tabs = 0;
-            for (; line.charAt(tabs) == '\t'; tabs++) {}
-            // assume tabs <= dirs.size(), otherwise invalid
-            while (tabs < dirs.size()) {
+            int tabs = line.lastIndexOf('\t') + 1;
+            while (tabs < dirs.size()) { // invalid if tabs > dirs.size()
                 dirs.pop();
             }
+            int path = (dirs.isEmpty() ? 0 : dirs.peek()) + line.length() - tabs;
             if (line.indexOf('.') < 0) {
-                dirs.push(line.length() - tabs + 1);
+                dirs.push(path + 1); // add "/"
             } else {
-                int tabPos = line.lastIndexOf('\t');
-                int path = line.length();
-                if (tabPos >= 0) {
-                    path -= tabPos + 1;
-                    for (int dir : dirs) {
-                        path += dir;
-                    }
-                }
                 maxPath = Math.max(maxPath, path);
             }
         }
