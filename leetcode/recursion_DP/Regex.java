@@ -3,11 +3,14 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC010: https://leetcode.com/problems/regular-expression-matching/
+//
 // Implement regular expression matching with support for '.' and '*'.
 public class Regex {
-    // beats 50.80%
+    // beats 50.80%(45 ms)
     public boolean isMatch(String s, String p) {
         if (s == null || p == null) return false;
+
         if (p.isEmpty()) return s.isEmpty();
 
         Matcher matcher = new Matcher(p);
@@ -89,7 +92,7 @@ public class Regex {
     }
 
     // http://articles.leetcode.com/regular-expression-matching/
-    // beats 2.28%
+    // beats 2.28%(333 ms)
     public boolean isMatch2(String s, String p) {
         if (p.isEmpty()) return s.isEmpty();
 
@@ -102,44 +105,148 @@ public class Regex {
         // p.charAt(1) == '*'
         while (s.length() > 0 && (c == '.' || c == s.charAt(0))) {
             if (isMatch2(s, p.substring(2))) return true;
+
             s = s.substring(1);
         }
         return isMatch2(s, p.substring(2));
     }
 
+    // recursion
     // http://www.jiuzhang.com/solutions/regular-expression-matching/
-    // beats 26.44%
+    // beats 26.44%(143 ms)
     public boolean isMatch3(String s, String p) {
         if (p.isEmpty()) return s.isEmpty();
 
         if (p.length() == 1 || p.charAt(1) != '*') {
-            if (!matchFirst(p, s)) return false;
-
-            return isMatch3(s.substring(1), p.substring(1));
+            return matchFirst(s, p) && isMatch3(s.substring(1), p.substring(1));
         }
 
-        if (!matchFirst(p, s)) return isMatch3(s, p.substring(2));
+        if (!matchFirst(s, p)) return isMatch3(s, p.substring(2));
         // fork: 1. consume the character and reuse the same pattern
         //       2. keep the character, and skip '*' pattern
         // Here is also an opportunity to use DP
         return isMatch3(s.substring(1), p) || isMatch3(s, p.substring(2));
     }
 
-    private boolean matchFirst(String p, String s){
-        if (s.isEmpty()) return false;
-        return p.charAt(0) == '.' || p.charAt(0) == s.charAt(0);
+    private boolean matchFirst(String s, String p) {
+        return !s.isEmpty() && (p.charAt(0) == '.' || p.charAt(0) == s.charAt(0));
     }
+
+    // Dynamic Programming
+    // time complexity: O(N ^ 2), space complexity: O(N ^ 2)
+    // beats 97.99%(3 ms)
+    public boolean isMatch4(String s, String p) {
+        int m = s.length();
+        int n = p.length();
+        int[] chars = new int[n];
+        int j = 0;
+        for (int i = 0; i < n; i++, j++) {
+            chars[j] = p.charAt(i);
+            if (i + 1 < n && p.charAt(i + 1) == '*') {
+                chars[j] = -chars[j];
+                i++;
+            }
+        }
+        n = j;
+
+        boolean[][] dp = new boolean[m + 1][n + 1];
+        dp[0][0] = true;
+        for (j = 1; j <= n && chars[j - 1] < 0; j++) {
+            dp[0][j] = true;
+        }
+        for (int i = 1; i <= m; i++) {
+            for (j = 1; j <= n; j++) {
+                char c = (char)Math.abs(chars[j - 1]);
+                boolean same = (c == '.' || c == s.charAt(i - 1));
+                dp[i][j] = (same && dp[i - 1][j - 1]) // 1-occurance
+                           || (chars[j - 1] < 0 // wildcard
+                               && (dp[i][j - 1] // 0-occurence
+                                   || same && dp[i - 1][j])); // multi-occurrance
+            }
+        }
+        return dp[m][n];
+    }
+
+    // Dynamic Programming
+    // time complexity: O(N ^ 2), space complexity: O(N ^ 2)
+    // beats %(6 ms)
+    public boolean isMatch5(String s, String p) {
+        int m = s.length();
+        int n = p.length();
+        boolean[][] dp = new boolean[m + 1][n + 1];
+        dp[0][0] = true;
+        for (int i = 2; i <= n; i++) {
+            dp[0][i] = (p.charAt(i - 1) == '*') && dp[0][i - 2];
+        }
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                char c = p.charAt(j - 1);
+                if (c == '*') {
+                    dp[i][j] = dp[i][j - 2]; // 0-occurence
+                    if (p.charAt(j - 2) == '.' || p.charAt(j - 2) == s.charAt(i - 1)) {
+                        // dp[i][j] |= dp[i][j - 1] || dp[i - 1][j];
+                        dp[i][j] |= dp[i - 1][j];
+                    }
+                } else if (c == '.' || c == s.charAt(i - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                }
+            }
+        }
+        return dp[m][n];
+    }
+
+    // Solution of Choice
+    // https://discuss.leetcode.com/topic/31974/java-4ms-dp-solution-with-o-n-2-time-and-o-n-space-beats-95
+    // Dynamic Programming
+    // time complexity: O(N ^ 2), space complexity: O(N)
+    // beats 97.99%(3 ms)
+    public boolean isMatch6(String s, String p) {
+        int m = s.length();
+        int n = p.length();
+        boolean[] dp = new boolean[n + 1];
+        dp[0] = true;
+        for (int j = 2; j <= n; j++) {
+            dp[j] = dp[j - 2] && (p.charAt(j - 1) == '*');
+        }
+
+        for (int i = 1; i <= m; i++) {
+            boolean last = dp[0]; // dp[i - 1][j - 1]
+            dp[0] = false;
+            char sc = s.charAt(i - 1);
+            for (int j = 1; j <= n; j++) {
+                boolean cur = dp[j]; // dp[i-1][j]
+                char pc = p.charAt(j - 1);
+                if (pc != '*') {
+                    dp[j] = last && (sc == pc || pc == '.');
+                } else {
+                    char pc2 = p.charAt(j - 2);
+                    dp[j] = dp[j - 2] || (dp[j] && (sc == pc2 || pc2 == '.'));
+                }
+                last = cur;
+            }
+        }
+        return dp[n];
+    }
+
+    // TODO: backtracking
+
+    // TODO: state machine
 
     void test(String s, String p, boolean expected) {
         assertEquals(expected, isMatch(s, p));
         assertEquals(expected, isMatch2(s, p));
         assertEquals(expected, isMatch3(s, p));
+        assertEquals(expected, isMatch4(s, p));
+        assertEquals(expected, isMatch5(s, p));
+        assertEquals(expected, isMatch6(s, p));
     }
 
     @Test
     public void test1() {
+        test("", "c*c*", true);
         test("", "", true);
         test("aa","a", false);
+        test("aaa","a", false);
         test("aa","aa", true);
         test("aaa","aa", false);
         test("aa", "a*", true);
@@ -158,6 +265,7 @@ public class Regex {
         test("a", "ab*", true);
         test("a", "ab*c*", true);
         test("abcd", "a.*d", true);
+        test("aasdfasdfasdfasdfas", "aasdf.*asdf.*asdf.*asdf.*s", true);
     }
 
     public static void main(String[] args) {
