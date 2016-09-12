@@ -3,9 +3,11 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC044: https://leetcode.com/problems/wildcard-matching/
+//
 // Implement wildcard pattern matching with support for '?' and '*'.
 public class WildcardMatch {
-    // beats 54.54%
+    // beats 54.54%(13 ms)
     public boolean isMatch(String s, String p) {
         if (p.isEmpty()) return s.isEmpty();
 
@@ -177,15 +179,13 @@ public class WildcardMatch {
     public boolean isMatch3(String s, String p) {
         if (p.isEmpty()) return s.isEmpty();
 
-        char firstPat = p.charAt(0);
-        if (firstPat == '*') {
+        char c = p.charAt(0);
+        if (c == '*') {
             return (!s.isEmpty() && isMatch3(s.substring(1), p))
                    || isMatch3(s, p.substring(1));
         }
 
-        if (s.isEmpty()) return false;
-
-        if (firstPat != s.charAt(0) && firstPat != '?') return false;
+        if (s.isEmpty() || c != s.charAt(0) && c != '?') return false;
 
         return isMatch3(s.substring(1), p.substring(1));
     }
@@ -224,8 +224,9 @@ public class WildcardMatch {
         return s.length() >= count;
     }
 
+    // Solution of Choice
     // http://www.programcreek.com/2014/06/leetcode-wildcard-matching-java/
-    // beats 66.37%
+    // beats 66.37%(6 ms)
     public boolean isMatch5(String s, String p) {
         int pLen = p.length();
         int pCur = 0;
@@ -276,16 +277,17 @@ public class WildcardMatch {
         return false;
     }
 
+    // Dynamic Programming
     // https://www.youtube.com/watch?v=3ZDZ-N0EPV0
-    // Time: O(|s||p|), Space: O(|s|)
-    // beats 44.08%
+    // Time: O(|s||p|), Space: O(|s||p|)
+    // beats 44.08%(62 ms)
     public boolean isMatch7(String s, String p) {
         int pLen = p.length();
         char[] pat = p.toCharArray();
         int index = 0;
         boolean isFirst = true;
         for (int i = 0; i < pLen; i++) {
-            if (pat[i] == '*') {
+            if (pat[i] == '*') { // remove redundant *'s
                 if (isFirst) {
                     pat[index++] = pat[i];
                     isFirst = false;
@@ -306,7 +308,7 @@ public class WildcardMatch {
 
         for (int i = 1; i <= sLen; i++) {
             for (int j = 1; j <= pLen; j++) {
-                if (s.charAt(i - 1) == pat[j - 1] || pat[j - 1] == '?') {
+                if (pat[j - 1] == s.charAt(i - 1) || pat[j - 1] == '?') {
                     tbl[i][j] = tbl[i - 1][j - 1];
                 } else if (pat[j - 1] == '*') {
                     tbl[i][j] = tbl[i - 1][j] || tbl[i][j - 1];
@@ -364,6 +366,52 @@ public class WildcardMatch {
         return dp[sLen - 1];
     }
 
+    // Dynamic Programming
+    // Time: O(|s||p|), Space: O(|s|)
+    // beats %(33 ms)
+    public boolean isMatch9(String s, String p) {
+        int m = s.length();
+        int n = p.length();
+        char[] pat = p.toCharArray();
+        int index = 0;
+        boolean isFirst = true;
+        for (int i = 0; i < n; i++) {
+            if (pat[i] == '*') { // remove redundant *'s
+                if (isFirst) {
+                    pat[index++] = pat[i];
+                    isFirst = false;
+                }
+            } else {
+                pat[index++] = pat[i];
+                isFirst = true;
+            }
+        }
+
+        n = index;
+        boolean[] dp = new boolean[n + 1];
+        dp[0] = true;
+        if (n > 0 && pat[0] == '*') {
+            dp[1] = true;
+        }
+
+        for (int i = 1; i <= m; i++) {
+            boolean last = dp[0];
+            dp[0] = false;
+            for (int j = 1; j <= n; j++) {
+                boolean cur = dp[j];
+                if (pat[j - 1] == s.charAt(i - 1) || pat[j - 1] == '?') {
+                    dp[j] = last;
+                } else if (pat[j - 1] == '*') {
+                    dp[j] |= dp[j - 1];
+                } else {
+                    dp[j] = false;
+                }
+                last = cur;
+            }
+        }
+        return dp[n];
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -386,13 +434,14 @@ public class WildcardMatch {
             assertEquals(expected, isMatch6(s, p));
             assertEquals(expected, isMatch7(s, p));
             assertEquals(expected, isMatch8(s, p));
+            assertEquals(expected, isMatch9(s, p));
         } else {
             WildcardMatch matcher = new WildcardMatch();
             test(matcher::isMatch, "isMatch", s, p, expected);
-            test(matcher::isMatch, "isMatch5", s, p, expected);
-            test(matcher::isMatch, "isMatch6", s, p, expected);
-            test(matcher::isMatch, "isMatch7", s, p, expected);
-            test(matcher::isMatch, "isMatch8", s, p, expected);
+            test(matcher::isMatch5, "isMatch5", s, p, expected);
+            test(matcher::isMatch7, "isMatch7", s, p, expected);
+            test(matcher::isMatch8, "isMatch8", s, p, expected);
+            test(matcher::isMatch9, "isMatch9", s, p, expected);
         }
     }
 
@@ -427,6 +476,8 @@ public class WildcardMatch {
         test("abcd", "*?*?*?*?", true);
         test("abcde", "a*?*?*?*?e", false);
         test("aabcde", "a*?*?*?*?e", true);
+        test("aba", "aa*", false);
+        test("bab", "?", false);
         test("abc12rrrrrrrrrrrdcde89xyz", "a?c**cde*abcd**c**cd*xyz", false);
         test("abcg12cde0abcd8ccd9xyz", "a?c**cde*abcd**c**cd*xyz", true);
         test("12cde0abcd8ccd9", "**cde*abcd**c**cd*", true);
