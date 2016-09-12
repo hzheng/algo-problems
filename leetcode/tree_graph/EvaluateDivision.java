@@ -19,10 +19,11 @@ import static org.junit.Assert.*;
 // The input is always valid. You may assume that evaluating the queries will
 // result in no division by zero and there is no contradiction.
 public class EvaluateDivision {
+    // recursion
     // beats N/A(4 ms)
     public double[] calcEquation(String[][] equations, double[] values,
                                  String[][] queries) {
-        Map<String, Map<String, Double>> relations = new HashMap<>();
+        Map<String, Map<String, Double> > relations = new HashMap<>();
         for (int i = 0; i < equations.length; i++) {
             String[] equation = equations[i];
             double value = values[i];
@@ -37,7 +38,7 @@ public class EvaluateDivision {
         return res;
     }
 
-    private void save(Map<String, Map<String, Double>> relations,
+    private void save(Map<String, Map<String, Double> > relations,
                       String x, String y, double value) {
         if (!relations.containsKey(x)) {
             relations.put(x, new HashMap<>());
@@ -45,7 +46,7 @@ public class EvaluateDivision {
         relations.get(x).put(y, value);
     }
 
-    private double calc(Map<String, Map<String, Double>> relations,
+    private double calc(Map<String, Map<String, Double> > relations,
                         String x, String y) {
         if (!relations.containsKey(x)) return -1.0;
 
@@ -54,7 +55,7 @@ public class EvaluateDivision {
         return calc(relations, x, y, new HashSet<>());
     }
 
-    private double calc(Map<String, Map<String, Double>> relations,
+    private double calc(Map<String, Map<String, Double> > relations,
                         String x, String y, Set<String> visited) {
         visited.add(x);
         Map<String, Double> values = relations.get(x);
@@ -67,6 +68,38 @@ public class EvaluateDivision {
             }
         }
         return -1.0;
+    }
+
+    // iteration
+    // beats N/A(11 ms)
+    public double[] calcEquation2(String[][] equations, double[] values,
+                                  String[][] queries) {
+        Map<String, Map<String, Double> > relations = new HashMap<>();
+        for (int i = 0; i < equations.length; i++) {
+            String[] equation = equations[i];
+            double value = values[i];
+            save(relations, equation[0], equation[1], value);
+            save(relations, equation[1], equation[0], 1.0 / value);
+        }
+        for (String r : relations.keySet()) {
+            Set<String> relation = relations.get(r).keySet();
+            for (String x : relation) {
+                for (String y : relation) {
+                    save(relations, x, y,
+                         relations.get(x).get(r) * relations.get(r).get(y));
+                }
+            }
+        }
+        double[] res = new double[queries.length];
+        for (int i = 0; i < queries.length; i++) {
+            String[] query = queries[i];
+            if (!relations.containsKey(query[0])) {
+                res[i] = -1.0;
+            } else {
+                res[i] = relations.get(query[0]).getOrDefault(query[1], -1.0);
+            }
+        }
+        return res;
     }
 
     @FunctionalInterface
@@ -85,6 +118,7 @@ public class EvaluateDivision {
               double ... expected) {
         EvaluateDivision e = new EvaluateDivision();
         test(e::calcEquation, equations, values, queries, expected);
+        test(e::calcEquation2, equations, values, queries, expected);
     }
 
     @Test
