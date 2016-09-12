@@ -225,31 +225,26 @@ public class WildcardMatch {
     }
 
     // Solution of Choice
+    // Two Pointers
     // http://www.programcreek.com/2014/06/leetcode-wildcard-matching-java/
     // beats 66.37%(6 ms)
     public boolean isMatch5(String s, String p) {
         int pLen = p.length();
         int pCur = 0;
-        int pMark = -1;
-        int sMark = -1;
-        for (int sCur = 0; sCur < s.length(); ) {
+        for (int sCur = 0, pMark = -1, sMark = -1; sCur < s.length(); ) {
             if (pCur < pLen
                 && (p.charAt(pCur) == '?' || p.charAt(pCur) == s.charAt(sCur))) {
-                sCur++;
                 pCur++;
+                sCur++;
             } else if (pCur < pLen && p.charAt(pCur) == '*') {
                 pMark = pCur++;
                 sMark = sCur;
             } else if (pMark >= 0) {
                 pCur = pMark + 1;
                 sCur = ++sMark;
-            } else {
-                return false;
-            }
+            } else return false;
         }
-        while (pCur < pLen && p.charAt(pCur) == '*') {
-            ++pCur;
-        }
+        for (; pCur < pLen && p.charAt(pCur) == '*'; pCur++) {}
         return pCur == pLen;
     }
 
