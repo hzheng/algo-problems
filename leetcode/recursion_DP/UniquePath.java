@@ -3,11 +3,14 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC062: https://leetcode.com/problems/unique-paths/
+//
 // A robot is located at the top-left corner of a m x n grid.
 // It can only move either down or right at any point. The robot
 // is trying to reach the bottom-right corner of the grid.
 // How many possible unique paths are there?
 public class UniquePath {
+    // recursion
     // Time Limit Exceeded
     public int uniquePaths(int m, int n) {
         int[] count = new int[1];
@@ -29,12 +32,11 @@ public class UniquePath {
         }
     }
 
-    // beats 2.59%
+    // recursion
+    // beats 2.59%(3 ms)
     public int uniquePaths2(int m, int n) {
         if (m == 1 || n == 1) return 1;
-
         // if (m == 2) return n;
-
         // if (n == 2) return m;
 
         int count = 0;
@@ -46,7 +48,8 @@ public class UniquePath {
         return count;
     }
 
-    // beats 5.98%
+    // recursion + memo
+    // beats 5.98%(1 ms)
     public int uniquePaths3(int m, int n) {
         int[][] cache = new int[m][n];
         return uniquePaths3(m, n, cache);
@@ -72,10 +75,10 @@ public class UniquePath {
         return count;
     }
 
-    // beats 5.98%
+    // Dynamic Programming(2D array)
+    // time complexity: O(M * N), space complexity: O(M * N)
+    // beats 5.98%(1 ms)
     public int uniquePaths4(int m, int n) {
-        if (m == 1 || n == 1) return 1;
-
         int[][] count = new int[m][n];
         for (int i = 0; i < m; i++) {
             count[i][0] = 1;
@@ -83,7 +86,6 @@ public class UniquePath {
         for (int j = 0; j < n; j++) {
             count[0][j] = 1;
         }
-
         for (int i = 1; i < m; i++) {
             for (int j = 1; j < n; j++) {
                 count[i][j] = count[i - 1][j] + count[i][j - 1];
@@ -92,7 +94,10 @@ public class UniquePath {
         return count[m - 1][n - 1];
     }
 
-    // beats 83.92%
+    // Solution of Choice
+    // Dynamic Programming(1D array)
+    // time complexity: O(M * N), space complexity: O(N)
+    // beats 83.92%(0 ms)
     public int uniquePaths5(int m, int n) {
         int[] count = new int[n];
         for (int i = 0; i < n; i++) {
@@ -104,6 +109,19 @@ public class UniquePath {
             }
         }
         return count[n - 1];
+    }
+
+    // Solution of Choice(2)
+    // math:  (m+n)! / (m! * n!)
+    // time complexity: O(M + N), space complexity: O(1)
+    // beats 83.92%(0 ms)
+    public int uniquePaths6(int m, int n) {
+        long total = 1;
+        for (int i = m, j = 1; i < m + n - 1; i++, j++) {
+            total *= i;
+            total /= j;
+        }
+        return (int)total;
     }
 
     @FunctionalInterface
@@ -125,11 +143,13 @@ public class UniquePath {
         test(p::uniquePaths3, "uniquePaths3", expected, m, n);
         test(p::uniquePaths4, "uniquePaths4", expected, m, n);
         test(p::uniquePaths5, "uniquePaths5", expected, m, n);
+        test(p::uniquePaths6, "uniquePaths6", expected, m, n);
     }
 
     @Test
     public void test1() {
         test(1, 1, 2);
+        test(1, 2, 1);
         test(2, 2, 2);
         test(3, 3, 2);
         test(6, 3, 3);
