@@ -3,10 +3,13 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC032: https://leetcode.com/problems/longest-valid-parentheses/
+//
 // Given a string containing just the characters '(' and ')', find the length
 // of the longest valid (well-formed) parentheses substring.
 public class LongestParentheses {
-    // beats 3.59%
+    // Stack
+    // beats 3.59%(15 ms)
     public int longestValidParentheses(String s) {
         Stack<Integer> leftParens = new Stack<>();
         Stack<int[]> pairs = new Stack<>();
@@ -42,28 +45,26 @@ public class LongestParentheses {
         return maxLen;
     }
 
+    // Solution of Choice
+    // Stack
     // http://www.geeksforgeeks.org/length-of-the-longest-valid-substring/
-    // beats 50.87%
+    // beats 50.87%(10 ms)
     public int longestValidParentheses2(String s) {
         Stack<Integer> stack = new Stack<>();
         stack.push(-1);
         int maxLen = 0;
-        for (int cur = 0; cur < s.length(); cur++) {
-            switch (s.charAt(cur)) {
-            case '(':
-                stack.push(cur);
-                break;
-            case ')':
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '(') {
+                stack.push(i);
+            } else {
                 stack.pop();
                 if (stack.empty()) {
-                    // push current index as base for next valid pairs
-                    stack.push(cur);
+                    stack.push(i); // current index as base for next valid pairs
                 } else {
-                    maxLen = Math.max(maxLen, cur - stack.peek());
+                    maxLen = Math.max(maxLen, i - stack.peek());
                 }
             }
         }
-
         return maxLen;
     }
 
@@ -91,15 +92,57 @@ public class LongestParentheses {
         return Math.max(maxLen, s.length() - start - extraLeftParen);
     }
 
-    // TODO: add dynamci programming solution
+    // Solution of Choice(2)
+    // Dynamic Programming
+    // beats %(3 ms)
+    public int longestValidParentheses3(String s) {
+        int len = s.length();
+        int[] dp = new int[len];
+        int maxLen = 0;
+        int extraLeftParens = 0;
+        for (int i = 0; i < len; i++) {
+            if (s.charAt(i) == '(') {
+                extraLeftParens++;
+            } else if (extraLeftParens > 0) {
+                extraLeftParens--;
+                dp[i] = dp[i - 1] + 2;
+                if (i > dp[i]) { // merge previous matches
+                    dp[i] += dp[i - dp[i]];
+                }
+                maxLen = Math.max(maxLen, dp[i]);
+            }
+        }
+        return maxLen;
+    }
+
+    // Dynamic Programming
+    // beats %(4 ms)
+    public int longestValidParentheses4(String s) {
+        int len = s.length();
+        int[] dp = new int[len + 1];
+        int maxLen = 0;
+        for (int i = 1; i < len; i++) {
+            if (s.charAt(i) == ')') {
+                int left = i - dp[i] - 1;
+                if (left >= 0 && s.charAt(left) == '(') {
+                    dp[i + 1] = dp[i] + 2 + dp[left];
+                    maxLen = Math.max(maxLen, dp[i + 1]);
+                }
+            }
+        }
+        return maxLen;
+    }
 
     void test(String s, int expected) {
         assertEquals(expected, longestValidParentheses(s));
         assertEquals(expected, longestValidParentheses2(s));
+        assertEquals(expected, longestValidParentheses3(s));
+        assertEquals(expected, longestValidParentheses4(s));
     }
 
     @Test
     public void test1() {
+        test("((())(()", 4);
         test("(())()((()", 6);
         test("()(()", 2);
         test("()()()()", 8);
