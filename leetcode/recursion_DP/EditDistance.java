@@ -3,6 +3,8 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC072 https://leetcode.com/problems/edit-distance/
+//
 // Given two words word1 and word2, find the minimum number of steps required to
 // convert word1 to word2. (each operation is counted as 1 step.)
 // The following 3 operations permitted on a word:
@@ -10,6 +12,7 @@ import static org.junit.Assert.*;
 // b) Delete a character
 // c) Replace a character
 public class EditDistance {
+    // recursion
     // Time Limit Exceeded
     public int minDistance(String word1, String word2) {
         int len1 = word1.length();
@@ -43,7 +46,8 @@ public class EditDistance {
         return Math.min(Math.min(a, b), c);
     }
 
-    // beats 37.11%
+    // Dynamic Programming(2D array)
+    // beats 37.11%(15 ms)
     public int minDistance2(String word1, String word2) {
         int len1 = word1.length();
         int len2 = word2.length();
@@ -85,8 +89,9 @@ public class EditDistance {
         return d[len1][len2];
     }
 
+    // Dynamic Programming(2D array)
     // http://www.geeksforgeeks.org/dynamic-programming-set-5-edit-distance/
-    // beats 46.71%
+    // beats 46.71%(14 ms)
     public int minDistance3(String word1, String word2) {
         int len1 = word1.length();
         int len2 = word2.length();
@@ -109,60 +114,59 @@ public class EditDistance {
         return d[len1][len2];
     }
 
+    // Dynamic Programming(2D array)
     // https://en.wikipedia.org/wiki/Wagner%E2%80%93Fischer_algorithm
-    // beats 30.79%
+    // beats 30.79%(16 ms)
     public int minDistance4(String word1, String word2) {
         int len1 = word1.length();
         int len2 = word2.length();
-        int d[][] = new int[len1 + 1][len2 + 1];
+        int dp[][] = new int[len1 + 1][len2 + 1];
 
         for (int i = 0; i <= len2; i++) {
-            d[0][i] = i;
+            dp[0][i] = i;
         }
         for (int i = 1; i <= len1; i++) {
-            d[i][0] = i;
+            dp[i][0] = i;
             for (int j = 1; j <= len2; j++) {
                 if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
-                    d[i][j] = d[i - 1][j - 1];
+                    dp[i][j] = dp[i - 1][j - 1];
                 } else {
-                    d[i][j] = 1 + min(d[i][j - 1], d[i - 1][j], d[i - 1][j - 1]);
+                    dp[i][j] = 1 + min(dp[i][j - 1], dp[i - 1][j], dp[i - 1][j - 1]);
                 }
             }
         }
-
-        return d[len1][len2];
+        return dp[len1][len2];
     }
 
-    // beats 91.58%
+    // Solution of Choice
+    // Dynamic Programming(1D array)
+    // https://en.wikipedia.org/wiki/Levenshtein_distance
+    // beats 9x.xx%(10 ms)
     public int minDistance5(String word1, String word2) {
-        if (word1.length() > word2.length()) { // make sure word1 is shorter
-            String tmp = word1;
-            word1 = word2;
-            word2 = tmp;
-        }
-
         int len1 = word1.length();
         int len2 = word2.length();
-        int[] d = new int[len1 + 1];
+        // if (len1 > len2) return minDistance5(word2, word1); // optimize
+
+        int[] dp = new int[len1 + 1];
         for (int i = 0; i <= len1; i++) {
-            d[i] = i;
+            dp[i] = i;
         }
+        char[] chars1 = word1.toCharArray();
+        char[] chars2 = word2.toCharArray();
+        int[] buffer = new int[len1 + 1];
         for (int i = 0; i < len2; i++) {
-            int[] d1 = new int[len1 + 1];
-            d1[0] = i + 1;
+            buffer[0] = i + 1;
             for (int j = 0; j < len1; j++) {
-                if (word1.charAt(j) == word2.charAt(i)) {
-                    d1[j + 1] = d[j];
+                if (chars1[j] == chars2[i]) {
+                    buffer[j + 1] = dp[j];
                 } else {
-                    d1[j + 1] = min(d[j], d[j + 1], d1[j]) + 1;
+                    buffer[j + 1] = min(dp[j], dp[j + 1], buffer[j]) + 1;
                 }
             }
-            d = d1;
-            // can avoid recreating d1 each loop by copying, but beat ratio
-            // will drop to 37.11%(that dosen't necessarily mean worse)
-            // System.arraycopy(d1, 0, d, 0, len1 + 1);
+            // or: we could recreate buffer each loop and assign buffer to dp;
+            System.arraycopy(buffer, 0, dp, 0, len1 + 1);
         }
-        return d[len1];
+        return dp[len1];
     }
 
     @FunctionalInterface
