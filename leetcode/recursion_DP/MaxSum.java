@@ -3,22 +3,21 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- * https://leetcode.com/problems/maximum-subarray/
- * Cracking the Coding Interview(5ed) Problem 17.8:
- * Given an array of integers, find the contiguous sequence with the largest sum.
- */
+// LC053: https://leetcode.com/problems/maximum-subarray/
+// Cracking the Coding Interview(5ed) Problem 17.8
+//
+// Given an array of integers, find the contiguous sequence with the largest sum.
 public class MaxSum {
-    // beats 13.99%
-    public static int findMaxSum(int[] a) {
+    // beats 13.99%(2 ms)
+    public static int maxSubArray(int[] nums) {
         int maxSingle = Integer.MIN_VALUE; // in case of all negatives
         int sum = 0;
         int maxSum = 0;
-        for (int i = 0; i < a.length; i++) {
-            if ((maxSingle < 0) && (a[i] > maxSingle)) {
-                maxSingle = a[i];
+        for (int num : nums) {
+            if ((maxSingle < 0) && (num > maxSingle)) {
+                maxSingle = num;
             }
-            sum += a[i];
+            sum += num;
             if (maxSum < sum) {
                 maxSum = sum;
             } else if (sum < 0) { // start a new segment
@@ -28,8 +27,8 @@ public class MaxSum {
         return maxSingle < 0 ? maxSingle : maxSum;
     }
 
-    // beats 13.99%
-    public static int maxSubArray(int[] nums) {
+    // beats 13.99%(2 ms)
+    public static int maxSubArray2(int[] nums) {
         int maxSum = 0;
         int sum = 0;
         for (int num : nums) {
@@ -49,56 +48,57 @@ public class MaxSum {
         return maxSum;
     }
 
-    // from the book
-    public static int getMaxSum(int[] a) {
-        int maxSum = 0;
-        int runningSum = 0;
-        for (int i = 0; i < a.length; i++) {
-            runningSum += a[i];
-            if (maxSum < runningSum) {
-                maxSum = runningSum;
-            } else if (runningSum < 0) {
-                runningSum = 0;
-            }
-        }
-        return maxSum;
-    }
-
-    // 编程之美
-    // beats 3.53%
-    public static int getMaxSum2(int[] nums) {
+    // Solution of Choice
+    // beats 13.99%(2 ms)
+    public static int maxSubArray3(int[] nums) {
         int n = nums.length;
         int maxSum = nums[n - 1];
-        int start = nums[n - 1];
+        int sum = nums[n - 1];
         for (int i = n - 2; i >= 0; i--) {
-            start = Math.max(nums[i], nums[i] + start);
-            maxSum = Math.max(start, maxSum);
+            sum = Math.max(sum, 0);
+            maxSum = Math.max(maxSum, sum += nums[i]);
         }
         return maxSum;
     }
 
-    // 编程之美
-    // beats 68.48%
-    public static int getMaxSum3(int[] nums) {
+    // Dynamic Programming
+    // beats %(3 ms)
+    public static int maxSubArray4(int[] nums) {
         int n = nums.length;
-        int maxSum = nums[n - 1];
-        int start = nums[n - 1];
-        for (int i = n - 2; i >= 0; i--) {
-            if (start < 0) {
-                start = 0;
-            }
-            start += nums[i];
-            if (start > maxSum) {
-                maxSum = start;
-            }
+        int[] dp = new int[n + 1]; // maximum subarray ending with A[i]
+        int max = Integer.MIN_VALUE;
+        for (int i = 1; i <= n; i++) {
+            dp[i] = nums[i - 1] + Math.max(dp[i - 1], 0);
+            max = Math.max(max, dp[i]);
         }
-        return maxSum;
+        return max;
     }
 
-    // TODO: leetcode More practice:
+    // Leetcode More practice:
     // If you have figured out the O(n) solution, try coding another solution
     // using the divide and conquer approach, which is more subtle.
     // time complexity: O(N * log(N))
+    // beats %(3 ms)
+    public static int maxSubArray5(int[] nums) {
+        return maxSubArray5(nums, 0, nums.length - 1);
+    }
+
+    private static int maxSubArray5(int[] nums, int start, int end) {
+        if (start > end) return Integer.MIN_VALUE;
+
+        int mid = (start + end) >>> 1;
+        int maxSum1 = 0;
+        for (int i = mid - 1, sum = 0; i >= start; i--) {
+            maxSum1 = Math.max(maxSum1, sum += nums[i]);
+        }
+        int maxSum2 = 0;
+        for (int i = mid + 1, sum = 0; i <= end; i++) {
+            maxSum2 = Math.max(maxSum2, sum += nums[i]);
+        }
+        return Math.max(maxSum1 + maxSum2 + nums[mid],
+                        Math.max(maxSubArray5(nums, start, mid - 1),
+                                 maxSubArray5(nums, mid + 1, end)));
+    }
 
     private void test(Function<int[], Integer> maxSum, String name,
                       int expected, int ... a) {
@@ -112,13 +112,11 @@ public class MaxSum {
     }
 
     private void test(int expected, int ... a) {
-        test(MaxSum::findMaxSum, "findMaxSum", expected, a);
         test(MaxSum::maxSubArray, "maxSubArray", expected, a);
-        if (expected >= 0) {
-            test(MaxSum::getMaxSum, "getMaxSum", expected, a);
-            test(MaxSum::getMaxSum2, "getMaxSum2", expected, a);
-            test(MaxSum::getMaxSum3, "getMaxSum3", expected, a);
-        }
+        test(MaxSum::maxSubArray2, "maxSubArray2", expected, a);
+        test(MaxSum::maxSubArray3, "maxSubArray3", expected, a);
+        test(MaxSum::maxSubArray4, "maxSubArray4", expected, a);
+        test(MaxSum::maxSubArray5, "maxSubArray5", expected, a);
     }
 
     @Test
@@ -128,6 +126,7 @@ public class MaxSum {
         test(6, -2, 1, -3, 4, -1, 2, 1, -5, 4);
         test(1, -2, 1);
         test(-1, -2, -1);
+        test(-1, -1, -2);
         test(14, 6, -2, -2, 3, -2, -2, 4, 5, -4, -4, 5, 7, -9);
     }
 
