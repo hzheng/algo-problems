@@ -69,6 +69,7 @@ public class UniquePath2 {
         return count[m - 1][n - 1];
     }
 
+    // Solution of Choice
     // Dynamic Programming(1D array)
     // beats 17.74%(1 ms)
     public int uniquePathsWithObstacles3(int[][] obstacleGrid) {

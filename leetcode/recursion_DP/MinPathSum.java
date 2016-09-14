@@ -4,17 +4,19 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC064: https://leetcode.com/problems/minimum-path-sum/
+//
 // Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right which minimizes the sum of all numbers along its path.
 // Note: You can only move either down or right at any point in time.
 public class MinPathSum {
-    // beats 0.16%
+    // Dynamic Programming(2D array)
+    // beats %(4 ms)
     public int minPathSum(int[][] grid) {
         int m = grid.length;
         if (m == 0) return 0;
 
         int n = grid[0].length;
         if (n == 0) return 0;
-
         // if (m == 1) {
         //     return Arrays.stream(grid[0]).reduce(0, Integer::sum);
         // }
@@ -22,7 +24,6 @@ public class MinPathSum {
         // if (n == 1) {
         //     return Arrays.stream(grid).map(a -> a[0]).reduce(0, Integer::sum);
         // }
-
         int[][] min = new int[m][n];
         min[0][0] = grid[0][0];
         for (int i = 1; i < m; i++) {
@@ -40,7 +41,7 @@ public class MinPathSum {
     }
 
     // Breadth first search
-    // beats 0.48%
+    // beats 0.48%(29 ms)
     public int minPathSum2(int[][] grid) {
         int m = grid.length;
         if (m == 0) return 0;
@@ -107,7 +108,7 @@ public class MinPathSum {
     }
 
     // Dijkstra algorithm
-    // beats 0.08%
+    // beats 0.08%(151 ms)
     public int minPathSum3(int[][] grid) {
         int m = grid.length;
         if (m == 0) return 0;
@@ -148,8 +149,9 @@ public class MinPathSum {
         }
     }
 
-    // rolling array
-    // beats 92.89%
+    // Solution of Choice
+    // Dynamic Programming(1D array, aka rolling array)
+    // beats 92.89%(3 ms)
     public int minPathSum4(int[][] grid) {
         int m = grid.length;
         if (m == 0) return 0;
