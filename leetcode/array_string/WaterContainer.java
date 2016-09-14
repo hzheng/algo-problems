@@ -3,12 +3,14 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC011: https://leetcode.com/problems/container-with-most-water/
+//
 // Given n non-negative integers a[1], a[2], ..., a[n], where each represents a
 // point at coordinate (i, a[i]). n vertical lines are drawn such that the two
 // endpoints of line i is at (i, a[i]) and (i, 0). Find 2 lines, which together
 // with x-axis forms a container, s.t. the container contains the most water.
 public class WaterContainer {
-    // beats 71.89%
+    // beats 71.89%(5 ms)
     public int maxArea(int[] height) {
         int n = height.length;
         int start = 0;
@@ -57,28 +59,26 @@ public class WaterContainer {
         }
     }
 
+    // Two Pointers
     // http://www.programcreek.com/2014/03/leetcode-container-with-most-water-java/
-    // beats 5.03%
+    // beats ?%(7 ms)
     public int maxArea2(int[] height) {
-        if (height.length < 2) return 0;
-
         int maxArea = 0;
         for (int left = 0, right = height.length - 1; left < right; ) {
             maxArea = Math.max(maxArea, (right - left)
                                * Math.min(height[left], height[right]));
-            if (height[left] < height[right])
+            if (height[left] < height[right]) {
                 left++;
-            else
+            } else {
                 right--;
+            }
         }
-
         return maxArea;
     }
 
-    // beats 88.21%
+    // Two Pointers
+    // beats 88.21%(3 ms)
     public int maxArea3(int[] height) {
-        if (height.length < 2) return 0;
-
         int maxArea = 0;
         int maxLeftH = 0;
         int maxRightH = 0;
@@ -97,7 +97,20 @@ public class WaterContainer {
                 maxRightH = height[right];
             }
         }
+        return maxArea;
+    }
 
+    // Solution of Choice
+    // Two Pointers
+    // beats 88.21%(3 ms)
+    public int maxArea4(int[] height) {
+        int maxArea = 0;
+        for (int i = 0, j = height.length - 1; i < j; ) {
+            int h = Math.min(height[i], height[j]);
+            maxArea = Math.max(maxArea, (j - i) * h);
+            while (height[i] <= h && i < j) i++;
+            while (height[j] <= h && i < j) j--;
+        }
         return maxArea;
     }
 
@@ -105,6 +118,7 @@ public class WaterContainer {
         assertEquals(expected, maxArea(height));
         assertEquals(expected, maxArea2(height));
         assertEquals(expected, maxArea3(height));
+        assertEquals(expected, maxArea4(height));
     }
 
     @Test
