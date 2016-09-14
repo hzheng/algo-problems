@@ -4,6 +4,8 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC063: https://leetcode.com/problems/unique-paths-ii/
+//
 // Follow up for "Unique Paths":
 // Now consider if some obstacles are added to the grids. How many unique paths
 // would there be?
@@ -40,11 +42,11 @@ public class UniquePath2 {
     // the recursion method used in UniquePath's uniquePaths2 and its DP
     // version uniquePaths3 should still work, but too tedious to show here.
 
-    // beats 17.74%
+    // Dynamic Programming(2D array)
+    // beats 17.74%(1 ms)
     public int uniquePathsWithObstacles2(int[][] obstacleGrid) {
         int m = obstacleGrid.length;
         int n = obstacleGrid[0].length;
-
         int[][] count = new int[m][n];
         count[0][0] = 1; // 1 - obstacleGrid[0][0];
         for (int i = 1; i < m; i++) {
@@ -57,7 +59,6 @@ public class UniquePath2 {
                 count[0][j] = count[0][j - 1];
             }
         }
-
         for (int i = 1; i < m; i++) {
             for (int j = 1; j < n; j++) {
                 if (obstacleGrid[i][j] == 0) {
@@ -68,17 +69,16 @@ public class UniquePath2 {
         return count[m - 1][n - 1];
     }
 
-    // beats 17.74%
+    // Dynamic Programming(1D array)
+    // beats 17.74%(1 ms)
     public int uniquePathsWithObstacles3(int[][] obstacleGrid) {
         int m = obstacleGrid.length;
         int n = obstacleGrid[0].length;
         int[] count = new int[n];
-
-        count[0] = 1; // 1 - obstacleGrid[0][0];
+        count[0] = 1;
         for (int i = 1; i < n; i++) {
             count[i] = (1 - obstacleGrid[0][i]) * count[i - 1];
         }
-
         for (int i = 1; i < m; i++) {
             count[0] *= (1 - obstacleGrid[i][0]);
             for (int j = 1; j < n; j++) {
