@@ -4,10 +4,14 @@ import java.math.BigInteger;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC042: https://leetcode.com/problems/trapping-rain-water/
+//
 // Given n non-negative integers representing an elevation map where the width
 // of each bar is 1, compute how much water it is able to trap after raining.
 public class TrapRainWater {
-    // beats 6.83%
+    // Stack
+    // time complexity: O(N), space complexity: O(N)
+    // beats 6.83%(6 ms)
     public int trap(int[] height) {
         int len = height.length;
         if (len == 0) return 0;
@@ -15,7 +19,6 @@ public class TrapRainWater {
         int water = 0;
         int base = height[0];
         Stack<Integer> leftIndices = new Stack<>();
-
         for (int i = 1; i < len; i++) {
             int curH = height[i];
             if (curH < base) {
@@ -42,8 +45,10 @@ public class TrapRainWater {
         return water;
     }
 
+    // Two Pointers(3-pass)
     // http://www.geeksforgeeks.org/trapping-rain-water/
-    // beats 16.67%
+    // time complexity: O(N), space complexity: O(N)
+    // beats 16.67%(2 ms)
     public int trap2(int[] height) {
         int len = height.length;
         if (len == 0) return 0;
@@ -64,11 +69,12 @@ public class TrapRainWater {
         for (int i = 0; i < len; i++) {
             water += Math.min(left[i], right[i]) - height[i];
         }
-
         return water;
     }
 
-    // beats 16.67%
+    // Two Pointers(2-pass)
+    // time complexity: O(N), space complexity: O(N)
+    // beats 16.67%(2 ms)
     public int trap3(int[] height) {
         int len = height.length;
         if (len == 0) return 0;
@@ -85,7 +91,56 @@ public class TrapRainWater {
             right = Math.max(right, height[i]);
             water += Math.min(left[i], right) - height[i];
         }
+        return water;
+    }
 
+    // Two Pointers(1-pass)
+    // https://discuss.leetcode.com/topic/18731/7-lines-c-c
+    // time complexity: O(N), space complexity: O(1)
+    // beats 16.67%(2 ms)
+    public int trap4(int[] height) {
+        int water = 0;
+        for (int l = 0, r = height.length - 1, level = 0; l < r; ) {
+            int lower = height[height[l] < height[r] ? l++ : r--];
+            level = Math.max(level, lower);
+            water += level - lower;
+        }
+        return water;
+    }
+
+    // Solution of Choice
+    // Two Pointers(1-pass)
+    // time complexity: O(N), space complexity: O(1)
+    // beats 16.67%(2 ms)
+    public int trap5(int[] height) {
+        int water = 0;
+        for (int l = 0, r = height.length - 1, maxL = 0, maxR = 0; l < r; ) {
+            maxL = Math.max(maxL, height[l]);
+            maxR = Math.max(maxR, height[r]);
+            water += (maxL < maxR) ? (maxL - height[l++]) : (maxR - height[r--]);
+        }
+        return water;
+    }
+
+    // Stack
+    // time complexity: O(N), space complexity: O(N)
+    // Largest Rectangle in Histogram???
+    // beats %(7 ms)
+    public int trap6(int[] height) {
+        Stack<Integer> leftPos = new Stack<>();
+        int water = 0;
+        for (int i = 0; i < height.length; ) {
+            if (leftPos.isEmpty() || height[i] <= height[leftPos.peek()]) {
+                leftPos.push(i++);
+                continue;
+            }
+            int base = leftPos.pop();
+            if (!leftPos.isEmpty()) {
+                int left = leftPos.peek();
+                int depth = Math.min(height[left], height[i]) - height[base];
+                water += depth * (i - left - 1);
+            }
+        }
         return water;
     }
 
@@ -93,6 +148,9 @@ public class TrapRainWater {
         assertEquals(expected, trap(height));
         assertEquals(expected, trap2(height));
         assertEquals(expected, trap3(height));
+        assertEquals(expected, trap4(height));
+        assertEquals(expected, trap5(height));
+        assertEquals(expected, trap6(height));
     }
 
     @Test
