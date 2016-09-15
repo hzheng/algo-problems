@@ -132,13 +132,13 @@ public class TrapRainWater {
         for (int i = 0; i < height.length; ) {
             if (leftPos.isEmpty() || height[i] <= height[leftPos.peek()]) {
                 leftPos.push(i++);
-                continue;
-            }
-            int base = leftPos.pop();
-            if (!leftPos.isEmpty()) {
-                int left = leftPos.peek();
-                int depth = Math.min(height[left], height[i]) - height[base];
+            } else {
+                int base = leftPos.pop();
+                if (!leftPos.isEmpty()) {
+                    int left = leftPos.peek();
+                    int depth = Math.min(height[left], height[i]) - height[base];
                 water += depth * (i - left - 1);
+                }
             }
         }
         return water;

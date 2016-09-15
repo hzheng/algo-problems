@@ -3,10 +3,12 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// L084: Given n non-negative integers representing the histogram's bar height where the width of each bar is 1, find the area of largest rectangle in the histogram.
+//
 // Given n non-negative integers representing the histogram's bar height where
 // the width of each bar is 1, find the area of largest rectangle.
 public class LargestRect {
-    //  Time Limit Exceeded
+    // Time Limit Exceeded
     // time complexity: O(N ^ 2)
     public int largestRectangleArea(int[] heights) {
         int n = heights.length;
@@ -48,7 +50,7 @@ public class LargestRect {
     }
 
     // divide and conquer
-    //  Time Limit Exceeded
+    // Time Limit Exceeded
     public int largestRectangleArea2(int[] heights) {
         PriorityQueue<IndexedHeight> queue = new PriorityQueue<>();
         for (int i = 0; i < heights.length; i++) {
@@ -81,7 +83,7 @@ public class LargestRect {
     }
 
     // divide and conque
-    // beats 0.14%
+    // beats 0.14%(53 ms)
     public int largestRectangleArea3(int[] heights) {
         int n = heights.length;
         if (n == 0) return 0;
@@ -122,9 +124,11 @@ public class LargestRect {
     // time complexity: O(N * logN)
     // code omitted
 
-    // beats 59.19%
+    // Solution of Choice
+    // Stack
     // http://www.geeksforgeeks.org/largest-rectangle-under-histogram/
     // time complexity: O(N)
+    // beats ?%(23 ms)
     public int largestRectangleArea4(int[] heights) {
         Stack<Integer> stack = new Stack<>();
         int maxArea = 0;
@@ -134,7 +138,28 @@ public class LargestRect {
                 stack.push(i++);
             } else {
                 int last = stack.pop();
-                int width = stack.empty() ? i : i - stack.peek() - 1;
+                int width = stack.empty() ? i : (i - stack.peek() - 1);
+                maxArea = Math.max(maxArea, heights[last] * width);
+            }
+        }
+        return maxArea;
+    }
+
+    // Stack(array form)
+    // time complexity: O(N)
+    // beats ?%(5 ms)
+    public int largestRectangleArea5(int[] heights) {
+        int n = heights.length;
+        int maxArea = 0;
+        int[] stack = new int[n + 1];
+        int index = -1;
+        for (int i = 0; i <= n; ) {
+            int height = (i == n) ? 0 : heights[i];
+            if (index < 0 || height > heights[stack[index]]) {
+                stack[++index] = i++;
+            } else {
+                int last = stack[index--];
+                int width = (index < 0) ? i : (i - stack[index] - 1);
                 maxArea = Math.max(maxArea, heights[last] * width);
             }
         }
@@ -146,6 +171,7 @@ public class LargestRect {
         assertEquals(expected, largestRectangleArea2(heights));
         assertEquals(expected, largestRectangleArea3(heights));
         assertEquals(expected, largestRectangleArea4(heights));
+        assertEquals(expected, largestRectangleArea5(heights));
     }
 
     @Test
