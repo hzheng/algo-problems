@@ -4,6 +4,8 @@ import java.lang.reflect.Array;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC115: https://leetcode.com/problems/distinct-subsequences/
+//
 // Given a string S and a string T, count the number of distinct subsequences of
 // T in S.
 public class DistinctSubseq {
@@ -121,7 +123,7 @@ public class DistinctSubseq {
     }
 
     // dynamic programming
-    // beats 95.09%
+    // beats 95.09%(8 ms)
     public int numDistinct3(String s, String t) {
         List<Integer[]> indexListSeq = getIndexListSeq(s, t);
         if (indexListSeq == null) return 0;
@@ -154,7 +156,8 @@ public class DistinctSubseq {
         return countSeq.get(0)[0];
     }
 
-    // beats 52.62%
+    // Dynamic Programming(2D array)
+    // beats 52.62%(17 ms)
     public int numDistinct4(String s, String t) {
         int sLen = s.length();
         int tLen = t.length();
@@ -178,7 +181,8 @@ public class DistinctSubseq {
         return dp[sLen][tLen];
     }
 
-    // beats 86.29%
+    // Dynamic Programming(1D array)
+    // beats 86.29%(12 ms)
     public int numDistinct5(String s, String t) {
         int sLen = s.length();
         int tLen = t.length();
@@ -187,6 +191,26 @@ public class DistinctSubseq {
         for (int i = 1; i <= sLen; i++) {
             for (int j = tLen; j > 0; j--) {
                 if (s.charAt(i - 1) == t.charAt(j - 1)) {
+                    dp[j] += dp[j - 1];
+                }
+            }
+        }
+        return dp[tLen];
+    }
+
+    // Solution of Choice
+    // Dynamic Programming(1D array)
+    // beats 9X%(7 ms)
+    public int numDistinct6(String s, String t) {
+        int sLen = s.length();
+        int tLen = t.length();
+        char[] sChars = s.toCharArray();
+        char[] tChars = t.toCharArray();
+        int[] dp = new int[tLen + 1];
+        dp[0] = 1;
+        for (int i = 1; i <= sLen; i++) {
+            for (int j = tLen; j > 0; j--) {
+                if (sChars[i - 1] == tChars[j - 1]) {
                     dp[j] += dp[j - 1];
                 }
             }
@@ -215,6 +239,7 @@ public class DistinctSubseq {
         test(d::numDistinct3, "numDistinct3", s, t, expected);
         test(d::numDistinct4, "numDistinct4", s, t, expected);
         test(d::numDistinct5, "numDistinct5", s, t, expected);
+        test(d::numDistinct6, "numDistinct6", s, t, expected);
     }
 
     @Test
