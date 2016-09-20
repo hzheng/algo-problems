@@ -157,6 +157,32 @@ public class FrogJump {
         return !prevSet.isEmpty();
     }
 
+    // Dynamic Programming
+    // time complexity: O(N ^ 2), space complexity: O(N ^ 2)
+    // beats N/A(178 ms)
+    public boolean canCross6(int[] stones) {
+        int n = stones.length;
+        Map<Integer, Set<Integer>> stoneMap = new HashMap<>();
+        for (int i = 1; i < n; i++) {
+            stoneMap.put(stones[i], new HashSet<>());
+        }
+        if (stones[0] + 1 == stones[1]) {
+            stoneMap.get(stones[1]).add(1);
+        } else return false;
+
+        for (int i = 1; i < n; i++) {
+            int stone = stones[i];
+            for (int j : stoneMap.get(stone)) {
+                for (int k = j - 1; k < j + 2; k++) {
+                    if (k != 0 && stoneMap.containsKey(stone + k)) {
+                        stoneMap.get(stone + k).add(k);
+                    }
+                }
+            }
+        }
+        return !stoneMap.get(stones[n - 1]).isEmpty();
+    }
+
     void test(Function<int[], Boolean> canCross, String name,
              boolean expected, int ... stones) {
         long t1 = System.nanoTime();
@@ -173,6 +199,7 @@ public class FrogJump {
         test(f::canCross3, "canCross3", expected, stones);
         test(f::canCross4, "canCross4", expected, stones);
         test(f::canCross5, "canCross5", expected, stones);
+        test(f::canCross6, "canCross6", expected, stones);
     }
 
     @Test
