@@ -39,14 +39,14 @@ public class RangeBitwiseAnd {
         return m & mask;
     }
 
-    // beats 22.37(9 ms)
+    // beats 22.37%(9 ms)
     public int rangeBitwiseAnd3(int m, int n) {
         int shift = 0;
         for (; m != n; m >>= 1, n >>= 1, shift++);
         return m << shift;
     }
 
-    // beats 22.37(9 ms)
+    // beats 22.37%(9 ms)
     public int rangeBitwiseAnd4(int m, int n) {
         int mask = n;
         for (; mask > m; mask &= (mask - 1));
@@ -54,7 +54,7 @@ public class RangeBitwiseAnd {
     }
 
     // recursion
-    // beats 22.37(9 ms)
+    // beats 22.37%(9 ms)
     public int rangeBitwiseAnd5(int m, int n) {
         if (m >= n) return m;
 

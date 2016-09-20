@@ -94,7 +94,7 @@ public class MinStack {
     }
 
     // one user-defined stack
-    // beats 73.88(120 ms)
+    // beats 73.88%(120 ms)
     static class MinStack3 implements IMinStack {
         static class Node {
             int val;

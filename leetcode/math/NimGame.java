@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 // first turn to remove the stones. Write a function to determine whether you
 // can win the game given the number of stones in the heap.
 public class NimGame {
-    // beats
+    // beats 7.72%(0 ms)
     public boolean canWinNim(int n) {
         return (n & 3) != 0;
         // return (n % 4) != 0;

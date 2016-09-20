@@ -169,7 +169,7 @@ public class Regex {
 
     // Dynamic Programming
     // time complexity: O(N ^ 2), space complexity: O(N ^ 2)
-    // beats %(6 ms)
+    // beats 71.62%(6 ms)
     public boolean isMatch5(String s, String p) {
         int m = s.length();
         int n = p.length();

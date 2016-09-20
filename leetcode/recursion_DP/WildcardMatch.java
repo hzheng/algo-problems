@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 //
 // Implement wildcard pattern matching with support for '?' and '*'.
 public class WildcardMatch {
-    // beats 54.54%(13 ms)
+    // beats 72.04%(13 ms)
     public boolean isMatch(String s, String p) {
         if (p.isEmpty()) return s.isEmpty();
 
@@ -227,7 +227,7 @@ public class WildcardMatch {
     // Solution of Choice
     // Two Pointers
     // http://www.programcreek.com/2014/06/leetcode-wildcard-matching-java/
-    // beats 66.37%(6 ms)
+    // beats 79.45%(6 ms)
     public boolean isMatch5(String s, String p) {
         int pLen = p.length();
         int pCur = 0;
@@ -275,7 +275,7 @@ public class WildcardMatch {
     // Dynamic Programming
     // https://www.youtube.com/watch?v=3ZDZ-N0EPV0
     // Time: O(|s||p|), Space: O(|s||p|)
-    // beats 44.08%(62 ms)
+    // beats 58.56%(62 ms)
     public boolean isMatch7(String s, String p) {
         int pLen = p.length();
         char[] pat = p.toCharArray();
@@ -363,7 +363,7 @@ public class WildcardMatch {
 
     // Dynamic Programming
     // Time: O(|s||p|), Space: O(|s|)
-    // beats %(33 ms)
+    // beats 68.95%(33 ms)
     public boolean isMatch9(String s, String p) {
         int m = s.length();
         int n = p.length();

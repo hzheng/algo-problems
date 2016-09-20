@@ -61,7 +61,7 @@ public class WaterContainer {
 
     // Two Pointers
     // http://www.programcreek.com/2014/03/leetcode-container-with-most-water-java/
-    // beats ?%(7 ms)
+    // beats 12.32%(7 ms)
     public int maxArea2(int[] height) {
         int maxArea = 0;
         for (int left = 0, right = height.length - 1; left < right; ) {

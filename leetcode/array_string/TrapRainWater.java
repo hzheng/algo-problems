@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 public class TrapRainWater {
     // Stack
     // time complexity: O(N), space complexity: O(N)
-    // beats 6.83%(6 ms)
+    // beats 23.11%(6 ms)
     public int trap(int[] height) {
         int len = height.length;
         if (len == 0) return 0;
@@ -48,7 +48,7 @@ public class TrapRainWater {
     // Two Pointers(3-pass)
     // http://www.geeksforgeeks.org/trapping-rain-water/
     // time complexity: O(N), space complexity: O(N)
-    // beats 16.67%(2 ms)
+    // beats 33.23%(2 ms)
     public int trap2(int[] height) {
         int len = height.length;
         if (len == 0) return 0;
@@ -74,7 +74,7 @@ public class TrapRainWater {
 
     // Two Pointers(2-pass)
     // time complexity: O(N), space complexity: O(N)
-    // beats 16.67%(2 ms)
+    // beats 33.23%(2 ms)
     public int trap3(int[] height) {
         int len = height.length;
         if (len == 0) return 0;
@@ -97,7 +97,7 @@ public class TrapRainWater {
     // Two Pointers(1-pass)
     // https://discuss.leetcode.com/topic/18731/7-lines-c-c
     // time complexity: O(N), space complexity: O(1)
-    // beats 16.67%(2 ms)
+    // beats 33.23%(2 ms)
     public int trap4(int[] height) {
         int water = 0;
         for (int l = 0, r = height.length - 1, level = 0; l < r; ) {
@@ -111,7 +111,7 @@ public class TrapRainWater {
     // Solution of Choice
     // Two Pointers(1-pass)
     // time complexity: O(N), space complexity: O(1)
-    // beats 16.67%(2 ms)
+    // beats 33.23%(2 ms)
     public int trap5(int[] height) {
         int water = 0;
         for (int l = 0, r = height.length - 1, maxL = 0, maxR = 0; l < r; ) {
@@ -125,7 +125,7 @@ public class TrapRainWater {
     // Stack
     // time complexity: O(N), space complexity: O(N)
     // Largest Rectangle in Histogram???
-    // beats %(7 ms)
+    // beats 21.98%(7 ms)
     public int trap6(int[] height) {
         Stack<Integer> leftPos = new Stack<>();
         int water = 0;

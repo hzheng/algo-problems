@@ -57,7 +57,7 @@ public class Rtoi {
         return (unit1 * 5 == unit2) || (unit1 * 10 == unit2);
     }
 
-    // beats 8X.??%(6 ms)
+    // beats 91.45%(6 ms)
     public int romanToInt2(String s) {
         int[] vals = new int[26];
         vals['I' - 'A'] = 1;
@@ -84,7 +84,7 @@ public class Rtoi {
     }
 
     // Solution of Choice
-    // beats 8X.??%(6 ms)
+    // beats 91.45%(6 ms)
     public int romanToInt3(String s) {
         int[] vals = new int[26];
         vals['I' - 'A'] = 1;
@@ -103,7 +103,7 @@ public class Rtoi {
         return num;
     }
 
-    // beats 82.35%(7 ms)
+    // beats 75.87%(7 ms)
     public int romanToInt4(String s) {
         int num = 0;
         for (int i = s.length() - 1; i >= 0; i--) {

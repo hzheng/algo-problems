@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 // of the longest valid (well-formed) parentheses substring.
 public class LongestParentheses {
     // Stack
-    // beats 3.59%(15 ms)
+    // beats 14.98%(15 ms)
     public int longestValidParentheses(String s) {
         Stack<Integer> leftParens = new Stack<>();
         Stack<int[]> pairs = new Stack<>();
@@ -48,7 +48,7 @@ public class LongestParentheses {
     // Solution of Choice
     // Stack
     // http://www.geeksforgeeks.org/length-of-the-longest-valid-substring/
-    // beats 50.87%(10 ms)
+    // beats 48.06%(10 ms)
     public int longestValidParentheses2(String s) {
         Stack<Integer> stack = new Stack<>();
         stack.push(-1);
@@ -94,7 +94,7 @@ public class LongestParentheses {
 
     // Solution of Choice(2)
     // Dynamic Programming
-    // beats %(3 ms)
+    // beats 96.13%(3 ms)
     public int longestValidParentheses3(String s) {
         int len = s.length();
         int[] dp = new int[len];
@@ -116,7 +116,7 @@ public class LongestParentheses {
     }
 
     // Dynamic Programming
-    // beats %(4 ms)
+    // beats 85.52%(4 ms)
     public int longestValidParentheses4(String s) {
         int len = s.length();
         int[] dp = new int[len + 1];

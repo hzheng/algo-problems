@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 // Note: You can only move either down or right at any point in time.
 public class MinPathSum {
     // Dynamic Programming(2D array)
-    // beats %(4 ms)
+    // beats 32.27%(4 ms)
     public int minPathSum(int[][] grid) {
         int m = grid.length;
         if (m == 0) return 0;
@@ -41,7 +41,7 @@ public class MinPathSum {
     }
 
     // Breadth first search
-    // beats 0.48%(29 ms)
+    // beats 1.23%(29 ms)
     public int minPathSum2(int[][] grid) {
         int m = grid.length;
         if (m == 0) return 0;
@@ -151,7 +151,7 @@ public class MinPathSum {
 
     // Solution of Choice
     // Dynamic Programming(1D array, aka rolling array)
-    // beats 92.89%(3 ms)
+    // beats 84.58%(3 ms)
     public int minPathSum4(int[][] grid) {
         int m = grid.length;
         if (m == 0) return 0;

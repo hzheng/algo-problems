@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 //
 // Given an array of integers, find the contiguous sequence with the largest sum.
 public class MaxSum {
-    // beats 13.99%(2 ms)
+    // beats 22.56%(2 ms)
     public static int maxSubArray(int[] nums) {
         int maxSingle = Integer.MIN_VALUE; // in case of all negatives
         int sum = 0;
@@ -27,7 +27,7 @@ public class MaxSum {
         return maxSingle < 0 ? maxSingle : maxSum;
     }
 
-    // beats 13.99%(2 ms)
+    // beats 22.56%(2 ms)
     public static int maxSubArray2(int[] nums) {
         int maxSum = 0;
         int sum = 0;
@@ -49,7 +49,7 @@ public class MaxSum {
     }
 
     // Solution of Choice
-    // beats 13.99%(2 ms)
+    // beats 22.56%(2 ms)
     public static int maxSubArray3(int[] nums) {
         int n = nums.length;
         int maxSum = nums[n - 1];
@@ -62,7 +62,7 @@ public class MaxSum {
     }
 
     // Dynamic Programming
-    // beats %(3 ms)
+    // beats 15.70%(3 ms)
     public static int maxSubArray4(int[] nums) {
         int n = nums.length;
         int[] dp = new int[n + 1]; // maximum subarray ending with A[i]
@@ -78,7 +78,7 @@ public class MaxSum {
     // If you have figured out the O(n) solution, try coding another solution
     // using the divide and conquer approach, which is more subtle.
     // time complexity: O(N * log(N))
-    // beats %(3 ms)
+    // beats 15.70%(3 ms)
     public static int maxSubArray5(int[] nums) {
         return maxSubArray5(nums, 0, nums.length - 1);
     }

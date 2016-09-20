@@ -9,7 +9,7 @@ public class Itor {
     private static final int[] ROMAN_VALUES = {1000, 500, 100, 50, 10, 5, 1};
     private static final char[] ROMAN_LETTERS = {'M', 'D', 'C', 'L', 'X', 'V', 'I'};
 
-    // beats 68.22%(8 ms)
+    // beats 74.73%(8 ms)
     public String intToRoman(int num) {
         if (num <= 0) return "";
 
@@ -40,7 +40,7 @@ public class Itor {
 
     // Solution of Choice
     // https://discuss.leetcode.com/topic/12384/simple-solution
-    // beats %(6 ms)
+    // beats 97.85%(6 ms)
     private static final String M[] = {"", "M", "MM", "MMM"};
     private static final String C[] = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
     private static final String X[] = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
@@ -51,7 +51,7 @@ public class Itor {
     }
 
     // https://discuss.leetcode.com/topic/26543/easy-to-understand-java-solution
-    // beats %(15 ms)
+    // beats 21.40%(15 ms)
     private static enum Unit {
         M(1000), CM(900), D(500), CD(400), C(100),
         XC(90), L(50), XL(40), X(10), IX(9), V(5), IV(4), I(1);

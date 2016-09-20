@@ -47,7 +47,7 @@ public class EditDistance {
     }
 
     // Dynamic Programming(2D array)
-    // beats 37.11%(15 ms)
+    // beats 47.83%(15 ms)
     public int minDistance2(String word1, String word2) {
         int len1 = word1.length();
         int len2 = word2.length();
@@ -91,7 +91,7 @@ public class EditDistance {
 
     // Dynamic Programming(2D array)
     // http://www.geeksforgeeks.org/dynamic-programming-set-5-edit-distance/
-    // beats 46.71%(14 ms)
+    // beats 56.78%(14 ms)
     public int minDistance3(String word1, String word2) {
         int len1 = word1.length();
         int len2 = word2.length();
@@ -116,7 +116,7 @@ public class EditDistance {
 
     // Dynamic Programming(2D array)
     // https://en.wikipedia.org/wiki/Wagner%E2%80%93Fischer_algorithm
-    // beats 30.79%(16 ms)
+    // beats 31.71%(16 ms)
     public int minDistance4(String word1, String word2) {
         int len1 = word1.length();
         int len2 = word2.length();
@@ -141,7 +141,7 @@ public class EditDistance {
     // Solution of Choice
     // Dynamic Programming(1D array)
     // https://en.wikipedia.org/wiki/Levenshtein_distance
-    // beats 9x.xx%(10 ms)
+    // beats 93.36%(10 ms)
     public int minDistance5(String word1, String word2) {
         int len1 = word1.length();
         int len2 = word2.length();
