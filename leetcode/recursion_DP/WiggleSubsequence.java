@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/wiggle-subsequence/
+// LC376: https://leetcode.com/problems/wiggle-subsequence/
 //
 // A sequence of numbers is called a wiggle sequence if the differences between
 // successive numbers strictly alternate between positive and negative. The

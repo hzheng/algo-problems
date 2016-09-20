@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 // Note:
 // You may assume that both strings contain only lowercase letters.
 public class RansomNote {
-    // beats N/A(13 ms)
+    // beats 95.22%(13 ms)
     public boolean canConstruct(String ransomNote, String magazine) {
         int[] counts = new int[26];
         for (char c : magazine.toCharArray()) {

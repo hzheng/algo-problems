@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 
 // LC392: https://leetcode.com/problems/is-subsequence/
 public class IsSubsequence {
-    // beats N/A(31 ms)
+    // beats 63.62%(31 ms)
     public boolean isSubsequence(String s, String t) {
         int sLen = s.length();
         int tLen = t.length();
@@ -18,6 +18,7 @@ public class IsSubsequence {
         return i == sLen;
     }
 
+    // beats 52.69%(36 ms)
     public boolean isSubsequence2(String s, String t) {
         int sLen = s.length();
         int tLen = t.length();

@@ -94,7 +94,7 @@ public class RandomPickIndex {
     }
 
     // Reservoir sampling
-    // beats N/A(397 ms)
+    // beats 24.23%(397 ms)
     static class RandomPickIndex3 implements IRandomPickIndex {
         private Random rand = new Random();
         private int[] nums;

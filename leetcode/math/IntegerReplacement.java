@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 // What is the minimum number of replacements needed for n to become 1?
 public class IntegerReplacement {
     // iteration
-    // beats N/A(5 ms)
+    // beats 57.77%(5 ms)
     public int integerReplacement(int n) {
         if (n == Integer.MAX_VALUE) return 32;
 
@@ -28,7 +28,7 @@ public class IntegerReplacement {
     }
 
     // recursion
-    // beats N/A(7 ms)
+    // beats 36.12%(7 ms)
     public int integerReplacement2(int n) {
         if (n <= 1) return 0;
 
@@ -41,7 +41,7 @@ public class IntegerReplacement {
     }
 
     // recursion
-    // beats N/A(7 ms)
+    // beats 36.12%(7 ms)
     public int integerReplacement3(int n) {
         return integerReplacement3((long)n);
     }

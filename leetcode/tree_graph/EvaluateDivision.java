@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 // result in no division by zero and there is no contradiction.
 public class EvaluateDivision {
     // recursion
-    // beats N/A(4 ms)
+    // beats 47.55(4 ms)
     public double[] calcEquation(String[][] equations, double[] values,
                                  String[][] queries) {
         Map<String, Map<String, Double> > relations = new HashMap<>();
@@ -71,7 +71,7 @@ public class EvaluateDivision {
     }
 
     // iteration
-    // beats N/A(11 ms)
+    // beats 5.85%(11 ms)
     public double[] calcEquation2(String[][] equations, double[] values,
                                   String[][] queries) {
         Map<String, Map<String, Double> > relations = new HashMap<>();

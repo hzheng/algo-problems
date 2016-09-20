@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 
 import common.Interval;
 
-// https://leetcode.com/problems/insert-delete-getrandom-o1/
+// LC380: https://leetcode.com/problems/insert-delete-getrandom-o1/
 //
 // Design a data structure that supports all following operations in average O(1) time.
 
@@ -29,7 +29,7 @@ public class RandomizedSet {
         public int getRandom();
     }
 
-    // beat N?A(147 ms)
+    // beat 37.91%(147 ms)
     static class RandomizedSet1 implements IRandomizedSet {
         private Random rand = new Random();
         private Map<Integer, Integer> valMap = new HashMap<>();
@@ -63,7 +63,7 @@ public class RandomizedSet {
         }
     }
 
-    // beat N?A(153 ms)
+    // beat 28.86%(153 ms)
     static class RandomizedSet2 implements IRandomizedSet {
         private Random rand = new Random();
 

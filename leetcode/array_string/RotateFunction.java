@@ -29,7 +29,7 @@ public class RotateFunction {
     }
 
     // time complexity: O(N), space complexity: O(1)
-    // beats N/A(5 ms)
+    // beats 42.67%(5 ms)
     public int maxRotateFunction2(int[] A) {
         int n = A.length;
         int coefficientSum = 0;

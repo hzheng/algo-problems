@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
 // The input is an array of integers. Only the least significant 8 bits of each
 // integer is used to store the data. This means each integer represents only 1 byte of data.
 public class Utf8Validation {
-    // beats N/A(8 ms)
+    // beats 49.49%(8 ms)
     public boolean validUtf8(int[] data) {
         int len = data.length;
         for (int i = 0; i < len; i++) {

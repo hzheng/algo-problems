@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 // form an exact cover of a rectangular region.
 // Each rectangle is represented as a bottom-left point and a top-right point.
 public class PerfectRectangle {
-    // beats N/A(50 ms)
+    // beats 99.55%(50 ms)
     public boolean isRectangleCover(int[][] rectangles) {
         int n = rectangles.length;
         if (n < 2) return true;

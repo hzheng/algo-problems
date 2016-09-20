@@ -18,7 +18,7 @@ public class RandomNode {
     private Random rand = new Random();
 
     // Solution of Choice
-    // beats N/A(145 ms)
+    // beats 37.53%(145 ms)
     public int getRandom(ListNode head) {
         ListNode chosen = null;
         int i = 0;

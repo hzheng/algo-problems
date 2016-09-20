@@ -1,17 +1,19 @@
-// Given a n x n matrix where each of the rows and columns are sorted in
-
 import java.util.*;
 import java.util.PriorityQueue;
 import java.util.function.Function;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC378: https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/
+//
+// Given a n x n matrix where each of the rows and columns are sorted in
 // ascending order, find the kth smallest element in the matrix.
 // Note:
 // You may assume k is always valid, 1 ≤ k ≤ n ^ 2.
 public class KthSmallestInMatrix {
     // time complexity: O(N ^ 2), space complexity: O(N)
-    // beats N/A(42 ms)
+    // beats 24.86%(42 ms)
     public int kthSmallest(int[][] matrix, int k) {
         if (k == 1) return matrix[0][0];
 
@@ -67,7 +69,7 @@ public class KthSmallestInMatrix {
     }
 
     // time complexity: O(N * log(N)), space complexity: O(N)
-    // beats N/A(21 ms)
+    // beats 76.75%(21 ms)
     public int kthSmallest2(int[][] matrix, int k) {
         int n = matrix.length;
         int m = (int)Math.sqrt(k);
@@ -108,7 +110,7 @@ public class KthSmallestInMatrix {
     }
 
     // time complexity: O(N * log(K)), space complexity: O(K)
-    // beats N/A(42 ms)
+    // beats 24.86%(42 ms)
     public int kthSmallest3(int[][] matrix, int k) {
         int n = matrix.length;
         PriorityQueue<int[]> pq = new PriorityQueue<>(new Comparator<int[]>() {

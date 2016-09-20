@@ -31,7 +31,7 @@ public class RandomizedCollection {
         public int getRandom();
     }
 
-    // beat N?A(148 ms)
+    // beat 47.36%(148 ms)
     static class RandomizedCollection1 implements IRandomizedCollection {
         private Random rand = new Random();
         private Map<Integer, Set<Integer>> map = new HashMap<>();

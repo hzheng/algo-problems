@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
 // The minute must be consist of two digits and may contain a leading zero
 public class BinaryWatch {
     // Backtracking + Bit Manipulation
-    // beats N/A(31 ms)
+    // beats 18.58%(31 ms)
     public List<String> readBinaryWatch(int num) {
         List<String> res = new ArrayList<>();
         readBinaryWatch(num, 0, 10, res);
@@ -49,7 +49,7 @@ public class BinaryWatch {
         return String.format("%d:%02d", hour, min);
     }
 
-    // beats N/A(32 ms)
+    // beats 16.70%(32 ms)
     public List<String> readBinaryWatch2(int num) {
         List<String> res = new ArrayList<>();
         for (int h = 0; h < 12; h++) {

@@ -43,7 +43,7 @@ public class LongestSubstring {
 
     // Divide & Conquer
     // time complexity: O(N ^ 2), space complexity: O(N)
-    // beats N/A(3 ms)
+    // beats 89.88%(3 ms)
     public int longestSubstring2(String s, int k) {
         return longestSubstring2(s.toCharArray(), k, 0, s.length());
     }
@@ -68,7 +68,7 @@ public class LongestSubstring {
 
     // Divide & Conquer
     // time complexity: O(N), space complexity: O(N)
-    // beats N/A(3 ms)
+    // beats 89.88(3 ms)
     public int longestSubstring3(String s, int k) {
         return longestSubstring3(s.toCharArray(), k, 0, s.length());
     }

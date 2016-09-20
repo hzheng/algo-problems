@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 // right to left, until a single number remains.
 // Find the last number that remains starting with a list of length n.
 public class EliminationGame {
-    // beats N/A(93 ms)
+    // beats 26.73%(93 ms)
     public int lastRemaining(int n) {
         return lastRemaining(n, true);
     }
@@ -25,12 +25,20 @@ public class EliminationGame {
         return (left2Right || (n & 1) == 1) ? res : res - 1;
     }
 
-    // beats N/A(87 ms)
+    // beats 40.10%(87 ms)
     public int lastRemaining2(int n) {
         return n == 1 ? 1 : ((n >> 1) + 1 - lastRemaining2(n >> 1)) << 1;
     }
 
-    // beats N/A(82 ms)
+    // beats 89.60%(75 ms)
+    public int lastRemaining2_2(int n) {
+        if (n == 1) return 1;
+
+        n >>= 1;
+        return (n + 1 - lastRemaining(n)) << 1;
+    }
+
+    // beats 59.41%(82 ms)
     public int lastRemaining3(int n) {
         int head = 1;
         boolean left2Right = true;
@@ -46,6 +54,7 @@ public class EliminationGame {
     void test(int n, int expected) {
         assertEquals(expected, lastRemaining(n));
         assertEquals(expected, lastRemaining2(n));
+        assertEquals(expected, lastRemaining2_2(n));
         assertEquals(expected, lastRemaining3(n));
     }
 

@@ -79,7 +79,7 @@ public class FrogJump {
     }
 
     // Recursion + Memoization
-    // beats N/A(56 ms)
+    // beats 49.66%(56 ms)
     public boolean canCross3(int[] stones) {
         return canCross3(stones, 0, 0, new HashMap<>());
     }
@@ -159,7 +159,7 @@ public class FrogJump {
 
     // Dynamic Programming
     // time complexity: O(N ^ 2), space complexity: O(N ^ 2)
-    // beats N/A(178 ms)
+    // beats 13.61%(178 ms)
     public boolean canCross6(int[] stones) {
         int n = stones.length;
         Map<Integer, Set<Integer>> stoneMap = new HashMap<>();

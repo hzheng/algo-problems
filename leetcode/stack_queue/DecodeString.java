@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 // Furthermore, you may assume that the original data does not contain any
 // digits and that digits are only for those repeat numbers, k.
 public class DecodeString {
-    // beats N/A(5 ms)
+    // beats 20.91%(5 ms)
     public String decodeString(String s) {
         Stack<Integer> counts = new Stack<>();
         Stack<StringBuilder> strs = new Stack<>();

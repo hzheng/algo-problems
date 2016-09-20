@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 // The length of num is less than 10 ^ 5 and will be ≥ k.
 // The given num does not contain any leading zero.
 public class RemoveKDigits {
-    // beats N/A(15 ms)
+    // beats 77.70%(15 ms)
     public String removeKdigits(String num, int k) {
         int len = num.length();
         if (k >= len) return "0";
@@ -41,7 +41,7 @@ public class RemoveKDigits {
     }
 
     // Stack
-    // beats N/A(10 ms)
+    // beats 89.53%(10 ms)
     public String removeKdigits2(String num, int k) {
         int len = num.length();
         if (k >= len) return "0";

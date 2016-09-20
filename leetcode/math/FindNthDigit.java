@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 // Find the nth digit of the infinite integer sequence 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, ...
 // n is positive and will fit within the range of a 32-bit signed integer (n < 2 ^ 31).
 public class FindNthDigit {
-    // beats N/A(6 ms)
+    // beats 39.39%(6 ms)
     public int findNthDigit(int n) {
         if (n < 10) return n;
 
@@ -31,7 +31,7 @@ public class FindNthDigit {
     }
 
     // https://discuss.leetcode.com/topic/59314/java-solution
-    // beats N/A(6 ms)
+    // beats 39.39%(6 ms)
     public int findNthDigit2(int n) {
         int len = 1;
         int start = 1;
@@ -44,7 +44,7 @@ public class FindNthDigit {
     }
 
     // https://discuss.leetcode.com/topic/59378/short-python-java
-    // beats N/A(6 ms)
+    // beats 39.39%(6 ms)
     public int findNthDigit3(int n) {
         int digits = 1;
         int first = 1;

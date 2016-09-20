@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 // letter at a random position.
 // Find the letter that was added in t.
 public class FindTheDifference {
-    // beats N/A(10 ms)
+    // beats 30.51%(10 ms)
     public char findTheDifference(String s, String t) {
         int[] counts = new int[26];
         for (char c : t.toCharArray()) {
@@ -25,7 +25,7 @@ public class FindTheDifference {
         return 0;
     }
 
-    // beats N/A(8 ms)
+    // beats 55.21%(8 ms)
     public char findTheDifference2(String s, String t) {
         char res = 0;
         for (char c : t.toCharArray()) {
@@ -38,7 +38,7 @@ public class FindTheDifference {
     }
 
     // Solution of Choice
-    // beats N/A(7 ms)
+    // beats 74.08%(7 ms)
     public char findTheDifference3(String s, String t) {
         int len = s.length();
         char res = t.charAt(len);

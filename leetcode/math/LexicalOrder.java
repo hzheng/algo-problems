@@ -24,7 +24,7 @@ public class LexicalOrder {
         return res;
     }
 
-    // beats N/A(166 ms)
+    // beats 84.66%(166 ms)
     public List<Integer> lexicalOrder(int n) {
         List<Integer> res = new ArrayList<>();
         for (int i = 1, count = 0, limit = n / 10; count < n; count++) {

@@ -2,7 +2,8 @@ import java.util.*;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-// https://leetcode.com/problems/combination-sum-iv/
+
+// LC377: https://leetcode.com/problems/combination-sum-iv/
 //
 // Given an integer array with all positive numbers and no duplicates, find the
 // number of possible combinations that add up to a positive integer target.
@@ -101,7 +102,7 @@ public class CombinationSum4 {
         }
     }
 
-    // beats N/A(48 ms)
+    // beats 1.9%(48 ms)
     // time complexity: O(?), space complexity: O(N * T)
     public int combinationSum4_2(int[] nums, int target) {
         int n = nums.length;
@@ -146,7 +147,7 @@ public class CombinationSum4 {
     }
 
     // time complexity: O(N * T), space complexity: O(T)
-    // beats N/A(6 ms)
+    // beats 22.32%(6 ms)
     public int combinationSum4_3(int[] nums, int target) {
         int[] dp = new int[target + 1];
         dp[0] = 1;

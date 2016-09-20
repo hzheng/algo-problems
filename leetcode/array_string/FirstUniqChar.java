@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 // Note: You may assume the string contain only lowercase letters.
 public class FirstUniqChar {
     // one pass, worse case: N + 26
-    // beats N/A(19 ms)
+    // beats 91.56%(19 ms)
     public int firstUniqChar(String s) {
         int[] indices = new int[26];
         int i = 0;
@@ -32,7 +32,7 @@ public class FirstUniqChar {
     }
 
     // two passes, worse case: 2N
-    // beats N/A(18 ms)
+    // beats 93.23%(18 ms)
     public int firstUniqChar2(String s) {
         int[] counts = new int[26];
         char[] chars = s.toCharArray();
