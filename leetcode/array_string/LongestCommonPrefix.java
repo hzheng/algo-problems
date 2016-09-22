@@ -1,9 +1,13 @@
+import java.util.*;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC014: https://leetcode.com/problems/longest-common-prefix/
+//
 // Find the longest common prefix string amongst an array of strings.
 public class LongestCommonPrefix {
-    // beats 40.93%
+    // beats 39.00%(3 ms)
     public String longestCommonPrefix(String[] strs) {
         if (strs == null || strs.length == 0) return "";
 
@@ -21,8 +25,9 @@ public class LongestCommonPrefix {
         return first;
     }
 
+    // Solution of Choice
     // from the solution
-    // beats 80.10%
+    // beats 84.22%(1 ms)
     public String longestCommonPrefix2(String[] strs) {
         if (strs.length == 0) return "";
 
@@ -36,7 +41,9 @@ public class LongestCommonPrefix {
         return prefix;
     }
 
+    // Divide & Conquer
     // from the solution
+    // beats 7.62%(12 ms)
     public String longestCommonPrefix3(String[] strs) {
         if (strs == null || strs.length == 0) return "";
         return longestCommonPrefix3(strs, 0, strs.length - 1);
@@ -45,7 +52,7 @@ public class LongestCommonPrefix {
     private String longestCommonPrefix3(String[] strs, int l, int r) {
         if (l == r) return strs[l];
 
-        int mid = (l + r)/2;
+        int mid = (l + r) >>> 1;
         String lcpLeft = longestCommonPrefix3(strs, l, mid);
         String lcpRight = longestCommonPrefix3(strs, mid + 1, r);
         return commonPrefix(lcpLeft, lcpRight);
@@ -54,13 +61,13 @@ public class LongestCommonPrefix {
     private String commonPrefix(String left, String right) {
         int min = Math.min(left.length(), right.length());
         for (int i = 0; i < min; i++) {
-            if (left.charAt(i) != right.charAt(i))
-                return left.substring(0, i);
+            if (left.charAt(i) != right.charAt(i)) return left.substring(0, i);
         }
         return left.substring(0, min);
     }
 
     // from the solution
+    // beats 9.81%(11 ms)
     public String longestCommonPrefix4(String[] strs) {
         if (strs == null || strs.length == 0) return "";
 
@@ -71,17 +78,17 @@ public class LongestCommonPrefix {
         int low = 0;
         int high = minLen;
         while (low <= high) {
-            int middle = (low + high) / 2;
+            int middle = (low + high) >>> 1;
             if (isCommonPrefix(strs, middle)) {
                 low = middle + 1;
             } else {
                 high = middle - 1;
             }
         }
-        return strs[0].substring(0, (low + high) / 2);
+        return strs[0].substring(0, (low + high) >>> 1);
     }
 
-    private boolean isCommonPrefix(String[] strs, int len){
+    private boolean isCommonPrefix(String[] strs, int len) {
         String str1 = strs[0].substring(0,len);
         for (int i = 1; i < strs.length; i++) {
             if (!strs[i].startsWith(str1)) return false;
@@ -89,16 +96,36 @@ public class LongestCommonPrefix {
         return true;
     }
 
+    // beats 7.62%(12 ms)
+    public String longestCommonPrefix5(String[] strs) {
+        if (strs == null || strs.length == 0) return "";
+
+        Arrays.sort(strs);
+        StringBuilder sb = new StringBuilder();
+        char[] a = strs[0].toCharArray();
+        char[] b = strs[strs.length - 1].toCharArray();
+        for (int i = 0; i < a.length; i ++) {
+            if (i < b.length && b[i] == a[i]) {
+                sb.append(b[i]);
+            }
+            else break;
+        }
+        return sb.toString();
+    }
+
     void test(String[] strs, String expected) {
         assertEquals(expected, longestCommonPrefix(strs));
         assertEquals(expected, longestCommonPrefix2(strs));
         assertEquals(expected, longestCommonPrefix3(strs));
         assertEquals(expected, longestCommonPrefix4(strs));
+        assertEquals(expected, longestCommonPrefix5(strs));
     }
 
     @Test
     public void test1() {
         test(new String[] {"abc", "abef", "abk", "aba"}, "ab");
+        test(new String[] {"abc", "abef", "cabk", "aba"}, "");
+        test(new String[] {"abc", "abcef", "abck", "abca"}, "abc");
     }
 
     public static void main(String[] args) {
