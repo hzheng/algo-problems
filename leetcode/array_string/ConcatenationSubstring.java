@@ -3,6 +3,8 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC030: https://leetcode.com/problems/substring-with-concatenation-of-all-words/
+//
 // Given a string, s, and a list of words, words, all of the same length. Find
 // all starting indices of substring(s) in s that is a concatenation of each
 // word in words exactly once and without any intervening characters.
@@ -186,7 +188,7 @@ public class ConcatenationSubstring {
         }
     }
 
-    // beats 91.26%(16 ms)
+    // beats 88.99%(16 ms)
     public List<Integer> findSubstring3(String s, String[] words) {
         if (s.isEmpty() || words.length == 0) return Collections.emptyList();
 
@@ -298,6 +300,53 @@ public class ConcatenationSubstring {
         return res;
     }
 
+    // Solution of Choice
+    // beats 58.08%(35 ms)
+    public List<Integer> findSubstring5(String s, String[] words) {
+        if (s.isEmpty() || words.length == 0) return Collections.emptyList();
+
+        Map<String, Integer> counts = new HashMap<>();
+        for (String word : words) {
+            counts.put(word, counts.getOrDefault(word, 0) + 1);
+        }
+
+        List<Integer> res = new ArrayList<>();
+        int wordLen = words[0].length();
+        int lastIndex = s.length() - wordLen;
+        for (int i = 0; i < wordLen; i++) {
+            Map<String, Integer> found = new HashMap<>();
+            int start = i;
+            int total = 0;
+            for (int j = i; j <= lastIndex; j += wordLen) {
+                String slice = s.substring(j, j + wordLen);
+                if (!counts.containsKey(slice)) {
+                    start = j + wordLen;
+                    total = 0;
+                    found.clear();
+                    continue;
+                }
+
+                int count = found.getOrDefault(slice, 0) + 1;
+                found.put(slice, count);
+                if (count > counts.get(slice)) { // shift
+                    for (; ; total--) {
+                        String word = s.substring(start, start + wordLen);
+                        found.put(word, found.get(word) - 1);
+                        start += wordLen;
+                        if (word.equals(slice)) break;
+                    }
+                } else if (++total == words.length) {
+                    res.add(start);
+                    String word = s.substring(start, start + wordLen);
+                    found.put(word, found.get(word) - 1);
+                    total--;
+                    start += wordLen;
+                }
+            }
+        }
+        return res;
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -317,6 +366,7 @@ public class ConcatenationSubstring {
         test(c::findSubstring2, expected, s, words);
         test(c::findSubstring3, expected, s, words);
         test(c::findSubstring4, expected, s, words);
+        test(c::findSubstring5, expected, s, words);
     }
 
     @Test
