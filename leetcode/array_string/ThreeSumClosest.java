@@ -4,10 +4,12 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// Given an array of integers, find 3 in s.t the sum is closest to a target.
+// LC016: https://leetcode.com/problems/3sum-closest/
+//
+// Given an array of integers, find 3 s.t the sum is closest to a target.
 public class ThreeSumClosest {
     // time complexity: O(N ^ 2)
-    // beats 35.55%
+    // beats 26.26%(15 ms)
     public int threeSumClosest(int[] nums, int target) {
         if (nums == null || nums.length < 3) return 0;
 
@@ -45,11 +47,8 @@ public class ThreeSumClosest {
         return minDiff;
     }
 
-    // from http://www.jiuzhang.com/solutions/3sum-closest/
-    // beats 35.55%
+    // beats 13.64%(20 ms)
     public int threeSumClosest2(int[] num, int target) {
-		if (num == null || num.length < 3) return Integer.MAX_VALUE;
-
 		Arrays.sort(num);
 		int closest = Integer.MAX_VALUE / 2; // otherwise it may overflow
 		for (int i = 0; i < num.length - 2; i++) {
@@ -57,18 +56,20 @@ public class ThreeSumClosest {
 			int right = num.length - 1;
 			while (left < right) {
 				int sum = num[i] + num[left] + num[right];
-				if (sum == target) {
-					return sum;
-				} else if (sum < target) {
-					left++;
-                    while (left < right && num[left] == num[left - 1]) left++;
-				} else {
-					right--;
-                    while (left < right && num[right] == num[right + 1]) right--;
-				}
 				if (Math.abs(sum - target) < Math.abs(closest - target)) {
+                    if (sum == target) return sum;
+
                     closest = sum;
                 }
+				if (sum < target) {
+					left++;
+                    // may improve performance
+                    // while (left < right && num[left] == num[left - 1]) left++;
+				} else {
+					right--;
+                    // may improve performance
+                    // while (left < right && num[right] == num[right + 1]) right--;
+				}
 			}
 		}
 		return closest;

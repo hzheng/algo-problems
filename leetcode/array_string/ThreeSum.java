@@ -4,7 +4,9 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-//  Find all unique triplets in the array which gives the sum of zero.
+// LC015: https://leetcode.com/problems/3sum/
+//
+// Find all unique triplets in the array which gives the sum of zero.
 public class ThreeSum {
     // Sort + Hashtable
     // time complexity: O(N ^ 2)
