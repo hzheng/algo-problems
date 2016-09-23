@@ -6,8 +6,9 @@ import static org.junit.Assert.*;
 
 //  Find all unique triplets in the array which gives the sum of zero.
 public class ThreeSum {
+    // Sort + Hashtable
     // time complexity: O(N ^ 2)
-    // beats 10.29%
+    // beats 12.35%(34 ms)
     public List<List<Integer> > threeSum(int[] nums) {
         if (nums == null || nums.length < 3) return Collections.emptyList();
 
@@ -20,7 +21,7 @@ public class ThreeSum {
                 twoSum(nums, i, result, map);
             }
         }
-        return new ArrayList<List<Integer>>(result);
+        return new ArrayList<>(result);
     }
 
     private void twoSum(int[] nums, int start, Set<List<Integer> > lists,
@@ -40,19 +41,20 @@ public class ThreeSum {
         }
     }
 
-    // beats 34.07%
+    // Sort + Binary Search
+    // time complexity: O(N ^ 2 * log(N))
+    // beats 18.12%(29 ms)
     public List<List<Integer> > threeSum2(int[] nums) {
         if (nums == null || nums.length < 3) return Collections.emptyList();
 
-        List<List<Integer> > result = new ArrayList<List<Integer> >();
+        List<List<Integer>> res = new ArrayList<>();
         Arrays.sort(nums);
-        for (int i = 0; i < nums.length - 2; i++) {
-            if (nums[i] > 0) break;
+        for (int i = 0; i < nums.length - 2 && nums[i] <= 0; i++) {
             if (i == 0 || nums[i] > nums[i - 1]) {
-                twoSum2(nums, i, result);
+                twoSum2(nums, i, res);
             }
         }
-        return result;
+        return res;
     }
 
     private void twoSum2(int[] nums, int start, List<List<Integer> > lists) {
@@ -64,7 +66,8 @@ public class ThreeSum {
 
             lastNum = num;
             int complement = -target - num;
-            if (find(nums, i + 1, complement)) {
+            if (Arrays.binarySearch(nums, i + 1, nums.length, complement) >= 0) {
+            // if (find(nums, i + 1, complement)) {
                 List<Integer> l = Arrays.asList(target, num, complement);
                 lists.add(l);
             }
@@ -85,35 +88,33 @@ public class ThreeSum {
         return false;
     }
 
-    // beats 60.94%
+    // Sort + Two Pointers
+    // time complexity: O(N)
+    // beats 21.95%(26 ms)
     public List<List<Integer> > threeSum3(int[] nums) {
-        if (nums == null || nums.length < 3) return Collections.emptyList();
-
-        List<List<Integer> > result = new ArrayList<List<Integer> >();
+        List<List<Integer> > res = new ArrayList<>();
         Arrays.sort(nums);
-        for (int i = 0; i < nums.length - 2; i++) {
-            if (nums[i] > 0) break;
+        for (int i = 0; i < nums.length - 2 && nums[i] <= 0; i++) {
             if (i == 0 || nums[i] > nums[i - 1]) {
-                twoSum3(nums, i, result);
+                twoSum3(nums, i, res);
             }
         }
-        return result;
+        return res;
     }
 
     private void twoSum3(int[] nums, int start, List<List<Integer> > lists) {
         int target = -nums[start];
         for (int i = start + 1, j = nums.length - 1; j > i; ) {
             int sum = nums[i] + nums[j];
-            if (sum == target) {
-                List<Integer> l = Arrays.asList(-target, nums[i], nums[j]);
-                lists.add(l);
+            if (sum < target) {
                 i++;
-                while (i < j && nums[i] == nums[i - 1]) i++;
+            } else if (sum > target) {
                 j--;
-                while (i < j && nums[j] == nums[j + 1]) j--;
-            } else if (sum < target) {
-                i++;
             } else {
+                lists.add(Arrays.asList(-target, nums[i], nums[j]));
+                while (i < j && nums[i] == nums[i + 1]) i++;
+                i++;
+                while (i < j && nums[j] == nums[j - 1]) j--;
                 j--;
             }
         }
@@ -128,7 +129,7 @@ public class ThreeSum {
 
     void test(Function<int[], List<List<Integer>>> threeSum, String name,
               int[] nums, Integer[][] expected) {
-        List<List<Integer> > res = threeSum.apply(nums);
+        List<List<Integer> > res = threeSum.apply(nums.clone());
         // System.out.println(res);
         Integer[][] resArray = res.stream().map(
             l -> l.stream().toArray(Integer[]::new)).toArray(Integer[][]::new);
