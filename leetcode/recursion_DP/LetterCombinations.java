@@ -1,21 +1,25 @@
 import java.util.*;
+import java.util.function.Function;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC017: https://leetcode.com/problems/letter-combinations-of-a-phone-number/
+//
 // Given a digit string, return all possible letter combinations that the number
 // could represent.
 public class LetterCombinations {
     private final String[][] LETTERS = {
         {" "}, {""}, {"a", "b", "c"}, {"d", "e", "f"}, {"g", "h", "i"},
         {"j", "k", "l"}, {"m", "n", "o"}, {"p", "q", "r", "s"},
-        {"t", "u", "v"}, {"w", "x", "y", "z"}};
+        {"t", "u", "v"}, {"w", "x", "y", "z"}
+    };
 
-    // beats 46.02%
+    // beats 47.29%(1 ms)
     public List<String> letterCombinations(String digits) {
         if (digits == null || digits.isEmpty()) return Collections.emptyList();
 
-        LinkedList<String[]> letterList = new LinkedList<>();
+        Queue<String[]> letterList = new LinkedList<>();
         for (char c : digits.toCharArray()) {
             int index = c - '0';
             if (index < 2 || index > 9) return Collections.emptyList();
@@ -25,7 +29,7 @@ public class LetterCombinations {
         return Arrays.asList(combine(letterList));
     }
 
-    private String[] combine(LinkedList<String[]> strsList) {
+    private String[] combine(Queue<String[]> strsList) {
         if (strsList.isEmpty()) return new String[0];
 
         String[] combinations = strsList.poll();
@@ -53,10 +57,73 @@ public class LetterCombinations {
         return combinations;
     }
 
-    void test(String digits, String[] expected) {
-        String[] res = letterCombinations(digits).stream()
+    // BFS(Queue)
+    // https://discuss.leetcode.com/topic/8465/my-java-solution-with-fifo-queue
+    // beats 11.68%(3 ms)
+    private final char[][] LETTERS2 = {
+        {}, {}, {'a', 'b', 'c'}, {'d', 'e', 'f'}, {'g', 'h', 'i'},
+        {'j', 'k', 'l'}, {'m', 'n', 'o'}, {'p', 'q', 'r', 's'},
+        {'t', 'u', 'v'}, {'w', 'x', 'y', 'z'}
+    };
+
+    public List<String> letterCombinations2(String digits) {
+        if (digits == null || digits.isEmpty()) return Collections.emptyList();
+
+        LinkedList<String> res = new LinkedList<>();
+        res.add("");
+        char[] digitChars = digits.toCharArray();
+        for (int i = 0; i < digitChars.length; i++) {
+            int num = Character.getNumericValue(digitChars[i]);
+            if (num < 2) return Collections.emptyList();
+
+            while (res.peek().length() == i) {
+                String prefix = res.poll();
+                for (char c : LETTERS2[num]) {
+                    res.add(prefix + c);
+                }
+            }
+        }
+        return res;
+    }
+
+    // Solution of Choice
+    // DFS/Backtracking
+    // beats 11.68%(3 ms)
+    public List<String> letterCombinations3(String digits) {
+        if (digits == null || digits.isEmpty()) return Collections.emptyList();
+
+        List<String> res = new ArrayList<>();
+        combine3(0, digits.toCharArray(), new StringBuilder(), res);
+        return res;
+    }
+
+    private void combine3(int start, char[] digits,
+                          StringBuilder sb, List<String> res) {
+        if (start == digits.length) {
+            res.add(sb.toString());
+            return;
+        }
+
+        int len = sb.length();
+        for (char c : LETTERS2[digits[start] - '0']) {
+            sb.append(c);
+            combine3(start + 1, digits, sb, res);
+            sb.setLength(len); // or: sb.deleteCharAt(len);
+        }
+    }
+
+    void test(Function<String, List<String> > letterCombinations,
+              String digits, String[] expected) {
+        String[] res = letterCombinations.apply(digits).stream()
                        .toArray(String[]::new);
         assertArrayEquals(expected, res);
+    }
+
+    void test(String digits, String[] expected) {
+        LetterCombinations l = new LetterCombinations();
+        test(l::letterCombinations, digits, expected);
+        test(l::letterCombinations2, digits, expected);
+        test(l::letterCombinations3, digits, expected);
     }
 
     @Test
