@@ -34,26 +34,26 @@ public class Parentheses {
     // Solution of Choice
     // Recursion/Backtracking
     // beats 54.04%(2 ms)
-    public static List<String> parentheses2(int count) {
-        char[] str = new char[count * 2];
-        List<String> list = new ArrayList<>();
-        addParen2(list, count, count, str, 0);
-        return list;
+    public static List<String> parentheses2(int n) {
+        List<String> res = new ArrayList<>();
+        addParen2(res, n, n, new char[n * 2], 0);
+        return res;
     }
 
-    private static void addParen2(List<String> list, int leftRem, int rightRem,
-                                  char[] str, int count) {
-        if (leftRem == 0 && rightRem == 0) { // all out of left and right parentheses
-            list.add(String.valueOf(str));
-        } else {
-            if (leftRem > 0) { // try a left paren, if there are some available
-                str[count] = '(';
-                addParen2(list, leftRem - 1, rightRem, str, count + 1);
-            }
-            if (rightRem > leftRem) { // try a right paren, if there's a matching left
-                str[count] = ')';
-                addParen2(list, leftRem, rightRem - 1, str, count + 1);
-            }
+    private static void addParen2(List<String> res, int leftRem, int rightRem,
+                                  char[] buf, int index) {
+        if (rightRem == 0) { // all out of left and right parentheses
+            res.add(String.valueOf(buf));
+            return;
+        }
+
+        if (leftRem > 0) { // try a left paren, if there are some available
+            buf[index] = '(';
+            addParen2(res, leftRem - 1, rightRem, buf, index + 1);
+        }
+        if (rightRem > leftRem) { // try a right paren, if there's a matching left
+            buf[index] = ')';
+            addParen2(res, leftRem, rightRem - 1, buf, index + 1);
         }
     }
 
