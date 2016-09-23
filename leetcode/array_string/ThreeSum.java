@@ -90,6 +90,7 @@ public class ThreeSum {
         return false;
     }
 
+    // Solution of Choice
     // Sort + Two Pointers
     // time complexity: O(N)
     // beats 21.95%(26 ms)
@@ -114,10 +115,8 @@ public class ThreeSum {
                 j--;
             } else {
                 lists.add(Arrays.asList(-target, nums[i], nums[j]));
-                while (i < j && nums[i] == nums[i + 1]) i++;
-                i++;
-                while (i < j && nums[j] == nums[j - 1]) j--;
-                j--;
+                while (++i < j && nums[i] == nums[i - 1]) {}
+                while (i < --j && nums[j] == nums[j + 1]) {}
             }
         }
     }

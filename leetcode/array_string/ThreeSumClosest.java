@@ -47,6 +47,7 @@ public class ThreeSumClosest {
         return minDiff;
     }
 
+    // Solution of Choice
     // beats 13.64%(20 ms)
     public int threeSumClosest2(int[] num, int target) {
 		Arrays.sort(num);

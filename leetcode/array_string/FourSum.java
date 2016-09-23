@@ -3,10 +3,13 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC018: https://leetcode.com/problems/4sum/
+//
 //  Find all unique quadruplets in the array which gives the sum of target
 public class FourSum {
+    // Solution of Choice
     // time complexity: O(N ^ 3)
-    // beats 88.26%
+    // beats 64.36%(53 ms)
     public List<List<Integer> > fourSum(int[] nums, int target) {
         if (nums == null || nums.length < 4) return Collections.emptyList();
 
@@ -32,18 +35,16 @@ public class FourSum {
         target -= secondNum;
         for (int i = second + 1, j = nums.length - 1; j > i; ) {
             int sum = nums[i] + nums[j];
-            if (sum == target) {
+            if (sum < target) {
+                i++;
+            } else if (sum > target) {
+                j--;
+            } else {
                 List<Integer> l = Arrays.asList(firstNum, secondNum,
                                                 nums[i], nums[j]);
                 lists.add(l);
-                i++;
-                while (i < j && nums[i] == nums[i - 1]) i++;
-                j--;
-                while (i < j && nums[j] == nums[j + 1]) j--;
-            } else if (sum < target) {
-                i++;
-            } else {
-                j--;
+                while (++i < j && nums[i] == nums[i - 1]) {}
+                while (i < --j && nums[j] == nums[j + 1]) {}
             }
         }
     }
