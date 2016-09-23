@@ -7,21 +7,32 @@ import static org.junit.Assert.*;
 
 import common.ListNode;
 
+// LC023: https://leetcode.com/problems/merge-k-sorted-lists/
+//
 // Merge k sorted linked lists and return it as a new list.
 public class MergeSortedKLists {
-    // beats 12.37% (1.31% if not set PriorityQueue's size)
+    // Solution of Choice
+    // Heap
+    // beats 9.05%(21 ms)
     // time complexity: O(N * log(K))
     public ListNode mergeKLists(ListNode[] lists) {
         if (lists == null || lists.length == 0) return null;
 
-        ListNode dummy = new ListNode(0);
+        // PriorityQueue<ListNode> headHeap
+        //     = new PriorityQueue<>(lists.length, (a, b)-> a.val - b.val);
         PriorityQueue<ListNode> headHeap
-            = new PriorityQueue<>(lists.length, (a, b)-> a.val - b.val);
+            = new PriorityQueue<>(lists.length,
+                                  new Comparator<ListNode>() {
+            public int compare(ListNode a, ListNode b) {
+                return a.val - b.val;
+            }
+        });
         for (ListNode node : lists) {
             if (node != null) {
                 headHeap.offer(node);
             }
         }
+        ListNode dummy = new ListNode(0);
         for (ListNode cur = dummy; !headHeap.isEmpty(); cur = cur.next) {
             ListNode max = headHeap.poll();
             cur.next = max;
@@ -47,7 +58,7 @@ public class MergeSortedKLists {
     }
 
     private void mergeTwoLists(ListNode cur, ListNode l1, ListNode l2) {
-        for ( ; l1 != null || l2 != null; cur = cur.next) {
+        for (; l1 != null || l2 != null; cur = cur.next) {
             if (l1 == null || (l2 != null && l1.val > l2.val)) {
                 cur.next = l2;
                 l2 = l2.next;
@@ -80,12 +91,44 @@ public class MergeSortedKLists {
         return listSet.get(0);
     }
 
+    // Divide & Conquer/Recursion
+    // beats 7.95%(22 ms)
+    public ListNode mergeKLists4(ListNode[] lists) {
+        if (lists == null || lists.length == 0) return null;
+
+        return partion(lists, 0, lists.length - 1);
+    }
+
+    private ListNode partion(ListNode[] lists, int low, int high) {
+        if (low == high) return lists[low];
+
+        int mid = (low + high) >>> 1;
+        return merge(partion(lists, low, mid), partion(lists, mid + 1, high));
+    }
+
+    private ListNode merge(ListNode l1, ListNode l2) {
+        if (l1 == null) return l2;
+        if (l2 == null) return l1;
+
+        if (l1.val < l2.val) {
+            l1.next = merge(l1.next, l2);
+            return l1;
+        } else {
+            l2.next = merge(l1, l2.next);
+            return l2;
+        }
+    }
+
     void test(Function<ListNode[], ListNode> merge,
               int[] expected, int[] ... listArray) {
         ListNode[] lists = Stream.of(listArray)
                            .map(l->ListNode.of(l)).toArray(ListNode[]::new);
         ListNode res = merge.apply(lists);
-        assertArrayEquals(expected, res.toArray());
+        if (expected.length == 0) {
+            assertNull(res);
+        } else {
+            assertArrayEquals(expected, res.toArray());
+        }
     }
 
     void test(int[] expected, int[] ... listArray) {
@@ -93,10 +136,15 @@ public class MergeSortedKLists {
         test(l::mergeKLists, expected, listArray);
         test(l::mergeKLists2, expected, listArray);
         test(l::mergeKLists3, expected, listArray);
+        test(l::mergeKLists4, expected, listArray);
     }
 
     @Test
     public void test1() {
+        test(new int[] {}, new int[0]);
+        test(new int[] {}, new int[] {});
+        test(new int[] {}, new int[] {}, new int[] {});
+        test(new int[] {1}, new int[] {}, new int[] {1});
         test(new int[] {1, 2, 3, 4, 5, 6},
              new int[] {1, 3, 5}, new int[] {2, 4, 6});
         test(new int[] {2, 3, 4, 6}, new int[] {3}, new int[] {2, 4, 6});
