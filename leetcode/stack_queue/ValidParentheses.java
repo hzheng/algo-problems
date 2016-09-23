@@ -3,6 +3,8 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC020: https://leetcode.com/problems/valid-parentheses/
+// 
 // Given a string containing just the characters '(', ')', '{', '}', '[' and ']',
 // determine if the input string is valid.
 public class ValidParentheses {
