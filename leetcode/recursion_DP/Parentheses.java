@@ -7,12 +7,10 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- * https://leetcode.com/problems/generate-parentheses/
- *
- * Cracking the Coding Interview(5ed) Problem 9.6:
- * Print all valid combinations of n-pairs of parentheses.
- */
+// LC022: https://leetcode.com/problems/generate-parentheses/
+// Cracking the Coding Interview(5ed) Problem 9.6:
+//
+// Print all valid combinations of n-pairs of parentheses.
 public class Parentheses {
     // FIXME: wrong
     public static List<String> parenthesesWrong(int count) {
@@ -33,8 +31,9 @@ public class Parentheses {
         return list;
     }
 
-    // from the book
-    // beats 87.70% in leetcode
+    // Solution of Choice
+    // Recursion/Backtracking
+    // beats 54.04%(2 ms)
     public static List<String> parentheses2(int count) {
         char[] str = new char[count * 2];
         List<String> list = new ArrayList<>();
@@ -118,6 +117,32 @@ public class Parentheses {
         return res;
     }
 
+    // Recursion/Backtracking
+    // beats 28.68%(3 ms)
+    public static List<String> generateParenthesis(int n) {
+        List<String> res = new ArrayList<>();
+        generateParenthesis(n, 0, 0, new StringBuilder(), res);
+        return res;
+    }
+
+    private static void generateParenthesis(int n, int leftParens, int rightParens,
+                                     StringBuilder sb, List<String> res) {
+        if (n == rightParens) {
+            res.add(sb.toString());
+            return;
+        }
+
+        int len = sb.length();
+        if (leftParens < n) {
+            generateParenthesis(n, leftParens + 1, rightParens, sb.append('('), res);
+            sb.setLength(len);
+        }
+        if (leftParens > rightParens) {
+            generateParenthesis(n, leftParens, rightParens + 1, sb.append(')'), res);
+            // sb.setLength(len);
+        }
+    }
+
     void test(Function<Integer, List<String> > getParen, String name,
               int n, String ... expected) {
         Arrays.sort(expected);
@@ -129,7 +154,7 @@ public class Parentheses {
     void test(int n, String ... expected) {
         test(Parentheses::parentheses2, "parentheses2", n, expected);
         test(Parentheses::parenthesesBit, "parenthesesBit", n, expected);
-        // test(Parentheses::generateParenthesis, "generateParenthesis", n, expected);
+        test(Parentheses::generateParenthesis, "generateParenthesis", n, expected);
     }
 
     @Test
