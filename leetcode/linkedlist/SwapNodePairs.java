@@ -1,17 +1,21 @@
+import java.util.function.Function;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 import common.ListNode;
-// Given a linked list, swap every two adjacent nodes and return its head.
 
+// L024: https://leetcode.com/problems/swap-nodes-in-pairs/
+//
+// Given a linked list, swap every two adjacent nodes and return its head.
 public class SwapNodePairs {
-    // beats 13.35%
+    // Solution of Choice
+    // beats 22.60%(0 ms)
     public ListNode swapPairs(ListNode head) {
         ListNode dummy = new ListNode(0);
         dummy.next = head;
         for (ListNode cur = dummy; cur.next != null && cur.next.next != null; ) {
             ListNode tmp = cur.next;
-
             cur.next = tmp.next;
             tmp.next = cur.next.next;
             cur.next.next = tmp;
@@ -20,15 +24,31 @@ public class SwapNodePairs {
             // tmp.next = tmp2.next;
             // cur.next = tmp2;
             // tmp2.next = tmp;
-
             cur = tmp;
         }
         return dummy.next;
     }
 
-    void test(int[] n, int[] expected) {
-        ListNode l = swapPairs(ListNode.of(n));
+    // Recursion
+    // beats 1.59%(6 ms)
+    public ListNode swapPairs2(ListNode head) {
+        if (head == null || head.next == null) return head;
+
+        ListNode newHead = head.next;
+        head.next = swapPairs(head.next.next);
+        newHead.next = head;
+        return newHead;
+    }
+
+    void test(Function<ListNode, ListNode> swap, int[] n, int[] expected) {
+        ListNode l = swap.apply(ListNode.of(n));
         assertArrayEquals(expected, l == null ? null : l.toArray());
+    }
+
+    void test(int[] n, int[] expected) {
+        SwapNodePairs s = new SwapNodePairs();
+        test(s::swapPairs, n, expected);
+        test(s::swapPairs2, n, expected);
     }
 
     @Test
