@@ -3,9 +3,11 @@ import static org.junit.Assert.*;
 
 import common.ListNode;
 
+// LC019: https://leetcode.com/problems/remove-nth-node-from-end-of-list/
+// 
 // Given a linked list, remove the nth node from the end of list.
 public class RemoveNodeFromEnd {
-    // beats 7.54%
+    // beats 18.00%(1 ms)
     public ListNode removeNthFromEnd(ListNode head, int n) {
         ListNode tail = head;
         for (int i = n; i > 0; i--, tail = tail.next) {
@@ -22,8 +24,8 @@ public class RemoveNodeFromEnd {
         return oldHead;
     }
 
-    // from the solution
-    // beats 7.54%
+    // Solution of Choice
+    // beats 18.00%(1 ms)
     public ListNode removeNthFromEnd2(ListNode head, int n) {
         ListNode dummy = new ListNode(0);
         dummy.next = head;
