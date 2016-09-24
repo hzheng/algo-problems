@@ -3,11 +3,13 @@ import java.util.Arrays;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC027: https://leetcode.com/problems/remove-element/
+//
 // Given an array and a value, remove all instances of that value in place and
 // return the new length. Do not allocate extra space for another array,
 // The order of elements can be changed.
 public class RemoveElement {
-    // beats 70.92%
+    // beats 70.92%(0 ms)
     public int removeElement(int[] nums, int val) {
         int len = nums.length;
         if (len < 1) return 0;
@@ -24,28 +26,28 @@ public class RemoveElement {
         return begin;
     }
 
+    // Two Pointers
     // from solution
-    // beat 3.73%
+    // beat 3.73%(1 ms)
     public int removeElement2(int[] nums, int val) {
         int i = 0;
         for (int j = 0; j < nums.length; j++) {
             if (nums[j] != val) {
-                nums[i] = nums[j];
-                i++;
+                nums[i++] = nums[j];
             }
         }
         return i;
     }
 
+    // Solution of Choice
+    // Two Pointers
     // from solution
-    // beat 3.73%
+    // beat 3.73%(1 ms)
     public int removeElement3(int[] nums, int val) {
-        int i = 0;
         int n = nums.length;
-        while (i < n) {
+        for (int i = 0; i < n; ) {
             if (nums[i] == val) {
-                nums[i] = nums[n - 1];
-                n--;
+                nums[i] = nums[--n];
             } else {
                 i++;
             }

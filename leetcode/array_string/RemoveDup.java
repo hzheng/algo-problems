@@ -4,8 +4,14 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC026: https://leetcode.com/problems/remove-duplicates-from-sorted-array/
+//
+// Given a sorted array, remove the duplicates in place such that each element
+// appear only once and return the new length.
+// Do not allocate extra space for another array, you must do this in place
+// with constant memory.
 public class RemoveDup {
-    // beats 7.99%
+    // beats 7.99%(2 ms)
     public int removeDuplicates(int[] nums) {
         int len = nums.length;
         int end = 0;
@@ -19,7 +25,7 @@ public class RemoveDup {
         return end + 1;
     }
 
-    // beats 7.99%
+    // beats 7.99%(2 ms)
     public int removeDuplicates2(int[] nums) {
         int len = nums.length;
         if (len < 2) return len;
@@ -31,7 +37,7 @@ public class RemoveDup {
         }
         for (int cur = end + 1; end < len; cur++) {
             val = nums[end];
-            for (; cur < len && nums[cur] == val; cur ++);
+            for (; cur < len && nums[cur] == val; cur++);
             if (cur >= len) break;
 
             nums[++end] = nums[cur];
@@ -39,7 +45,8 @@ public class RemoveDup {
         return end + 1;
     }
 
-    // beats54.30%
+    // Solution of Choice
+    // beats 54.30%(1 ms)
     public int removeDuplicates3(int[] nums) {
         if (nums.length < 2) return nums.length;
 
@@ -68,6 +75,7 @@ public class RemoveDup {
 
     @Test
     public void test1() {
+        test(new int[] {1}, new int[] {1});
         test(new int[] {1, 1}, new int[] {1});
         test(new int[] {1, 1, 2}, new int[] {1, 2});
         test(new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9},

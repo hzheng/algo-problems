@@ -3,12 +3,14 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC081: https://leetcode.com/problems/search-in-rotated-sorted-array-ii/
+//
 // Follow up for "Search in Rotated Sorted Array":
 // Search a sorted array which is rotated at some unknown pivot beforehand.
 // What if duplicates are allowed?
 //Would this affect the run-time complexity? How and why?
 public class SearchRotatedSortedArray2 {
-    // beats 23.71%
+    // beats 23.71%(1 ms)
     // worse case: time complexity: O(N)
     public boolean search(int[] nums, int target) {
         return search(nums, 0, nums.length - 1, target) >= 0;
@@ -17,7 +19,7 @@ public class SearchRotatedSortedArray2 {
     private int search(int nums[], int left, int right, int target) {
         if (right < left) return -1;
 
-        int mid = left + (right - left) / 2;
+        int mid = (left + right) >>> 1;
         if (target == nums[mid]) return mid;
 
         if (nums[left] < nums[mid]) {
@@ -52,10 +54,11 @@ public class SearchRotatedSortedArray2 {
 
     }
 
-    // beats 23.71%
+    // Solution of Choice
+    // beats 23.71%(1 ms)
     public boolean search2(int[] nums, int target) {
         for (int left = 0, right = nums.length - 1; left <= right; ) {
-            int mid = left + (right - left) / 2;
+            int mid = (left + right) >>> 1;
             int midVal = nums[mid];
             if (target == midVal) return true;
 
