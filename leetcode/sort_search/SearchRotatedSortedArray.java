@@ -3,12 +3,12 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/search-in-rotated-sorted-array/
+// LC033: https://leetcode.com/problems/search-in-rotated-sorted-array/
 //
 // Suppose a sorted array is rotated at some pivot unknown to you beforehand.
 // You may assume no duplicate exists in the array.
 public class SearchRotatedSortedArray {
-    // beats 5.36%
+    // beats 5.36%(1 ms)
     public int search(int[] nums, int target) {
         // find pivot
         int left  = 0;
@@ -51,7 +51,7 @@ public class SearchRotatedSortedArray {
         return -1;
     }
 
-    // beats 1.77%
+    // beats 1.77%(2 ms)
     public int search2(int[] nums, int target) {
         int left = 0;
         int right = nums.length - 1;
@@ -80,13 +80,13 @@ public class SearchRotatedSortedArray {
     }
 
     // from Cracking the Coding Interview(5ed) Problem
-    // beats 5.36%
+    // beats 5.36%(1 ms)
     public int search3(int[] nums, int target) {
         return search(nums, 0, nums.length - 1, target);
     }
 
-    private static int search(int nums[], int left, int right, int target) {
-        int mid = (left + right) / 2;
+    private int search(int nums[], int left, int right, int target) {
+        int mid = (left + right) >>> 1;
         if (target == nums[mid]) return mid;
 
         if (right < left) return -1;
@@ -106,11 +106,12 @@ public class SearchRotatedSortedArray {
         }
     }
 
+    // Solution of Choice
     // http://www.programcreek.com/2014/06/leetcode-search-in-rotated-sorted-array-java/
-    // beats 5.36%
+    // beats 5.36%(1 ms)
     public int search4(int[] nums, int target) {
         for (int left = 0, right = nums.length - 1; left <= right; ) {
-            int mid = left + (right - left) / 2;
+            int mid = (left + right) >>> 1;
             int midVal = nums[mid];
             if (target == midVal) return mid;
 
@@ -131,11 +132,29 @@ public class SearchRotatedSortedArray {
         return -1;
     }
 
+    // https://discuss.leetcode.com/topic/28367/c-4-lines-4ms
+    // beats 5.36%(1 ms)
+    public int search5(int[] nums, int target) {
+        for (int low = 0, high = nums.length; low < high; ) {
+            int mid = (low + high) >>> 1;
+            int num = (nums[mid] < nums[0]) ^ (target < nums[0])
+                         ? target < nums[0] ? Integer.MIN_VALUE : Integer.MAX_VALUE
+                         : nums[mid];
+            if (num < target) {
+                low = mid + 1;
+            } else if (num > target) {
+                high = mid;
+            } else return mid;
+        }
+        return -1;
+    }
+
     void test(int expected, int target, int ... nums) {
         assertEquals(expected, search(nums, target));
         assertEquals(expected, search2(nums, target));
         assertEquals(expected, search3(nums, target));
         assertEquals(expected, search4(nums, target));
+        assertEquals(expected, search5(nums, target));
     }
 
     @Test
