@@ -4,9 +4,11 @@ import java.math.BigInteger;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC043: https://leetcode.com/problems/multiply-strings/
+//
 // Given two non-negative numbers represented as strings, return multiplication.
 public class StrMultiplier {
-    // beats 14.48%
+    // beats 14.48%(25 ms)
     public String multiply(String num1, String num2) {
         String n1 = num1;
         String n2 = num2;
@@ -55,7 +57,7 @@ public class StrMultiplier {
     }
 
     // http://www.jiuzhang.com/solutions/multiply-strings/
-    // beats 20.55%
+    // beats 20.55%(18 ms)
     public String multiply2(String num1, String num2) {
         int len1 = num1.length();
         int len2 = num2.length();
@@ -76,13 +78,35 @@ public class StrMultiplier {
 
         StringBuilder sb = new StringBuilder();
         int i = 0;
-        while (i < len - 1 && num[i] == 0) {
-            i++;
-        }
+        for (; i < len - 1 && num[i] == 0; i++) {}
         while (i < len) {
             sb.append(num[i++]);
         }
         return sb.toString();
+    }
+
+    // Solution of Choice
+    // beats 34.19%(31 ms)
+    public String multiply3(String num1, String num2) {
+        int len1 = num1.length();
+        int len2 = num2.length();
+        int[] product = new int[len1 + len2];
+        for (int i = len1 - 1; i >= 0; i--) {
+            for (int j = len2 - 1; j >= 0; j--) {
+                int sum = (num1.charAt(i) - '0') * (num2.charAt(j) - '0')
+                          + product[i + j + 1];
+                product[i + j] += sum / 10;
+                product[i + j + 1] = sum % 10;
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int p : product) {
+            if (sb.length() > 0 || p > 0) {
+                sb.append(p);
+            }
+        }
+        return sb.length() == 0 ? "0" : sb.toString();
     }
 
     @FunctionalInterface
@@ -107,6 +131,7 @@ public class StrMultiplier {
         StrMultiplier multiplier = new StrMultiplier();
         test(multiplier::multiply, "multiply", n1, n2);
         test(multiplier::multiply2, "multiply2", n1, n2);
+        test(multiplier::multiply3, "multiply3", n1, n2);
     }
 
     @Test
