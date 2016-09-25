@@ -3,6 +3,8 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC039: https://leetcode.com/problems/combination-sum/
+//
 // Given a set of candidate numbers and a target T, find all unique combinations
 // where the candidate numbers sums to T.
 // The same repeated number may be chosen unlimited number of times.
@@ -20,7 +22,7 @@ public class CombinationSum {
         return candidates;
     }
 
-    // beats 16.98%
+    // beats 16.98%(16 ms)
     public List<List<Integer> > combinationSum(int[] candidates, int target) {
         // candidates = preprocess(candidates); // only beats 0.68% if add this
         // if (candidates == null) return null;
@@ -51,11 +53,10 @@ public class CombinationSum {
         }
     }
 
-    // beats 44.62%
+    // beats 44.62%(11 ms)
     public List<List<Integer> > combinationSum2(int[] candidates, int target) {
         // candidates = preprocess(candidates); // beats 0.97% if add this
         // if (candidates == null) return null;
-
         List<List<Integer> > res = new ArrayList<>();
         combinationSum2(candidates, target, 0, Collections.emptyList(), res);
         return res;
@@ -80,11 +81,10 @@ public class CombinationSum {
         }
     }
 
-    // beats 57.38%
+    // beats 57.38%(7 ms)
     public List<List<Integer> > combinationSum3(int[] candidates, int target) {
         // candidates = preprocess(candidates); // beats 0.68% if add this
         // if (candidates == null) return null;
-
         Arrays.sort(candidates);
         return combinationSum3(candidates, target, candidates.length - 1);
     }
@@ -117,13 +117,14 @@ public class CombinationSum {
         return res;
     }
 
+    // Solution of Choice
+    // Backtracking
     // http://www.jiuzhang.com/solutions/combination-sum/
-    // beats 74.42%
+    // beats 74.42%(5 ms)
     public List<List<Integer> > combinationSum4(int[] candidates, int target) {
-        List<List<Integer> > res = new ArrayList<>();
-        List<Integer> path = new ArrayList<>();
         Arrays.sort(candidates);
-        combinationSum4(candidates, target, path, 0, res);
+        List<List<Integer> > res = new ArrayList<>();
+        combinationSum4(candidates, target, new ArrayList<>(), 0, res);
         return res;
     }
 
@@ -135,16 +136,13 @@ public class CombinationSum {
             return;
         }
 
-        // int prev = -1;
         for (int i = index; i < candidates.length; i++) {
             int candidate = candidates[i];
             if (candidate > target) break;
 
-            // if (prev != -1 && prev == candidate) continue;
             path.add(candidate);
             combinationSum4(candidates, target - candidate, path, i, res);
             path.remove(path.size() - 1);
-            // prev = candidate;
         }
     }
 
@@ -155,7 +153,7 @@ public class CombinationSum {
 
     void test(Function<int[], Integer, List<List<Integer>>> sum,
               int[][] expected, int target, int ... candidates) {
-        List<List<Integer> > res = sum.apply(candidates, target);
+        List<List<Integer> > res = sum.apply(candidates.clone(), target);
         // System.out.println(res);
         Integer[][] resArray = res.stream().map(
             a -> a.toArray(new Integer[0])).toArray(Integer[][]::new);

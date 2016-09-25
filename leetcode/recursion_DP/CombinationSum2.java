@@ -3,19 +3,19 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/combination-sum-ii/
-// 
+// LC040: https://leetcode.com/problems/combination-sum-ii/
+//
 // Given a set of candidate numbers and a target T, find all unique combinations
 // where the candidate numbers sums to T.
 // The same repeated number may only be chosen once.
 // All numbers (including target) will be positive integers.
 public class CombinationSum2 {
-    // beats 75.29%
+    // Backtracking
+    // beats 75.29%(5 ms)
     public List<List<Integer> > combinationSum2(int[] candidates, int target) {
-        List<List<Integer> > res = new ArrayList<>();
-        List<Integer> path = new ArrayList<>();
         Arrays.sort(candidates);
-        combinationSum2(candidates, target, path, 0, res);
+        List<List<Integer> > res = new ArrayList<>();
+        combinationSum2(candidates, target, new ArrayList<>(), 0, res);
         return res;
     }
 
@@ -32,12 +32,11 @@ public class CombinationSum2 {
             int candidate = candidates[i];
             if (candidate > target) break;
 
-            if (last == candidate) continue;
+            if (i > index && candidates[i - 1] == candidate) continue;
 
             path.add(candidate);
             combinationSum2(candidates, target - candidate, path, i + 1, res);
             path.remove(path.size() - 1);
-            last = candidate;
         }
     }
 
@@ -48,7 +47,7 @@ public class CombinationSum2 {
 
     void test(Function<int[], Integer, List<List<Integer>>> sum,
               int[][] expected, int target, int ... candidates) {
-        List<List<Integer> > res = sum.apply(candidates, target);
+        List<List<Integer> > res = sum.apply(candidates.clone(), target);
         System.out.println(res);
         Integer[][] resArray = res.stream().map(
             a -> a.toArray(new Integer[0])).toArray(Integer[][]::new);

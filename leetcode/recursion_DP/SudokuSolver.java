@@ -4,6 +4,8 @@ import java.util.stream.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC037: https://leetcode.com/problems/sudoku-solver/
+// 
 // Solve a Sudoku puzzle by filling the empty cells
 public class SudokuSolver {
     private static final int SIZE = 9;

@@ -1,20 +1,21 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC038: https://leetcode.com/problems/count-and-say/
+// 
 // The count-and-say sequence is the sequence of integers beginning as follows:
 // 1, 11, 21, 1211, 111221, ...
 public class CountAndSay {
-    // beats 84.47%
+    // Recurison
+    // beats 57.46%(5 ms)
     public String countAndSay(int n) {
         if (n == 0) return "";
-
         if (n == 1) return "1";
 
         StringBuilder sb = new StringBuilder();
         char[] digits = countAndSay(n - 1).toCharArray();
         char lastDigit = digits[0];
         int lastCount = 1;
-        // for (char c : countAndSay(n - 1).toCharArray()) {
         for (int i = 1; i < digits.length; i++) {
             char c = digits[i];
             if (c == lastDigit) {
@@ -25,16 +26,12 @@ public class CountAndSay {
                 lastDigit = c;
             }
         }
-        if (lastCount > 0) {
-            sb.append(lastCount).append(lastDigit);
-        }
-        return sb.toString();
+        return sb.append(lastCount).append(lastDigit).toString();
     }
 
-    // beats 76.15%
+    // beats 76.15%(3 ms)
     public String countAndSay2(int n) {
         String last = "1";
-        // StringBuilder last = new StringBuilder("1"); // beats 64.44%
         while (--n > 0) {
             StringBuilder sb = new StringBuilder();
             int lastCount = 1;
