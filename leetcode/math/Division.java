@@ -1,6 +1,8 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC029: https://leetcode.com/problems/divide-two-integers/
+//
 // Divide two integers without using multiplication, division and mod operator.
 public class Division {
     // Time Limit Exceeded and overflow unhandled
@@ -27,7 +29,8 @@ public class Division {
         return sign > 0 ? res : -res;
     }
 
-    // beats 75.64% (only 8.94% if use countBits)
+    // beats 75.64% (2ms) // only 8.94%(3 ms) if use countBits
+    // beats 4.70%(55 ms) // new percentage
     public int divide(int dividend, int divisor) {
         if (divisor == 0) return Integer.MAX_VALUE;
         if (dividend == divisor) return 1;
@@ -76,7 +79,49 @@ public class Division {
         return sign > 0 ? res : -res;
     }
 
-    // TODO: binary search
+    // Solution of Choice
+    // Binary Search
+    // beats 42.45%(36 ms)
+    public int divide2(int dividend, int divisor) {
+        if (divisor == 0 || (dividend == Integer.MIN_VALUE && divisor == -1)) {
+            return Integer.MAX_VALUE;
+        }
+
+        int sign = (dividend > 0 ^ divisor > 0) ? -1 : 1;
+        long target = Math.abs((long)dividend);
+        long upper = Math.abs((long)divisor);
+        long power = 1;
+        for (; upper < target; upper <<= 1, power <<= 1) {}
+        if (upper == target) return (int)(sign > 0 ? power : -power);
+
+        power >>= 1;
+        for (long res = 0, lower = 0; ; power >>= 1) {
+            long mid = (lower + upper) >> 1;
+            if (mid > target) {
+                upper = mid;
+            } else {
+                res += power;
+                lower = mid;
+            }
+            if (mid == target || power == 0) return (int)(sign > 0 ? res : -res);
+        }
+    }
+
+    // beats 39.32%(37 ms)
+    public int divide3(int dividend, int divisor) {
+        if (divisor == 0 || (dividend == Integer.MIN_VALUE && divisor == -1)) {
+            return Integer.MAX_VALUE;
+        }
+        int sign = ((dividend < 0) ^ (divisor < 0)) ? -1 : 1;
+        long res = 0;
+        for (long p = Math.abs((long)dividend), q = Math.abs((long)divisor),
+             power = 1; p >= q; res += power) {
+            long base = q;
+            for (power = 1; p >= (base << 1); base <<= 1, power <<= 1) {}
+            p -= base;
+        }
+        return (int)(sign == 1 ? res : -res);
+    }
 
     // dumped
     int countBits(int n) {
@@ -86,8 +131,15 @@ public class Division {
     }
 
     void test(int a, int b) {
-        // assertEquals(a / b, divide(a, b));
         assertEquals(a / b, divide(a, b));
+        assertEquals(a / b, divide2(a, b));
+        assertEquals(a / b, divide3(a, b));
+    }
+
+    void test(int a, int b, int expected) {
+        assertEquals(expected, divide(a, b));
+        assertEquals(expected, divide2(a, b));
+        assertEquals(expected, divide3(a, b));
     }
 
     @Test
@@ -97,6 +149,7 @@ public class Division {
                 test(i, j);
             }
         }
+        test(0, 2);
         test(10, -2);
         test(-10, 2);
         test(-2, 10);
@@ -112,6 +165,7 @@ public class Division {
         test(-690731771, -1401361801);
         test(-2147483648, 1262480350);
         test(-2147483648, -2147483648);
+        test(-2147483648, -1, Integer.MAX_VALUE);
     }
 
     public static void main(String[] args) {
