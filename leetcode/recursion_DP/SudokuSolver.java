@@ -6,10 +6,10 @@ import static org.junit.Assert.*;
 
 // Solve a Sudoku puzzle by filling the empty cells
 public class SudokuSolver {
-    // beats 8.67%(last version: 11.51%)
-    static final int SIZE = 9;
-    static final char BLANK = '.';
+    private static final int SIZE = 9;
+    private static final char BLANK = '.';
 
+    // beats 18.38%(83 ms)
     public void solveSudoku(char[][] board) {
         List<BlockList> blocks = new ArrayList<>(SIZE * 3);
         for (int i = 0; i < SIZE; i++) {
@@ -226,8 +226,9 @@ public class SudokuSolver {
         }
     } // SquareList
 
+    // Backtracking
     // http://www.jiuzhang.com/solutions/sudoku-solver/
-    // beats 18.75%
+    // beats 33.73%(33 ms)
     public void solveSudoku2(char[][] board) {
         solve(board);
     }
@@ -284,13 +285,13 @@ public class SudokuSolver {
                 bits |= mask;
             }
         }
-
         return true;
     }
 
-    // beats 8.10%
+    // Backtracking
+    // beats 72.51%(19 ms)
     public void solveSudoku3(char[][] board) {
-        List<Integer> blanks = new ArrayList<Integer>();
+        List<Integer> blanks = new ArrayList<>();
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 if (board[i][j] == BLANK) {
@@ -298,7 +299,12 @@ public class SudokuSolver {
                 }
             }
         }
-        solve(blanks.stream().mapToInt(i->i).toArray(), board, 0);
+        // solve(blanks.stream().mapToInt(i->i).toArray(), board, 0);
+        int[] blankArray = new int[blanks.size()];
+        for (int i = 0; i < blankArray.length; i++) {
+            blankArray[i] = blanks.get(i);
+        }
+        solve(blankArray, board, 0);
     }
 
     private boolean solve(int[] blanks, char[][] board, int cur) {
@@ -315,6 +321,47 @@ public class SudokuSolver {
             board[row][col] = BLANK;
         }
         return false;
+    }
+
+    // Solution of Choice
+    // Backtracking
+    // beats 54.97%(25 ms)
+    public void solveSudoku4(char[][] board) {
+        solve4(board);
+    }
+
+    private boolean solve4(char[][] board){
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                if (board[i][j] != BLANK) continue;
+
+                for (char c = '1'; c <= '9'; c++) {
+                    if (!isValid(board, i, j, c)) continue;
+
+                    board[i][j] = c;
+                    if (solve4(board)) return true;
+
+                    board[i][j] = BLANK;
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isValid(char[][] board, int i, int j, char c) {
+        for (int row = 0; row < 9; row++) {
+            if (board[row][j] == c) return false;
+        }
+        for (int col = 0; col < 9; col++) {
+            if (board[i][col] == c) return false;
+        }
+        for (int row = i / 3 * 3; row < i / 3 * 3 + 3; row++) {
+            for (int col = j / 3 * 3; col < j / 3 * 3 + 3; col++) {
+                if (board[row][col] == c) return false;
+            }
+        }
+        return true;
     }
 
     @FunctionalInterface
@@ -344,6 +391,7 @@ public class SudokuSolver {
         test(solver::solveSudoku, boardStr, expected);
         test(solver::solveSudoku2, boardStr, expected);
         test(solver::solveSudoku3, boardStr, expected);
+        test(solver::solveSudoku4, boardStr, expected);
     }
 
     void print(char[][] board) {
