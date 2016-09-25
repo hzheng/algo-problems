@@ -3,15 +3,18 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC035: https://leetcode.com/problems/search-insert-position/
+//
 // Given a sorted array and a target, return the index if the target is found.
 // If not, return the index where it would be if it were inserted in order.
 public class SearchInsertion {
-    // beats 19.33%
+    // Solution of Choice
+    // beats 19.33%(0 ms)
     public int searchInsert(int[] nums, int target) {
         int low = 0;
         int high = nums.length - 1;
         while (low <= high) {
-            int mid = (low + high) / 2;
+            int mid = (low + high) >>> 1;
             if (nums[mid] == target) return mid;
             if (nums[mid] > target) {
                 high = mid - 1;

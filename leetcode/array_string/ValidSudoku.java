@@ -3,10 +3,11 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/valid-sudoku/
+// LC036: https://leetcode.com/problems/valid-sudoku/
+//
 // Determine if a Sudoku is valid(not necessarily solvable)
 public class ValidSudoku {
-    // beats 68.29%
+    // beats 68.29%(4 ms)
     public boolean isValidSudoku(char[][] board) {
         final int MAX = board.length;
         char[] seq = new char[MAX];
@@ -43,7 +44,7 @@ public class ValidSudoku {
         return true;
     }
 
-    // beats 56.40%
+    // beats 56.40%(5 ms)
     public boolean isValidSudoku2(char[][] board) {
         final int MAX = board.length;
         for (int i = 0; i < MAX; i++) {
@@ -79,7 +80,47 @@ public class ValidSudoku {
         return true;
     }
 
-    // TODO: use hash table
+    // Hashtable
+    // beats 39.90%(31 ms) (new percentage)
+    public boolean isValidSudoku3(char[][] board) {
+        for(int i = 0; i < 9; i++) {
+            Set<Character> rows = new HashSet<>();
+            Set<Character> cols = new HashSet<>();
+            Set<Character> cube = new HashSet<>();
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] != '.' && !rows.add(board[i][j])) return false;
+                if (board[j][i] !='.' && !cols.add(board[j][i])) return false;
+                int rowIndex = 3 * (i / 3);
+                int colIndex = 3 * (i % 3);
+                if (board[rowIndex + j / 3][colIndex + j % 3] != '.'
+                    && !cube.add(board[rowIndex + j / 3][colIndex + j % 3])) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // Solution of Choice
+    // Hashtable
+    // beats 39.90%(31 ms) (new percentage)
+    public boolean isValidSudoku4(char[][] board) {
+        boolean[][] used1 = new boolean[9][9];
+        boolean[][] used2 = new boolean[9][9];
+        boolean[][] used3 = new boolean[9][9];
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] == '.') continue;
+
+                int num = board[i][j] - '1';
+                int k = i / 3 * 3 + j / 3;
+                if (used1[i][num] || used2[j][num] || used3[k][num]) return false;
+
+                used1[i][num] = used2[j][num] = used3[k][num] = true;
+            }
+        }
+        return true;
+    }
 
     void test(boolean expected, String[] boardStr) {
         int size = boardStr.length;
@@ -89,6 +130,8 @@ public class ValidSudoku {
         }
         assertEquals(expected, isValidSudoku(board));
         assertEquals(expected, isValidSudoku2(board));
+        assertEquals(expected, isValidSudoku3(board));
+        assertEquals(expected, isValidSudoku4(board));
     }
 
     @Test
