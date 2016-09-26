@@ -4,11 +4,13 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC049: https://leetcode.com/problems/anagrams/
+//
 // Given an array of strings, group anagrams together.
 // For the return value, each inner list's elements must follow the
 // lexicographic order. All inputs will be in lower-case.
 public class GroupAnagrams {
-    // beats 27.25%
+    // beats 27.25%(34 ms)
     public List<List<String> > groupAnagrams(String[] strs) {
         Map<Integer, PriorityQueue<String> > map = new HashMap<>();
         for (String s : strs) {
@@ -36,9 +38,8 @@ public class GroupAnagrams {
         return res;
     }
 
-    // beats 89.45%
+    // beats 89.45%(24 ms)
     public List<List<String> > groupAnagrams2(String[] strs) {
-        List<List<String> > res = new ArrayList<>();
         Map<String, List<String> > map = new HashMap<>();
         for(String s : strs) {
             char[] chars = s.toCharArray();
@@ -47,17 +48,37 @@ public class GroupAnagrams {
             if (map.containsKey(key)) {
                 map.get(key).add(s);
             } else {
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 list.add(s);
                 map.put(key, list);
             }
         }
-
+        List<List<String> > res = new ArrayList<>();
         for (List<String> list : map.values()) {
             Collections.sort(list);
             res.add(list);
         }
         return res;
+    }
+
+    // Solution of Choice
+    // beats 17.65%(37 ms)
+    public List<List<String> > groupAnagrams3(String[] strs) {
+        Map<String, List<String> > map = new HashMap<>();
+        Arrays.sort(strs);
+        for(String s : strs) {
+            char[] chars = s.toCharArray();
+            Arrays.sort(chars);
+            String key = new String(chars);
+            if (map.containsKey(key)) {
+                map.get(key).add(s);
+            } else {
+                List<String> list = new ArrayList<>();
+                list.add(s);
+                map.put(key, list);
+            }
+        }
+        return new ArrayList<>(map.values());
     }
 
     void test(Function<String[], List<List<String>>> group,
@@ -84,6 +105,7 @@ public class GroupAnagrams {
         sort(expected);
         test(g::groupAnagrams, expected, strs);
         test(g::groupAnagrams2, expected, strs);
+        test(g::groupAnagrams3, expected, strs);
     }
 
     @Test
