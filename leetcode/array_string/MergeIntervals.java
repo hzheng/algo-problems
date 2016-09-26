@@ -6,14 +6,14 @@ import static org.junit.Assert.*;
 
 import common.Interval;
 
-// Given a collection of intervals, merge all overlapping intervals.
+// LC056: https://leetcode.com/problems/merge-intervals/
 
+// Given a collection of intervals, merge all overlapping intervals.
 public class MergeIntervals {
-    // beats 1.36%
+    // beats 1.36%(66 ms)
     // time complexity: O(N * log(N)) space complexity: O(N)
     public List<Interval> merge(List<Interval> intervals) {
         SortedMap<Integer, Interval> map = new TreeMap<>();
-
         for (Interval i : intervals) {
             int start = i.start;
             int end = i.end;
@@ -40,7 +40,7 @@ public class MergeIntervals {
         return new ArrayList<>(map.values());
     }
 
-    // beats 86.52%
+    // beats 86.52%(13 ms)
     // time complexity: O(N * log(N)) space complexity: O(N)
     public List<Interval> merge2(List<Interval> intervals) {
         List<Interval> res = new ArrayList<>();
@@ -62,7 +62,8 @@ public class MergeIntervals {
         return res;
     }
 
-    // beats 86.52%
+    // Solution of Choice
+    // beats 86.52%(13 ms)
     // time complexity: O(N * log(N)) space complexity: O(N)
     public List<Interval> merge3(List<Interval> intervals) {
         int n = intervals.size();
@@ -77,7 +78,7 @@ public class MergeIntervals {
                 res.add(prev);
                 prev = next;
             } else if (next.end > prev.end) {
-                prev = new Interval(prev.start, next.end);
+                prev.end = next.end;
             }
         }
         res.add(prev);
@@ -85,7 +86,7 @@ public class MergeIntervals {
     }
 
     // http://www.geeksforgeeks.org/merging-intervals/
-    // beats 0%(?)
+    // beats 0.52%(125 ms)
     // time complexity: O(N * log(N)) space complexity: O(1)
     public List<Interval> merge4(List<Interval> intervals) {
         // reverse sort
@@ -108,7 +109,8 @@ public class MergeIntervals {
         return intervals.subList(0, endIndex);
     }
 
-    // beats 38.02%
+    // Sort + Two Pointers
+    // beats 38.02%(16 ms)
     // time complexity: O(N * log(N)) space complexity: O(1)
     public List<Interval> merge5(List<Interval> intervals) {
         int n = intervals.size();

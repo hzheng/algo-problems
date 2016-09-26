@@ -60,7 +60,29 @@ public class JumpGame {
                 last = i;
             }
         }
-        return last <= 0;
+        return last == 0;
+    }
+
+    // Dynamic Programming
+    // Time Limit Exceeded
+    enum Index {
+        GOOD, BAD, UNKNOWN
+    }
+
+    public boolean canJump5(int[] nums) {
+        Index[] memo = new Index[nums.length];
+        for (int i = 0; i < memo.length; i++) { memo[i] = Index.UNKNOWN; }
+        memo[memo.length - 1] = Index.GOOD;
+        for (int i = nums.length - 2; i >= 0; i--) {
+            int furthestJump = Math.min(i + nums[i], nums.length - 1);
+            for (int j = i + 1; j <= furthestJump; j++) {
+                if (memo[j] == Index.GOOD) {
+                    memo[i] = Index.GOOD;
+                    break;
+                }
+            }
+        }
+        return memo[0] == Index.GOOD;
     }
 
     void test(boolean expected, int ... nums) {
@@ -68,6 +90,7 @@ public class JumpGame {
         assertEquals(expected, canJump2(nums));
         assertEquals(expected, canJump3(nums));
         assertEquals(expected, canJump4(nums));
+        assertEquals(expected, canJump5(nums));
     }
 
     @Test
