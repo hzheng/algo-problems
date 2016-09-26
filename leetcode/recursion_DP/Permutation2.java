@@ -5,9 +5,12 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC047: https://leetcode.com/problems/permutations-ii/
+//
 // Given a collection of numbers might contain duplicates, return all unique permutations.
 public class Permutation2 {
-    // beats 5.70%
+    // Recursion
+    // beats 5.70%(84 ms)
     public List<List<Integer> > permuteUnique(int[] nums) {
         int n = nums.length;
         Set<List<Integer> > res = new HashSet<>();
@@ -47,10 +50,11 @@ public class Permutation2 {
         nums[j] = tmp;
     }
 
-    // beats 2.07%
+    // Backtracking
+    // beats 2.07%(140 ms)
     public List<List<Integer> > permuteUnique2(int[] nums) {
         Set<List<Integer> > res = new HashSet<>();
-        permute2(res, new ArrayList<Integer>(), nums, new boolean[nums.length]);
+        permute2(res, new ArrayList<>(), nums, new boolean[nums.length]);
         return new ArrayList<>(res);
     }
 
@@ -58,7 +62,7 @@ public class Permutation2 {
                           int[] nums, boolean[] isVisited) {
         int n = nums.length;
         if (cur.size() == n) {
-            res.add(new ArrayList<Integer>(cur));
+            res.add(new ArrayList<>(cur));
             return;
         }
 
@@ -73,11 +77,12 @@ public class Permutation2 {
         }
     }
 
-    // beats 97.22%
+    // Solution of Choice
+    // beats 97.22%(3 ms)
     public List<List<Integer> > permuteUnique3(int[] nums) {
         List<List<Integer> > res = new ArrayList<>();
         Arrays.sort(nums);
-        permute3(res, new ArrayList<Integer>(), nums, new boolean[nums.length]);
+        permute3(res, new ArrayList<>(), nums, new boolean[nums.length]);
         return res;
     }
 
@@ -85,7 +90,7 @@ public class Permutation2 {
                           int[] nums, boolean[] isVisited) {
         int n = nums.length;
         if (cur.size() == n) {
-            res.add(new ArrayList<Integer>(cur));
+            res.add(new ArrayList<>(cur));
             return;
         }
 
@@ -96,7 +101,7 @@ public class Permutation2 {
                 permute3(res, cur, nums, isVisited);
                 isVisited[i] = false;
                 cur.remove(cur.size() - 1);
-                for (; i < n - 1 && nums[i] == nums[i + 1]; ++i) ;
+                for (; i < n - 1 && nums[i] == nums[i + 1]; ++i) {}
             }
         }
     }

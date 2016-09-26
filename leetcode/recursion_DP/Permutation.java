@@ -5,22 +5,24 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC046: https://leetcode.com/problems/permutations/
+//
 // Given a collection of distinct numbers, return all possible permutations.
 public class Permutation {
-    // beats 13.69%
+    // Recursion
+    // beats 13.69%(6 ms)
     public List<List<Integer> > permute(int[] nums) {
         int n = nums.length;
         if (n == 0) return Collections.emptyList();
 
+        List<List<Integer> > res = new ArrayList<>();
         if (n == 1) {
-            List<List<Integer> > res = new ArrayList<>();
             List<Integer> perm = new ArrayList<>();
             perm.add(nums[0]);
             res.add(perm);
             return res;
         }
 
-        List<List<Integer> > res = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             int[] partialNums = new int[n - 1];
             for (int j = 0; j < n - 1; j++) {
@@ -40,6 +42,7 @@ public class Permutation {
         return res;
     }
 
+    // Iteration
     // beats 7.7%
     public List<List<Integer> > permute2(int[] nums) {
         List<List<Integer> > res = new ArrayList<>();
@@ -66,24 +69,21 @@ public class Permutation {
 
         int m = perm.get(i - 1);
         int j = n - 1;
-        for (; perm.get(j) < m; j--);
+        for (; perm.get(j) < m; j--) {}
         List<Integer> nextPerm = new ArrayList<>();
         for (int k = 0; k + 1 < i; k++) {
             nextPerm.add(perm.get(k));
         }
         nextPerm.add(perm.get(j));
         for (int k = n - 1; k >= i; k--) {
-            if (k == j) {
-                nextPerm.add(perm.get(k));
-            } else {
-                nextPerm.add(perm.get(k));
-            }
+            nextPerm.add(perm.get(k));
         }
         nextPerm.set(n - 1 + i - j, m);
         return nextPerm;
     }
 
-    // beats 67.81%
+    // Iteration
+    // beats 67.81%(3 ms)
     public List<List<Integer> > permute3(int[] nums) {
         int n = nums.length;
         List<List<Integer> > res = new ArrayList<>();
@@ -123,18 +123,18 @@ public class Permutation {
         nums[j] = tmp;
     }
 
-    // http://www.jiuzhang.com/solutions/permutations/
-    // beats 13.69%
+    // Backtracking
+    // beats 13.69%(6 ms)
     public List<List<Integer> > permute4(int[] nums) {
         List<List<Integer> > res = new ArrayList<>();
-        permute4(res, new ArrayList<Integer>(), nums);
+        permute4(res, new ArrayList<>(), nums);
         return res;
     }
 
     private void permute4(List<List<Integer> > res, List<Integer> list, int[] nums) {
         int n = nums.length;
         if (list.size() == n) {
-            res.add(new ArrayList<Integer>(list));
+            res.add(new ArrayList<>(list));
             return;
         }
 
@@ -147,8 +147,9 @@ public class Permutation {
         }
     }
 
+    // Backtracking(modified input)
     // http://www.programcreek.com/2013/02/leetcode-permutations-java/
-    // beats 0.29%
+    // beats 0.29%(103 ms)
     public List<List<Integer> > permute5(int[] nums) {
         List<List<Integer> > res = new ArrayList<>();
         permute5(nums, 0, res);
@@ -168,12 +169,14 @@ public class Permutation {
         }
     }
 
+    // Solution of Choice
+    // Backtracking
     // https://siddontang.gitbooks.io/leetcode-solution/content/backtracking/permutation.html
     // backtracking, similar to permute4, but add visited flags
-    // beats 67.81%
+    // beats 67.81%(3 ms)
     public List<List<Integer> > permute6(int[] nums) {
         List<List<Integer> > res = new ArrayList<>();
-        permute6(res, new ArrayList<Integer>(), nums, new boolean[nums.length]);
+        permute6(res, new ArrayList<>(), nums, new boolean[nums.length]);
         return res;
     }
 
@@ -181,7 +184,7 @@ public class Permutation {
                           int[] nums, boolean[] isVisited) {
         int n = nums.length;
         if (cur.size() == n) {
-            res.add(new ArrayList<Integer>(cur));
+            res.add(new ArrayList<>(cur));
             return;
         }
 
