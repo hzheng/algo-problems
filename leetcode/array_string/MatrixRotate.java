@@ -3,17 +3,19 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- * Cracking the Coding Interview(5ed) Problem 1.6:
- * Given an image represented by an NxN matrix, where each pixel in the image
- * is 4 bytes, write a method to rotate the image by 90 degrees in place.
- */
+// LC048: https://leetcode.com/problems/rotate-image/
+// Cracking the Coding Interview(5ed) Problem 1.6:
+
+// You are given an n x n 2D matrix representing an image.
+// Rotate the image by 90 degrees (clockwise).
+// Follow up: Could you do this in-place?
+
+// Given an image represented by an NxN matrix, where each pixel in the image
+// is 4 bytes, write a method to rotate the image by 90 degrees in place.
 public class MatrixRotate {
     // time complexity: O(n^2), space complexity: O(1)
-    // beats 25.09%
+    // beats 25.09%(0 ms)
     public void rotate(int[][] matrix) {
-        if (matrix == null) return;
-
         int n = matrix.length;
         for (int layer = 0; layer < n / 2; layer++) {
             rotateLayer(matrix, n, layer);
@@ -23,7 +25,6 @@ public class MatrixRotate {
     void rotateLayer(int[][] matrix, int n, int layer) {
         int begin = layer;
         int end = n - 1 - layer;
-
         for (int index = begin; index < end; index++) {
             int indexBackwards = end + begin - index;
             int right = matrix[index][end];
@@ -38,12 +39,13 @@ public class MatrixRotate {
         }
     }
 
+    // Solution of Choice
     // http://www.programcreek.com/2013/01/leetcode-rotate-image-java/
-    // beats 7.67%
+    // beats 7.67%(1 ms)
     public void rotate2(int[][] matrix) {
         int n = matrix.length;
         int rows = n / 2;
-        int cols = (int)Math.ceil(n / 2.);
+        int cols = (n + 1) / 2; //(int)Math.ceil(n / 2.);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 int temp = matrix[i][j];
@@ -55,7 +57,7 @@ public class MatrixRotate {
         }
     }
 
-    // beats 7.67%
+    // beats 7.67%(1 ms)
     public void rotate3(int[][] matrix) {
         // rotate along to diagonal
         int n = matrix.length;
@@ -68,6 +70,44 @@ public class MatrixRotate {
         for (int i = 0; i < n / 2; i++) {
             for (int j = 0; j < n; j++) {
                 swap(matrix, i, j, n - 1 - i, j);
+            }
+        }
+    }
+
+    // https://discuss.leetcode.com/topic/9744/ac-java-in-place-solution-with-explanation-easy-to-understand
+    // beats 7.67%(1 ms)
+    public void rotate4(int[][] matrix) {
+        // transpose
+        int n = matrix.length;
+        for (int i = 0; i < n; i++) {
+            for (int j = i; j < n; j++) {
+                swap(matrix, i, j, j, i);
+            }
+        }
+        // flip horizontally
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n / 2; j++) {
+                swap(matrix, i, j, i, n - 1 - j);
+            }
+        }
+    }
+
+    // https://discuss.leetcode.com/topic/6796/a-common-method-to-rotate-the-image
+    // first reverse up to down, then swap the symmetry
+    // 1 2 3     7 8 9     7 4 1
+    // 4 5 6  => 4 5 6  => 8 5 2
+    // 7 8 9     1 2 3     9 6 3
+    // beats 7.67%(1 ms)
+    public void rotate5(int[][] matrix) {
+        int n = matrix.length;
+        for (int i = 0; i < n / 2; i++) {
+            for (int j = 0; j < n; j++) {
+                swap(matrix, i, j, n - 1 - i, j);
+            }
+        }
+        for (int i = 0; i < n; ++i) {
+            for (int j = i + 1; j < n; ++j) {
+                swap(matrix, i, j, j, i);
             }
         }
     }
@@ -106,6 +146,8 @@ public class MatrixRotate {
         test(r::rotate, matrix, expected);
         test(r::rotate2, matrix, expected);
         test(r::rotate3, matrix, expected);
+        test(r::rotate4, matrix, expected);
+        test(r::rotate5, matrix, expected);
     }
 
     @Test
