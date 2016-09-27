@@ -3,9 +3,11 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC067: https://leetcode.com/problems/add-binary/
+//
 // Given two binary strings, return their sum (also a binary string).
 public class AddBinary {
-    // beats 98.05%
+    // beats 96.11%(2 ms)
     public String addBinary(String a, String b) {
         boolean carry = false;
         int len1 = a.length();
@@ -30,8 +32,22 @@ public class AddBinary {
         return new String(res, 1, len - 1);
     }
 
+    // Solution of Choice
+    // beats 84.38%(3 ms)
+    public String addBinary2(String a, String b) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = a.length() - 1, j = b.length() - 1, sum = 0;
+             i >= 0 || j >= 0 || sum == 1; sum >>= 1) {
+            sum += i >= 0 ? a.charAt(i--) - '0' : 0;
+            sum += j >= 0 ? b.charAt(j--) - '0' : 0;
+            sb.append((sum & 1) == 0 ? "0" : "1");
+        }
+        return sb.reverse().toString();
+    }
+
     void test(String a, String b, String expected) {
         assertEquals(expected, addBinary(a, b));
+        assertEquals(expected, addBinary2(a, b));
     }
 
     @Test
