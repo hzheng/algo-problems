@@ -3,6 +3,8 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC060: https://leetcode.com/problems/permutation-sequence/
+//
 // Given n and k, return the kth permutation sequence.
 public class PermutationSeq {
     // Time Limit Exceeded
@@ -47,7 +49,7 @@ public class PermutationSeq {
         nums[j] = tmp;
     }
 
-    // beats 5.39%
+    // beats 5.39%(4 ms)
     public String getPermutation2(int n, int k) {
         if (n == 0) return "";
 
@@ -98,7 +100,8 @@ public class PermutationSeq {
         return factorials[n - 1] = factorial;
     }
 
-    // beats 77.48%
+    // Solution of Choice
+    // beats 77.48%(2 ms)
     public String getPermutation3(int n, int k) {
         StringBuilder availables = new StringBuilder("123456789");
         availables.setLength(n);

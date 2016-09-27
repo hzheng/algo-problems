@@ -3,9 +3,11 @@ import common.ListNode;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC061: https://leetcode.com/problems/rotate-list/
+//
 // Given a list, rotate the list to the right by k places
 public class RotateList {
-    // beats 14.33%
+    // beats 40.06%(15 ms)
     public ListNode rotateRight(ListNode head, int k) {
         if (k == 0) return head;
 
@@ -26,7 +28,6 @@ public class RotateList {
                 first = first.next;
             }
         }
-
         ListNode second = head;
         while (first.next != null) {
             first = first.next;
@@ -39,9 +40,37 @@ public class RotateList {
         return res;
     }
 
-    void test(int k, int[] n, int ... expected) {
-        ListNode l = rotateRight(ListNode.of(n), k);
+    // Solution of Choice
+    // beats 21.88%(17 ms)
+    public ListNode rotateRight2(ListNode head, int k) {
+        if (head == null || k == 0) return head;
+
+        int i;
+        ListNode fast = head;
+        for (i = 1; fast.next != null; i++, fast = fast.next) {}
+        ListNode slow = head;
+        for (int j = i - k % i - 1; j > 0; j--, slow = slow.next) {}
+        fast.next = head;
+        ListNode res = slow.next;
+        slow.next = null;
+        return res;
+    }
+
+    @FunctionalInterface
+    interface Function<A, B, C> {
+        public C apply(A a, B b);
+    }
+
+    void test(Function<ListNode, Integer, ListNode> rotateRight, int k,
+              int[] n, int ... expected) {
+        ListNode l = rotateRight.apply(ListNode.of(n), k);
         assertArrayEquals(expected, l == null ? null : l.toArray());
+    }
+
+    void test(int k, int[] n, int ... expected) {
+        RotateList r = new RotateList();
+        test(r::rotateRight, k, n, expected);
+        test(r::rotateRight2, k, n, expected);
     }
 
     @Test
