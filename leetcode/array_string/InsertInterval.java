@@ -5,11 +5,13 @@ import static org.junit.Assert.*;
 
 import common.Interval;
 
+// LC057: https://leetcode.com/problems/insert-interval/
+//
 // Given a set of non-overlapping intervals, insert a new interval into the
 // intervals (merge if necessary).
 // The intervals were initially sorted according to their start times.
 public class InsertInterval {
-    // beats 97.70%
+    // beats 97.70%(2 ms)
     public List<Interval> insert(List<Interval> intervals, Interval newInterval) {
         int n = intervals.size();
         List<Interval> res = new ArrayList<>();
@@ -51,7 +53,7 @@ public class InsertInterval {
         int high = n - 1;
         int low = offset;
         while (low <= high) {
-            int mid = (low + high) / 2;
+            int mid = (low + high) >>> 1;
             int midInterval = intervals.get(mid).start;
             if (midInterval == target) return mid;
 
@@ -65,8 +67,9 @@ public class InsertInterval {
         return (intervals.get(high).end >= target) ? high : high + 1;
     }
 
+    // Solution of Choice
     // http://www.jiuzhang.com/solutions/insert-interval/
-    // beats 70.43%
+    // beats 70.43%(4 ms)
     public List<Interval> insert2(List<Interval> intervals, Interval newInterval) {
         List<Interval> res = new ArrayList<Interval>();
         int insertPos = 0;
