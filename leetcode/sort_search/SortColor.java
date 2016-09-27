@@ -3,34 +3,23 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC075: https://leetcode.com/problems/sort-colors/
+//
 // Given an array with n objects colored red, white or blue, sort them so that
 // objects of the same color are adjacent, with the colors in the order red,
 // white and blue.
 public class SortColor {
-    // beats 3.63%
+    // Solution of Choice
+    // Two Pointers
+    // beats 53.70%(0 ms)
     public void sortColors(int[] nums) {
         int redEnd = 0;
         int blueStart = nums.length - 1;
-        // the following two while's can be omitted
-        while (redEnd < blueStart && nums[redEnd] == 0) {
-            redEnd++;
-        }
-        while (blueStart >= 0 && nums[blueStart] == 2) {
-            blueStart--;
-        }
-
-        for (int i = redEnd; i <= blueStart; ) {
-            switch (nums[i]) {
-            case 0:
-                swap(nums, i, redEnd++);
-                i++;
-                break;
-            case 1:
-                i++;
-                break;
-            case 2:
-                swap(nums, i, blueStart--);
-                break;
+        for (int cur = 0; cur <= blueStart; cur++) {
+            if (nums[cur] == 0) {
+                swap(nums, cur, redEnd++);
+            } else if (nums[cur] == 2) {
+                swap(nums, cur--, blueStart--);
             }
         }
     }
@@ -41,8 +30,9 @@ public class SortColor {
         nums[j] = tmp;
     }
 
+    // Three Pointers
     // http://www.lifeincode.net/programming/leetcode-sort-colors-java/
-    // beats 3.63%
+    // beats 53.70%(0 ms)
     public void sortColors2(int[] nums) {
         int redPos = 0;
         int whitePos = 0;
@@ -64,13 +54,21 @@ public class SortColor {
         }
     }
 
-    void test(int[] nums, int ... expected) {
+    @FunctionalInterface
+    interface Function<A> {
+        public void apply(A a);
+    }
+
+    void test(Function<int[]> sortColors, int[] nums, int ... expected) {
         int[] nums2 = nums.clone();
-        sortColors(nums);
-        assertArrayEquals(expected, nums);
-        System.out.println(Arrays.toString(nums2));
-        sortColors2(nums2);
+        sortColors.apply(nums2);
         assertArrayEquals(expected, nums2);
+    }
+
+    void test(int[] nums, int ... expected) {
+        SortColor s = new SortColor();
+        test(s::sortColors, nums, expected);
+        test(s::sortColors2, nums, expected);
     }
 
     @Test

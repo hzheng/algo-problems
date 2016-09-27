@@ -6,14 +6,14 @@ import java.util.Objects;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- * Write an efficient algorithm that searches for a value in an m x n matrix.
- * This matrix has the following properties:
- * Integers in each row are sorted from left to right.
- * The first integer of each row is greater than the last one of the previous row
- */
+// LC074: https://leetcode.com/problems/search-a-2d-matrix/
+//
+// Write an efficient algorithm that searches for a value in an m x n matrix.
+// This matrix has the following properties:
+// Integers in each row are sorted from left to right.
+// The first integer of each row is greater than the last one of the previous row
 public class MatrixSearch {
-    // beats 3.00%
+    // beats 3.00%(2 ms)
     public boolean searchMatrix(int[][] matrix, int target) {
         int m = matrix.length;
         int n = matrix[0].length;
@@ -78,15 +78,12 @@ public class MatrixSearch {
         }
     }
 
-    // beats 6.15%
+    // beats 6.15%(1 ms)
     public boolean searchMatrix2(int[][] matrix, int target) {
         int m = matrix.length;
         int n = matrix[0].length;
-
-        int low = 0;
-        int high = m * n - 1;
-        while (low <= high) {
-            int mid = (low + high) / 2;
+        for (int low = 0, high = m * n - 1; low <= high; ) {
+            int mid = (low + high) >>> 1;
             int midVal = matrix[mid / n][mid % n];
             if (midVal == target) return true;
 
@@ -99,16 +96,15 @@ public class MatrixSearch {
         return false;
     }
 
-    // beats 6.15%
+    // beats 6.15%(1 ms)
     public boolean searchMatrix3(int[][] matrix, int target) {
         int m = matrix.length;
         int n = matrix[0].length;
 
         // find row first
-        int low = 0;
         int high = m - 1;
-        while (low <= high) {
-            int mid = (low + high) / 2;
+        for (int low = 0; low <= high; ) {
+            int mid = (low + high) >>> 1;
             if (matrix[mid][0] == target) return true;
 
             if (matrix[mid][0] > target) {
@@ -117,19 +113,16 @@ public class MatrixSearch {
                 low = mid + 1;
             }
         }
-        int row = high;
-        if (row < 0) return false;
+        if (high < 0) return false;
 
-        low = 0;
-        high = n - 1;
-        while (low <= high) {
-            int mid = (low + high) / 2;
+        for (int row = high, lo = 0, hi = n - 1; lo <= hi; ) {
+            int mid = (lo + hi) >>> 1;
             if (matrix[row][mid] == target) return true;
 
             if (matrix[row][mid] > target) {
-                high = mid - 1;
+                hi = mid - 1;
             } else {
-                low = mid + 1;
+                lo = mid + 1;
             }
         }
         return false;
