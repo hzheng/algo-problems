@@ -4,10 +4,12 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC059: https://leetcode.com/problems/spiral-matrix-ii/
+//
 // Given an integer n, generate a square matrix filled with elements from 1 to
 // n ^ 2 in spiral order.
 public class SpiralMatrix2 {
-    // beats 2.27%
+    // beats 24.78%(2 ms)
     public int[][] generateMatrix(int n) {
         int[][] matrix = new int[n][n];
         int layers = (n + 1) / 2;
@@ -36,8 +38,26 @@ public class SpiralMatrix2 {
         return matrix;
     }
 
+    // Solution of Choice
+    // beats 6.80%(3 ms)
+    public int[][] generateMatrix2(int n) {
+        int[][] matrix = new int[n][n];
+        int[][] dirs = new int[][]{{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        int[] steps = {n, n - 1};
+        for (int x = 0, dir = 0, row = 0, col = -1; steps[dir & 1] > 0; dir = ++dir & 3) {
+            for (int i = 0; i < steps[dir & 1]; i++) {
+                row += dirs[dir][0];
+                col += dirs[dir][1];
+                matrix[row][col] = ++x;
+            }
+            steps[dir & 1]--;
+        }
+        return matrix;
+    }
+
     void test(int n, int[][] expected) {
         assertArrayEquals(expected, generateMatrix(n));
+        assertArrayEquals(expected, generateMatrix2(n));
     }
 
     @Test
