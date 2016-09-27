@@ -1,15 +1,16 @@
+import java.util.*;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- * Cracking the Coding Interview(5ed) Problem 1.7:
- * Write an algorithm such that if an element in an MxN matrix is 0, its entire
- * row and column are set to 0.
- */
+// LC073: https://leetcode.com/problems/set-matrix-zeroes/
+// Cracking the Coding Interview(5ed) Problem 1.7:
+//
+// Given a matrix, if an element is 0, set its entire row and column to 0. Do it in place.
 public class ZeroMatrix {
     // time complexity: O(M*N), space complexity: O(M+N)
-    // beats 19.41%
-    public void zeroMatrix(int[][] matrix) {
+    // beats 26.88%(2 ms)
+    public void setZeroes(int[][] matrix) {
         int m = matrix.length;
         int n = matrix[0].length;
         // we could use bit vector to save more space
@@ -33,20 +34,22 @@ public class ZeroMatrix {
     }
 
     // time complexity: O(M*N), space complexity: O(1)
-    // beats 8.64%
-    public void zeroMatrix2(int[][] matrix) {
+    // beats 26.88%(2 ms)
+    public void setZeroes2(int[][] matrix) {
         int m = matrix.length;
         int n = matrix[0].length;
         boolean firstRowZero = false;
         for (int i = 0; i < n; i++) {
             if (matrix[0][i] == 0) {
                 firstRowZero = true;
+                break;
             }
         }
         boolean firstColZero = false;
         for (int i = 0; i < m; i++) {
             if (matrix[i][0] == 0) {
                 firstColZero = true;
+                break;
             }
         }
 
@@ -80,10 +83,52 @@ public class ZeroMatrix {
         }
     }
 
+    // Solution of Choice
+    // https://discuss.leetcode.com/topic/5056/any-shorter-o-1-space-solution
+    // beats 16.34%(3 ms)
+    public void setZeroes3(int[][] matrix) {
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+        boolean zeroFirstCol = false;
+        for (int i = 0; i < rows; i++) { // top-down
+            if (matrix[i][0] == 0) {
+                zeroFirstCol = true;
+            }
+            for (int j = 1; j < cols; j++) {
+                if (matrix[i][j] == 0) {
+                    matrix[i][0] = matrix[0][j] = 0;
+                }
+            }
+        }
+
+        for (int i = rows - 1; i >= 0; i--) { // bottom-up
+            for (int j = cols - 1; j > 0; j--) {
+                if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+                    matrix[i][j] = 0;
+                }
+            }
+            if (zeroFirstCol) {
+                matrix[i][0] = 0;
+            }
+        }
+    }
+
+    @FunctionalInterface
+    interface Function<A> {
+        public void apply(A a);
+    }
+
+    void test(Function<int[][]> zeroMatrix, final int[][] matrix, int[][] expected) {
+        int[][] clonedMatrix = Arrays.stream(matrix).map(e -> e.clone()).toArray(__ -> matrix.clone());
+        zeroMatrix.apply(clonedMatrix);
+        assertArrayEquals(expected, clonedMatrix);
+    }
+
     void test(int[][] matrix, int[][] expected) {
-        zeroMatrix2(matrix);
-        // zeroMatrix(matrix);
-        assertArrayEquals(expected, matrix);
+        ZeroMatrix z = new ZeroMatrix();
+        test(z::setZeroes, matrix, expected);
+        test(z::setZeroes2, matrix, expected);
+        test(z::setZeroes3, matrix, expected);
     }
 
     @Test

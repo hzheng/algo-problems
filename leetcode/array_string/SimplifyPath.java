@@ -3,9 +3,12 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC071: https://leetcode.com/problems/simplify-path/
+//
 // Given an absolute path for a file (Unix-style), simplify it.
 public class SimplifyPath {
-    // beats 85.26%
+    // Solution of Choice
+    // beats 30.91%(15 ms)
     public String simplifyPath(String path) {
         if (path.length() == 0) return "";
 
