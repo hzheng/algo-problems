@@ -6,9 +6,11 @@ import static org.junit.Assert.*;
 
 import common.ListNode;
 
+// LC082: https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/
+//
 // Given a sorted linked list, delete all nodes that have duplicate numbers, leaving only distinct numbers from the original list.
 public class RemoveDupList2 {
-    // beats 21.24%
+    // beats 18.48%(1 ms)
     public ListNode deleteDuplicates(ListNode head) {
         ListNode dummy = new ListNode(0);
         dummy.next = head;
@@ -37,7 +39,7 @@ public class RemoveDupList2 {
         return dummy.next;
     }
 
-    // beats 21.24%
+    // beats 18.48%(1 ms)
     public ListNode deleteDuplicates2(ListNode head) {
         ListNode dummy = new ListNode(0);
         dummy.next = head;
@@ -48,11 +50,67 @@ public class RemoveDupList2 {
             } else {
                 do {
                     n = n.next;
-                } while (n.next != null && n.val == n.next.val) ;
+                } while (n.next != null && n.val == n.next.val);
                 lastNode.next = n.next;
             }
         }
         return dummy.next;
+    }
+
+    // Solution of Choice
+    // beats 18.48%(1 ms)
+    public ListNode deleteDuplicates3(ListNode head) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode prev = dummy;
+        for (ListNode cur = head; cur != null; cur = cur.next) {
+            if (cur.next != null && cur.val == cur.next.val) continue;
+
+            if (prev.next == cur) {
+                prev = prev.next;
+            } else {
+                prev.next = cur.next;
+            }
+        }
+        return dummy.next;
+    }
+
+    // beats 18.48%(1 ms)
+    public ListNode deleteDuplicates4(ListNode head) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode lastNode = dummy;
+        boolean dup = false;
+        for (ListNode n = head; n != null && n.next != null; n = n.next) {
+            if (n.val == n.next.val) {
+                dup = true;
+            } else if (dup) {
+                lastNode.next = n.next;
+                dup = false;
+            } else {
+                lastNode = n;
+            }
+        }
+        if (dup) {
+            lastNode.next = null;
+        }
+        return dummy.next;
+    }
+
+    // Recursion
+    // beats 18.48%(1 ms)
+    public ListNode deleteDuplicates5(ListNode head) {
+        if (head == null) return null;
+
+        if (head.next == null || head.val != head.next.val) {
+            head.next = deleteDuplicates5(head.next);
+            return head;
+        }
+
+        while (head.next != null && head.val == head.next.val) {
+            head = head.next;
+        }
+        return deleteDuplicates5(head.next);
     }
 
     void test(Function<ListNode, ListNode> removeDup, int [] nums, int[] expected) {
@@ -65,6 +123,9 @@ public class RemoveDupList2 {
         RemoveDupList2 rm = new RemoveDupList2();
         test(rm::deleteDuplicates, nums, expected);
         test(rm::deleteDuplicates2, nums, expected);
+        test(rm::deleteDuplicates3, nums, expected);
+        test(rm::deleteDuplicates4, nums, expected);
+        test(rm::deleteDuplicates5, nums, expected);
     }
 
     @Test
