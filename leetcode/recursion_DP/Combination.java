@@ -3,11 +3,12 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/combinations/
+// LC077: https://leetcode.com/problems/combinations/
 //
 // Return all possible combinations of k numbers out of 1 ... n.
 public class Combination {
-    // beats 90.59%(4 ms)
+    // Backtracking
+    // beats 31.47%(43 ms)
     public List<List<Integer> > combine(int n, int k) {
         List<List<Integer> > res = new ArrayList<>();
         combine(n, k, res, new ArrayList<>());
@@ -30,8 +31,32 @@ public class Combination {
         }
     }
 
+    // Backtracking
+    // beats 35.45%(37 ms)
+    public List<List<Integer> > combine1(int n, int k) {
+        List<List<Integer> > res = new ArrayList<>();
+        combine1(n, k, 1, res, new ArrayList<>());
+        return res;
+    }
+
+    private void combine1(int n, int k, int start, List<List<Integer> > res,
+                          List<Integer> buf) {
+        int count = buf.size();
+        if (count == k) {
+            res.add(new ArrayList<>(buf));
+            return;
+        }
+
+        for (int i = start; i <= n; i++) {
+            buf.add(i);
+            combine1(n, k, i + 1, res, buf);
+            buf.remove(count);
+        }
+    }
+
+    // Recursion + Combinatorics
     // https://discuss.leetcode.com/topic/12537/a-short-recursive-java-solution-based-on-c-n-k-c-n-1-k-1-c-n-1-k
-    // beats 74.37%(14 ms)
+    // beats 76.29%(22 ms)
     public List<List<Integer> > combine2(int n, int k) {
         if (k == n || k == 0) {
             List<Integer> row = new LinkedList<>();
@@ -50,11 +75,11 @@ public class Combination {
         return res;
     }
 
-    // iterative by bit manipulation
+    // Iteration by Bit Manipulation
     // https://graphics.stanford.edu/~seander/bithacks.html#NextBitPermutation
-    // beats 86.24%(6 ms)
+    // beats 88.36%(8 ms)
     public List<List<Integer> > combine3(int n, int k) {
-        List<List<Integer>> res = new ArrayList<>();
+        List<List<Integer> > res = new ArrayList<>();
         for (int v = (1 << k) - 1; v < (1 << n); ) {
             res.add(codeToList(v, n));
             int t = v | (v - 1); // set least significant 0 bit to 1
@@ -79,6 +104,31 @@ public class Combination {
         int count = 0;
         for (int x = (n ^ (n - 1)) >> 1; x > 0; count++, x >>= 1) {}
         return count;
+    }
+
+    // Iteration
+    // Time Limit Exceeded
+    public List<List<Integer> > combine4(int n, int k) {
+        if (k == 0 || n == 0 || k > n) return Collections.emptyList();
+
+        List<List<Integer> > res = new ArrayList<>();
+        for (int i = 1; i <= n; i++) {
+            res.add(Arrays.asList(i));
+        }
+        for (int i = 2; i <= k; i++) {
+            List<List<Integer> > nextCombinations = new ArrayList<>();
+            for (int j = i; j <= n; j++) {
+                for (List<Integer> combination : res) {
+                    if (combination.get(combination.size() - 1) < j) {
+                        List<Integer> cloned = new ArrayList<>(combination);
+                        cloned.add(j);
+                        nextCombinations.add(cloned);
+                    }
+                }
+            }
+            res = nextCombinations;
+        }
+        return res;
     }
 
     @FunctionalInterface
@@ -111,8 +161,10 @@ public class Combination {
     void test(int n, int k, Integer[][] expected) {
         Combination c = new Combination();
         test(c::combine, "combine", n, k, expected);
+        test(c::combine1, "combine1", n, k, expected);
         test(c::combine2, "combine2", n, k, expected);
         test(c::combine3, "combine3", n, k, expected);
+        test(c::combine4, "combine4", n, k, expected);
     }
 
     @Test
