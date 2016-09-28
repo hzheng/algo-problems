@@ -4,9 +4,13 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC078: https://leetcode.com/problems/subsets/
+// Cracking the Coding Interview(5ed) Problem 9.4
+//
 // Given a set of distinct integers, nums, return all possible subsets.
 public class Subset {
-    // beats 10.68%(15.24% if not using Arrays.binarySearch)
+    // Backtracking + Binary Search
+    // beats 8.05%(3 ms)
     public List<List<Integer> > subsets(int[] nums) {
         List<List<Integer> > res = new ArrayList<>();
         Arrays.sort(nums);
@@ -37,29 +41,29 @@ public class Subset {
         }
     }
 
-    // beats 15.24%
+    // Solution of Choice
+    // Backtracking
+    // beats 26.55%(2 ms)
     public List<List<Integer> > subsets2(int[] nums) {
         List<List<Integer> > res = new ArrayList<>();
-        Arrays.sort(nums);
-        subsets2(nums, res, 0, new ArrayList<>());
+        subsets2(nums, 0, new ArrayList<>(), res);
         return res;
     }
 
-    private void subsets2(int[] nums, List<List<Integer> > res, int start,
-                          List<Integer> cur) {
-        int count = cur.size();
-        res.add(new ArrayList<>(cur));
-        for (int i = start; i < nums.length; i++) {
-            cur.add(nums[i]);
-            subsets2(nums, res, i + 1, cur);
-            cur.remove(count);
+    private void subsets2(int[] nums, int start, List<Integer> buf,
+                          List<List<Integer>> res) {
+        res.add(new ArrayList<>(buf));
+        for (int i = start, count = buf.size(); i < nums.length; i++) {
+            buf.add(nums[i]);
+            subsets2(nums, i + 1, buf, res);
+            buf.remove(count);
         }
     }
 
-    // from recursive_DP/Subsets.java
-    // beats 59.76%
+    // Solution of Choice
+    // Bit Manipulation
+    // beats 91.45%(1 ms)
     public List<List<Integer> > subsets3(int[] nums) {
-        Arrays.sort(nums);
         List<List<Integer> > res = new ArrayList<>();
         int n = nums.length;
         for (int i = ((1 << n) - 1); i >= 0; i--) {
@@ -69,7 +73,7 @@ public class Subset {
                     subset.add(nums[j]);
                 }
             }
-            // or:
+            // or: beats 26.55%(2 ms)
             // for (int j = i, index = 0; j > 0; j >>= 1, index++) {
             //     if ((j & 1) > 0) {
             //         subset.add(nums[index]);
@@ -80,8 +84,50 @@ public class Subset {
         return res;
     }
 
+    // Recursion
+    // From Cracking the Coding Interview
+    // beats 26.55%(2 ms)
+    public List<List<Integer> > subsets4(int[] nums) {
+        return subsets4(nums, 0);
+    }
+
+    private List<List<Integer> > subsets4(int[] nums, int index) {
+        if (nums.length == index) { // Base case - add empty set
+            return new ArrayList<>(Arrays.asList(new ArrayList<>()));
+        }
+
+        List<List<Integer>> allSubsets = subsets4(nums, index + 1);
+        int item = nums[index];
+        List<List<Integer> > moreSubsets = new ArrayList<>();
+        for (List<Integer> subset : allSubsets) {
+            List<Integer> cloned = new ArrayList<>(subset);
+            cloned.add(item);
+            moreSubsets.add(cloned);
+        }
+        allSubsets.addAll(moreSubsets);
+        return allSubsets;
+    }
+
+    // Solution of Choice
+    // Iteration version of last method
+    // beats 26.55%(2 ms)
+    public List<List<Integer> > subsets5(int[] nums) {
+        List<List<Integer> > allSubsets = new ArrayList<>(Arrays.asList(new ArrayList<>()));
+        for (int i : nums) {
+            List<List<Integer>> moreSubsets = new ArrayList<>();
+            for (List<Integer> set : allSubsets) {
+                List<Integer> cloned = new ArrayList<>(set);
+                cloned.add(i);
+                moreSubsets.add(cloned);
+            }
+            allSubsets.addAll(moreSubsets);
+        }
+        return allSubsets;
+    }
+
     void test(Function<int[], List<List<Integer>>> subsets,
               String name, int[] nums, Integer[][] expected) {
+        nums = nums.clone();
         List<List<Integer> > res = subsets.apply(nums);
         Integer[][] resArray = res.stream().map(
             a -> a.toArray(new Integer[0])).toArray(Integer[][]::new);
@@ -108,6 +154,8 @@ public class Subset {
         test(s::subsets, "subsets", nums, expected);
         test(s::subsets2, "subsets2", nums, expected);
         test(s::subsets3, "subsets3", nums, expected);
+        test(s::subsets4, "subsets4", nums, expected);
+        test(s::subsets5, "subsets5", nums, expected);
     }
 
     @Test
