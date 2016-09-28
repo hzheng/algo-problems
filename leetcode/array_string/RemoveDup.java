@@ -45,8 +45,8 @@ public class RemoveDup {
         return end + 1;
     }
 
-    // Solution of Choice
-    // beats 54.30%(1 ms)
+    // old: beats 54.30%(1 ms)
+    // beats 29.63%(14 ms)
     public int removeDuplicates3(int[] nums) {
         if (nums.length < 2) return nums.length;
 
@@ -57,6 +57,18 @@ public class RemoveDup {
             }
         }
         return end + 1;
+    }
+
+    // Solution of Choice
+    // beats 22.00%(15 ms)
+    public int removeDuplicates4(int[] nums) {
+        int i = 0;
+        for (int n : nums) {
+            if (i < 1 || n > nums[i - 1]) {
+                nums[i++] = n;
+            }
+        }
+        return i;
     }
 
     void test(Function<int[], Integer> removeDup, int [] nums, int[] expected) {
@@ -71,6 +83,7 @@ public class RemoveDup {
         test(rm::removeDuplicates, nums, expected);
         test(rm::removeDuplicates2, nums, expected);
         test(rm::removeDuplicates3, nums, expected);
+        test(rm::removeDuplicates4, nums, expected);
     }
 
     @Test

@@ -4,12 +4,14 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC080: https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/
+//
 // Follow up for "Remove Duplicates":
 // What if duplicates are allowed at most twice?
 public class RemoveDup2 {
-    // beats 62.51%
+    // beats 38.77%(1 ms)
     public int removeDuplicates(int[] nums) {
-        if (nums.length < 2) return nums.length;
+        if (nums.length < 3) return nums.length;
 
         int end = 0;
         boolean dup = false;
@@ -22,7 +24,7 @@ public class RemoveDup2 {
         return end + 1;
     }
 
-    // beats 6.71%
+    // beats 38.77%(1 ms)
     public int removeDuplicates2(int[] nums) {
         if (nums.length < 3) return nums.length;
 
@@ -33,6 +35,18 @@ public class RemoveDup2 {
             }
         }
         return end + 1;
+    }
+
+    // Solution of Choice
+    // beats 38.77%(1 ms)
+    public int removeDuplicates3(int[] nums) {
+        int i = 0;
+        for (int n : nums) {
+            if (i < 2 || n > nums[i - 2]) {
+                nums[i++] = n;
+            }
+        }
+        return i;
     }
 
     void test(Function<int[], Integer> removeDup, int [] nums, int[] expected) {
@@ -47,6 +61,7 @@ public class RemoveDup2 {
         RemoveDup2 rm = new RemoveDup2();
         test(rm::removeDuplicates, nums, expected);
         test(rm::removeDuplicates2, nums, expected);
+        test(rm::removeDuplicates3, nums, expected);
     }
 
     @Test
