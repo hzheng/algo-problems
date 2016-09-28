@@ -68,7 +68,7 @@ public class RemoveDupList2 {
 
             if (prev.next == cur) {
                 prev = prev.next;
-            } else {
+            } else { // duplicated
                 prev.next = cur.next;
             }
         }
@@ -79,20 +79,20 @@ public class RemoveDupList2 {
     public ListNode deleteDuplicates4(ListNode head) {
         ListNode dummy = new ListNode(0);
         dummy.next = head;
-        ListNode lastNode = dummy;
+        ListNode prev = dummy;
         boolean dup = false;
-        for (ListNode n = head; n != null && n.next != null; n = n.next) {
-            if (n.val == n.next.val) {
+        for (ListNode cur = head; cur != null && cur.next != null; cur = cur.next) {
+            if (cur.val == cur.next.val) {
                 dup = true;
             } else if (dup) {
-                lastNode.next = n.next;
+                prev.next = cur.next;
                 dup = false;
             } else {
-                lastNode = n;
+                prev = cur;
             }
         }
         if (dup) {
-            lastNode.next = null;
+            prev.next = null;
         }
         return dummy.next;
     }

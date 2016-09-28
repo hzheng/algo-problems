@@ -3,13 +3,14 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/maximal-rectangle/
+// LC085: https://leetcode.com/problems/maximal-rectangle/
 //
 // Given a 2D binary matrix filled with 0's and 1's, find the largest rectangle
 // containing all ones and return its area.
 public class MaxRect {
-    // beats 41.87%
-    // time complexity: O(M * N)
+    // Stack
+    // beats 54.04%(30 ms)
+    // time complexity: O(M * N), space complexity: O(N)
     public int maximalRectangle(char[][] matrix) {
         int m = matrix.length;
         if (m == 0) return 0;
@@ -57,10 +58,37 @@ public class MaxRect {
         return max;
     }
 
-    // http://www.sigmainfy.com/blog/leetcode-maximal-rectangle.html
-    // time complexity: O(M * M * N)
-    // beats 41.87%
+    // Solution of Choice
+    // Stack
+    // beats 26.54%(37 ms)
     public int maximalRectangle2(char[][] matrix) {
+        if (matrix.length == 0) return 0;
+
+        int max = 0;
+        int n = matrix[0].length;
+        int[] heights = new int[n + 1]; // append a dummy element
+        for (char[] row : matrix) {
+            Stack<Integer> stack = new Stack<>();
+            for (int i = 0; i <= n; i++) {
+                if (i < n) {
+                    heights[i] = (row[i] == '1') ? heights[i] + 1 : 0;
+                }
+                while (!stack.isEmpty() && heights[stack.peek()] >= heights[i]) {
+                    int height = heights[stack.pop()];
+                    int width = stack.empty() ? i : i - stack.peek() - 1;
+                    max = Math.max(max, width * height);
+                }
+                stack.push(i);
+            }
+        }
+        return max;
+    }
+
+    // Dynamic Programming
+    // http://www.sigmainfy.com/blog/leetcode-maximal-rectangle.html
+    // time complexity: O(M * M * N), space complexity: O(M * N)
+    // beats 58.08%(29 ms)
+    public int maximalRectangle3(char[][] matrix) {
         int m = matrix.length;
         if (m == 0) return 0;
 
@@ -88,6 +116,47 @@ public class MaxRect {
         return max;
     }
 
+    // Solution of Choice
+    // Dynamic Programming
+    // https://discuss.leetcode.com/topic/6650/share-my-dp-solution
+    // time complexity: O(M * N), space complexity: O(N)
+    // beats 92.12%(9 ms)
+    public int maximalRectangle4(char[][] matrix) {
+        if (matrix.length == 0) return 0;
+
+        int n = matrix[0].length;
+        int[] left = new int[n]; // max distance (inclusive) to leftmost 1
+        int[] right = new int[n]; // max distance (inclusive) to rightmost 1
+        int[] height = new int[n]; // max distance (inclusive) to topmost 1
+        Arrays.fill(right, n);
+        int max = 0;
+        for (char[] row : matrix) {
+            for (int i = n - 1, curRight = n; i >= 0; i--) {
+                // calculate right
+                if (row[i] == '1') {
+                    right[i] = Math.min(right[i], curRight);
+                } else {
+                    right[i] = n;
+                    curRight = i;
+                }
+            }
+            for (int i = 0, curLeft = 0; i < n; i++) {
+                // calculate left
+                if (row[i] == '1') {
+                    left[i] = Math.max(left[i], curLeft);
+                } else {
+                    left[i] = 0;
+                    curLeft = i + 1;
+                }
+                // calculate height
+                height[i] = (row[i] == '1') ? height[i] + 1 : 0;
+                // calculate max
+                max = Math.max(max, (right[i] - left[i]) * height[i]);
+            }
+        }
+        return max;
+    }
+
     // http://www.geeksforgeeks.org/maximum-size-sub-matrix-with-all-1s-in-a-binary-matrix/
     // only for sub-squrare matrix
 
@@ -101,10 +170,14 @@ public class MaxRect {
         }
         assertEquals(expected, maximalRectangle(matrix));
         assertEquals(expected, maximalRectangle2(matrix));
+        assertEquals(expected, maximalRectangle3(matrix));
+        assertEquals(expected, maximalRectangle4(matrix));
     }
 
     @Test
     public void test1() {
+        test(6, "0001000", "0011100", "0111110");
+        test(6, "10100", "10111", "11111", "10010");
         test(6, "00110", "10110", "10111", "11011");
         test(9, "00110", "11110", "11101", "11111");
         test(9, "00110", "11111", "11101", "11111");
