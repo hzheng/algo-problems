@@ -31,6 +31,7 @@ public class Combination {
         }
     }
 
+    // Solution of Choice
     // Backtracking
     // beats 35.45%(37 ms)
     public List<List<Integer> > combine1(int n, int k) {
@@ -54,6 +55,7 @@ public class Combination {
         }
     }
 
+    // Solution of Choice
     // Recursion + Combinatorics
     // https://discuss.leetcode.com/topic/12537/a-short-recursive-java-solution-based-on-c-n-k-c-n-1-k-1-c-n-1-k
     // beats 76.29%(22 ms)
@@ -75,6 +77,7 @@ public class Combination {
         return res;
     }
 
+    // Solution of Choice
     // Iteration by Bit Manipulation
     // https://graphics.stanford.edu/~seander/bithacks.html#NextBitPermutation
     // beats 88.36%(8 ms)
@@ -131,6 +134,29 @@ public class Combination {
         return res;
     }
 
+    // Iteration
+    // https://discuss.leetcode.com/topic/26689/short-iterative-c-answer-8ms
+    // beats 72.31%(25 ms)
+    public List<List<Integer> > combine5(int n, int k) {
+        List<List<Integer> > res = new ArrayList<>();
+        int[] buf = new int[k];
+		for (int i = 0; i >= 0; ) {
+			if (++buf[i] > n) { // move i to the left if the element is too big
+                i--;
+            } else if (i != k - 1) { // move i to the right
+			    buf[i + 1] = buf[i];
+			    i++;
+            } else { // found a combination
+                List<Integer> list = new ArrayList<>();
+                for (int num : buf) {
+                    list.add(num);
+                }
+                res.add(list);
+			}
+		}
+		return res;
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -165,6 +191,7 @@ public class Combination {
         test(c::combine2, "combine2", n, k, expected);
         test(c::combine3, "combine3", n, k, expected);
         test(c::combine4, "combine4", n, k, expected);
+        test(c::combine5, "combine5", n, k, expected);
     }
 
     @Test
