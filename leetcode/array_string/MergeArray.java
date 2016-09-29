@@ -7,6 +7,7 @@ import static org.junit.Assert.*;
 //
 // Given two sorted integer arrays, merge them as one sorted array.
 public class MergeArray {
+    // Solution of Choice
     // beats 39.97%(0 ms)
     public void merge(int[] nums1, int m, int[] nums2, int n) {
         for (int i = m - 1, j = n - 1; j >= 0; ) {

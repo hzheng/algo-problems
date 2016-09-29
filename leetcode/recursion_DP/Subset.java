@@ -65,11 +65,10 @@ public class Subset {
     // beats 91.45%(1 ms)
     public List<List<Integer> > subsets3(int[] nums) {
         List<List<Integer> > res = new ArrayList<>();
-        int n = nums.length;
-        for (int i = ((1 << n) - 1); i >= 0; i--) {
+        for (int n = nums.length, i = ((1 << n) - 1); i >= 0; i--) {
             List<Integer> subset = new ArrayList<>();
             for (int j = 0; j < n; j++) {
-                if ((i & (1 << j)) > 0) {
+                if ((i & (1 << j)) != 0) {
                     subset.add(nums[j]);
                 }
             }
@@ -112,17 +111,17 @@ public class Subset {
     // Iteration version of last method
     // beats 26.55%(2 ms)
     public List<List<Integer> > subsets5(int[] nums) {
-        List<List<Integer> > allSubsets = new ArrayList<>(Arrays.asList(new ArrayList<>()));
+        List<List<Integer> > res = new ArrayList<>(Arrays.asList(new ArrayList<>()));
         for (int i : nums) {
-            List<List<Integer>> moreSubsets = new ArrayList<>();
-            for (List<Integer> set : allSubsets) {
+            List<List<Integer>> more = new ArrayList<>(); // avoid ConcurrentModificationException
+            for (List<Integer> set : res) {
                 List<Integer> cloned = new ArrayList<>(set);
                 cloned.add(i);
-                moreSubsets.add(cloned);
+                more.add(cloned);
             }
-            allSubsets.addAll(moreSubsets);
+            res.addAll(more);
         }
-        return allSubsets;
+        return res;
     }
 
     void test(Function<int[], List<List<Integer>>> subsets,
