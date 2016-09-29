@@ -3,11 +3,13 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC091: https://leetcode.com/problems/decode-ways/
+//
 // A message containing letters from A-Z is being encoded to numbers using the
 // following mapping: 'A' -> 1 'B' -> 2 ... 'Z' -> 26. Given an encoded message
 // containing digits, determine the total number of ways to decode it.
 public class DecodeWays {
-    // beats 52.85%
+    // beats 52.85%(4 ms)
     public int numDecodings(String s) {
         int len = s.length();
         if (len == 0 || s.charAt(0) == '0') return 0;
@@ -100,8 +102,9 @@ public class DecodeWays {
         return count;
     }
 
-    // beats 68.71%
+    // Dynamic Programming
     // time complexity: O(N), space complexity: O(N)
+    // beats 68.87%(2 ms)
     public int numDecodings4(String s) {
         int len = s.length();
         if (len == 0) return 0;
@@ -122,38 +125,48 @@ public class DecodeWays {
         return dp[len];
     }
 
-    // beats 68.71%
+    // Solution of Choice
+    // Dynamic Programming
+    // beats 91.36%(1 ms)
     // time complexity: O(N), space complexity: O(1)
     public int numDecodings5(String s) {
         int len = s.length();
         if (len == 0 || s.charAt(0) == '0') return 0;
 
-        if (len == 1) return 1;
-
-        char c1 = s.charAt(0);
-        char c2 = s.charAt(1);
-        int count = 0;
-        int count2 = 1;
-        int count1 = isValid(c1, c2) ? 1 : 0;
-        count1 += (c1 > '0' && c2 > '0') ? 1 : 0;
-        for (int i = 2; i < len; i++) {
-            if (s.charAt(i) > '0') {
-                count += count1;
+        int prev = 1;
+        for (int i = 1, prev2 = 1; i < len; i++) {
+            char c1 = s.charAt(i - 1);
+            char c2 = s.charAt(i);
+            int cur = (c2 > '0') ? prev : 0;
+            if (c1 == '1' || (c1 == '2' && c2 < '7')) {
+                cur += prev2;
             }
-            if (isValid(s.charAt(i - 1), s.charAt(i))) {
-                count += count2;
-            }
-            if (count == 0) return 0;
-
-            count2 = count1;
-            count1 = count;
-            count = 0;
+            prev2 = prev;
+            prev = cur;
         }
-        return count1;
+        return prev;
     }
 
-    private boolean isValid(char c1, char c2) {
-        return (c1 == '1') || (c1 == '2' && c2 < '7');
+    // Dynamic Programming
+    // beats 68.87%(2 ms)
+    // time complexity: O(N), space complexity: O(N)
+    public int numDecodings6(String s) {
+        int len = s.length();
+        if (len == 0) return 0;
+
+        int[] dp = new int[len + 1];
+        dp[len] = 1;
+        dp[len - 1] = s.charAt(len - 1) == '0' ? 0 : 1;
+        for (int i = len - 2; i >= 0; i--) {
+            char c1 = s.charAt(i);
+            if (c1 > '0') {
+                dp[i] = dp[i + 1];
+                if (c1 == '1' || (c1 == '2' && s.charAt(i + 1) < '7')) {
+                    dp[i] += dp[i + 2];
+                }
+            }
+        }
+        return dp[0];
     }
 
     void test(String s, int expected) {
@@ -162,6 +175,7 @@ public class DecodeWays {
         assertEquals(expected, numDecodings3(s));
         assertEquals(expected, numDecodings4(s));
         assertEquals(expected, numDecodings5(s));
+        assertEquals(expected, numDecodings6(s));
     }
 
     @Test
