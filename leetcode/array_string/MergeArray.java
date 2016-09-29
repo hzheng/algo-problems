@@ -3,19 +3,14 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC088: https://leetcode.com/problems/merge-sorted-array/
+//
 // Given two sorted integer arrays, merge them as one sorted array.
 public class MergeArray {
-    // beats 7.48%
+    // beats 39.97%(0 ms)
     public void merge(int[] nums1, int m, int[] nums2, int n) {
-        if (n == 0) return;
-
-        for (int i = m - 1, j = n - 1, k = m + n - 1; ; k--) {
-            if (i < 0 || nums1[i] < nums2[j]) {
-                nums1[k] = nums2[j--];
-                if (j < 0) return;
-            } else {
-                nums1[k] = nums1[i--];
-            }
+        for (int i = m - 1, j = n - 1; j >= 0; ) {
+            nums1[i + j + 1] = (i < 0 || nums1[i] < nums2[j]) ? nums2[j--] : nums1[i--];
         }
     }
 

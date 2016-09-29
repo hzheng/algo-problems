@@ -3,6 +3,8 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC087: https://leetcode.com/problems/scramble-string/
+//
 // Given a string s1, we may represent it as a binary tree by partitioning it to
 // two non-empty substrings recursively. To scramble the string, we may choose
 // any non-leaf node and swap its two children.
