@@ -9,16 +9,12 @@ import static org.junit.Assert.*;
 // Given two strings s1 and s2 of the same length, determine if s2 is a
 // scrambled string of s1.
 public class ScrambleStr {
-    // beats 71.43%(34.88% if use 'isPerm2')
+    // Recursion
+    // beats 67.44%(6 ms)
     public boolean isScramble(String s1, String s2) {
         if (s1.equals(s2)) return true;
 
         int len = s1.length();
-        if (len <= 1) return false;
-
-        // if (!isPerm(s1, s2, 0, 0, len)) return false;
-        // if (len < 3) return true;
-
         for (int i = 1; i < len; i++) {
             if (isPerm(s1, s2, 0, 0, i)) {
                 if (isScramble(s1.substring(0, i), s2.substring(0, i))
@@ -75,20 +71,18 @@ public class ScrambleStr {
         }
     }
 
-    // beats 18.74%
+    // Solution of Choice
+    // Dynamic Programming(bottom-up)
+    // beats 28.87%(20 ms)
     public boolean isScramble2(String s1, String s2) {
-        if (s1.equals(s2)) return true;
-
         int len = s1.length();
-        if (len <= 1) return false;
-
+        // s1[i..i+l-1] is a scramble of s2[j..j+l-1]
         boolean[][][] dp = new boolean[len][len][len + 1];
         for (int i = 0; i < len; i++) {
             for (int j = 0; j < len; j++) {
                 dp[i][j][1] = (s1.charAt(i) == s2.charAt(j));
             }
         }
-
         for (int l = 2; l <= len; l++) {
             for (int i = 0; i <= len - l; i++) {
                 for (int j = 0; j <= len - l; j++) {
@@ -102,32 +96,84 @@ public class ScrambleStr {
         return dp[0][0][len];
     }
 
-    // beats 66.42%
+    // Solution of Choice
+    // Dynamic Programming(top-down) + Pruning
+    // beats 56.35%(7 ms)
     public boolean isScramble3(String s1, String s2) {
+        int len = s1.length();
+        return isScramble3(s1.toCharArray(), s2.toCharArray(), 0, 0,
+                           len, new Boolean[len][len][len + 1], true);
+    }
+
+    private boolean isScramble3(char[] s1, char[] s2, int i1, int i2, int len,
+                                Boolean[][][] memo, boolean check) {
+
+        if (len == 1) return s1[i1] == s2[i2];
+
+        Boolean cached = memo[i1][i2][len];
+        if (cached != null) return cached;
+
+        if (check) {
+            int[] count = new int[26]; // or 256
+            for (int j = 0; j < len; j++) {
+                count[s1[i1 + j] - 'a']++;
+                count[s2[i2 + j] - 'a']--;
+            }
+            for (int c : count) {
+                if (c != 0) return memo[i1][i2][len] = false;
+            }
+        }
+
+        boolean res = false;
+        for (int j = 1; j < len; j++) {
+            if (isScramble3(s1, s2, i1, i2, j, memo, true)
+                && isScramble3(s1, s2, i1 + j, i2 + j, len - j, memo, false)
+                || isScramble3(s1, s2, i1, i2 + len - j, j, memo, true)
+                && isScramble3(s1, s2, i1 + j, i2, len - j, memo, false)) {
+                res = true;
+                break;
+            }
+        }
+        return memo[i1][i2][len] = res;
+    }
+
+    // Recursion + Pruning
+    // beats 91.45%(4 ms)
+    public boolean isScramble4(String s1, String s2) {
+        return isScramble4(s1, s2, true);
+    }
+
+    private boolean isScramble4(String s1, String s2, boolean check) {
         if (s1.equals(s2)) return true;
 
         int len = s1.length();
-        if (len <= 1) return false;
-
-        char[] arr1 = s1.toCharArray();
-        char[] arr2 = s2.toCharArray();
-        Arrays.sort(arr1);
-        Arrays.sort(arr2);
-        if (!Arrays.equals(arr1, arr2)) return false;
+        if (check) {
+            // beats 67.44%(6 ms) if use character sort
+            // char[] arr1 = s1.toCharArray();
+            // char[] arr2 = s2.toCharArray();
+            // Arrays.sort(arr1);
+            // Arrays.sort(arr2);
+            // if (!Arrays.equals(arr1, arr2)) return false;
+            int[] count = new int[26]; // or 256
+            for (int i = 0; i < len; i++) {
+                count[s1.charAt(i) - 'a']++;
+                count[s2.charAt(i) - 'a']--;
+            }
+            for (int c : count) {
+                if (c != 0) return false;
+            }
+        }
 
         for (int i = 1; i < len; i++) {
             String s11 = s1.substring(0, i);
             String s12 = s1.substring(i);
-            String s21 = s2.substring(0, i);
-            String s22 = s2.substring(i);
-
-            if (isScramble(s11, s21) && isScramble(s12, s22)) return true;
-
-            String s23 = s2.substring(0, len - i);
-            String s24 = s2.substring(len - i, len);
-            if (isScramble(s11, s24) && isScramble(s12, s23)) return true;
+            if (isScramble4(s11, s2.substring(0, i), true)
+                && isScramble4(s12, s2.substring(i), false)
+                || isScramble4(s11, s2.substring(len - i, len), true)
+                && isScramble4(s12, s2.substring(0, len - i), false)) {
+                return true;
+            }
         }
-
         return false;
     }
 
@@ -135,6 +181,7 @@ public class ScrambleStr {
         assertEquals(expected, isScramble(s1, s2));
         assertEquals(expected, isScramble2(s1, s2));
         assertEquals(expected, isScramble3(s1, s2));
+        assertEquals(expected, isScramble4(s1, s2));
     }
 
     @Test
