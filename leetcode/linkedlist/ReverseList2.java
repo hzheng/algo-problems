@@ -6,9 +6,11 @@ import static org.junit.Assert.*;
 
 import common.ListNode;
 
+// LC092: https://leetcode.com/problems/reverse-linked-list-ii/
+//
 // Reverse a linked list from position m to n. Do it in-place and in one-pass.
 public class ReverseList2 {
-    // beats 7.78%
+    // beats 2.61%(1 ms)
     public ListNode reverseBetween(ListNode head, int m, int n) {
         if (m >= n) return head;
 
@@ -31,6 +33,28 @@ public class ReverseList2 {
         return (m == 1) ? cur : head;
     }
 
+    // Solution of Choice
+    // https://discuss.leetcode.com/topic/15034/12-lines-4ms-c
+    // beats 13.66%(0 ms)
+    public ListNode reverseBetween2(ListNode head, int m, int n) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode start = dummy;
+        for (int i = 1; i < m; i++) {
+            start = start.next;
+        }
+        ListNode end = start.next;
+        for (int i = m; i < n; i++) {
+            // detach the node(nextMove) which is immediately after 'end'
+            ListNode nextMove = end.next;
+            end.next = nextMove.next;
+            // insert the node immediately after 'start'
+            nextMove.next = start.next;
+            start.next = nextMove;
+        }
+        return dummy.next;
+    }
+
     @FunctionalInterface
     interface Function<A, B, C, D> {
         public D apply(A a, B b, C c);
@@ -47,6 +71,7 @@ public class ReverseList2 {
     void test(int[] nums, int m, int n, int[] expected) {
         ReverseList2 r = new ReverseList2();
         test(r::reverseBetween, nums, m, n, expected);
+        test(r::reverseBetween2, nums, m, n, expected);
     }
 
     @Test
