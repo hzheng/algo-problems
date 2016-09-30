@@ -47,6 +47,7 @@ public class TreePreorderTraversal {
         return res;
     }
 
+    // Solution of Choice
     // beats 1.55%(2 ms)
     // time complexity: O(N), space complexity: O(N)
     public List<Integer> preorderTraversal3(TreeNode root) {
@@ -84,19 +85,16 @@ public class TreePreorderTraversal {
     // beats 53.27%(1 ms)
     public List<Integer> preorderTraversal5(TreeNode root) {
         List<Integer> res = new ArrayList<>();
-        if (root == null) return res;
-
-        for (TreeNode cur = root, prev = null; cur != null; ) {
+        for (TreeNode cur = root, prev; cur != null; ) {
             if (cur.left == null) {
                 res.add(cur.val);
                 cur = cur.right;
             } else {
-                for (prev = cur.left; prev.right != null && prev.right != cur; ) {
-                    prev = prev.right;
-                }
+                for (prev = cur.left; prev.right != null && prev.right != cur;
+                     prev = prev.right) {}
                 if (prev.right == null) {
                     res.add(cur.val);
-                    prev.right = cur;
+                    prev.right = cur; // create threaded link
                     cur = cur.left;
                 } else {
                     prev.right = null; // recover the tree
