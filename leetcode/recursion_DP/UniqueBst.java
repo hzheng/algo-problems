@@ -4,8 +4,11 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC096: https://leetcode.com/problems/unique-binary-search-trees/
+//
 // Given n, how many structurally unique BST's that store values 1...n?
 public class UniqueBst {
+    // Recursion
     // Time Limit Exceeded
     public int numTrees(int n) {
         if (n == 0) return 1;
@@ -17,7 +20,9 @@ public class UniqueBst {
         return count;
     }
 
-    // beats 11.97%
+    // Dynamic Programming
+    // time complexity: O(N), space complexity: O(N)
+    // beats 14.61%(0 ms)
     public int numTrees2(int n) {
         int[] cache = new int[n + 1];
         cache[0] = 1;
@@ -35,7 +40,9 @@ public class UniqueBst {
         return count;
     }
 
-    // beats 11.97%
+    // Solution of Choice
+    // Dynamic Programming
+    // beats 14.61%(0 ms)
     public int numTrees3(int n) {
         int[] count = new int[n + 1];
         count[0] = 1;
@@ -45,6 +52,19 @@ public class UniqueBst {
             }
         }
         return count[n];
+    }
+
+    // Solution of Choice
+    // Math (Catalan Number: C(2n,n)/(n+1)= II(2..n) (n+k)/k)
+    // time complexity: O(N), space complexity: O(1)
+    // beats 14.61%(0 ms)
+    public int numTrees4(int n) {
+        long res = 1;
+        for (int i = 1; i <= n; i++) {
+            res *= (n + i);
+            res /= i;
+        }
+        return (int)(res / (n + 1));
     }
 
     void test(Function<Integer, Integer> count, String name,
@@ -61,6 +81,7 @@ public class UniqueBst {
         }
         test(u::numTrees2, "numTrees2", n, expected);
         test(u::numTrees3, "numTrees3", n, expected);
+        test(u::numTrees4, "numTrees4", n, expected);
     }
 
     @Test
