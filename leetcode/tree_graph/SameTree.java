@@ -5,49 +5,75 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
+// LC100: https://leetcode.com/problems/same-tree/
+//
 // Given two binary trees, write a function to check if they are equal or not.
 public class SameTree {
-    // beats 10.47%
+    // Recursion
+    // beats 10.47%(0 ms)
     public boolean isSameTree(TreeNode p, TreeNode q) {
-        if (p == null)  return q == null;
-        if (q == null)  return p == null;
+        if (p == null || q == null)  return p == q;
 
         return (p.val == q.val)
                && isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
     }
 
-    // beats 1.18%
+    // Queue
+    // beats 2.18%(1 ms)
     public boolean isSameTree2(TreeNode p, TreeNode q) {
-        if (p == null)  return q == null;
-        if (q == null)  return p == null;
+        if (p == null || q == null)  return p == q;
 
-        Queue<TreeNode> pq = new LinkedList<>();
-        Queue<TreeNode> qq = new LinkedList<>();
-        pq.add(p);
-        qq.add(q);
-        while (!pq.isEmpty() && !qq.isEmpty()) {
-            TreeNode pn = pq.poll();
-            TreeNode qn = qq.poll();
-            if (pn.val != qn.val) return false;
+        Queue<TreeNode> queue1 = new LinkedList<>();
+        Queue<TreeNode> queue2 = new LinkedList<>();
+        queue1.add(p);
+        queue2.add(q);
+        while (!queue1.isEmpty() && !queue2.isEmpty()) {
+            TreeNode pHead = queue1.poll();
+            TreeNode qHead = queue2.poll();
+            if (pHead.val != qHead.val) return false;
 
-            if (pn.left == null) {
-                if (qn.left != null) return false;
-            } else {
-                if (qn.left == null) return false;
-
-                pq.offer(pn.left);
-                qq.offer(qn.left);
+            if ((pHead.left == null) ^ (qHead.left == null)) return false;
+            if (pHead.left != null) {
+                queue1.offer(pHead.left);
+                queue2.offer(qHead.left);
             }
-            if (pn.right == null) {
-                if (qn.right != null) return false;
-            } else {
-                if (qn.right == null) return false;
 
-                pq.offer(pn.right);
-                qq.offer(qn.right);
+            if ((pHead.right == null) ^ (qHead.right == null)) return false;
+            if (pHead.right != null) {
+                queue1.offer(pHead.right);
+                queue2.offer(qHead.right);
             }
         }
-        return pq.isEmpty() && qq.isEmpty();
+        return queue1.isEmpty() && queue2.isEmpty();
+    }
+
+    // Stack
+    // beats 2.18%(1 ms)
+    public boolean isSameTree3(TreeNode p, TreeNode q) {
+        if (p == null || q == null)  return p == q;
+
+        Stack<TreeNode> stack1 = new Stack<> ();
+        Stack<TreeNode> stack2 = new Stack<> ();
+        stack1.push(p);
+        stack2.push(q);
+        while (!stack1.isEmpty() && !stack2.isEmpty()) {
+            TreeNode pTop = stack1.pop();
+            TreeNode qTop = stack2.pop();
+            if (pTop.val != qTop.val) return false;
+
+            if ((pTop.right == null) ^ (qTop.right == null)) return false;
+            if (pTop.right != null) {
+                stack1.push(pTop.right);
+                stack2.push(qTop.right);
+            }
+
+            if ((pTop.left == null) ^ (qTop.left == null)) return false;
+            if (pTop.left != null) {
+                stack1.push(pTop.left);
+                stack2.push(qTop.left);
+            }
+        }
+        return stack1.isEmpty() == stack2.isEmpty();
     }
 
     @FunctionalInterface
@@ -66,6 +92,7 @@ public class SameTree {
         SameTree s = new SameTree();
         test(s::isSameTree, s1, s2, expected);
         test(s::isSameTree2, s1, s2, expected);
+        test(s::isSameTree3, s1, s2, expected);
     }
 
     @Test
