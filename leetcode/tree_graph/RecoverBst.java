@@ -5,8 +5,13 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
+// LC099: https://leetcode.com/problems/recover-binary-search-tree/
+//
 // Two elements of a binary search tree (BST) are swapped by mistake.
 // Recover the tree without changing its structure.
+// Note:
+// A solution using O(n) space is pretty straight forward. Could you devise a
+// constant space solution?
 public class RecoverBst {
     private TreeNode node1;
     private TreeNode node2;
@@ -14,7 +19,7 @@ public class RecoverBst {
 
     // Recursion traversal: time complexity: O(N)
     // space complexity: average - O(Log(N)) worst - O(N)
-    // beats 44.17%
+    // beats 83.17%(3 ms)
     public void recoverTree(TreeNode root) {
         visit(root);
         swap(node1, node2);
@@ -40,45 +45,31 @@ public class RecoverBst {
         node2.val = tmp;
     }
 
+    // Solution of Choice
     // Morris traversal: time complexity: O(N), space complexity: O(1)
-    // beats 27.33%
+    // beats 41.02%(4 ms)
     public void recoverTree2(TreeNode root) {
         TreeNode node1 = null;
         TreeNode node2 = null;
-        TreeNode lastNode = null;
-        TreeNode cur = root;
-
-        while (cur != null) {
-            if (cur.left == null) {
-                if (lastNode != null && cur.val < lastNode.val) {
-                    if (node1 == null) {
-                        node1 = lastNode;
-                    }
-                    node2 = cur;
+        for (TreeNode cur = root, lastNode = null, prev; cur != null; ) {
+            if (cur.left != null) {
+                for (prev = cur.left; prev.right != null && prev.right != cur;
+                     prev = prev.right) {}
+                if (prev.right == null) {
+                    prev.right = cur;
+                    cur = cur.left;
+                    continue;
                 }
-                lastNode = cur;
-                cur = cur.right;
-                continue;
+                prev.right = null;
             }
-
-            TreeNode pre = cur.left;
-            while (pre.right != null && pre.right != cur) {
-                pre = pre.right;
-            }
-            if (pre.right == null) {
-                pre.right = cur;
-                cur = cur.left;
-            } else {
-                pre.right = null;
-                if (lastNode != null && cur.val < lastNode.val) {
-                    if (node1 == null) {
-                        node1 = lastNode;
-                    }
-                    node2 = cur;
+            if (lastNode != null && cur.val < lastNode.val) {
+                if (node1 == null) {
+                    node1 = lastNode;
                 }
-                lastNode = cur;
-                cur = cur.right;
+                node2 = cur;
             }
+            lastNode = cur;
+            cur = cur.right;
         }
         swap(node1, node2);
     }
