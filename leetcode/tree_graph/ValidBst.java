@@ -6,9 +6,12 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
+// LC098: https://leetcode.com/problems/validate-binary-search-tree/
+//
 // Given a binary tree, determine if it is a valid binary search tree (BST).
 public class ValidBst {
-    // beats 31.71%
+    // Divide & Conquer(Recursion)
+    // beats 31.71%(1 ms)
     public boolean isValidBST(TreeNode root) {
         if (root == null) return true;
 
@@ -30,7 +33,9 @@ public class ValidBst {
         return isValidBST(root.left) && isValidBST(root.right);
     }
 
-    // beats 31.71%
+    // Solution of Choice
+    // Divide & Conquer(Recursion)
+    // beats 31.71%(1 ms)
     public boolean isValidBST2(TreeNode root) {
         // return isValidBST2(root, null, null);
         // return isValidBST2(root, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
@@ -46,13 +51,14 @@ public class ValidBst {
                && isValidBST2(root.right, root.val, max);
     }
 
+    // Queue
     // http://www.programcreek.com/2012/12/leetcode-validate-binary-search-tree-java/
-    // beats 6.33%
+    // beats 6.33%(5 ms)
     public boolean isValidBST3(TreeNode root) {
         if (root == null) return true;
 
         Queue<BoundedNode> queue = new LinkedList<>();
-        queue.add(new BoundedNode(root, Long.MIN_VALUE,Long.MAX_VALUE));
+        queue.add(new BoundedNode(root, Long.MIN_VALUE, Long.MAX_VALUE));
         while (!queue.isEmpty()) {
             BoundedNode n = queue.poll();
             if (n.node.val <= n.min || n.node.val >= n.max) return false;
@@ -78,7 +84,8 @@ public class ValidBst {
         }
     }
 
-    // beats 6.33%
+    // Stack
+    // beats 6.33%(5 ms)
     public boolean isValidBST4(TreeNode root) {
         Stack<TreeNode> stack = new Stack<>();
         TreeNode last = null;
@@ -97,6 +104,24 @@ public class ValidBst {
         return true;
     }
 
+    // Divide & Conquer(Recursion)
+    // beats 23.49%(3 ms)
+    public boolean isValidBST5(TreeNode root) {
+        return validate(root, new TreeNode[1]);
+    }
+
+    private boolean validate(TreeNode node, TreeNode[] prev) {
+        if (node == null) return true;
+
+        if (!validate(node.left, prev)
+            || (prev[0] != null && prev[0].val >= node.val)) {
+            return false;
+        }
+
+        prev[0] = node;
+        return validate(node.right, prev);
+    }
+
     void test(Function<TreeNode, Boolean> valid, String name,
               String s, boolean expected) {
         long t1 = System.nanoTime();
@@ -110,6 +135,7 @@ public class ValidBst {
         test(v::isValidBST2, "isValidBST2", s, expected);
         test(v::isValidBST3, "isValidBST3", s, expected);
         test(v::isValidBST4, "isValidBST4", s, expected);
+        test(v::isValidBST5, "isValidBST5", s, expected);
     }
 
     @Test
