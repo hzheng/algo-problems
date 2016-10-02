@@ -6,9 +6,12 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
+// LC101: https://leetcode.com/problems/symmetric-tree/
+//
 // Given a binary tree, check whether it is a mirror of itself (ie, symmetric around its center).
 public class SymmetricTree {
-    // beats 23.80%
+    // Recursion
+    // beats 23.80%(1 ms)
     public boolean isSymmetric(TreeNode root) {
         if (root == null) return true;
 
@@ -17,16 +20,15 @@ public class SymmetricTree {
     }
 
     private boolean isSymmetric(TreeNode p, TreeNode q) {
-        if (p == null) return q == null;
-
-        if (q == null) return p == null;
+        if (p == null || q == null)  return p == q;
 
         return p.val == q.val && isSymmetric(p.right, q.left)
                && isSymmetric(p.left, q.right);
     }
 
+    // Solution of Choice
     // from leetcode solution
-    // beats 6.29%
+    // beats 6.29%(3 ms)
     public boolean isSymmetric2(TreeNode root) {
         Queue<TreeNode> queue = new LinkedList<>();
         queue.offer(root);
@@ -48,29 +50,26 @@ public class SymmetricTree {
         return true;
     }
 
-    // beats 6.29%
+    // Solution of Choice
+    // Stack
+    // beats 6.29%(3 ms)
     public boolean isSymmetric3(TreeNode root) {
-        if (root == null) return true;
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            TreeNode n1 = stack.pop();
+            TreeNode n2 = stack.pop();
+            if (n1 == null && n2 == null) continue;
 
-        Queue<TreeNode> left = new LinkedList<>();
-        left.offer(root.left);
+            if (n1 == null || n2 == null) return false;
 
-        Queue<TreeNode> right = new LinkedList<>();
-        right.offer(root.right);
+            if (n1.val != n2.val) return false;
 
-        while (!left.isEmpty() && !right.isEmpty()) {
-            TreeNode l = left.poll();
-            TreeNode r = right.poll();
-            if (l == null && r == null) continue;
-
-            if (l == null || r == null) return false;
-
-            if (l.val != r.val) return false;
-
-            left.add(l.left);
-            left.add(l.right);
-            right.add(r.right);
-            right.add(r.left);
+            stack.push(n1.left);
+            stack.push(n2.right);
+            stack.push(n1.right);
+            stack.push(n2.left);
         }
         return true;
     }

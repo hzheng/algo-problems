@@ -18,62 +18,52 @@ public class SameTree {
                && isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
     }
 
+    // Solution of Choice
     // Queue
     // beats 2.18%(1 ms)
     public boolean isSameTree2(TreeNode p, TreeNode q) {
-        if (p == null || q == null)  return p == q;
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(p);
+        queue.offer(q);
+        while (!queue.isEmpty()) {
+            TreeNode pHead = queue.poll();
+            TreeNode qHead = queue.poll();
+            if (pHead == null && qHead == null) continue;
 
-        Queue<TreeNode> queue1 = new LinkedList<>();
-        Queue<TreeNode> queue2 = new LinkedList<>();
-        queue1.add(p);
-        queue2.add(q);
-        while (!queue1.isEmpty() && !queue2.isEmpty()) {
-            TreeNode pHead = queue1.poll();
-            TreeNode qHead = queue2.poll();
+            if (pHead == null || qHead == null) return false;
+
             if (pHead.val != qHead.val) return false;
 
-            if ((pHead.left == null) ^ (qHead.left == null)) return false;
-            if (pHead.left != null) {
-                queue1.offer(pHead.left);
-                queue2.offer(qHead.left);
-            }
-
-            if ((pHead.right == null) ^ (qHead.right == null)) return false;
-            if (pHead.right != null) {
-                queue1.offer(pHead.right);
-                queue2.offer(qHead.right);
-            }
+            queue.offer(pHead.left);
+            queue.offer(qHead.left);
+            queue.offer(pHead.right);
+            queue.offer(qHead.right);
         }
-        return queue1.isEmpty() && queue2.isEmpty();
+        return true;
     }
 
+    // Solution of Choice
     // Stack
     // beats 2.18%(1 ms)
     public boolean isSameTree3(TreeNode p, TreeNode q) {
-        if (p == null || q == null)  return p == q;
+        Stack<TreeNode> stack = new Stack<> ();
+        stack.push(p);
+        stack.push(q);
+        while (!stack.isEmpty()) {
+            TreeNode pTop = stack.pop();
+            TreeNode qTop = stack.pop();
+            if (pTop == null && qTop == null) continue;
 
-        Stack<TreeNode> stack1 = new Stack<> ();
-        Stack<TreeNode> stack2 = new Stack<> ();
-        stack1.push(p);
-        stack2.push(q);
-        while (!stack1.isEmpty() && !stack2.isEmpty()) {
-            TreeNode pTop = stack1.pop();
-            TreeNode qTop = stack2.pop();
+            if (pTop == null || qTop == null) return false;
+
             if (pTop.val != qTop.val) return false;
 
-            if ((pTop.right == null) ^ (qTop.right == null)) return false;
-            if (pTop.right != null) {
-                stack1.push(pTop.right);
-                stack2.push(qTop.right);
-            }
-
-            if ((pTop.left == null) ^ (qTop.left == null)) return false;
-            if (pTop.left != null) {
-                stack1.push(pTop.left);
-                stack2.push(qTop.left);
-            }
+            stack.push(pTop.right);
+            stack.push(qTop.right);
+            stack.push(pTop.left);
+            stack.push(qTop.left);
         }
-        return stack1.isEmpty() == stack2.isEmpty();
+        return true;
     }
 
     @FunctionalInterface
