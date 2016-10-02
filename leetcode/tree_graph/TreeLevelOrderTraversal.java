@@ -6,40 +6,43 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
+// LC102: https://leetcode.com/problems/binary-tree-level-order-traversal/
+//
 // Given a binary tree, return the level order traversal of its nodes' values.
 public class TreeLevelOrderTraversal {
-    // beats 14.03%
+    // Solution of Choice
+    // BFS/Queue
+    // beats 36.62%(2 ms)
     public List<List<Integer> > levelOrder(TreeNode root) {
         List<List<Integer> > res = new ArrayList<>();
         if (root == null) return res;
 
         Queue<TreeNode> queue = new LinkedList<>();
         queue.offer(root);
-        List<Integer> level = null;
-        while (!queue.isEmpty()) {
+        queue.offer(null);
+        List<Integer> level = new ArrayList<>();
+        while (true) {
             TreeNode n = queue.poll();
             if (n == null) { // finished one level
                 res.add(level);
-                level = null;
-                continue;
-            }
+                if (queue.isEmpty()) return res;
 
-            if (level == null) { // new level begins
                 level = new ArrayList<>();
                 queue.offer(null);
-            }
-            level.add(n.val);
-            if (n.left != null) {
-                queue.offer(n.left);
-            }
-            if (n.right != null) {
-                queue.offer(n.right);
+            } else {
+                level.add(n.val);
+                if (n.left != null) {
+                    queue.offer(n.left);
+                }
+                if (n.right != null) {
+                    queue.offer(n.right);
+                }
             }
         }
-        return res;
     }
 
-    // beats 58.26%
+    // BFS/Queue
+    // beats 36.62%(2 ms)
     public List<List<Integer> > levelOrder2(TreeNode root) {
         List<List<Integer> > res = new ArrayList<>();
         if (root == null) return res;
@@ -48,8 +51,7 @@ public class TreeLevelOrderTraversal {
         queue.offer(root);
         while (!queue.isEmpty()) {
             List<Integer> level = new ArrayList<>();
-            int size = queue.size();
-            for (int i = 0; i < size; i++) {
+            for (int i = queue.size(); i > 0; i--) {
                 TreeNode head = queue.poll();
                 level.add(head.val);
                 if (head.left != null) {
@@ -64,34 +66,28 @@ public class TreeLevelOrderTraversal {
         return res;
     }
 
-    // beats 6.32%
+    // Solution of Choice
+    // DFS/Recursion
+    // beats 88.51%(1 ms)
     public List<List<Integer> > levelOrder3(TreeNode root) {
         List<List<Integer> > res = new ArrayList<>();
-
-        for (int max = 0;; max++) {
-            List<Integer> level = new ArrayList<>();
-            dfs(root, level, 0, max);
-            if (level.size() == 0) break;
-
-            res.add(level);
-        }
+        levelOrder3(root, 0, res);
         return res;
     }
 
-    private void dfs(TreeNode root, List<Integer> level, int cur, int max) {
-        if (root == null || cur > max) return;
+    private void levelOrder3(TreeNode root, int level, List<List<Integer>> res) {
+        if (root == null) return;
 
-        if (cur == max) {
-            level.add(root.val);
-            return;
+        if (res.size() == level) {
+            res.add(new ArrayList<>());
         }
-
-        dfs(root.left, level, cur + 1, max);
-        dfs(root.right, level, cur + 1, max);
+        res.get(level).add(root.val);
+        levelOrder3(root.left, level + 1, res);
+        levelOrder3(root.right, level + 1, res);
     }
 
-    // another recursion
-    // beats 6.32%
+    // Recursion
+    // beats 5.51%(4 ms)
     public List<List<Integer> > levelOrder4(TreeNode root) {
         List<List<Integer> > res = new ArrayList<>();
         if (root != null) {
