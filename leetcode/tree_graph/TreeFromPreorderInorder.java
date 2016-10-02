@@ -6,10 +6,13 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
+// LC105: https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/
+//
 // Given preorder and inorder traversal of a tree, construct the binary tree.
 // You may assume that duplicates do not exist in the tree.
 public class TreeFromPreorderInorder {
-    // beats 72.17%
+    // Stack
+    // beats 72.17%(11 ms)
     public TreeNode buildTree(int[] preorder, int[] inorder) {
         int len = preorder.length;
         if (len == 0) return null;
@@ -64,7 +67,8 @@ public class TreeFromPreorderInorder {
         return map.get(n) > map.get(node.val);
     }
 
-    // beats 73.81%
+    // Stack
+    // beats 73.81%(8 ms)
     public TreeNode buildTree2(int[] preorder, int[] inorder) {
         int len = preorder.length;
         if (len == 0) return null;
@@ -97,7 +101,8 @@ public class TreeFromPreorderInorder {
         return root;
     }
 
-    // beats 25.32%
+    // Divide & Conquer/Recursion
+    // beats 41.62%(19 ms)
     public TreeNode buildTree3(int[] preorder, int[] inorder) {
         return buildTree3(preorder, new int[1], inorder, 0, inorder.length);
     }
@@ -105,7 +110,6 @@ public class TreeFromPreorderInorder {
     private TreeNode buildTree3(int[] preorder, int[] from,
                                 int[] inorder, int start, int end) {
         if (start >= end) return null;
-
 
         TreeNode root = new TreeNode(preorder[from[0]++]);
         int rootIndex = start;
@@ -118,7 +122,9 @@ public class TreeFromPreorderInorder {
         return root;
     }
 
-    // beats 74.94%
+    // Solution of Choice
+    // Divide & Conquer/Recursion + Hashtable
+    // beats 77.21%(7 ms)
     public TreeNode buildTree4(int[] preorder, int[] inorder) {
         Map<Integer, Integer> map = new HashMap<>();
         for (int i = 0; i < inorder.length; i++) {
@@ -138,6 +144,32 @@ public class TreeFromPreorderInorder {
         return root;
     }
 
+    // Solution of Choice
+    // Stack
+    // beats 83.92%(5 ms)
+    public TreeNode buildTree5(int[] preorder, int[] inorder) {
+        TreeNode dummy = new TreeNode(Integer.MIN_VALUE);
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(dummy);
+        TreeNode node = null;
+        for (int i = 0, j = 0; j < preorder.length; ) {
+            if (stack.peek().val == inorder[j]) {
+                node = stack.pop();
+                j++;
+            } else {
+                TreeNode child = new TreeNode(preorder[i++]);
+                if (node == null) {
+                    stack.peek().left = child;
+                } else {
+                    node.right = child;
+                    node = null;
+                }
+                stack.push(child);
+            }
+        }
+        return dummy.left;
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -154,6 +186,7 @@ public class TreeFromPreorderInorder {
         test(t::buildTree2, preorder, inorder, expected);
         test(t::buildTree3, preorder, inorder, expected);
         test(t::buildTree4, preorder, inorder, expected);
+        test(t::buildTree5, preorder, inorder, expected);
     }
 
     @Test
