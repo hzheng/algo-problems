@@ -6,48 +6,51 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
+// LC103: https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/
+//
 // Given a binary tree, return the zigzag level order traversal of its nodes'
 // values. (ie, from left to right, then right to left for the next level and
 // alternate between).
 public class TreeZigzagTraversal {
-    // beats 52.53%
-    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+    // BFS/Queue
+    // beats 41.18%(2 ms)
+    public List<List<Integer> > zigzagLevelOrder(TreeNode root) {
         List<List<Integer> > res = new ArrayList<>();
         if (root == null) return res;
 
         Queue<TreeNode> queue = new LinkedList<>();
         queue.offer(root);
+        queue.offer(null);
         boolean direction = false;
-        List<Integer> level = null;
-        while (!queue.isEmpty()) {
+        List<Integer> level = new LinkedList<>(); // ArrayList<>();
+        while (true) {
             TreeNode n = queue.poll();
             if (n == null) { // finished one level
                 res.add(level);
-                level = null;
-                continue;
-            }
+                if (queue.isEmpty()) return res;
 
-            if (level == null) { // new level begins
                 level = new ArrayList<>();
                 queue.offer(null);
                 direction = !direction;
-            }
-            if (direction) {
-                level.add(n.val);
             } else {
-                level.add(0, n.val);
-            }
-            if (n.left != null) {
-                queue.offer(n.left);
-            }
-            if (n.right != null) {
-                queue.offer(n.right);
+                if (direction) {
+                    level.add(0, n.val);
+                } else {
+                    level.add(n.val);
+                }
+                if (n.left != null) {
+                    queue.offer(n.left);
+                }
+                if (n.right != null) {
+                    queue.offer(n.right);
+                }
             }
         }
-        return res;
     }
 
-    // beats 10.87%
+    // Solution of Choice
+    // BFS/Queue
+    // beats 41.18%(2 ms)
     public List<List<Integer> > zigzagLevelOrder2(TreeNode root) {
         List<List<Integer> > res = new ArrayList<>();
         if (root == null) return res;
@@ -56,8 +59,7 @@ public class TreeZigzagTraversal {
         queue.offer(root);
         for (boolean direction = false; !queue.isEmpty(); direction = !direction) {
             List<Integer> level = new ArrayList<>();
-            int size = queue.size();
-            for (int i = 0; i < size; i++) {
+            for (int i = queue.size(); i > 0; i--) {
                 TreeNode head = queue.poll();
                 if (direction) {
                     level.add(0, head.val);
@@ -76,34 +78,28 @@ public class TreeZigzagTraversal {
         return res;
     }
 
-    // beats 52.53%
+    // Solution of Choice
+    // DFS/Recursion
+    // beats 41.18%(2 ms)
     public List<List<Integer> > zigzagLevelOrder3(TreeNode root) {
         List<List<Integer> > res = new ArrayList<>();
-
-        for (int max = 0;; max++) {
-            List<Integer> level = new ArrayList<>();
-            dfs(root, level, 0, max);
-            if (level.size() == 0) break;
-
-            res.add(level);
-        }
+        zigzagLevelOrder3(root, 0, res);
         return res;
     }
 
-    private void dfs(TreeNode root, List<Integer> level, int cur, int max) {
-        if (root == null || cur > max) return;
+    private void zigzagLevelOrder3(TreeNode root, int level, List<List<Integer> > res) {
+        if (root == null) return;
 
-        if (cur == max) {
-            if ((max & 1) == 0) {
-                level.add(root.val);
-            } else {
-                level.add(0, root.val);
-            }
-            return;
+        if (res.size() == level) {
+            res.add(new LinkedList<>());
         }
-
-        dfs(root.left, level, cur + 1, max);
-        dfs(root.right, level, cur + 1, max);
+        if ((level & 1) == 0) {
+            res.get(level).add(root.val);
+        } else {
+            res.get(level).add(0, root.val);
+        }
+        zigzagLevelOrder3(root.left, level + 1, res);
+        zigzagLevelOrder3(root.right, level + 1, res);
     }
 
     void test(Function<TreeNode, List<List<Integer>>> traversal,
