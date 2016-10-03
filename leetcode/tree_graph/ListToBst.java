@@ -12,7 +12,7 @@ import common.ListNode;
 // Given a singly linked list where elements are sorted in ascending order,
 // convert it to a height balanced BST.
 public class ListToBst {
-    // Recursion + Fast Pointer
+    // Recursion + Slow/Fast Pointer
     // time complexity: O(N * Log(N)), space complexity: O(1)
     // beats 45.93%(1 ms)
     public TreeNode sortedListToBST(ListNode head) {

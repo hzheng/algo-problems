@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
-// https://leetcode.com/problems/binary-tree-postorder-traversal/
+// LC145: https://leetcode.com/problems/binary-tree-postorder-traversal/
 //
 // Given a binary tree, return the postorder traversal of its nodes' values.
 public class TreePostorderTraversal {
@@ -209,6 +209,30 @@ public class TreePostorderTraversal {
         reverse(end, start);
     }
 
+    // Solution of Choice
+    // Stack + Set(actual postorder)
+    // beats 7.00%(2 ms)
+    public List<Integer> postorderTraversal9(TreeNode root) {
+        List<Integer> res = new LinkedList<>();
+        if (root == null) return res;
+
+        Set<TreeNode> visited = new HashSet<>();
+        visited.add(null);
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.peek();
+            boolean visitedLeft = visited.contains(node.left);
+            if (visitedLeft && visited.contains(node.right)) {
+                res.add(stack.pop().val);
+                visited.add(node);
+            } else {
+                stack.push(visitedLeft ? node.right : node.left);
+            }
+        }
+        return res;
+    }
+
     void test(Function<TreeNode, List<Integer> > traversal,
               String s, Integer ... expected) {
         TreeNode root = TreeNode.of(s);
@@ -226,6 +250,7 @@ public class TreePostorderTraversal {
         test(t::postorderTraversal6, s, expected);
         test(t::postorderTraversal7, s, expected);
         test(t::postorderTraversal8, s, expected);
+        test(t::postorderTraversal9, s, expected);
     }
 
     @Test
