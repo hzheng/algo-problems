@@ -64,6 +64,7 @@ public class TreeFromInorderPostorder {
     }
 
     // Solution of Choice
+    // Stack
     // beats 77.83%(5 ms)
     public TreeNode buildTree3(int[] inorder, int[] postorder) {
         TreeNode dummy = new TreeNode(Integer.MIN_VALUE);

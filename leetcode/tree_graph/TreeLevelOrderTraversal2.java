@@ -6,41 +6,44 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
+// LC107: https://leetcode.com/problems/binary-tree-level-order-traversal-ii/
+//
 // Given a binary tree, return the bottom-up level order traversal of its nodes'
 // values. (ie, from left to right, level by level from leaf to root).
 public class TreeLevelOrderTraversal2 {
-    // beats 31.93%
+    // Solution of Choice
+    // BFS/Queue
+    // beats 23.12%(3 ms)
     public List<List<Integer>> levelOrderBottom(TreeNode root) {
         List<List<Integer> > res = new ArrayList<>();
         if (root == null) return res;
 
         Queue<TreeNode> queue = new LinkedList<>();
         queue.offer(root);
-        List<Integer> level = null;
-        while (!queue.isEmpty()) {
+        queue.offer(null);
+        List<Integer> level = new LinkedList<>();
+        while (true) {
             TreeNode n = queue.poll();
             if (n == null) { // finished one level
                 res.add(0, level); // or reverse the res at the end
-                level = null;
-                continue;
-            }
+                if (queue.isEmpty()) return res;
 
-            if (level == null) { // new level begins
-                level = new ArrayList<>();
+                level = new LinkedList<>();
                 queue.offer(null);
-            }
-            level.add(n.val);
-            if (n.left != null) {
-                queue.offer(n.left);
-            }
-            if (n.right != null) {
-                queue.offer(n.right);
+            } else {
+                level.add(n.val);
+                if (n.left != null) {
+                    queue.offer(n.left);
+                }
+                if (n.right != null) {
+                    queue.offer(n.right);
+                }
             }
         }
-        return res;
     }
 
-    // beats 31.93%
+    // BFS/Queue
+    // beats 23.12%(3 ms)
     public List<List<Integer> > levelOrderBottom2(TreeNode root) {
         List<List<Integer> > res = new ArrayList<>();
         if (root == null) return res;
@@ -49,8 +52,7 @@ public class TreeLevelOrderTraversal2 {
         queue.offer(root);
         while (!queue.isEmpty()) {
             List<Integer> level = new ArrayList<>();
-            int size = queue.size();
-            for (int i = 0; i < size; i++) {
+            for (int i = queue.size(); i > 0; i--) {
                 TreeNode head = queue.poll();
                 level.add(head.val);
                 if (head.left != null) {
@@ -65,31 +67,24 @@ public class TreeLevelOrderTraversal2 {
         return res;
     }
 
-    // beats 3.33%
+    // Solution of Choice
+    // DFS/Recursion
+    // beats 67.75%(2 ms)
     public List<List<Integer> > levelOrderBottom3(TreeNode root) {
         List<List<Integer> > res = new ArrayList<>();
-        if (root != null) {
-            levelOrderBottom3(Arrays.asList(root), res);
-        }
+        levelOrderBottom3(root, 0, res);
         return res;
     }
 
-    private void levelOrderBottom3(List<TreeNode> level, List<List<Integer> > res) {
-        List<Integer> levelVal = new LinkedList<>();
-        List<TreeNode> nextLevel = new LinkedList<>();
-        for (TreeNode node : level) {
-            levelVal.add(node.val);
-            if (node.left != null) {
-                nextLevel.add(node.left);
-            }
-            if (node.right != null) {
-                nextLevel.add(node.right);
-            }
+    private void levelOrderBottom3(TreeNode root, int level, List<List<Integer>> res) {
+        if (root == null) return;
+
+        if (res.size() == level) {
+            res.add(0, new ArrayList<>());
         }
-        res.add(0, levelVal);
-        if (!nextLevel.isEmpty()) {
-            levelOrderBottom3(nextLevel, res);
-        }
+        res.get(res.size() - 1 - level).add(root.val);
+        levelOrderBottom3(root.left, level + 1, res);
+        levelOrderBottom3(root.right, level + 1, res);
     }
 
     void test(Function<TreeNode, List<List<Integer>>> traversal,
@@ -110,6 +105,7 @@ public class TreeLevelOrderTraversal2 {
     @Test
     public void test1() {
         test("1,#,2,3", new int[][] {{3}, {2}, {1}});
+        test("1,2,3,4,5", new int[][] {{4, 5}, {2, 3}, {1}});
         test("3,9,20,#,#,15,7", new int[][] {{15, 7}, {9, 20}, {3}});
     }
 
