@@ -129,7 +129,7 @@ public class TreePostorderTraversal {
     }
 
     // Solution of Choice
-    // Stack(weakness: not actually postorder, just reverse list)
+    // Stack(weakness: not actual postorder, just reverse list)
     // beats 52.08%(1 ms)
     public List<Integer> postorderTraversal6(TreeNode root) {
         LinkedList<Integer> res = new LinkedList<>();
@@ -209,7 +209,6 @@ public class TreePostorderTraversal {
         reverse(end, start);
     }
 
-    // Solution of Choice
     // Stack + Set(actual postorder)
     // beats 7.00%(2 ms)
     public List<Integer> postorderTraversal9(TreeNode root) {
@@ -233,6 +232,31 @@ public class TreePostorderTraversal {
         return res;
     }
 
+    // Solution of Choice
+    // Stack(actual postorder)
+    // beats 7.00%(2 ms)
+    public List<Integer> postorderTraversal10(TreeNode root) {
+        List<Integer> res = new LinkedList<>();
+        Stack<TreeNode> stack = new Stack<>();
+        for (TreeNode cur = root, prev = null; cur != null || !stack.isEmpty(); ) {
+            if (cur != null) {
+                stack.push(cur);
+                cur = cur.left;
+            } else {
+                cur = stack.peek();
+                if (cur.right != null && cur.right != prev) {
+                    cur = cur.right;
+                } else {
+                    res.add(cur.val);
+                    prev = cur;
+                    cur = null;
+                    stack.pop();
+                }
+            }
+        }
+        return res;
+    }
+
     void test(Function<TreeNode, List<Integer> > traversal,
               String s, Integer ... expected) {
         TreeNode root = TreeNode.of(s);
@@ -251,6 +275,7 @@ public class TreePostorderTraversal {
         test(t::postorderTraversal7, s, expected);
         test(t::postorderTraversal8, s, expected);
         test(t::postorderTraversal9, s, expected);
+        test(t::postorderTraversal10, s, expected);
     }
 
     @Test
