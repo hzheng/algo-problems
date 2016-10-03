@@ -6,15 +6,16 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
+// LC111: https://leetcode.com/problems/minimum-depth-of-binary-tree/
+//
 // Given a binary tree, find its minimum depth.
 // The minimum depth is the number of nodes along the shortest path from the
 // root node down to the nearest leaf node.
 public class MinDepthTree {
-    // beats 10.71%
+    // DFS + Recursion
+    // beats 10.71%(1 ms)
     public int minDepth(TreeNode root) {
         if (root == null) return 0;
-
-        // if (root.left == null && root.right == null) return 1;
 
         if (root.left == null) return minDepth(root.right) + 1;
 
@@ -23,24 +24,22 @@ public class MinDepthTree {
         return Math.min(minDepth(root.left), minDepth(root.right)) + 1;
     }
 
-    // beats 2.57%
+    // BFS + Queue
+    // beats 3.90%(2 ms)
     public int minDepth2(TreeNode root) {
         if (root == null) return 0;
 
-        Queue<TreeNode> queue = new LinkedList<>();
         int depth = 1;
-        int curCount = 1;
-        int nextCount = 0;
+        Queue<TreeNode> queue = new LinkedList<>();
         queue.offer(root);
-        while (!queue.isEmpty()) {
+        for (int curCount = 1, nextCount = 0; !queue.isEmpty(); ) {
             TreeNode n = queue.poll();
             curCount--;
             if (n.left != null) {
                 queue.offer(n.left);
                 nextCount++;
-            } else if (n.right == null) {
-                break;
-            }
+            } else if (n.right == null) break;
+
             if (n.right != null) {
                 queue.offer(n.right);
                 nextCount++;
@@ -54,6 +53,29 @@ public class MinDepthTree {
         return depth;
     }
 
+    // Solution of Choice
+    // BFS + Queue
+    // beats 15.24%(1 ms)
+    public int minDepth3(TreeNode root) {
+        if (root == null) return 0;
+
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        for (int depth = 1; ; depth++) {
+            for (int i = queue.size(); i > 0; i--) {
+                TreeNode head = queue.poll();
+                if (head.left == null && head.right == null) return depth;
+
+                if (head.left != null) {
+                    queue.offer(head.left);
+                }
+                if (head.right != null) {
+                    queue.offer(head.right);
+                }
+            }
+        }
+    }
+
     void test(Function<TreeNode, Integer> minDepth, String s, int expected) {
         TreeNode root = TreeNode.of(s);
         assertEquals(expected, (int)minDepth.apply(root));
@@ -63,6 +85,7 @@ public class MinDepthTree {
         MinDepthTree m = new MinDepthTree();
         test(m::minDepth, s, expected);
         test(m::minDepth2, s, expected);
+        test(m::minDepth3, s, expected);
     }
 
     @Test
