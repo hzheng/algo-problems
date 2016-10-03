@@ -7,11 +7,13 @@ import static org.junit.Assert.*;
 import common.TreeNode;
 import common.ListNode;
 
+// LC109: https://leetcode.com/problems/convert-sorted-list-to-binary-search-tree/
+//
 // Given a singly linked list where elements are sorted in ascending order,
 // convert it to a height balanced BST.
 public class ListToBst {
-    // Time Limit Exceeded
     // time complexity: O(N * Log(N)), space complexity: O(1)
+    // beats 45.93%(1 ms)
     public TreeNode sortedListToBST(ListNode head) {
         return sortedListToBST(head, null);
     }
@@ -31,7 +33,8 @@ public class ListToBst {
         return parent;
     }
 
-    // beats 2.09%
+    // Divide & Conquer/Recursion(Top-down)
+    // beats 4.77%(3 ms)
     // time complexity: O(N), space complexity: O(N)
     public TreeNode sortedListToBST2(ListNode head) {
         List<Integer> nums = new ArrayList<>();
@@ -44,17 +47,18 @@ public class ListToBst {
     private TreeNode sortedListToBST(List<Integer> nums, int start, int end) {
         if (start >= end) return null;
 
-        int mid = start + (end - start) / 2;
+        int mid = (start + end) >>> 1;
         TreeNode parent = new TreeNode(nums.get(mid));
-        parent.left  = sortedListToBST(nums, start, mid);
-        parent.right  = sortedListToBST(nums, mid + 1, end);
+        parent.left = sortedListToBST(nums, start, mid);
+        parent.right = sortedListToBST(nums, mid + 1, end);
         return parent;
     }
 
+    // Solution of Choice
     // http://articles.leetcode.com/convert-sorted-list-to-balanced-binary
-    // bottom-up
+    // Divide & Conquer/Recursion(Bottom-up) + Delimiter
     // time complexity: O(N), space complexity: O(1)
-    // beats 35.84%
+    // beats 45.93%(1 ms)
     public TreeNode sortedListToBST3(ListNode head) {
         int len = 0;
         for (ListNode n = head; n != null; n = n.next) {
@@ -74,7 +78,26 @@ public class ListToBst {
         return root;
     }
 
-    // TODO: recursion solution
+    // Recursion + Fast Pointer
+    // beats 45.93%(1 ms)
+    public TreeNode sortedListToBST4(ListNode head) {
+        return toBST(head, null);
+    }
+
+    private TreeNode toBST(ListNode head, ListNode tail) {
+        if (head == tail) return null;
+
+        ListNode slow = head;
+        for (ListNode fast = head; fast != tail && fast.next != tail;
+             fast = fast.next.next, slow = slow.next) {}
+        TreeNode thead = new TreeNode(slow.val);
+        thead.left = toBST(head, slow);
+        thead.right = toBST(slow.next, tail);
+        return thead;
+    }
+
+    // TODO: iterative solution
+    // convert to array and apply iterative way in ArrayToBst.java
 
     void test(Function<ListNode, TreeNode> convert, int[] nums, String expected) {
         TreeNode expectedTree = TreeNode.of(expected);
@@ -88,6 +111,7 @@ public class ListToBst {
         test(l::sortedListToBST, nums, expected[1]);
         test(l::sortedListToBST2, nums, expected[0]);
         test(l::sortedListToBST3, nums, expected[0]);
+        test(l::sortedListToBST4, nums, expected[0]);
     }
 
     @Test
