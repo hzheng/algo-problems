@@ -6,10 +6,14 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
+// LC106: https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/
+//
 // Given inorder and postorder traversal of a tree, construct the binary tree.
 // You may assume that duplicates do not exist in the tree.
 public class TreeFromInorderPostorder {
-    // beats 68.48%
+    // Solution of Choice
+    // Divide & Conquer/Recursion + Hashtable
+    // beats 68.48%(6 ms)
     public TreeNode buildTree(int[] inorder, int[] postorder) {
         int len = inorder.length;
         if (len == 0) return null;
@@ -32,7 +36,8 @@ public class TreeFromInorderPostorder {
         return root;
     }
 
-    // beats 77.06%
+    // Divide & Conquer/Recursion + Hashtable
+    // beats 77.83%(5 ms)
     public TreeNode buildTree2(int[] inorder, int[] postorder) {
         int len = inorder.length;
         if (len == 0) return null;
@@ -58,20 +63,46 @@ public class TreeFromInorderPostorder {
         return root;
     }
 
+    // Solution of Choice
+    // beats 77.83%(5 ms)
+    public TreeNode buildTree3(int[] inorder, int[] postorder) {
+        TreeNode dummy = new TreeNode(Integer.MIN_VALUE);
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(dummy);
+        TreeNode node = null;
+        for (int i = postorder.length - 1, j = i; j >= 0; ) {
+            if (stack.peek().val == inorder[j]) {
+                node = stack.pop();
+                j--;
+            } else {
+                TreeNode child = new TreeNode(postorder[i--]);
+                if (node == null) {
+                    stack.peek().right = child;
+                } else {
+                    node.left = child;
+                    node = null;
+                }
+                stack.push(child);
+            }
+        }
+        return dummy.right;
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
     }
 
-    void test(Function<int[], int[], TreeNode> build, int[] preorder,
-              int[] inorder, String expected) {
-        assertEquals(expected, build.apply(preorder, inorder).toString());
+    void test(Function<int[], int[], TreeNode> build, int[] inorder,
+              int[] postorder, String expected) {
+        assertEquals(expected, build.apply(inorder, postorder).toString());
     }
 
     void test(int[] inorder, int[] postorder, String expected) {
         TreeFromInorderPostorder t = new TreeFromInorderPostorder();
         test(t::buildTree, inorder, postorder, expected);
         test(t::buildTree2, inorder, postorder, expected);
+        test(t::buildTree3, inorder, postorder, expected);
     }
 
     @Test
