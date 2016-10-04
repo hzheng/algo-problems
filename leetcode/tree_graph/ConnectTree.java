@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 
 import common.TreeLinkNode;
 
+// LC116: https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+//
 // Populate each next pointer to point to its next right node. If there is no
 // next right node, the next pointer should be set to NULL.
 // Note:
@@ -12,7 +14,8 @@ import common.TreeLinkNode;
 // You may assume that it is a perfect binary tree (ie, all leaves are at the
 // same level, and every parent has two children).
 public class ConnectTree {
-    // beats 10.93%
+    // BFS + Queue
+    // beats 10.93%(5 ms)
     // space complexity: O(Log(N))
     public void connect(TreeLinkNode root) {
         if (root == null) return;
@@ -42,7 +45,8 @@ public class ConnectTree {
         }
     }
 
-    // beats 10.93%
+    // BFS + Queue
+    // beats 10.93%(5 ms)
     // space complexity: O(Log(N))
     public void connect2(TreeLinkNode root) {
         if (root == null) return;
@@ -73,10 +77,10 @@ public class ConnectTree {
     }
 
     // space complexity: O(1)
-    // beats 86.69%
+    // beats 86.69%(0 ms)
     public void connect3(TreeLinkNode root) {
-        for (TreeLinkNode prevHead = root; prevHead != null; ) {
-            TreeLinkNode nextHead = prevHead.left;
+        for (TreeLinkNode prevHead = root, nextHead; prevHead != null; prevHead = nextHead) {
+            nextHead = prevHead.left;
             if (nextHead == null) return;
 
             TreeLinkNode last = nextHead.next = prevHead.right;
@@ -85,12 +89,11 @@ public class ConnectTree {
                 last.next = prevCur.left;
                 last = prevCur.left.next = prevCur.right;
             }
-            prevHead = nextHead;
         }
     }
 
-    // recursion
-    // beats 32.42%
+    // Recursion
+    // beats 31.38%(1 ms)
     public void connect4(TreeLinkNode root) {
         if (root == null || root.left == null) return;
 
@@ -98,9 +101,24 @@ public class ConnectTree {
         if (root.next != null) {
             root.right.next = root.next.left;
         }
-
         connect4(root.left);
         connect4(root.right);
+    }
+
+    // Solution of Choice
+    // space complexity: O(1)
+    // beats 31.38%(1 ms)
+    public void connect5(TreeLinkNode root) {
+        if (root == null) return;
+
+        for (TreeLinkNode prev = root; prev.left != null; prev = prev.left) {
+            for (TreeLinkNode cur = prev; cur != null; cur = cur.next) {
+                cur.left.next = cur.right;
+                if (cur.next != null) {
+                    cur.right.next = cur.next.left;
+                }
+            }
+        }
     }
 
     @FunctionalInterface
