@@ -4,25 +4,40 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC118: https://leetcode.com/problems/pascals-triangle/
+//
 // Generate the first numRows of Pascal's triangle.
 public class PascalTriangle {
-    // beats 40.54%
+    // beats 3.29%(2 ms)
     public List<List<Integer> > generate(int numRows) {
         List<List<Integer> > res = new ArrayList<>();
         if (numRows == 0) return res;
 
-        List<Integer> prevRow = new ArrayList<>(1);
-        prevRow.add(1);
-        res.add(prevRow);
+        List<Integer> prev = new ArrayList<>(Arrays.asList(1));
+        res.add(prev);
         for (int i = 2; i <= numRows; i++) {
-            List<Integer> row = new ArrayList<>(i);
-            row.add(1);
+            List<Integer> cur = new ArrayList<>(Arrays.asList(1));
             for (int j = 0; j < i - 2; j++) {
-                row.add(prevRow.get(j) + prevRow.get(j + 1));
+                cur.add(prev.get(j) + prev.get(j + 1));
             }
-            row.add(1);
-            res.add(row);
-            prevRow = row;
+            cur.add(1);
+            res.add(cur);
+            prev = cur;
+        }
+        return res;
+    }
+
+    // Solution of Choice
+    // beats 3.29%(2 ms)
+    public List<List<Integer> > generate2(int numRows) {
+        List<List<Integer> > res = new ArrayList<>();
+        List<Integer> row = new ArrayList<>();
+        for (int i = 0; i < numRows; i++) {
+            row.add(0, 1);
+            for (int j = 1; j < row.size() - 1; j++) {
+                row.set(j, row.get(j) + row.get(j + 1));
+            }
+            res.add(new ArrayList<>(row));
         }
         return res;
     }
@@ -38,6 +53,7 @@ public class PascalTriangle {
     void test(int n, int[][] expected) {
         PascalTriangle p = new PascalTriangle();
         test(p::generate, n, expected);
+        test(p::generate2, n, expected);
     }
 
     @Test
