@@ -5,9 +5,12 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
+// LC114: https://leetcode.com/problems/flatten-binary-tree-to-linked-list/
+//
 // Given a binary tree, flatten it to a linked list in-place.
 public class FlattenTree {
-    // beats 29.33%
+    // Recursion
+    // beats 29.33%(1 ms)
     public void flatten(TreeNode root) {
         if (root != null) {
             flattenTree(root);
@@ -27,7 +30,7 @@ public class FlattenTree {
     }
 
     // Morris Traversal(just for exercise, since space complexity is still O(N))
-    // beats 21.58%
+    // beats 21.58%(2 ms)
     public void flatten2(TreeNode root) {
         if (root == null) return;
 
@@ -59,10 +62,9 @@ public class FlattenTree {
     }
 
     // Morris Traversal(space complexity is O(1))
-    // beats 29.33%
+    // beats 29.33%(1 ms)
     public void flatten3(TreeNode root) {
-        TreeNode last = null;
-        for (TreeNode cur = root; cur != null; ) {
+        for (TreeNode cur = root, last = null, prev; cur != null; ) {
             if (cur.left == null) {
                 if (last != null) {
                     last.left = cur;
@@ -72,16 +74,14 @@ public class FlattenTree {
                 continue;
             }
 
-            TreeNode prev = cur.left;
-            while (prev.right != null && prev.right != cur) {
-                prev = prev.right;
-            }
+            for (prev = cur.left; prev.right != null && prev.right != cur;
+                 prev = prev.right) {}
             if (prev.right == null) {
                 if (last != null) {
                     last.left = cur;
                 }
-                prev.right = cur;
                 last = cur;
+                prev.right = cur;
                 cur = cur.left;
             } else {
                 cur = cur.right;
@@ -95,8 +95,9 @@ public class FlattenTree {
         }
     }
 
+    // Stack
     // http://www.programcreek.com/2013/01/leetcode-flatten-binary-tree-to-linked-list/
-    // beats 6.48%
+    // beats 4.53%(3 ms)
     public void flatten4(TreeNode root) {
         Stack<TreeNode> stack = new Stack<>();
         for (TreeNode n = root; n != null || !stack.empty(); n = n.right) {
@@ -112,22 +113,41 @@ public class FlattenTree {
         }
     }
 
-    // space complexity is O(1)
-    // beats 29.33%
+    // Solution of Choice
+    // space complexity: O(1)
+    // beats 29.33%(1 ms)
     public void flatten5(TreeNode root) {
-        for (TreeNode cur = root; cur != null; ) {
+        for (TreeNode cur = root, prev; cur != null; ) {
             if (cur.left == null) {
                 cur = cur.right;
-            }
-            else {
-                TreeNode prev = cur.left;
-                while (prev.right != null) {
-                    prev = prev.right;
-                }
+            } else {
+                for (prev = cur.left; prev.right != null; prev = prev.right) {}
                 prev.right = cur.right;
                 cur.right = cur.left;
                 cur.left = null;
             }
+        }
+    }
+
+    // Stack
+    // beats 4.53%(3 ms)
+    public void flatten6(TreeNode root) {
+        if (root == null) return;
+
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        while (!stack.isEmpty()){
+            TreeNode cur = stack.pop();
+            if (cur.right != null) {
+                stack.push(cur.right);
+            }
+            if (cur.left !=null) {
+                stack.push(cur.left);
+            }
+            if (!stack.isEmpty()) {
+                cur.right = stack.peek();
+            }
+            cur.left = null;
         }
     }
 
@@ -149,11 +169,13 @@ public class FlattenTree {
         test(f::flatten3, s, expected);
         test(f::flatten4, s, expected);
         test(f::flatten5, s, expected);
+        test(f::flatten6, s, expected);
     }
 
     @Test
     public void test1() {
         test("1", "{1}");
+        test("1,#,2,3", "{1,#,2,#,3}");
         test("1,2,#,3,4,5", "{1,#,2,#,3,#,5,#,4}");
         test("1,2,5,3,4,#,6", "{1,#,2,#,3,#,4,#,5,#,6}");
         test("1,2", "{1,#,2}");
