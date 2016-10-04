@@ -10,6 +10,7 @@ import common.TreeNode;
 // Given a binary tree and a sum, determine if the tree has a root-to-leaf path
 // such that adding up all the values along the path equals the given sum.
 public class PathSum {
+    // Solution of Choice
     // DFS + Recursion
     // beats 14.31%(1 ms)
     public boolean hasPathSum(TreeNode root, int sum) {
@@ -47,6 +48,7 @@ public class PathSum {
         return false;
     }
 
+    // Solution of Choice
     // Stack(Postorder traversal)
     // beats 3.83%(5 ms)
     public boolean hasPathSum3(TreeNode root, int sum) {
