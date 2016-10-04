@@ -5,39 +5,40 @@ import static org.junit.Assert.*;
 
 import common.TreeLinkNode;
 
+// LC117: https://leetcode.com/problems/populating-next-right-pointers-in-each-node-ii/
+//
 // Same problem as ConnectTree except binary tree could be inperfect.
 public class ConnectTree2 {
-    // beats 32.04%
+    // two-layer loop
+    // beats 51.63%(1 ms)
     public void connect(TreeLinkNode root) {
-        for (TreeLinkNode prevCur = root; prevCur != null; ) {
-            TreeLinkNode nextHead = null;
-            TreeLinkNode last = null;
-            for (; prevCur != null; prevCur = prevCur.next) {
-                if (prevCur.left != null) {
-                    if (nextHead == null) {
-                        nextHead = prevCur.left;
+        for (TreeLinkNode cur = root, next = null; cur != null;
+             cur = next, next = null) {
+            for (TreeLinkNode prev = null; cur != null; cur = cur.next) {
+                if (cur.left != null) {
+                    if (next == null) {
+                        next = cur.left;
                     }
-                    if (last != null) {
-                        last.next = prevCur.left;
+                    if (prev != null) {
+                        prev.next = cur.left;
                     }
-                    last = prevCur.left;
+                    prev = cur.left;
                 }
-                if (prevCur.right != null) {
-                    if (nextHead == null) {
-                        nextHead = prevCur.right;
+                if (cur.right != null) {
+                    if (next == null) {
+                        next = cur.right;
                     }
-                    if (last != null) {
-                        last.next = prevCur.right;
+                    if (prev != null) {
+                        prev.next = cur.right;
                     }
-                    last = prevCur.right;
+                    prev = cur.right;
                 }
             }
-            prevCur = nextHead;
         }
     }
 
-    // recursion
-    // beats 75.61%
+    // Recursion
+    // beats 51.63%(1 ms)
     public void connect2(TreeLinkNode root) {
         if (root == null || (root.left == null && root.right == null)) return;
 
@@ -61,16 +62,13 @@ public class ConnectTree2 {
         connect2(root.left);
     }
 
-    // one layer loop
-    // beats 32.04%
+    // one-layer loop
+    // beats 32.04%(2 ms)
     public void connect3(TreeLinkNode root) {
-        TreeLinkNode first = null;
-        TreeLinkNode last = null;
-        for (TreeLinkNode cur = root; cur != null; ) {
+        for (TreeLinkNode cur = root, first = null, last = null; cur != null; ) {
             if (first == null) {
                 first = (cur.left != null) ? cur.left : cur.right;
             }
-
             if (cur.left != null) {
                 if (last != null) {
                     last.next = cur.left;
@@ -83,13 +81,35 @@ public class ConnectTree2 {
                 }
                 last = cur.right;
             }
-
             if (cur.next != null) {
                 cur = cur.next;
             } else {
                 cur = first;
                 last = null;
                 first = null;
+            }
+        }
+    }
+
+    // Solution of Choice
+    // one-layer loop
+    // beats 51.63%(1 ms)
+    public void connect4(TreeLinkNode root) {
+        TreeLinkNode dummy = new TreeLinkNode(0);
+        for (TreeLinkNode cur = root, prev = dummy; cur != null; ) {
+            if (cur.left != null) {
+                prev.next = cur.left;
+                prev = prev.next;
+            }
+            if (cur.right != null) {
+                prev.next = cur.right;
+                prev = prev.next;
+            }
+            cur = cur.next;
+            if (cur == null) {
+                prev = dummy;
+                cur = dummy.next;
+                dummy.next = null;
             }
         }
     }
