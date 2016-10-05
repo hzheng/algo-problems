@@ -41,6 +41,7 @@ public class BestTransaction {
         return profit;
     }
 
+    // Solution of Choice
     // beats 85.40%(1 ms)
     public int maxProfit3(int[] prices) {
         int min = Integer.MAX_VALUE;

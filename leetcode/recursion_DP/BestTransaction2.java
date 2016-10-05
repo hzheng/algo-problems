@@ -4,11 +4,13 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC122: https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/
+//
 // Say you have an array for which the ith element is the price of a given stock
 // on day i. Design an algorithm to find the maximum profit. You may complete as
 // many transactions as you like.
 public class BestTransaction2 {
-    // beats 11.51%
+    // beats 11.51%(2 ms)
     public int maxProfit(int[] prices) {
         if (prices.length == 0) return 0;
 
@@ -26,14 +28,12 @@ public class BestTransaction2 {
         return profit + last - low;
     }
 
-    // beats 86.18%
+    // Solution of Choice
+    // beats 86.18%(1 ms)
     public int maxProfit2(int[] prices) {
         int profit = 0;
         for (int i = 1; i < prices.length; i++) {
-            int diff = prices[i] - prices[i - 1];
-            if (diff > 0) {
-                profit += diff;
-            }
+            profit += Math.max(0, prices[i] - prices[i - 1]);
         }
         return profit;
     }
