@@ -61,8 +61,7 @@ public class BestTransaction {
     public int maxProfit4(int[] prices) {
         int max = 0; // global max
         for (int i = 1, localMax = 0; i < prices.length; i++) {
-            localMax += prices[i] - prices[i - 1];
-            localMax = Math.max(0, localMax);
+            localMax = Math.max(0, localMax + prices[i] - prices[i - 1]);
             max = Math.max(localMax, max);
         }
         return max;
