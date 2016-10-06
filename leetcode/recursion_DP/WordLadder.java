@@ -5,14 +5,15 @@ import static org.junit.Assert.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-// https://leetcode.com/problems/word-ladder/
+// LC127: https://leetcode.com/problems/word-ladder/
+// Cracking the Coding Interview(5ed) Problem 18.10
 //
 // Given two words and a dictionary, find the length of shortest transformation
 // sequence from beginWord to endWord, such that:
 // 1. Only one letter can be changed at a time
 // 2. Each intermediate word must exist in the word list
 public class WordLadder {
-    // DFS
+    // DFS + Memoization
     // Time Limit Exceeded
     public int ladderLength(String beginWord, String endWord,
                             Set<String> wordList) {
@@ -65,15 +66,14 @@ public class WordLadder {
         return count;
     }
 
+    // BFS + Queue + Set
     // BFS is better that DFS since it guarantees the optimal result
-    // Cracking the Coding Interview(5ed) Problem 18.10
-    // beats 26.43%
+    // beats 38.27%(128 ms)
     public int ladderLength2(String beginWord, String endWord,
                              Set<String> wordList) {
         if (beginWord.equals(endWord)) return 1;
 
         Queue<String> queue = new LinkedList<>();
-        // beat rate drops to 15.11% if use TreeSet
         Set<String> visited = new HashSet<>();
         queue.add(beginWord);
         visited.add(beginWord);
@@ -103,8 +103,8 @@ public class WordLadder {
 
     private Set<String> oneEditSets(String word, Set<String> dict) {
         Set<String> words = new HashSet<>();
-        for (int i = 0; i < word.length(); i++) {
-            char[] chars = word.toCharArray();
+        char[] chars = word.toCharArray();
+        for (int i = word.length() - 1; i >= 0; i--) {
             char ch = word.charAt(i);
             for (char c = 'a'; c <= 'z'; c++) {
                 if (c != ch) {
@@ -115,24 +115,25 @@ public class WordLadder {
                     }
                 }
             }
+            chars[i] = ch;
         }
         return words;
     }
 
-    // beats 12.32%
+    // BFS + Queue + Set
+    // beats 42.23%(123 ms)
     public int ladderLength3(String beginWord, String endWord,
                              Set<String> wordList) {
         if (beginWord.equals(endWord)) return 1;
 
         wordList.add(beginWord);
         wordList.add(endWord);
-        HashSet<String> visited = new HashSet<>();
+        Set<String> visited = new HashSet<>();
         Queue<String> queue = new LinkedList<>();
         queue.offer(beginWord);
         visited.add(beginWord);
         for (int level = 2; !queue.isEmpty(); level++) {
-            int size = queue.size();
-            for (int i = 0; i < size; i++) {
+            for (int i = queue.size(); i > 0; i--) {
                 String word = queue.poll();
                 for (String nextWord : getNextWords(word, wordList)) {
                     if (visited.contains(nextWord)) continue;
@@ -149,19 +150,94 @@ public class WordLadder {
 
     private List<String> getNextWords(String word, Set<String> dict) {
         List<String> nextWords = new ArrayList<>();
+        char[] chars = word.toCharArray();
         for (char c = 'a'; c <= 'z'; c++) {
-            for (int i = 0; i < word.length(); i++) {
+            for (int i = word.length() - 1; i >= 0; i--) {
                 if (c == word.charAt(i)) continue;
 
-                char[] chars = word.toCharArray();
                 chars[i] = c;
                 String nextWord = new String(chars);
                 if (dict.contains(nextWord)) {
                     nextWords.add(nextWord);
                 }
+                chars[i] = word.charAt(i);
             }
         }
         return nextWords;
+    }
+
+    // Solution of Choice
+    // BFS + Queue
+    // beats 82.48%(84 ms)
+    public int ladderLength4(String beginWord, String endWord, Set<String> wordList) {
+        Queue<String> queue = new LinkedList<>();
+        queue.add(beginWord);
+        wordList.add(endWord);
+        for (int level = 1; !queue.isEmpty(); level++) {
+            for (int i = queue.size(); i > 0; i--) {
+                String cur = queue.poll();
+                if (cur.equals(endWord)) return level;
+
+                char[] word = cur.toCharArray();
+                for (int j = cur.length() - 1; j >= 0; j--) {
+                    char oldChar = cur.charAt(j);
+                    for (char c = 'a'; c < 'z'; c++) {
+                        if (c == oldChar) continue;
+
+                        word[j] = c;
+                        String newWord = new String(word);
+                        if (wordList.contains(newWord)) {
+                            queue.offer(newWord);
+                            wordList.remove(newWord);
+                        }
+                    }
+                    word[j] = oldChar;
+                }
+            }
+        }
+        return 0;
+    }
+
+    // Solution of Choice
+    // Two-end BFS + Set
+    // https://discuss.leetcode.com/topic/29303/two-end-bfs-in-java-31ms
+    // beats 85.62%(45 ms)
+    public int ladderLength5(String beginWord, String endWord, Set<String> wordList) {
+        if (beginWord.equals(endWord)) return 1;
+
+        Set<String> visited = new HashSet<>();
+        Set<String> beginSet = new HashSet<>();
+        beginSet.add(beginWord);
+        Set<String> endSet = new HashSet<>();
+        endSet.add(endWord);
+        for (int distance = 2; !beginSet.isEmpty() && !endSet.isEmpty(); distance++) {
+            if (beginSet.size() > endSet.size()) {
+                Set<String> tmp = beginSet;
+                beginSet = endSet;
+                endSet = tmp;
+            }
+
+            Set<String> nextSet = new HashSet<>();
+            for (String word : beginSet) {
+                char[] cs = word.toCharArray();
+                for (int i = cs.length - 1; i >= 0; i--) {
+                    for (char c = 'a'; c <= 'z'; c++) {
+                        char old = cs[i];
+                        cs[i] = c;
+                        String target = String.valueOf(cs);
+                        if (endSet.contains(target)) return distance;
+
+                        if (!visited.contains(target) && wordList.contains(target)) {
+                            nextSet.add(target);
+                            visited.add(target);
+                        }
+                        cs[i] = old;
+                    }
+                }
+            }
+            beginSet = nextSet;
+        }
+        return 0;
     }
 
     @FunctionalInterface
@@ -190,6 +266,8 @@ public class WordLadder {
             test(w::ladderLength, "ladderLength", begin, end, expected, words);
             test(w::ladderLength2, "ladderLength2", begin, end, expected, words);
             test(w::ladderLength3, "ladderLength3", begin, end, expected, words);
+            test(w::ladderLength4, "ladderLength4", begin, end, expected, words);
+            test(w::ladderLength5, "ladderLength5", begin, end, expected, words);
         } catch (Exception e) {
             e.printStackTrace();
         }
