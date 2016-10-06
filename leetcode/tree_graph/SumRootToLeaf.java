@@ -7,29 +7,82 @@ import static org.junit.Assert.*;
 import common.TreeNode;
 import java.util.function.Function;
 
-// https://leetcode.com/problems/sum-root-to-leaf-numbers/
+// LC129: https://leetcode.com/problems/sum-root-to-leaf-numbers/
 //
 // Given a binary tree containing digits from 0-9 only, each root-to-leaf path
 // could represent a number. Find the total sum of all root-to-leaf numbers.
 public class SumRootToLeaf {
-    // beats 73.64%
+    // Divide & Conquer/Recursion
+    // beats 27.08%(1 ms)
     public int sumNumbers(TreeNode root) {
-        return root == null ? 0 : sumNumbers(root, 0);
+        return sumNumbers(root, 0);
     }
 
     private int sumNumbers(TreeNode root, int sum) {
-        sum *= 10;
-        sum += root.val;
-        if (root.left == null && root.right == null) {
-            return sum;
-        }
+        if (root == null) return 0;
 
-        int total = 0;
-        if (root.left != null) {
-            total += sumNumbers(root.left, sum);
+        sum = sum * 10 + root.val;
+        if (root.left == null && root.right == null) return sum;
+
+        return sumNumbers(root.left, sum) + sumNumbers(root.right, sum);
+    }
+
+    // 2 Stacks(postorder)
+    // beats 9.05%(3 ms)
+    public int sumNumbers2(TreeNode root) {
+        Stack<TreeNode> nodeStack = new Stack<>();
+        Stack<Integer> valStack = new Stack<>();
+        int sum = 0;
+        valStack.push(0);
+        for (TreeNode cur = root, prev = null; cur != null || !nodeStack.isEmpty(); ) {
+            if (cur != null) {
+                nodeStack.push(cur);
+                valStack.push(valStack.peek() * 10 + cur.val);
+                cur = cur.left;
+            } else {
+                cur = nodeStack.peek();
+                if (cur.right != null && cur.right != prev) {
+                    cur = cur.right;
+                } else {
+                    nodeStack.pop();
+                    int val = valStack.pop();
+                    if (cur.right == null && cur.left == null) {
+                        sum += val;
+                    }
+                    prev = cur;
+                    cur = null;
+                }
+            }
         }
-        if (root.right != null) {
-            total += sumNumbers(root.right, sum);
+        return sum;
+    }
+
+    // Solution of Choice
+    // 1 Stack(postorder)
+    // beats 15.93%(2 ms)
+    public int sumNumbers3(TreeNode root) {
+        Stack<TreeNode> nodeStack = new Stack<>();
+        int total = 0;
+        int sum = 0;
+        for (TreeNode cur = root, prev = null; cur != null || !nodeStack.isEmpty(); ) {
+            if (cur != null) {
+                nodeStack.push(cur);
+                sum = sum * 10 + cur.val;
+                cur = cur.left;
+            } else {
+                cur = nodeStack.peek();
+                if (cur.right != null && cur.right != prev) {
+                    cur = cur.right;
+                } else {
+                    nodeStack.pop();
+                    if (cur.right == null && cur.left == null) {
+                        total += sum;
+                    }
+                    sum /= 10;
+                    prev = cur;
+                    cur = null;
+                }
+            }
         }
         return total;
     }
@@ -42,6 +95,8 @@ public class SumRootToLeaf {
     void test(String s, int expected) {
         SumRootToLeaf sum = new SumRootToLeaf();
         test(sum::sumNumbers, s, expected);
+        test(sum::sumNumbers2, s, expected);
+        test(sum::sumNumbers3, s, expected);
     }
 
     @Test

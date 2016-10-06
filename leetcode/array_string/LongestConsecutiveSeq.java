@@ -28,7 +28,7 @@ public class LongestConsecutiveSeq {
     }
 
     // Solution of Choice
-    // Sets
+    // Set
     // beats 91.16%(10 ms)
     public int longestConsecutive2(int[] nums) {
         int maxLen = 1;
@@ -84,7 +84,7 @@ public class LongestConsecutiveSeq {
         return maxLen;
     }
 
-    // Union Find
+    // Hashtable + Union Find
     // beats 28.09%(17 ms)
     public int longestConsecutive5(int[] nums) {
         UnionFind unionFind = new UnionFind(nums.length);
