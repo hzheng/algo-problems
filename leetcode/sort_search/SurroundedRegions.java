@@ -166,6 +166,7 @@ public class SurroundedRegions {
         }
     }
 
+    // Solution of Choice
     // DFS + Recursion
     // beats 80.72%(5 ms)
     public void solve3(char[][] board) {
@@ -210,6 +211,7 @@ public class SurroundedRegions {
         }
     }
 
+    // Union Find
     // beats 25.58%(14 ms)
     public void solve4(char[][] board) {
         int m = board.length;

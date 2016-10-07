@@ -5,15 +5,12 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/palindrome-partitioning/
+// LC131: https://leetcode.com/problems/palindrome-partitioning/
 //
 // Given a string s, partition s such that every substring of the partition is a
 // palindrome. Return all possible palindrome partitioning of s.
-//
-// https://leetcode.com/problems/palindrome-partitioning-ii/
-// Return the minimum cuts needed for a palindrome partitioning of s.
 public class PalindromePartition {
-    // beats 21.86%
+    // beats 21.86%(9 ms)
     public List<List<String> > partition(String s) {
         int len = s.length();
         char[] chars = s.toCharArray();
@@ -51,8 +48,8 @@ public class PalindromePartition {
         return partitions;
     }
 
-    // backtracking
-    // beats 83.28%
+    // Backtracking
+    // beats 59.09%(7 ms)
     public List<List<String> > partition2(String s) {
         int len = s.length();
         char[] chars = s.toCharArray();
@@ -64,25 +61,25 @@ public class PalindromePartition {
             }
         }
 
-        List<List<String>> res = new ArrayList<>();
-    	partition2(s, 0, len, new ArrayList<>(), res, table);
-    	return res;
+        List<List<String> > res = new ArrayList<>();
+        partition2(s, 0, len, new ArrayList<>(), res, table);
+        return res;
     }
 
     private void partition2(String s, int start, int end, List<String> partition,
-                            List<List<String>> res, Boolean[][] table) {
+                            List<List<String> > res, Boolean[][] table) {
         if (start == end) {
-    		res.add(new ArrayList<>(partition));
-    		return;
+            res.add(new ArrayList<>(partition));
+            return;
         }
 
         for (int i = start; i < end; i++) {
             if (table[start][i]) {
                 partition.add(s.substring(start, i + 1));
                 partition2(s, i + 1, end, partition, res, table);
-    			partition.remove(partition.size() - 1);
+                partition.remove(partition.size() - 1);
             }
-    	}
+        }
     }
 
     private void fillPalindromeTable(char[] chars, int start, int end,
@@ -98,6 +95,67 @@ public class PalindromePartition {
             table[start][end] = table[start + 1][end - 1];
         }
     }
+
+    // Backtracking
+    // beats 68.05%(6 ms)
+    public List<List<String> > partition3(String s) {
+        List<List<String>> res = new ArrayList<>();
+        partition3(s, 0, new ArrayList<>(), res);
+        return res;
+    }
+
+    private void partition3(String s, int start, List<String> cur,
+                            List<List<String>> res) {
+        if (start >= s.length()) {
+            res.add(new ArrayList<>(cur));
+            return;
+        }
+        for (int i = start; i < s.length(); i++) {
+            if (isPalindrome(s, start, i)) {
+                cur.add(s.substring(start, i + 1));
+                partition3(s, i + 1, cur, res);
+                cur.remove(cur.size() - 1);
+            }
+        }
+    }
+
+    private boolean isPalindrome(String s, int start, int end) {
+        for (int i = start, j = end; i < j; i++, j--) {
+            if (s.charAt(i) != s.charAt(j)) return false;
+        }
+        return true;
+    }
+
+    // Solution of Choice
+    // Dynamic Programming
+    // beats 68.05%(6 ms)
+    public List<List<String>> partition4(String s) {
+        int len = s.length();
+        @SuppressWarnings("unchecked")
+		List<List<String>>[] res = new List[len + 1];
+		res[0] = new ArrayList<>();
+		res[0].add(new ArrayList<>());
+		boolean[][] dp = new boolean[len][len];
+        char[] cs = s.toCharArray();
+		for (int i = 0; i < len; i++) {
+			res[i + 1] = new ArrayList<>();
+			for (int j = 0; j <= i; j++) {
+				if (cs[j] == cs[i] && (i - j <= 1 || dp[j + 1][i - 1])) {
+					dp[j][i] = true;
+					String substr = s.substring(j, i + 1);
+					for (List<String> list : res[j]) {
+						List<String> cloned = new ArrayList<>(list);
+						cloned.add(substr);
+						res[i + 1].add(cloned);
+					}
+				}
+			}
+		}
+		return res[len];
+	}
+
+// LC132: https://leetcode.com/problems/palindrome-partitioning-ii/
+// Return the minimum cuts needed for a palindrome partitioning of s.
 
     // Time Limit Exceeded
     public int minCut(String s) {
@@ -145,6 +203,8 @@ public class PalindromePartition {
         return min;
     }
 
+    // 2D-Dynamic Programming
+    // beats 41.11%(35 ms)
     public int minCut2(String s) {
         int len = s.length();
         char[] chars = s.toCharArray();
@@ -181,7 +241,8 @@ public class PalindromePartition {
         table2[start] = min + 1;
     }
 
-    // beats 96.25%
+    // 2D-Dynamic Programming
+    // beats 93.42%(14 ms)
     public int minCut3(String s) {
         int len = s.length();
         char[] chars = s.toCharArray();
@@ -221,7 +282,8 @@ public class PalindromePartition {
         return table[start][end] = isPalindrome(chars, start + 1, end - 1, table);
     }
 
-    // beats 19.28%
+    // 2D-Dynamic Programming
+    // beats 35.57%(37 ms)
     public int minCut4(String s) {
         int len = s.length();
         boolean palindromes[][] = new boolean[len][len];
@@ -241,9 +303,11 @@ public class PalindromePartition {
         return cuts[len - 1];
     }
 
+    // Solution of Choice
+    // 1D-Dynamic Programming(Manancher algorithm)
     // https://leetcode.com/discuss/9476/solution-does-not-need-table-palindrome-right-uses-only-space
-    // No palindrome table, which makes space complexity: O(N)
-    // beats 97.27%
+    // time complexity: O(N ^ 2), space complexity: O(N)
+    // beats 94.23%(13 ms)
     public int minCut5(String s) {
         int len = s.length();
         char[] c = s.toCharArray();
@@ -262,6 +326,29 @@ public class PalindromePartition {
             }
         }
         return cuts[len];
+    }
+
+    // Solution of Choice
+    // BFS
+    // beats 97.34%(10 ms)
+    public int minCut6(String s) {
+        int len = s.length();
+        Queue<Integer> queue = new LinkedList<>();
+        queue.offer(0);
+        boolean[] visited = new boolean[len];
+        for (int cuts = 0; ; cuts++) {
+            for (int i = queue.size(); i > 0; i--) {
+                int cur = queue.poll();
+                for (int j = len - 1; j >= cur; j--) {
+                    if (!visited[j] && isPalindrome(s, cur, j)) {
+                        if (j == len - 1) return cuts;
+
+                        queue.offer(j + 1);
+                    }
+                }
+                visited[cur] = true;
+            }
+        }
     }
 
     String[][] sort(String[][] lists) {
@@ -289,6 +376,8 @@ public class PalindromePartition {
         PalindromePartition p = new PalindromePartition();
         test(p::partition, s, expected);
         test(p::partition2, s, expected);
+        test(p::partition3, s, expected);
+        test(p::partition4, s, expected);
     }
 
     @Test
@@ -315,6 +404,7 @@ public class PalindromePartition {
         test(p::minCut3, "minCut3", s, expected);
         test(p::minCut4, "minCut4", s, expected);
         test(p::minCut5, "minCut5", s, expected);
+        test(p::minCut6, "minCut6", s, expected);
     }
 
     @Test
