@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 // otherwise return -1.
 // Note: The solution is guaranteed to be unique.
 public class GasStation {
-    // two-dimension DP
+    // 2D-Dynamic Programming
     // Memory Limit Exceeded
     public int canCompleteCircuit(int[] gas, int[] cost) {
         int n = gas.length;
@@ -40,7 +40,7 @@ public class GasStation {
         return -1;
     }
 
-    // one-dimension DP
+    // 1D-Dynamic Programming
     // Time Limit Exceeded
     public int canCompleteCircuit2(int[] gas, int[] cost) {
         int n = gas.length;
@@ -67,8 +67,8 @@ public class GasStation {
         return -1;
     }
 
-    // greedy(maximal subarray sum)
-    // beats 1.46%
+    // Greedy(Kadane's algorithm)
+    // beats 1.46%(2 ms)
     public int canCompleteCircuit3(int[] gas, int[] cost) {
         int n = gas.length;
         int total = 0;
@@ -96,13 +96,15 @@ public class GasStation {
         return maxIndex % n;
     }
 
+    // Solution of Choice
+    // Greedy(Kadane's algorithm)
     // Don't have to loop 2 * n times, and no need to find maximal sum.
     // Since the answer is unique, none of other stations could possibly pass
     // that unique station. Hence as long as running gas sum is negative,
     // none of passing stations is the answer, and the desired station must
     // be the lastest start point.
     //
-    // beats 87.63%
+    // beats 87.63%(0 ms)
     public int canCompleteCircuit4(int[] gas, int[] cost) {
         int total = 0;
         int runningGas = 0;

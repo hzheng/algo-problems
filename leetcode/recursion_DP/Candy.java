@@ -5,7 +5,7 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/candy/
+// LC135: https://leetcode.com/problems/candy/
 //
 // N children standing in a line. Each child is assigned a rating value. You
 // are giving candies to these children subjected to the following requirements:
@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 // Children with a higher rating get more candies than their neighbors.
 // What is the minimum candies you must give?
 public class Candy {
-    // beats 78.77%
+    // beats 78.77%(4 ms)
     // time complexity: O(N), space complexity: O(1)
     public int candy(int[] ratings) {
         int n = ratings.length;
@@ -49,24 +49,23 @@ public class Candy {
         return total;
     }
 
-    // beats 78.77%
+    // Solution of Choice
+    // Greedy(2-pass)
+    // beats 59.97%(4 ms)
     // time complexity: O(N), space complexity: O(N)
     public int candy2(int[] ratings) {
         int n = ratings.length;
         int[] candies = new int[n];
-        // from left to right
-        for (int i = 1; i < n; i++) {
+        for (int i = 1; i < n; i++) { // from left to right
             if (ratings[i] > ratings[i - 1]) {
                 candies[i] = candies[i - 1] + 1;
             }
         }
-        // from right to left
-        for (int i = n - 2; i >= 0; i--) {
+        for (int i = n - 2; i >= 0; i--) { // from right to left
             if (ratings[i] > ratings[i + 1] && candies[i] <= candies[i + 1]) {
                 candies[i] = candies[i + 1] + 1;
             }
         }
-
         int total = n;
         for (int candy : candies) {
             total += candy;
@@ -74,7 +73,33 @@ public class Candy {
         return total;
     }
 
-    // TODO: DP solution
+    // Greedy(1-pass)
+    // https://discuss.leetcode.com/topic/8208/one-pass-constant-space-java-solution
+    // beats 59.97%(4 ms)
+    public int candy3(int[] ratings) {
+        int total = 1;
+        int prev = 1;
+        int countDown = 0;
+        for (int i = 1, n = ratings.length; i <= n; i++) {
+            if (i < n && ratings[i] < ratings[i - 1]) {
+                countDown++;
+                continue;
+            }
+            if (countDown > 0) {
+                total += countDown * (countDown + 1) / 2;
+                if (countDown >= prev) {
+                    total += countDown - prev + 1;
+                }
+                countDown = 0;
+                prev = 1;
+            }
+            if (i < n) {
+                prev = (ratings[i] == ratings[i - 1]) ? 1 : prev + 1;
+                total += prev;
+            }
+        }
+        return total;
+    }
 
     void test(Function<int[], Integer> candy, String name,
               int expected, int ... ratings) {
@@ -85,6 +110,7 @@ public class Candy {
         Candy c = new Candy();
         test(c::candy, "candy", expected, ratings);
         test(c::candy2, "candy2", expected, ratings);
+        test(c::candy3, "candy3", expected, ratings);
     }
 
     @Test
