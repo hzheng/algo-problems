@@ -3,17 +3,18 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/surrounded-regions/
+// LC130: https://leetcode.com/problems/surrounded-regions/
 //
 // Given a 2D board containing 'X' and 'O', capture all regions surrounded by 'X'.
 // A region is captured by flipping all 'O's into 'X's in that surrounded region.
 public class SurroundedRegions {
-    // beats 8.41%
     private static final char O = 'O';
     private static final char X = 'X';
     private static final char o = 'o';
     private static final char workChar = ' ';
 
+    // BFS + Queue
+    // beats 8.41%(30 ms)
     public void solve(char[][] board) {
         int nRow = board.length;
         if (nRow == 0) return;
@@ -94,7 +95,8 @@ public class SurroundedRegions {
         }
     }
 
-    // beats 50.65%
+    // BFS + Queue
+    // beats 44.95%(10 ms)
     // only consider borders
     public void solve2(char[][] board) {
         int nRow = board.length;
@@ -164,9 +166,108 @@ public class SurroundedRegions {
         }
     }
 
-    // TODO: use iterative DFS by use of stack
-    
-    // TODO: use union-find algorithm
+    // DFS + Recursion
+    // beats 80.72%(5 ms)
+    public void solve3(char[][] board) {
+        int m = board.length;
+        if (m == 0) return;
+
+        int n = board[0].length;
+        for (int i = 0; i < m; i++) {
+            mark(board, i, 0);
+            mark(board, i, n - 1);
+        }
+        for (int j = 0; j < n; j++) {
+            mark(board, 0, j);
+            mark(board, m - 1, j);
+        }
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (board[i][j] == O) {
+                    board[i][j] = X;
+                } else if (board[i][j] == o) {
+                    board[i][j] = O;
+                }
+            }
+        }
+    }
+
+    private void mark(char[][] board, int i, int j) {
+        if (board[i][j] != O) return;
+
+        board[i][j] = o;
+        if (i > 1) {
+            mark(board, i - 1, j);
+        }
+        if (i < board.length - 2) {
+            mark(board, i + 1, j);
+        }
+        if (j > 1) {
+            mark(board, i, j - 1);
+        }
+        if (j < board[i].length - 2) {
+            mark(board, i, j + 1);
+        }
+    }
+
+    // beats 25.58%(14 ms)
+    public void solve4(char[][] board) {
+        int m = board.length;
+        if (m == 0) return;
+
+        int n = board[0].length;
+        int size = m * n;
+        int[] unionSet = new int[size];
+        boolean[] edgeOLinks = new boolean[size];
+        for (int i = 0; i < size; i++) {
+            int x = i / n;
+            int y = i % n;
+            if (x == 0 || x == m - 1 || y == 0 || y == n - 1) {
+                edgeOLinks[i] = (board[x][y] == O);
+            }
+            unionSet[i] = i;
+        }
+        for (int i = 0; i < size; i++) {
+            int x = i / n;
+            int y = i % n;
+            if (board[x][y] != O) continue;
+
+            if (x > 0 && board[x - 1][y] == O) {
+                union(i, i - n, unionSet, edgeOLinks);
+            }
+            if (y + 1 < n && board[x][y + 1] == O) {
+                union(i, i + 1, unionSet, edgeOLinks);
+            }
+        }
+        for (int i = 0; i < size; i++) {
+            int x = i / n;
+            int y = i % n;
+            if (board[x][y] == O && !edgeOLinks[findSet(i, unionSet)]) {
+                board[x][y] = X;
+            }
+        }
+    }
+
+    private void union(int x, int y, int[] unionSet, boolean[] edgeOLinks) {
+        int rootX = findSet(x, unionSet);
+        int rootY = findSet(y, unionSet);
+        unionSet[rootX] = rootY;
+        edgeOLinks[rootY] = edgeOLinks[rootX] || edgeOLinks[rootY];
+    }
+
+    private int findSet(int x, int[] unionSet) {
+        // return (unionSet[x] == x) ? x : (unionSet[x] = findSet(unionSet[x], unionSet));
+        while (x != unionSet[x]) {
+            unionSet[x] = unionSet[unionSet[x]];
+            x = unionSet[x];
+        }
+        return x;
+    }
+
+    @FunctionalInterface
+    interface Function<A> {
+        public void apply(A a);
+    }
 
     private char[][] convert(String[] s) {
         char[][] board = new char[s.length][];
@@ -174,11 +275,6 @@ public class SurroundedRegions {
             board[i] = s[i].toCharArray();
         }
         return board;
-    }
-
-    @FunctionalInterface
-    interface Function<A> {
-        public void apply(A a);
     }
 
     void test(Function<char[][]> solve, String[] s, String[] expected) {
@@ -192,6 +288,8 @@ public class SurroundedRegions {
         SurroundedRegions regions = new SurroundedRegions();
         test(regions::solve, s, expected);
         test(regions::solve2, s, expected);
+        test(regions::solve3, s, expected);
+        test(regions::solve4, s, expected);
     }
 
     @Test

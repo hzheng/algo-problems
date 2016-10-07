@@ -113,7 +113,7 @@ public class LongestConsecutiveSeq {
             }
         }
 
-        private int root(int i){
+        private int root(int i) {
             while (i != id[i]) {
                 id[i] = id[id[i]];
                 i = id[i];
