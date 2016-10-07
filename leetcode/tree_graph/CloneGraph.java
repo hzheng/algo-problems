@@ -5,35 +5,31 @@ import static org.junit.Assert.*;
 
 import common.UndirectedGraphNode;
 
-// https://leetcode.com/problems/clone-graph/
+// LC133: https://leetcode.com/problems/clone-graph/
 //
 // Clone an undirected graph. Each node in the graph contains a label and a
 // list of its neighbors.
 public class CloneGraph {
-    // DFS
-    // beats 66.04%
+    // DFS + Recursion
+    // beats 44.40%(8 ms)
     public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
-        return clone(node, new HashMap<>());
+        return node == null ? null : clone(node, new HashMap<>());
     }
 
     private UndirectedGraphNode clone(UndirectedGraphNode node,
-                                      Map<Integer, UndirectedGraphNode> map) {
-        if (node == null) return null;
-
-        int label = node.label;
-        if (map.containsKey(label)) return map.get(label); // visited
-
-        UndirectedGraphNode cloned = new UndirectedGraphNode(label);
-        map.put(label, cloned);
-        for (UndirectedGraphNode neighbor : node.neighbors) {
-            UndirectedGraphNode clonedNeighbor = clone(neighbor, map);
-            cloned.neighbors.add(clonedNeighbor);
+                                      Map<UndirectedGraphNode, UndirectedGraphNode> map) {
+        if (!map.containsKey(node)) {
+            UndirectedGraphNode cloned = new UndirectedGraphNode(node.label);
+            map.put(node, cloned);
+            for (UndirectedGraphNode neighbor : node.neighbors) {
+                cloned.neighbors.add(clone(neighbor, map));
+            }
         }
-        return cloned;
+        return map.get(node);
     }
 
-    // BFS
-    // beats 19.51%
+    // BFS + Queue
+    // beats 31.89%(9 ms)
     public UndirectedGraphNode cloneGraph2(UndirectedGraphNode node) {
         if (node == null) return null;
 
@@ -46,15 +42,11 @@ public class CloneGraph {
             UndirectedGraphNode n = queue.poll();
             UndirectedGraphNode cloned = map.get(n);
             for (UndirectedGraphNode neighbor : n.neighbors) {
-                UndirectedGraphNode clonedNeighbor = null;
-                if (map.containsKey(neighbor)) {
-                    clonedNeighbor = map.get(neighbor);
-                } else {
+                if (!map.containsKey(neighbor)) {
                     queue.offer(neighbor);
-                    clonedNeighbor = new UndirectedGraphNode(neighbor.label);
-                    map.put(neighbor, clonedNeighbor);
+                    map.put(neighbor, new UndirectedGraphNode(neighbor.label));
                 }
-                cloned.neighbors.add(clonedNeighbor);
+                cloned.neighbors.add(map.get(neighbor));
             }
         }
         return root;
