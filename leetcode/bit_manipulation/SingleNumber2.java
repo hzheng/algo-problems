@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 // Your algorithm should have a linear runtime complexity. Could you implement
 // it without using extra memory?
 public class SingleNumber2 {
-    // beats 50.74%
+    // beats 50.74%(5 ms)
     public int singleNumber(int[] nums) {
         int res = 0;
         int mask = 1;
@@ -21,7 +21,7 @@ public class SingleNumber2 {
                     sum++;
                 }
             }
-            if (sum % 3 == 1) {
+            if (sum % 3 != 0) {
                 res |= mask;
             }
             mask <<= 1;
@@ -29,10 +29,27 @@ public class SingleNumber2 {
         return res;
     }
 
+    public int singleNumber2(int[] nums) {
+        int res = 0;
+        for (int i = 0; i < 32; i++) {
+            int sum = 0;
+            for (int j = 0; j < nums.length; j++) {
+                if (((nums[j] >> i) & 1) == 1) {
+                    sum++;
+                }
+            }
+            sum %= 3;
+            if (sum != 0) {
+                res |= sum << i;
+            }
+        }
+        return res;
+    }
+
     // https://traceformula.blogspot.com/2015/08/single-number-ii-how-to-come-up-with.html
     // this works even the exceptional number occurs any times other than one
-    // beats 87.51%
-    public int singleNumber2(int[] nums) {
+    // beats 87.51%(1 ms)
+    public int singleNumber3(int[] nums) {
         int a = 0;
         int b = 0;
         for (int x : nums) {
@@ -42,9 +59,23 @@ public class SingleNumber2 {
         return b;
     }
 
+    // Solution of Choice
+    // https://discuss.leetcode.com/topic/2031/challenge-me-thx
+    public int singleNumber4(int[] nums) {
+        int ones = 0; // holds XOR of all the elements which have appeared once
+        int twos = 0; // holds XOR of all the elements which have appeared twice
+        for (int x : nums) {
+            ones = (ones ^ x) & ~twos;
+            twos = (twos ^ x) & ~ones;
+        }
+        return ones;
+    }
+
     void test(int expected, int ... nums) {
         assertEquals(expected, singleNumber(nums));
         assertEquals(expected, singleNumber2(nums));
+        assertEquals(expected, singleNumber3(nums));
+        assertEquals(expected, singleNumber4(nums));
     }
 
     @Test

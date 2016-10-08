@@ -3,24 +3,17 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/single-number/
+// LC136: https://leetcode.com/problems/single-number/
 //
 // Given an array of integers, every element appears twice except for one.
 // Find that single one.
 // Your algorithm should have a linear runtime complexity. Could you implement
 // it without using extra memory?
 public class SingleNumber {
-    // beats 32.35%
+    // Solution of Choice
+    // Bit Manipulation
+    // beats 32.35%(1 ms)
     public int singleNumber(int[] nums) {
-        int xor = nums[0];
-        for (int i = 1; i < nums.length; i++) {
-            xor ^= nums[i];
-        }
-        return xor;
-    }
-
-    // beats 32.35%
-    public int singleNumber2(int[] nums) {
         int xor = 0;
         for (int num : nums) {
             xor ^= num;
@@ -30,7 +23,6 @@ public class SingleNumber {
 
     void test(int expected, int ... nums) {
         assertEquals(expected, singleNumber(nums));
-        assertEquals(expected, singleNumber2(nums));
     }
 
     @Test
