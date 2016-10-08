@@ -5,12 +5,13 @@ import static org.junit.Assert.*;
 
 import common.ListNode;
 
-// https://leetcode.com/problems/reorder-list/
+// LC143: https://leetcode.com/problems/reorder-list/
 //
 // Given a singly linked list L: L0→L1→…→Ln-1→Ln,
 // reorder it to: L0→Ln→L1→Ln-1→L2→Ln-2→…
 public class ReorderList {
-    // beats 1.02%
+    // Stack
+    // beats 1.02%(10 ms)
     public void reorderList(ListNode head) {
         Stack<ListNode> stack = new Stack<>();
         for (ListNode n = head; n != null; n = n.next) {
@@ -26,7 +27,7 @@ public class ReorderList {
         }
     }
 
-    // recursion
+    // Recursion
     // Time Limited Exceeded
     public void reorderList2(ListNode head) {
         if (head == null || head.next == null) return;
@@ -41,34 +42,29 @@ public class ReorderList {
         }
     }
 
-    // beats 77.74%
+    // beats 77.74%(2 ms)
     public void reorderList3(ListNode head) {
         if (head == null || head.next == null) return;
 
         // find middle pointer
         ListNode slow = head;
-        for (ListNode fast = head.next; fast != null; fast = fast.next) {
-            fast = fast.next;
+        for (ListNode fast = head.next; fast != null && fast.next != null; ) {
             slow = slow.next;
-            if (fast == null) break;
+            fast = fast.next.next;
         }
         ListNode half = slow.next;
         slow.next = null;
         // reverse half
         ListNode reversedHalf = null;
-        for (ListNode cur = half; cur != null; ) {
-            ListNode next = cur.next;
+        for (ListNode cur = half, next; cur != null; cur = next) {
+            next = cur.next;
             cur.next = reversedHalf;
             reversedHalf = cur;
-            cur = next;
         }
-        // splice
-        for (ListNode n = head, m = reversedHalf; m != null; ) {
-            ListNode next = m.next;
-            m.next = n.next;
-            n.next = m;
-            n = m.next;
-            m = next;
+        // merge
+        for (ListNode n = head, m = reversedHalf, next; m != null; m = next) {
+            next = n.next;
+            n = n.next = m;
         }
     }
 
