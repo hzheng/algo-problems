@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 //
 // Given a string S, find the longest palindromic substring. Assume the maximum
 // length of S is 1000, and there exists 1 unique longest palindromic substring.
-public class LongestPalindrome {
+public class LongestPalindromeSubstr {
     // time complexity: O(N ^ 2), space complexity: O(N ^ 2)
     // Time Limit Exceeded
     public String longestPalindrome(String s) {
@@ -195,6 +195,6 @@ public class LongestPalindrome {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("LongestPalindrome");
+        org.junit.runner.JUnitCore.main("LongestPalindromeSubstr");
     }
 }
