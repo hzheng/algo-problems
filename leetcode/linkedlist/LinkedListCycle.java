@@ -5,18 +5,16 @@ import static org.junit.Assert.*;
 
 import common.ListNode;
 
-// https://leetcode.com/problems/linked-list-cycle/
+// LC141: https://leetcode.com/problems/linked-list-cycle/
 //
 // Given a linked list, determine if it has a cycle in it.
-
 public class LinkedListCycle {
     // time complexity: O(N), space complexity: O(1)
-    // beats 12.02%
+    // beats 12.02%(1 ms)
     public boolean hasCycle(ListNode head) {
         if (head == null) return false;
 
         ListNode slow = head;
-        // ListNode fast = head;
         ListNode fast = head.next;
         while (fast != null && fast.next != null) {
             fast = fast.next.next;
@@ -26,8 +24,9 @@ public class LinkedListCycle {
         return false;
     }
 
+    // Solution of Choice
     // time complexity: O(N), space complexity: O(1)
-    // beats 12.02%
+    // beats 12.02%(1 ms)
     public boolean hasCycle2(ListNode head) {
         if (head == null) return false;
 
@@ -38,8 +37,9 @@ public class LinkedListCycle {
         return true;
     }
 
+    // Hashtable
     // time complexity: O(N), space complexity: O(N)
-    // beats 2.72%
+    // beats 2.72%(11 ms)
     public boolean hasCycle3(ListNode head) {
         Set<ListNode> visited = new HashSet<>();
         for (ListNode n = head; n != null; n = n.next) {

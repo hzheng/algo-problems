@@ -6,12 +6,13 @@ import static org.junit.Assert.*;
 
 import common.ListNode;
 
-// https://leetcode.com/problems/linked-list-cycle-ii/
+// LC142: https://leetcode.com/problems/linked-list-cycle-ii/
 //
 // Given a linked list, return the node where the cycle begins. If
 // there is no cycle, return null.
 public class LinkedListCycle2 {
-    // beats 17.22%
+    // Solution of Choice
+    // beats 17.22%(1 ms)
     public ListNode detectCycle(ListNode head) {
         ListNode slow = head;
         ListNode fast = head;
@@ -22,27 +23,17 @@ public class LinkedListCycle2 {
         }
         if (fast == null || fast.next == null) return null;
 
-        slow = head;
-        while (fast != slow) {
-            slow = slow.next;
-            fast = fast.next;
-        }
+        for (slow = head; fast != slow; slow = slow.next, fast = fast.next) {}
         return slow;
     }
 
-    // beats 17.22%
+    // beats 17.22%(1 ms)
     public ListNode detectCycle2(ListNode head) {
-        ListNode slow = head;
-        ListNode fast = head;
-        while (fast != null && fast.next != null) {
+        for (ListNode slow = head, fast = head; fast != null && fast.next != null; ) {
             fast = fast.next.next;
             slow = slow.next;
             if (fast == slow) {
-                slow = head;
-                while (fast != slow) {
-                    slow = slow.next;
-                    fast = fast.next;
-                }
+                for (slow = head; fast != slow; slow = slow.next, fast = fast.next) {}
                 return slow;
             }
         }
