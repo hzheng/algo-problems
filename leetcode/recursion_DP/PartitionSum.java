@@ -3,14 +3,14 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// LC416:
+// LC416: https://leetcode.com/problems/partition-equal-subset-sum/
 //
 // Given a non-empty array containing only positive integers, find if the array
 // can be partitioned into two subsets such that the sum of elements in both
 // subsets is equal.
 public class PartitionSum {
     // Recursion
-    // beats N/A(63 ms for 89 tests)
+    // beats N/A(61 ms for 89 tests)
     public boolean canPartition(int[] nums) {
         int sum = 0;
         for (int num : nums) {
@@ -32,7 +32,7 @@ public class PartitionSum {
     }
 
     // Dynamic Programming
-    // beats N/A(20 ms for 89 tests)
+    // beats N/A(24 ms for 89 tests)
     public boolean canPartition2(int[] nums) {
         int sum = 0;
         for (int num : nums) {

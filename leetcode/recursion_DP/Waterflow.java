@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 
 import common.Utils;
 
-// LC417:
+// LC417: https://leetcode.com/problems/pacific-atlantic-water-flow/
 //
 // Given an m x n matrix of non-negative integers representing the height of
 // each unit cell in a continent, the "Pacific ocean" touches the left and top
@@ -28,7 +28,7 @@ import common.Utils;
 // [[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]].
 public class Waterflow {
     // DFS + Recursion
-    // beats N/A(25 ms for 113 tests)
+    // beats N/A(18 ms for 113 tests)
     public List<int[]> pacificAtlantic(int[][] matrix) {
         List<int[]> res = new ArrayList<>();
         int m = matrix.length;

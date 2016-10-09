@@ -3,12 +3,12 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// LC415:
+// LC415: https://leetcode.com/problems/add-strings
 //
 // Given two non-negative numbers num1 and num2 represented as string, return
 // the sum of num1 and num2.
 public class AddStrings {
-    // beats N/A(23 ms for 315 tests)
+    // beats N/A(29 ms for 315 tests)
     public String addStrings(String num1, String num2) {
         int len1 = num1.length();
         int len2 = num2.length();
