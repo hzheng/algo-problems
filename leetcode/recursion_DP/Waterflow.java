@@ -27,6 +27,7 @@ import common.Utils;
 // Return:
 // [[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]].
 public class Waterflow {
+    // DFS + Recursion
     // beats N/A(25 ms for 113 tests)
     public List<int[]> pacificAtlantic(int[][] matrix) {
         List<int[]> res = new ArrayList<>();
