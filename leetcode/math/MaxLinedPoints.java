@@ -21,7 +21,7 @@ public class MaxLinedPoints {
     }
 
     // time complexity: O(N ^ 3), space complexity: O(1)
-    // beats 98.87%
+    // beats 98.87%(15 ms)
     public int maxPoints(Point[] points) {
         int n = points.length;
         if (n < 3) return n;
@@ -59,14 +59,15 @@ public class MaxLinedPoints {
         return (a.x - c.x) * (a.y - b.y) == (a.y - c.y) * (a.x - b.x);
     }
 
-    // http://www.programcreek.com/2014/04/leetcode-max-points-on-a-line-java/
+    // Solution of Choice
     // time complexity: O(N ^ 2), space complexity: O(N)
-    // 88.40%
+    // beats 88.40%(25 ms)
     public int maxPoints2(Point[] points) {
         int n = points.length;
         if (n < 3) return n;
 
         Map<Double, Integer> countMap = new HashMap<>();
+        // or use Long as key which is combined by two coprime p and q(p/q=slope)
         int max = 0;
         for (int i = 0; i < n; i++) {
             int duplicate = 1;
@@ -83,11 +84,7 @@ public class MaxLinedPoints {
                 } else {
                     // 0.0 and -0.0 are different keys in Map
                     double slope = (b.y == a.y) ? 0.0 : 1.0 * (b.y - a.y) / (b.x - a.x);
-                    if (countMap.get(slope) != null) {
-                        countMap.put(slope, countMap.get(slope) + 1);
-                    } else {
-                        countMap.put(slope, 1);
-                    }
+                    countMap.put(slope, countMap.getOrDefault(slope, 0) + 1);
                 }
             }
 
