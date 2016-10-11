@@ -3,11 +3,12 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/evaluate-reverse-polish-notation/
+// LC150: https://leetcode.com/problems/evaluate-reverse-polish-notation/
 //
 // Evaluate the value of an arithmetic expression in Reverse Polish Notation.
 public class EvalRPN {
-    // beats 50.28%
+    // Solution of Choice
+    // beats 50.28%(16 ms)
     public int evalRPN(String[] tokens) {
         Stack<Integer> stack = new Stack<>();
         for (String token : tokens) {

@@ -4,7 +4,7 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/max-points-on-a-line/
+// LC149: https://leetcode.com/problems/max-points-on-a-line/
 //
 // Given n points on a 2D plane, find the maximum number of points that lie on
 // the same straight line.
