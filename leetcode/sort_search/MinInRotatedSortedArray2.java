@@ -3,22 +3,22 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii/
+// LC154: https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii/
 //
 // Suppose a sorted array is rotated at some pivot unknown to you beforehand.
 // Find the minimum element. The array may contain duplicates.
 public class MinInRotatedSortedArray2 {
-    // beats 6.02%
+    // Solution of Choice
+    // beats 6.02%(1 ms)
     public int findMin(int[] nums) {
         int left = 0;
-        int right = nums.length - 1;
-        while (right > left) {
-            int pivot = left + (right - left) / 2;
+        for (int right = nums.length - 1; right > left; ) {
+            int mid = (left + right) >>> 1;
             int rightVal = nums[right];
-            if (nums[pivot] > rightVal) {
-                left = pivot + 1;
-            } else if (nums[pivot] < rightVal) {
-                right = pivot;
+            if (nums[mid] > rightVal) {
+                left = mid + 1;
+            } else if (nums[mid] < rightVal) {
+                right = mid;
             } else {
                 right--;
             }
