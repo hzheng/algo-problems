@@ -5,14 +5,13 @@ import static org.junit.Assert.*;
 
 import java.util.function.Function;
 
-// https://leetcode.com/problems/maximum-product-subarray/
+// LC152: https://leetcode.com/problems/maximum-product-subarray/
 //
 // Find the contiguous subarray within an array which has the largest product.
 public class MaxProductSubarray {
     // beats 92.75%(2 ms)
     public int maxProduct(int[] nums) {
         int n = nums.length;
-        if (n == 0) return 0;
         if (n == 1) return nums[0];
 
         int max = 0;
@@ -23,7 +22,7 @@ public class MaxProductSubarray {
             if (i == n) break;
 
             int start = i;
-            while (++i < n && nums[i] != 0);
+            while (++i < n && nums[i] != 0) {}
             max = Math.max(max, maxProduct(nums, start, i));
         }
         return max;
@@ -78,32 +77,31 @@ public class MaxProductSubarray {
         return product;
     }
 
-    // beats 44.91%(4 ms)
+    // Solution of Choice
+    // 0-D Dynamic Programming
+    // beats 49.97%(3 ms for 183 tests)
     public int maxProduct2(int[] nums) {
-        int n = nums.length;
-        if (n == 0) return 0;
-
-        int localMax = nums[0];
-        int localMin = localMax;
-        int max = localMax;
-        for (int i = 1; i < n; i++) {
-            int num = nums[i];
+        int localMax = 1;
+        int localMin = 1;
+        int max = Integer.MIN_VALUE;
+        for (int num : nums) {
             int oldLocalMax = localMax;
-            localMax = Math.max(Math.max(num * localMax, num), num * localMin);
-            localMin = Math.min(Math.min(num * oldLocalMax, num), num * localMin);
+            localMax = Math.max(Math.max(num * localMax, num), localMin *= num);
+            localMin = Math.min(Math.min(num * oldLocalMax, num), localMin);
             max = Math.max(max, localMax);
         }
         return max;
     }
 
-    // beats 80.08%(3 ms)
+    // 0-D Dynamic Programming
+    // beats 49.97%(3 ms for 183 tests)
     public int maxProduct3(int[] nums) {
-        int n = nums.length;
-        int localMax = nums[0];
-        int localMin = localMax;
-        int max = localMax;
-        for (int i = 1; i < n; i++) {
-            int num = nums[i];
+        if (nums.length == 1) return nums[0];
+
+        int localMax = 1;
+        int localMin = 1;
+        int max = 0;
+        for (int num : nums) {
             int curMax = num * localMax;
             int curMin = num;
             if (curMax < num) {
@@ -118,6 +116,7 @@ public class MaxProductSubarray {
         return max;
     }
 
+    // 0-D Dynamic Programming
     // beats 80.08%(3 ms)
     public int maxProduct4(int[] nums) {
         int n = nums.length;
@@ -156,6 +155,23 @@ public class MaxProductSubarray {
         return max;
     }
 
+    // Solution of Choice
+    // 0-D Dynamic Programming
+    // beats 49.97%(3 ms for 183 tests)
+    public int maxProduct5(int[] nums) {
+        int forwardProduct = 1;
+    	int backwardProduct = 1;
+  		int max = Integer.MIN_VALUE;
+  		for (int i = 0, n = nums.length; i < n; ++i) {
+  			forwardProduct *= nums[i];
+  			backwardProduct *= nums[n - i - 1];
+  			max = Math.max(max, Math.max(forwardProduct, backwardProduct));
+  		    forwardProduct = (forwardProduct == 0) ? 1 : forwardProduct;
+  		    backwardProduct = (backwardProduct == 0) ? 1 : backwardProduct;
+        }
+        return max;
+    }
+
     void test(Function<int[], Integer> maxProduct, int expected, int ... nums) {
         assertEquals(expected, (int)maxProduct.apply(nums));
     }
@@ -166,6 +182,7 @@ public class MaxProductSubarray {
         test(m::maxProduct2, expected, nums);
         test(m::maxProduct3, expected, nums);
         test(m::maxProduct4, expected, nums);
+        test(m::maxProduct5, expected, nums);
     }
 
     @Test
