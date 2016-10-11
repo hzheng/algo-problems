@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 
 import common.ListNode;
 
-// https://leetcode.com/problems/insertion-sort-list/
+// LC147: https://leetcode.com/problems/insertion-sort-list/
 //
 // Sort a linked list using insertion sort.
 public class InsertionSortList {
@@ -15,11 +15,10 @@ public class InsertionSortList {
     public ListNode insertionSortList(ListNode head) {
         if (head == null) return null;
 
-        ListNode last = head;
         ListNode dummy = new ListNode(0);
         dummy.next = head;
-        for (ListNode n = head.next; n != null; ) {
-            ListNode next = n.next;
+        for (ListNode last = head, n = head.next, next; n != null; n = next) {
+            next = n.next;
             for (ListNode m = dummy; ; m = m.next) {
                 if (m.next == n) {
                     last = n;
@@ -32,23 +31,20 @@ public class InsertionSortList {
                     break;
                 }
             }
-            n = next;
         }
         return dummy.next;
     }
 
-    // beats 23.09%(44 ms)
+    // Solution of Choice
+    // beats 9.47%(52 ms for 21 tests)
     public ListNode insertionSortList2(ListNode head) {
         ListNode dummy = new ListNode(0);
-        for (ListNode n = head; n != null; ) {
-            ListNode m = dummy;
-            while (m.next != null && m.next.val < n.val) {
-                m = m.next;
-            }
-            ListNode next = n.next;
-            n.next = m.next;
-            m.next = n;
-            n = next;
+        for (ListNode cur = head, next; cur != null; cur = next) {
+            next = cur.next;
+            ListNode prev = dummy;
+            for (; prev.next != null && prev.next.val < cur.val; prev = prev.next) {}
+            cur.next = prev.next;
+            prev.next = cur;
         }
         return dummy.next;
     }
