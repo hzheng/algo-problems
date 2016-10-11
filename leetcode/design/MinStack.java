@@ -3,11 +3,10 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/min-stack/
+// LC155: https://leetcode.com/problems/min-stack/
 //
 // Design a stack that supports push, pop, top, and retrieving the
 // minimum element in constant time.
-
 public class MinStack {
     static interface IMinStack {
         public void pop();
@@ -16,7 +15,8 @@ public class MinStack {
         public int getMin();
     }
 
-    // beats 13.61% (138 ms)
+    // Linked List + Heap
+    // beats 13.61%(138 ms)
     static class MinStack1 implements IMinStack {
         private class Node {
             int val;
@@ -64,6 +64,7 @@ public class MinStack {
         }
     }
 
+    // Two Stacks
     // beats 27.97%(131 ms)
     static class MinStack2 implements IMinStack {
         private Stack<Integer> stack = new Stack<>();
@@ -93,7 +94,7 @@ public class MinStack {
         }
     }
 
-    // one user-defined stack
+    // Linked List
     // beats 73.88%(120 ms)
     static class MinStack3 implements IMinStack {
         static class Node {
@@ -134,6 +135,36 @@ public class MinStack {
 
         public int getMin() {
             return top.min;
+        }
+    }
+
+    // Solution of Choice
+    // One Stack
+    // beats 26.64%(131 ms for 18 tests)
+    static class MinStack4 implements IMinStack {
+        private Stack<Integer> stack = new Stack<>();
+        private int min = Integer.MAX_VALUE;
+
+        public void push(int x) {
+            if (x <= min) {
+                stack.push(min);
+                min = x;
+            }
+            stack.push(x);
+        }
+
+        public void pop() {
+            if (stack.pop() == min) {
+                min = stack.pop();
+            }
+        }
+
+        public int top() {
+            return stack.peek();
+        }
+
+        public int getMin() {
+            return min;
         }
     }
 
@@ -179,6 +210,7 @@ public class MinStack {
         test1(new MinStack1());
         test1(new MinStack2());
         test1(new MinStack3());
+        test1(new MinStack4());
     }
 
     @Test
@@ -186,6 +218,7 @@ public class MinStack {
         test2(new MinStack1());
         test2(new MinStack2());
         test2(new MinStack3());
+        test2(new MinStack4());
     }
 
     public static void main(String[] args) {
