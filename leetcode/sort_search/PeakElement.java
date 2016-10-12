@@ -12,38 +12,27 @@ import static org.junit.Assert.*;
 // Your solution should be in logarithmic complexity.
 public class PeakElement {
     // time complexity: O(N), space complexity: O(1)
-    // beats 2.08%
+    // beats 2.34%(1 ms for 58 tests)
     public int findPeakElement(int[] nums) {
-        int n = nums.length;
-        if (n < 2) return n - 1;
-
-        if (nums[0] > nums[1]) return 0;
-
-        if (nums[n - 1] > nums[n - 2]) return n - 1;
-
-        for (int i = 1; i < n - 1; i++) {
-            if (nums[i] > nums[i - 1] && nums[i] > nums[i + 1]) return i;
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] < nums[i - 1]) return i - 1;
         }
-        return -1;
+        return nums.length - 1;
     }
 
-    // beats 33.78%
+    // Binary Search
+    // time complexity: O(log(N)), space complexity: O(1)
+    // beats 34.74%(0 ms for 58 tests)
     public int findPeakElement2(int[] nums) {
-        int n = nums.length;
-        if (n < 2) return n - 1;
-
         int low = 0;
-        int high = n - 1;
+        int high = nums.length - 1;
         while (low < high) {
-            int mid = low + (high - low) / 2;
-            if (mid > 0 && nums[mid - 1] > nums[mid]) {
-                high = mid - 1;
-                continue;
+            int mid = (low + high) >>> 1;
+            if (nums[mid] > nums[mid + 1]) {
+                high = mid;
+            } else {
+                low = mid + 1;
             }
-
-            if (mid + 1 < n && nums[mid + 1] < nums[mid]) return mid;
-
-            low = mid + 1;
         }
         return low;
     }
@@ -55,6 +44,7 @@ public class PeakElement {
 
     @Test
     public void test1() {
+        test(0, 3);
         test(2, 1, 2, 3, 1);
         test(4, 1, 2, 3, 4, 5, 4, 1);
     }
