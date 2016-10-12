@@ -4,12 +4,13 @@ import java.math.BigInteger;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/fraction-to-recurring-decimal/
+// LC166: https://leetcode.com/problems/fraction-to-recurring-decimal/
 //
 // Given two integers representing the numerator and denominator of a fraction,
 // return the fraction in string format. If the fractional part is repeating,
 // enclose the repeating part in parentheses.
 public class FractionToDecimal {
+    // BigInteger
     // beats 1.24%(16 ms)
     public String fractionToDecimal(int numerator, int denominator) {
         long[] faction = {numerator, denominator};
@@ -122,6 +123,7 @@ public class FractionToDecimal {
         return res;
     }
 
+    // Hash Table
     // beats 36.04%(4 ms)
     public String fractionToDecimal2(int numerator, int denominator) {
         long[] faction = {numerator, denominator};
@@ -153,7 +155,8 @@ outer:
         return res.toString();
     }
 
-    // beats 36.04%(4 ms)
+    // Hash Table
+    // beats 48.59%(4 ms for 35 tests)
     public String fractionToDecimal3(int numerator, int denominator) {
         if (numerator == 0) return "0";
         if (denominator == 0) return null;
@@ -163,24 +166,21 @@ outer:
             res.append("-");
         }
 
-        long longNum = Math.abs((long)numerator);
-        long longDenom = Math.abs((long)denominator);
-        long remainder = (longNum % longDenom) * 10;
-        res.append(longNum / longDenom);
-        if (remainder == 0) return res.toString();
+        long n = Math.abs((long)numerator);
+        long d = Math.abs((long)denominator);
+        long r = n % d;
+        res.append(n / d);
+        if (r == 0) return res.toString();
 
         res.append(".");
         Map<Long, Integer> map = new HashMap<>();
-        while (remainder != 0) {
-            if (map.containsKey(remainder)) {
-                res.insert((int)map.get(remainder), '(');
-                res.append(")");
-                break;
-            }
-
-            map.put(remainder, res.length());
-            res.append(remainder / longDenom);
-            remainder = (remainder % longDenom) * 10;
+        for (r *= 10; r != 0 && !map.containsKey(r); r = (r % d) * 10) {
+            map.put(r, res.length());
+            res.append(r / d);
+        }
+        if (r != 0) {
+            res.insert((int)map.get(r), '(');
+            res.append(")");
         }
         return res.toString();
     }
