@@ -155,6 +155,7 @@ outer:
         return res.toString();
     }
 
+    // Solution of Choice
     // Hash Table
     // beats 48.59%(4 ms for 35 tests)
     public String fractionToDecimal3(int numerator, int denominator) {
