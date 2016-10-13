@@ -4,7 +4,7 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/dungeon-game/
+// LC174: https://leetcode.com/problems/dungeon-game/
 //
 // The demons had captured the princess (P) and imprisoned her in the
 // bottom-right corner of a dungeon. The dungeon consists of M x N rooms laid
@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 // the knight decides to move only rightward or downward in each step. Determine
 // the knight's minimum initial health so that he is able to rescue the princess.
 public class DungeonGame {
+    // 2-D Dynamic Programming
     // beats 51.65%(4 ms)
     public int calculateMinimumHP(int[][] dungeon) {
         int row = dungeon.length;
@@ -44,30 +45,51 @@ public class DungeonGame {
         return Math.max(1, min - dungeon);
     }
 
-    // beats 21.49%(5 ms)
+    // Solution of Choice
+    // 1-D Dynamic Programming
+    // beats 62.59%(3 ms for 44 tests)
     public int calculateMinimumHP2(int[][] dungeon) {
         int row = dungeon.length;
         if (row == 0) return 0;
 
         int col = dungeon[0].length;
-        int[] minHP = new int[col];
-        minHP[col - 1] = min(dungeon[row - 1][col - 1], 1);
-        for (int j = col - 2; j >= 0; j--) {
+        int[] minHP = new int[col + 1];
+        minHP[col] = 1;
+        for (int j = col - 1; j >= 0; j--) {
             minHP[j] = min(dungeon[row - 1][j], minHP[j + 1]);
         }
+        minHP[col] = Integer.MAX_VALUE;
         for (int i = row - 2; i >= 0; i--) {
-            minHP[col - 1] = min(dungeon[i][col - 1], minHP[col - 1]);
-            for (int j = col - 2; j >= 0; j--) {
+            for (int j = col - 1; j >= 0; j--) {
                 minHP[j] = min(dungeon[i][j], Math.min(minHP[j], minHP[j + 1]));
             }
         }
         return minHP[0];
     }
 
-    // binary search
+    // 1-D Dynamic Programming
+    // beats 62.59%(3 ms for 44 tests)
+    public int calculateMinimumHP3(int[][] dungeon) {
+        int row = dungeon.length;
+        if (row == 0) return 0;
+
+        int col = dungeon[0].length;
+        int[] dp = new int[col + 1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        dp[col] = 1;
+        for (int i = row - 1; i >= 0; i--) {
+            for (int j = col - 1; j >= 0; j--) {
+                int last = (i != row - 1 && j == col - 1) ? Integer.MAX_VALUE : dp[j + 1];
+                dp[j] = Math.max(1, Math.min(dp[j], last) - dungeon[i][j]);
+            }
+        }
+        return dp[0];
+    }
+
+    // Binary Search
     // http://www.jiuzhang.com/solutions/dungeon-game/
     // beats 3.33%(11 ms)
-    public int calculateMinimumHP3(int[][] dungeon) {
+    public int calculateMinimumHP4(int[][] dungeon) {
         if (dungeon.length == 0) return 0;
 
         int start = 1, end = Integer.MAX_VALUE - 1;
@@ -126,6 +148,7 @@ public class DungeonGame {
         test(d::calculateMinimumHP, expected, dungeon);
         test(d::calculateMinimumHP2, expected, dungeon);
         test(d::calculateMinimumHP3, expected, dungeon);
+        test(d::calculateMinimumHP4, expected, dungeon);
     }
 
     @Test

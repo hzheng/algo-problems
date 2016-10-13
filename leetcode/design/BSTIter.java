@@ -22,6 +22,7 @@ public class BSTIter {
     }
 
     // Solution of Choice
+    // Stack
     // space complexity: O(h)
     // beats 15.82%(7 ms)
     static class BSTIterator implements BSTIterable {
