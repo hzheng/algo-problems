@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
-// https://leetcode.com/problems/binary-search-tree-iterator/
+// LC173: https://leetcode.com/problems/binary-search-tree-iterator/
 //
 // Implement an iterator over a binary search tree (BST). Your iterator will be
 // initialized with the root node of a BST.
@@ -21,7 +21,8 @@ public class BSTIter {
         public int next();
     }
 
-    // space complexity: O(N)
+    // Solution of Choice
+    // space complexity: O(h)
     // beats 15.82%(7 ms)
     static class BSTIterator implements BSTIterable {
         private Stack<TreeNode> stack = new Stack<>();
@@ -57,6 +58,7 @@ public class BSTIter {
         private TreeNode cur;
 
         public BSTIterator2(TreeNode root) {
+            // tree-to-vine
             TreeNode dummy = new TreeNode(0);
             dummy.right = root;
             TreeNode tail = dummy;
@@ -87,6 +89,49 @@ public class BSTIter {
         }
     }
 
+    // beats 40.01%(6 ms for 61 tests)
+    // Morris traversal
+    static class BSTIterator3 implements BSTIterable {
+        private TreeNode cur;
+
+        public BSTIterator3(TreeNode root) {
+            TreeNode prev;
+            for (cur = root; cur != null; ) {
+                if (cur.left == null) {
+                    cur = cur.right;
+                } else {
+                    for (prev = cur.left; prev.right != null && prev.right != cur;
+                         prev = prev.right) {}
+                    if (prev.right == null) {
+                        prev.right = cur; // create threaded link
+                        cur = cur.left;
+                    } else {
+                        cur = cur.right;
+                    }
+                }
+            }
+            for (cur = root; cur != null && cur.left != null; cur = cur.left) {}
+        }
+
+        public boolean hasNext() {
+            return cur != null;
+        }
+
+        public int next() {
+            int res = cur.val;
+            TreeNode next = cur.right;
+            if (next == null || next.left == null) {
+                cur = next;
+            } else if (next.left.val > cur.val) {
+                for (cur = next; cur.left != null; cur = cur.left) {}
+            } else {
+                cur.right = null; // recover the tree
+                cur = next;
+            }
+            return res;
+        }
+    }
+
     void test1(BSTIterable iter, int ... expected) {
         for (int n : expected) {
             assertEquals(n, iter.next());
@@ -97,6 +142,7 @@ public class BSTIter {
     public void test(String s, int ... expected) {
         test1(new BSTIterator(TreeNode.of(s)), expected);
         test1(new BSTIterator2(TreeNode.of(s)), expected);
+        test1(new BSTIterator3(TreeNode.of(s)), expected);
     }
 
     @Test
