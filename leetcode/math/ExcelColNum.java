@@ -3,14 +3,15 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/excel-sheet-column-number/
+// LC171: https://leetcode.com/problems/excel-sheet-column-number/
 //
 // Given a column title in an Excel sheet, return its corresponding column number.
 public class ExcelColNum {
-    // beats 73.83%
+    // Solution of Choice
+    // beats 73.83%(2 ms)
     public int titleToNumber(String s) {
-        int n = 0;
         final int radix = 26;
+        int n = 0;
         for (char c : s.toCharArray()) {
             n *= radix;
             n += (c - 'A' + 1);

@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 // the element that appears more than ⌊ n/2 ⌋ times.
 public class MajorityElement {
     // Divide & Conquer
-    // beats 67.68%(2 ms)
+    // beats 51.12%(2 ms for 44 tests)
     // time complexity: O(N * log(N)), space complexity: O(log(N))
     public int majorityElement(int[] nums) {
         return majorityElement(nums, 0, nums.length - 1);
@@ -20,8 +20,6 @@ public class MajorityElement {
 
         int mid = (start + end) >>> 1;
         int left = majorityElement(nums, start, mid);
-        if (mid >= end) return left;
-
         int right = majorityElement(nums, mid + 1, end);
         if (left == right) return left;
 
