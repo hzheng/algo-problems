@@ -3,27 +3,27 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/excel-sheet-column-title/
+// LC168: https://leetcode.com/problems/excel-sheet-column-title/
 //
 // Given a positive integer, return its corresponding column title as appear in
 // an Excel sheet.
 public class ExcelColTitle {
-    // beats 7.23%
+    // beats 12.78%(0 ms for 18 tests)
     public String convertToTitle(int n) {
-        if (n < 1) return "";
-
-        String title = "";
-        int radix = 26;
-        for (int x = n; x > 0; x /= radix) {
-            title = "" + (char)('A' + (--x % radix)) + title;
+        StringBuilder title = new StringBuilder();
+        final int radix = 26;
+        for (int x = n - 1; x >= 0; x /= radix, x--) {
+            title.insert(0, (char)('A' + (x % radix)));
         }
-        return title;
+        return title.toString();
     }
 
+    // Recursion
+    // beats 12.78%(0 ms for 18 tests)
     public String convertToTitle2(int n) {
         if (n < 1) return "";
 
-        int radix = 26;
+        final int radix = 26;
         return convertToTitle2(--n / radix) + (char)(n % radix + 'A');
     }
 
