@@ -145,6 +145,33 @@ public class RotateArray {
         }
     }
 
+    // Solution of Choice
+    // https://leetcode.com/articles/rotate-array/#approach-3-using-cyclic-replacements-accepted
+    // beats 12.84%(1 ms for 33 tests)
+    public void rotate8(int[] nums, int k) {
+        int n = nums.length;
+        for (int start = 0, count = 0; count < n; start++, count++) {
+            for (int curNum = nums[start], next = start + k; ; count++, next += k) {
+                int tmp = nums[next %= n];
+                nums[next] = curNum;
+                curNum = tmp;
+                if (start == next) break;
+            }
+        }
+    }
+
+    // https://leetcode.com/articles/rotate-array/#approach-2-using-extra-array-accepted
+    // beats 12.84%(1 ms for 33 tests)
+    public void rotate9(int[] nums, int k) {
+        int[] a = new int[nums.length];
+        for (int i = 0; i < nums.length; i++) {
+            a[(i + k) % nums.length] = nums[i];
+        }
+        for (int i = 0; i < nums.length; i++) {
+            nums[i] = a[i];
+        }
+    }
+
     @FunctionalInterface
     interface Function<A, B> {
         public void apply(A a, B b);
@@ -165,6 +192,8 @@ public class RotateArray {
         test(r::rotate5, k, nums, expected);
         test(r::rotate6, k, nums, expected);
         test(r::rotate7, k, nums, expected);
+        test(r::rotate8, k, nums, expected);
+        test(r::rotate9, k, nums, expected);
     }
 
     @Test
