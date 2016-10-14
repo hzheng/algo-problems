@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/rotate-array/
+// LC189: https://leetcode.com/problems/rotate-array/
 //
 // Rotate an array of n elements to the right by k steps.
 public class RotateArray {
@@ -74,12 +74,11 @@ public class RotateArray {
         }
     }
 
+    // Solution of Choice
     // time complexity: O(N), space complexity: O(1)
     // beats 3.29%(3 ms)
     public void rotate4(int[] nums, int k) {
         int n = nums.length;
-        if (n == 0) return;
-
         k %= n;
         reverse(nums, 0, n - k);
         reverse(nums, n - k, n);
@@ -95,23 +94,17 @@ public class RotateArray {
     }
 
     // time complexity: O(N), space complexity: O(1)
-    // beats 4.52%(2 ms)
+    // beats 12.84%(1 ms for 33 tests)
     public void rotate5(int[] nums, int k) {
         int n = nums.length;
-        if (n == 0) return;
-
-        int index = 0;
         int cur = nums[0];
-        int distance = 0;
-        for (int i = 0; i < n; i++) {
-           index = (index + k) % n;
+        for (int i = 0, next = k % n; i < n; i++, next = (next + k) % n) {
            int tmp = cur;
-           cur = nums[index];
-           nums[index] = tmp;
-           distance = (distance + k) % n;
-           if (distance == 0) {
-               index = ++index % n;
-               cur = nums[index];
+           cur = nums[next];
+           nums[next] = tmp;
+           if (k * (i + 1) % n == 0) {
+               next = ++next % n;
+               cur = nums[next];
            }
         }
     }
@@ -120,19 +113,34 @@ public class RotateArray {
     // beats 13.50%(1 ms)
     public void rotate6(int[] nums, int k) {
         int n = nums.length;
-        int startIndex = 0;
         k %= n;
-        for (int i = 0; i < n; i++) {
+        for (int i = 0, startIndex = 0; i < n; i++) {
             int startNum = nums[startIndex];
-            for (int j = startIndex; ; i++) {
-                int prev = (j - k + n) % n;
+            for (int j = startIndex, prev; ; i++, j = prev) {
+                prev = (j - k + n) % n;
                 if (prev == startIndex) {
                     nums[j] = startNum;
                     startIndex = prev + 1;
                     break;
                 }
                 nums[j] = nums[prev];
-                j = prev;
+            }
+        }
+    }
+
+    // Solution of Choice
+    // beats 12.84%(1 ms for 33 tests)
+    public void rotate7(int[] nums, int k) {
+        int n = nums.length;
+        int curNum = nums[0];
+        for (int i = 0, start = 0, next = k; i < n; i++, next += k) {
+            int nextNum = nums[next %= n];
+            nums[next] = curNum;
+            if (next == start) {
+                next = ++start % n;
+                curNum = nums[next];
+            } else {
+                curNum = nextNum;
             }
         }
     }
@@ -156,6 +164,7 @@ public class RotateArray {
         test(r::rotate4, k, nums, expected);
         test(r::rotate5, k, nums, expected);
         test(r::rotate6, k, nums, expected);
+        test(r::rotate7, k, nums, expected);
     }
 
     @Test
