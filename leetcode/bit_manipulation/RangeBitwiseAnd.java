@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/bitwise-and-of-numbers-range/
+// LC201: https://leetcode.com/problems/bitwise-and-of-numbers-range/
 //
 // Given a range [m, n] where 0 <= m <= n <= 2147483647, return the bitwise AND
 // of all numbers in this range, inclusive.
@@ -16,9 +16,9 @@ public class RangeBitwiseAnd {
         if (diff >= m) return 0;
 
         long power = 1;
-        for (; power <= diff; power <<= 1);
+        for (; power <= diff; power <<= 1) {}
         long diffPower = power;
-        for (; power <= m; power <<= 1);
+        for (; power <= m; power <<= 1) {}
         if (n >= power) return 0;
 
         int res = 0;
@@ -33,27 +33,27 @@ public class RangeBitwiseAnd {
     // beats 59.66%(8 ms)
     public int rangeBitwiseAnd2(int m, int n) {
         int mask = Integer.MAX_VALUE;
-        while ((m & mask) != (n & mask)) {
-            mask <<= 1;
-        }
+        for (; (m & mask) != (n & mask); mask <<= 1) {}
         return m & mask;
     }
 
+    // Solution of Choice
     // beats 22.37%(9 ms)
     public int rangeBitwiseAnd3(int m, int n) {
         int shift = 0;
-        for (; m != n; m >>= 1, n >>= 1, shift++);
+        for (; m != n; m >>= 1, n >>= 1, shift++) {}
         return m << shift;
     }
 
+    // Solution of Choice
     // beats 22.37%(9 ms)
     public int rangeBitwiseAnd4(int m, int n) {
         int mask = n;
-        for (; mask > m; mask &= (mask - 1));
+        for (; mask > m; mask &= (mask - 1)) {}
         return m & mask;
     }
 
-    // recursion
+    // Recursion
     // beats 22.37%(9 ms)
     public int rangeBitwiseAnd5(int m, int n) {
         if (m >= n) return m;
@@ -63,16 +63,40 @@ public class RangeBitwiseAnd {
         return rangeBitwiseAnd5(m >> 1, n >> 1) << 1;
     }
 
+    // Solution of Choice
+    // beats 44.28%(9 ms for 8266 tests)
+    public int rangeBitwiseAnd6(int m, int n) {
+        int bits = 0;
+        for (int x = m ^ n; x != 0; bits++, x >>= 1) {}
+        return (n >> bits) << bits;
+    }
+
+    // beats 44.28%(9 ms for 8266 tests)
+    public int rangeBitwiseAnd7(int m, int n) {
+        int bits = (m == n) ? 0 : (int)(Math.log(m ^ n) / Math.log(2)) + 1;
+        return (n >> bits) << bits;
+    }
+
+    // beats 25.22%(10 ms for 8266 tests)
+    public int rangeBitwiseAnd8(int m, int n) {
+        int bits = (int)Math.ceil(Math.log(n - m + 1) / Math.log(2));
+        return ((m & n) >> bits) << bits;
+    }
+
     void test(int m, int n, int expected) {
         assertEquals(expected, rangeBitwiseAnd(m, n));
         assertEquals(expected, rangeBitwiseAnd2(m, n));
         assertEquals(expected, rangeBitwiseAnd3(m, n));
         assertEquals(expected, rangeBitwiseAnd4(m, n));
         assertEquals(expected, rangeBitwiseAnd5(m, n));
+        assertEquals(expected, rangeBitwiseAnd6(m, n));
+        assertEquals(expected, rangeBitwiseAnd7(m, n));
+        assertEquals(expected, rangeBitwiseAnd8(m, n));
     }
 
     @Test
     public void test1() {
+        test(11, 11, 11);
         test(11, 12, 8);
         test(5, 6, 4);
         test(2, 3, 2);
