@@ -4,7 +4,7 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/count-primes/
+// LC204: https://leetcode.com/problems/count-primes/
 //
 // Count the number of prime numbers less than a non-negative number, n.
 public class PrimeCount {
@@ -68,6 +68,7 @@ public class PrimeCount {
 
     // sieve method(very slow due to set operations)
     // time complexity: ?, space complexity: O(N)
+    // Time Limit Exceeded
     public int countPrimes4(int n) {
         if (n < 3) return 0;
 
@@ -88,54 +89,84 @@ public class PrimeCount {
 
     // sieve method
     // time complexity: O(N * log(log(N))), space complexity: O(N)
-    // beats 30.22%(37 ms)
+    // beats 94.51%(21 ms for 20 tests)
     public int countPrimes5(int n) {
         boolean[] isComposite = new boolean[n];
-        for (int i = 2; i < n; i++) {
-            if (!isComposite[i]) {
-                for (int j = i * 2; j < n; j += i) {
-                    isComposite[j] = true;
-                }
-            }
-        }
-        int count = 0;
-        for (int i = 2; i < n; i++) {
-            if (!isComposite[i]) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    // sieve method(from leetcode hint)
-    // time complexity: O(N * log(log(N))), space complexity: O(N)
-    // beats 62.33%(28 ms)
-    public int countPrimes6(int n) {
-        boolean[] isPrime = new boolean[n];
-        for (int i = 2; i < n; i++) {
-            isPrime[i] = true;
-        }
+        int count = n - 1;
         for (int i = 2; i * i < n; i++) {
-            if (isPrime[i]) {
-                for (int j = i * i; j < n; j += i) {
-                    isPrime[j] = false;
+            if (isComposite[i]) continue;
+
+            for (int j = i * i; j < n; j += i) {
+                if (!isComposite[j]) {
+                    isComposite[j] = true;
+                    count--;
                 }
             }
         }
-        int count = 0;
-        for (int i = 2; i < n; i++) {
-            if (isPrime[i]) {
-                count++;
+        return count > 0 ? --count : 0;
+    }
+
+    // Solution of Choice
+    // sieve method
+    // time complexity: O(N * log(log(N))), space complexity: O(N)
+    // beats 98.29%(13 ms for 20 tests)
+    public int countPrimes6(int n) {
+        if (n < 3) return 0;
+
+        boolean[] isComposite = new boolean[n];
+        int count = n / 2;
+        for (int i = 3; i * i < n; i += 2) {
+            if (isComposite[i]) continue;
+
+            for (int j = i * i; j < n; j += i * 2) {
+                if (!isComposite[j]) {
+                    isComposite[j] = true;
+                    count--;
+                }
             }
         }
         return count;
     }
 
-    // sieve
+    // sieve method
+    // time complexity: O(N), space complexity: O(N)
+    // beats 71.80%(28 ms for 20 tests)
+    public int countPrimes7(int n) {
+        boolean[] isComposite = new boolean[n];
+        int count = 0;
+        for (int i = 2; i < n; i++) {
+            if (isComposite[i]) continue;
+
+            count++;
+            for (int j = i; j < n; j += i) {
+                isComposite[j] = true;
+            }
+       }
+       return count;
+   }
+
+    // sieve method
+    // time complexity: O(N), space complexity: O(N)
+    // beats 81.53%(26 ms for 20 tests)
+   public int countPrimes8(int n) {
+        boolean[] isComposite = new boolean[n];
+        int count = 0;
+        for (int i = 2; i < n; i++) {
+            if (isComposite[i]) continue;
+
+            count++;
+            for (int j = 2; i * j < n; j++) {
+                isComposite[i * j] = true;
+            }
+       }
+       return count;
+    }
+
+    // sieve method
     // time complexity: O(N), space complexity: O(N)
     // beats 14.37%(56 ms)
     // TODO: improvement
-    public int countPrimes7(int n) {
+    public int countPrimes9(int n) {
         boolean[] isComposite = new boolean[n];
         int[] primes = new int[n]; // can be smaller
         int primeCount = 0;
@@ -183,10 +214,14 @@ public class PrimeCount {
         test(p::countPrimes5, "countPrimes5", n, expected);
         test(p::countPrimes6, "countPrimes6", n, expected);
         test(p::countPrimes7, "countPrimes7", n, expected);
+        test(p::countPrimes8, "countPrimes8", n, expected);
+        test(p::countPrimes9, "countPrimes9", n, expected);
     }
 
     @Test
     public void test1() {
+        test(0, 0);
+        test(1, 0);
         test(2, 0);
         test(3, 1);
         test(4, 2);
