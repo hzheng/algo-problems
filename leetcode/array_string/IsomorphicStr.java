@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/isomorphic-strings/
+// LC205: https://leetcode.com/problems/isomorphic-strings/
 //
 // Given two strings s and t, determine if they are isomorphic.
 public class IsomorphicStr {
@@ -65,7 +65,7 @@ public class IsomorphicStr {
             char secondCh = t.charAt(i);
             if (map.containsKey(firstCh)) {
                 if (map.get(firstCh) != secondCh) return false;
-            } else {
+            } else { // containsValue is slow: O(N)
                 if (map.containsValue(secondCh)) return false;
 
                 map.put(firstCh, secondCh);
@@ -74,11 +74,26 @@ public class IsomorphicStr {
         return true;
     }
 
+    // Solution of Choice
+    // beats 99.34%(3 ms for 30 tests)
+    public boolean isIsomorphic5(String s, String t) {
+        int[] map = new int[512];
+        for (int i = s.length() - 1; i >= 0; i--) {
+            int first = s.charAt(i);
+            int second = t.charAt(i) + 256;
+            if (map[first] != map[second]) return false;
+
+            map[first] = map[second] = i;
+      }
+      return true;
+    }
+
     void test(String s, String t, boolean expected) {
         assertEquals(expected, isIsomorphic(s, t));
         assertEquals(expected, isIsomorphic2(s, t));
         assertEquals(expected, isIsomorphic3(s, t));
         assertEquals(expected, isIsomorphic4(s, t));
+        assertEquals(expected, isIsomorphic5(s, t));
     }
 
     @Test
