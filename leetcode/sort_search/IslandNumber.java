@@ -4,7 +4,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import java.util.function.Function;
 
-// https://leetcode.com/problems/number-of-islands/
+// LC200: https://leetcode.com/problems/number-of-islands/
 //
 // Given a 2d grid map of '1's (land) and '0's (water), count the number of
 // islands. An island is surrounded by water and is formed by connecting
@@ -12,11 +12,12 @@ import java.util.function.Function;
 // the grid are all surrounded by water.
 public class IslandNumber {
     private static final char LAND = '1';
-    private static final char WATER = '0';
     private static final char MARK = ' ';
+    private static final int[][] dirs = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
-    // BFS
-    // beats 21.91%(7 ms)
+    // Solution of Choice
+    // BFS + Queue
+    // beats 20.18%(7 ms for 47 tests)
     // time complexity: O(N * M), space complexity: O(1)
     public int numIslands(char[][] grid) {
         int nRow = grid.length;
@@ -32,15 +33,14 @@ public class IslandNumber {
                 }
             }
         }
-
-        // restore grid(if omitted, beat rate will rise to 25.82%(6 ms))
-        for (int i = 0; i < nRow; i++) {
-            for (int j = 0; j < nCol; j++) {
-                if (grid[i][j] == MARK) {
-                    grid[i][j] = LAND;
-                }
-            }
-        }
+        // restore grid if required
+        // for (int i = 0; i < nRow; i++) {
+        //     for (int j = 0; j < nCol; j++) {
+        //         if (grid[i][j] == MARK) {
+        //             grid[i][j] = LAND;
+        //         }
+        //     }
+        // }
         return islands;
     }
 
@@ -51,29 +51,19 @@ public class IslandNumber {
         grid[startX][startY] = MARK;
         while (!island.isEmpty()) {
             int[] pos = island.poll();
-            int x = pos[0];
-            int y = pos[1];
-            if (x > 0 && grid[x - 1][y] == LAND) {
-                island.offer(new int[] {x - 1, y});
-                grid[x - 1][y] = MARK;
-            }
-            if (x + 1 < nRow && grid[x + 1][y] == LAND) {
-                island.offer(new int[] {x + 1, y});
-                grid[x + 1][y] = MARK;
-            }
-            if (y > 0 && grid[x][y - 1] == LAND) {
-                island.offer(new int[] {x, y - 1});
-                grid[x][y - 1] = MARK;
-            }
-            if (y + 1 < nCol && grid[x][y + 1] == LAND) {
-                island.offer(new int[] {x, y + 1});
-                grid[x][y + 1] = MARK;
+            for (int[] dir : dirs) {
+                int x = pos[0] + dir[0];
+                int y = pos[1] + dir[1];
+                if (x >= 0 && y >= 0 && x < nRow && y < nCol && grid[x][y] == LAND) {
+                    island.offer(new int[] {x, y});
+                    grid[x][y] = MARK;
+                }
             }
         }
     }
 
-    // DFS
-    // beats 41.51%(4 ms)
+    // DFS + Recursion
+    // beats 39.89%(4 ms for 47 tests)
     // time complexity: O(N * M), space complexity: O(1)
     public int numIslands2(char[][] grid) {
         int nRow = grid.length;
@@ -89,39 +79,26 @@ public class IslandNumber {
                 }
             }
         }
-
-        // restore grid(if omitted, beat rate will rise to 66.24%(3 ms))
-        for (int i = 0; i < nRow; i++) {
-            for (int j = 0; j < nCol; j++) {
-                if (grid[i][j] == MARK) {
-                    grid[i][j] = LAND;
-                }
-            }
-        }
+        // restore grid if required
         return islands;
     }
 
     private void markIsland2(char[][] grid, int nRow, int nCol,
                              int x, int y) {
         grid[x][y] = MARK;
-        if (x > 0 && grid[x - 1][y] == LAND) {
-            markIsland2(grid, nRow, nCol, x - 1, y);
-        }
-        if (x + 1 < nRow && grid[x + 1][y] == LAND) {
-            markIsland2(grid, nRow, nCol, x + 1, y);
-        }
-        if (y > 0 && grid[x][y - 1] == LAND) {
-            markIsland2(grid, nRow, nCol, x, y - 1);
-        }
-        if (y + 1 < nCol && grid[x][y + 1] == LAND) {
-            markIsland2(grid, nRow, nCol, x, y + 1);
+        for (int[] dir : dirs) {
+            int i = x + dir[0];
+            int j = y + dir[1];
+            if (i >= 0 && j >= 0 && i < nRow && j < nCol && grid[i][j] == LAND) {
+                markIsland2(grid, nRow, nCol, i, j);
+            }
         }
     }
 
-    // http://www.programcreek.com/2014/04/leetcode-number-of-islands-java/
-    // union-find
+    // Solution of Choice
+    // Union Find
     // time complexity: O(N * M * log(K)), space complexity: O(N * M)
-    // beats 18.77%(8 ms)
+    // beats 16.27%(8 ms for 47 tests)
     public int numIslands3(char[][] grid) {
         int nRow = grid.length;
         if (nRow == 0) return 0;
@@ -137,7 +114,6 @@ public class IslandNumber {
                 }
             }
         }
-
         final int[] dx = {-1, 1, 0, 0};
         final int[] dy = {0, 0, -1, 1};
         for (int i = 0; i < nRow; i++) {
@@ -162,11 +138,16 @@ public class IslandNumber {
         return islands;
     }
 
-    private int getRoot(int[] arr, int i) {
-        while (arr[i] != i) {
-            i = arr[arr[i]];
+    private int getRoot(int[] id, int i) {
+        while (i != id[i]) {
+            id[i] = id[id[i]];
+            i = id[i];
         }
         return i;
+    }
+
+    void test(Function<char[][], Integer> count, int expected, String ... s) {
+        assertEquals(expected, (int)count.apply(convert(s)));
     }
 
     private char[][] convert(String[] s) {
@@ -175,10 +156,6 @@ public class IslandNumber {
             board[i] = s[i].toCharArray();
         }
         return board;
-    }
-
-    void test(Function<char[][], Integer> count, int expected, String ... s) {
-        assertEquals(expected, (int)count.apply(convert(s)));
     }
 
     void test(int expected, String ... s) {
