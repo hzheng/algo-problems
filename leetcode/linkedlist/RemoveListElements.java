@@ -5,10 +5,11 @@ import static org.junit.Assert.*;
 
 import common.ListNode;
 
-// https://leetcode.com/problems/remove-linked-list-elements/
+// L203: https://leetcode.com/problems/remove-linked-list-elements/
 //
 // Remove all elements from a linked list of integers that have value val.
 public class RemoveListElements {
+    // Solution of Choice
     // beats 3.47%(2 ms)
     public ListNode removeElements(ListNode head, int val) {
         ListNode dummy = new ListNode(0);
@@ -21,6 +22,15 @@ public class RemoveListElements {
             }
         }
         return dummy.next;
+    }
+
+    // Recursion
+    // beats 0.71%(3 ms for 63 tests)
+    public ListNode removeElements2(ListNode head, int val) {
+        if (head == null) return null;
+
+        head.next = removeElements2(head.next, val);
+        return head.val == val ? head.next : head;
     }
 
     @FunctionalInterface
@@ -37,6 +47,7 @@ public class RemoveListElements {
     void test(int[] nums, int val, int[] expected) {
         RemoveListElements r = new RemoveListElements();
         test(r::removeElements, nums, val, expected);
+        test(r::removeElements2, nums, val, expected);
     }
 
     @Test
