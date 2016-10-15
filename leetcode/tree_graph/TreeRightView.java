@@ -6,12 +6,13 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
-// https://leetcode.com/problems/binary-tree-right-side-view/
+// LC199: https://leetcode.com/problems/binary-tree-right-side-view/
 //
 // Given a binary tree, imagine yourself standing on the right side of it,
 // return the values of the nodes you can see ordered from top to bottom.
 public class TreeRightView {
-    // beats 1.48%(6 ms)
+    // DFS + Stack
+    // beats 1.97%(5 ms for 210 tests)
     public List<Integer> rightSideView(TreeNode root) {
         List<Integer> res = new ArrayList<>();
         if (root == null) return res;
@@ -19,41 +20,31 @@ public class TreeRightView {
         Stack<TreeNode> stack = new Stack<>();
         Set<TreeNode> visited = new HashSet<>();
         stack.push(root);
-        res.add(root.val);
-
         while (!stack.isEmpty()) {
             TreeNode top = stack.peek();
             if (res.size() < stack.size()) {
                 res.add(top.val);
             }
-
             if (top.right != null && !visited.contains(top.right)) {
                 stack.push(top.right);
-                continue;
-            }
-
-            if (top.left != null && !visited.contains(top.left)) {
+            } else if (top.left != null && !visited.contains(top.left)) {
                 stack.push(top.left);
-                continue;
+            } else {
+                visited.add(stack.pop());
             }
-
-            stack.pop();
-            visited.add(top);
         }
         return res;
     }
 
-    // BFS
-    // beats 10.84%(3 ms)
+    // BFS + Queue
+    // beats 31.93%(2 ms for 210 tests)
     public List<Integer> rightSideView2(TreeNode root) {
         List<Integer> res = new ArrayList<>();
         if (root == null) return res;
 
         Queue<TreeNode> queue = new LinkedList<>();
         queue.offer(root);
-        int curCount = 1;
-        int nextCount = 0;
-        while (!queue.isEmpty()) {
+        for (int curCount = 1, nextCount = 0; !queue.isEmpty(); ) {
             TreeNode node = queue.poll();
             if (node.left != null) {
                 queue.offer(node.left);
@@ -72,7 +63,7 @@ public class TreeRightView {
         return res;
     }
 
-    // BFS
+    // BFS + Queue
     // beats 10.84%(3 ms)
     public List<Integer> rightSideView3(TreeNode root) {
         List<Integer> res = new ArrayList<>();
@@ -80,20 +71,17 @@ public class TreeRightView {
 
         Queue<TreeNode> queue = new LinkedList<>();
         queue.offer(root);
-        TreeNode lastNode = null;
-        while (!queue.isEmpty()) {
+        for (TreeNode lastNode = null; !queue.isEmpty(); ) {
             TreeNode node = queue.poll();
             if (node == null) { // finished one level
                 res.add(lastNode.val);
                 lastNode = null;
                 continue;
             }
-
             if (lastNode == null) {
                 queue.offer(null);
             }
             lastNode = node;
-
             if (node.left != null) {
                 queue.offer(node.left);
             }
@@ -104,20 +92,18 @@ public class TreeRightView {
         return res;
     }
 
-    // BFS
-    // beats 47.35%(2 ms)
+    // Solution of Choice
+    // BFS + Queue
+    // beats 31.93%(2 ms for 210 tests)
     public List<Integer> rightSideView4(TreeNode root) {
         List<Integer> res = new ArrayList<>();
         if (root == null) return res;
 
         Queue<TreeNode> queue = new LinkedList<>();
         queue.offer(root);
-        while (true) {
-            int size = queue.size();
-            if (size == 0) break;
-
+        while (!queue.isEmpty()) {
             TreeNode node = null;
-            for (int i = 0; i < size; i++) {
+            for (int i = queue.size(); i > 0; i--) {
                 node = queue.poll();
                 if (node.left != null) {
                     queue.offer(node.left);
@@ -131,17 +117,14 @@ public class TreeRightView {
         return res;
     }
 
-    // recursion(DFS)
-    // http://www.jiuzhang.com/solutions/binary-tree-right-side-view/
-    // beats 10.84%(3 ms)
+    // DFS + Recursion
+    // beats 9.02%(3 ms for 210 tests)
     public List<Integer> rightSideView5(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
         Map<Integer, Integer> values = new HashMap<>();
         dfs(values, root, 1);
-
-        List<Integer> res = new ArrayList<>();
-        int maxDepth = values.size();
         //for (int depth = 1; values.containsKey(depth); depth++) {
-        for (int depth = 1; depth <= maxDepth; depth++) {
+        for (int depth = 1, maxDepth = values.size(); depth <= maxDepth; depth++) {
             res.add(values.get(depth));
         }
         return res;
@@ -152,10 +135,27 @@ public class TreeRightView {
 
         values.put(depth, node.val);
         dfs(values, node.left, depth + 1);
-        dfs(values, node.right, depth + 1);
+        dfs(values, node.right, depth + 1); // overwrite left
     }
 
-    // TODO: recursion: www.geeksforgeeks.org/print-right-view-binary-tree-2/
+    // Solution of Choice
+    // DFS + Recursion
+    // beats 77.68%(1 ms for 210 tests)
+    public List<Integer> rightSideView6(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        rightView(root, 0, res);
+        return res;
+    }
+
+    private void rightView(TreeNode node, int level, List<Integer> res) {
+        if (node == null) return;
+
+        if (level == res.size()) {
+            res.add(node.val);
+        }
+        rightView(node.right, level + 1, res);
+        rightView(node.left, level + 1, res);
+    }
 
     void test(Function<TreeNode, List<Integer> > rightSideView,
               String s, Integer ... expected) {
@@ -170,6 +170,7 @@ public class TreeRightView {
         test(t::rightSideView3, s, expected);
         test(t::rightSideView4, s, expected);
         test(t::rightSideView5, s, expected);
+        test(t::rightSideView6, s, expected);
     }
 
     @Test

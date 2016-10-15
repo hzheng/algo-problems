@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/house-robber/
+// LC198: https://leetcode.com/problems/house-robber/
 //
 // You are a professional robber planning to rob houses along a street. Each
 // house has a certain amount of money stashed, the only constraint stopping you
@@ -14,6 +14,7 @@ import static org.junit.Assert.*;
 // each house, determine the maximum amount of money you can rob tonight without
 // alerting the police.
 public class HouseRobber {
+    // Solution of Choice
     // time complexity: O(N), space complexity: O(1)
     // beats 41.08%(0 ms)
     public int rob(int[] nums) {
@@ -21,13 +22,11 @@ public class HouseRobber {
         int maxLastNotTaken = 0;
         for (int num : nums) {
             int tmp = maxLastNotTaken;
-
             // maxLastNotTaken = Math.max(maxLastTaken, maxLastNotTaken);
             //
             // the following is simpler than the last if maxLastTaken includes
             // the case that last one is not taken(or beat rate drops to 3.25%)
             maxLastNotTaken = maxLastTaken;
-
             maxLastTaken = Math.max(maxLastTaken, tmp + num);
         }
         // return Math.max(maxLastTaken, maxLastNotTaken);
