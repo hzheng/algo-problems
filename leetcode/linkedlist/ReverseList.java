@@ -6,22 +6,24 @@ import static org.junit.Assert.*;
 
 import common.ListNode;
 
+// LC206: https://leetcode.com/problems/reverse-linked-list/
+//
 // Reverse a singly linked list.
 public class ReverseList {
-    // beats 33.03%
+    // Solution of Choice
+    // beats 33.03%(0 ms)
     public ListNode reverseList(ListNode head) {
         ListNode prev = null;
-        for (ListNode cur = head; cur != null; ) {
-            ListNode next = cur.next;
+        for (ListNode cur = head, next; cur != null; cur = next) {
+            next = cur.next;
             cur.next = prev;
             prev = cur;
-            cur = next;
         }
         return prev;
     }
 
-    // from leetcode
-    // beats 4.66%
+    // Recursion
+    // beats 4.66%(1 ms)
     public ListNode reverseList2(ListNode head) {
         if (head == null || head.next == null) return head;
 
