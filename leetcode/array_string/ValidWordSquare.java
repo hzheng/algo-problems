@@ -39,7 +39,7 @@ public class ValidWordSquare {
     @Test
     public void test() {
         test(new String[] {"abcd", "bnrt", "crmy", "dtye"}, true);
-        test(new String[] { "abcd", "bnrt", "crm", "dt"}, true);
+        test(new String[] {"abcd", "bnrt", "crm", "dt"}, true);
         test(new String[] {"ball", "area", "read", "lady"}, false);
         test(new String[] {"abc","bde","cefg"}, false);
     }
