@@ -3,13 +3,13 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/course-schedule/
+// LC207: https://leetcode.com/problems/course-schedule/
 //
 // There are a total of n courses you have to take, labeled from 0 to n - 1.
 // Some courses may have prerequisites. Given the total number of courses and a
 // list of prerequisite pairs, is it possible for you to finish all courses?
 public class CourseSchedule {
-    // DFS
+    // Hash Table + DFS + Recursion
     // beats 49.07%(24 ms)
     public boolean canFinish(int numCourses, int[][] prerequisites) {
         Map<Integer, Set<Integer> > adjacencyList = new HashMap<>();
@@ -20,7 +20,6 @@ public class CourseSchedule {
             }
             adjacencyList.get(course).add(prerequisite[1]);
         }
-
         // if use iterator, will beat 52.26%(21 ms)
         // Iterator<Integer> iter = adjacencyList.keySet().iterator();
         // while (iter.hasNext()) {
@@ -50,8 +49,10 @@ public class CourseSchedule {
         return true;
     }
 
-    // DFS(reverse mapping: actually both will do)
-    // beats 64.12%(14 ms)
+    // Solution of Choice
+    // Hash Table + DFS + Recursion
+    // reverse mapping: actually both will do
+    // beats 71.49%(11 ms for 35 tests)
     public boolean canFinish2(int numCourses, int[][] prerequisites) {
         Map<Integer, List<Integer> > map = new HashMap<>();
         for (int[] prerequisite : prerequisites) {
@@ -63,8 +64,7 @@ public class CourseSchedule {
                 map.put(prerequisite[1], dependants);
             }
         }
-
-        Boolean[] visited = new Boolean[numCourses];
+        byte[] visited = new byte[numCourses];
         for (int i = 0; i < numCourses; i++) {
             if (!canFinish2(i, map, visited)) return false;
         }
@@ -72,31 +72,31 @@ public class CourseSchedule {
     }
 
     private boolean canFinish2(int course, Map<Integer, List<Integer> > map,
-                               Boolean[] visited) {
-        if (visited[course] != null) return visited[course];
+                               byte[] visited) {
+        if (visited[course] != 0) return visited[course] > 0;
 
-        visited[course] = false;
+        visited[course] = -1; // mark for cycle detection
         if (map.containsKey(course)) {
             for (int dependant : map.get(course)) {
                 if (!canFinish2(dependant, map, visited)) return false;
             }
         }
-        visited[course] = true;
+        visited[course] = 1;
         return true;
     }
 
-    // BFS/Topological-sorting(count down independents)
+    // BFS + Queue / Topological Sort
+    // count down independents
     // beats 28.61%(37 ms)
     public boolean canFinish3(int numCourses, int[][] prerequisites) {
         int[] dependentCount = new int[numCourses];
         for (int[] prerequisite : prerequisites) {
             dependentCount[prerequisite[0]]++;
         }
-
         Queue<Integer> independents = new LinkedList<>();
         for (int i = 0; i < numCourses; i++) {
             if (dependentCount[i] == 0) {
-                independents.add(i);
+                independents.offer(i);
             }
         }
 
@@ -115,24 +115,22 @@ public class CourseSchedule {
         return independentCount == numCourses;
     }
 
-    // BFS/Topological-sorting(inverse mapping, count down independents)
-    // beats 49.89%(23 ms)
+    // Solution of Choice
+    // BFS + Hash Table + Queue / Topological Sort
+    // inverse mapping, count down independents
+    // beats 51.24%(20 ms for 35 tests)
     public boolean canFinish4(int numCourses, int[][] prerequisites) {
         Map<Integer, Set<Integer> > adjacencyList = new HashMap<>();
         int[] dependentCounts = new int[numCourses];
         for (int[] prerequisite : prerequisites) {
             int dependant = prerequisite[0];
             int depended = prerequisite[1];
-            if (!adjacencyList.containsKey(depended)) {
-                adjacencyList.put(depended, new HashSet<>());
-            }
+            adjacencyList.putIfAbsent(depended, new HashSet<>());
             Set<Integer> dependants = adjacencyList.get(depended);
-            if (!dependants.contains(dependant)) { // avoid duplicate count
-                dependants.add(dependant);
+            if (dependants.add(dependant)) { // avoid duplicate count
                 dependentCounts[dependant]++;
             }
         }
-
         // can also use stack or list
         Queue<Integer> independents = new LinkedList<>();
         for (int i = 0; i < numCourses; i++) {
@@ -140,7 +138,6 @@ public class CourseSchedule {
                 independents.offer(i);
             }
         }
-
         int dependentCount = numCourses;
         for (; !independents.isEmpty(); dependentCount--) {
             int independent = independents.poll();
