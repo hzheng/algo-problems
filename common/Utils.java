@@ -4,6 +4,14 @@ import java.lang.reflect.*;
 import java.util.*;
 
 public class Utils {
+    public static int[][] clone(int[][] nums) {
+        int[][] cloned = nums.clone();
+        for (int i = 0; i < nums.length; i++) {
+            cloned[i] = nums[i].clone();
+        }
+        return cloned;
+    }
+
     public static class IntArrayComparator implements Comparator<int[]> {
         public int compare(int[] a, int[] b) {
             int len = Math.min(a.length, b.length);
