@@ -243,14 +243,12 @@ public class TreePostorderTraversal {
                 stack.push(cur);
                 cur = cur.left;
             } else {
-                cur = stack.peek();
-                if (cur.right != null && cur.right != prev) {
-                    cur = cur.right;
+                TreeNode top = stack.peek();
+                if (top.right != null && top.right != prev) {
+                    cur = top.right;
                 } else {
-                    res.add(cur.val);
-                    prev = cur;
-                    cur = null;
-                    stack.pop();
+                    res.add(top.val);
+                    prev = stack.pop();
                 }
             }
         }
