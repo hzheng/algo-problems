@@ -3,29 +3,31 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/implement-trie-prefix-tree/
+// LC208: https://leetcode.com/problems/implement-trie-prefix-tree/
 //
 // Implement a trie with insert, search, and startsWith methods.
 public class Trie {
-    static class TrieNode {
-        public static final int SIZE = 26;
+    private static class TrieNode {
+        private static final int SIZE = 26;
 
-        boolean isEnd;
+        private boolean isEnd;
 
-        TrieNode[] children;
+        private TrieNode[] children;
 
         public TrieNode() {
+            children = new TrieNode[SIZE];
         }
 
         public TrieNode getChild(char c) {
-            return children == null ? null : children[c - 'a'];
+            return children[c - 'a'];
         }
 
         public void setChild(char c, TrieNode child) {
-            if (children == null) {
-                children = new TrieNode[SIZE];
-            }
             children[c - 'a'] = child;
+        }
+
+        public boolean containsKey(char c) {
+            return children[c -'a'] != null;
         }
     }
 
@@ -48,8 +50,7 @@ public class Trie {
         }
     }
 
-    // beat 58.92%(20 ms)
-    // beats 63.99%(19 ms) (insert0)
+    // beat 40.00%(28 ms for 14 tests)
     static class Trie1 extends AbstractTrie {
         private TrieNode root;
 
@@ -78,7 +79,7 @@ public class Trie {
         public void insert(String word) {
             TrieNode cur = root;
             for (char c : word.toCharArray()) {
-                if (cur.getChild(c) == null) {
+                if (!cur.containsKey(c)) {
                     cur.setChild(c, new TrieNode());
                 }
                 cur = cur.getChild(c);
@@ -98,9 +99,8 @@ public class Trie {
         private TrieNode doSearch(String word) {
             TrieNode cur = root;
             for (char c : word.toCharArray()) {
-                if (cur == null || cur.children == null) return null;
-
                 cur = cur.getChild(c);
+                if (cur == null) return null;
             }
             return cur;
         }
