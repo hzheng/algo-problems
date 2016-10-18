@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/house-robber-ii/
+// LC213: https://leetcode.com/problems/house-robber-ii/
 //
 // Note: This is an extension of House Robber.
 // After robbing those houses on that street, the thief has found himself a new
@@ -15,12 +15,12 @@ import static org.junit.Assert.*;
 // each house, determine the maximum amount of money you can rob tonight without
 // alerting the police.
 public class HouseRobber2 {
+    // Dynamic Programming
     // scan array twice
     // time complexity: O(N), space complexity: O(1)
-    // beats 3.90%(1 ms)
+    // beats 56.07%(0 ms for 74 tests)
     public int rob(int[] nums) {
         int n = nums.length;
-        if (n == 0) return 0;
         if (n == 1) return nums[0];
 
         return Math.max(rob(nums, 0, n - 1), rob(nums, 1, n));
@@ -34,12 +34,13 @@ public class HouseRobber2 {
             maxLastNotTaken = maxLastTaken;
             maxLastTaken = Math.max(maxLastTaken, tmp + nums[i]);
         }
-        return Math.max(maxLastTaken, maxLastNotTaken);
+        return maxLastTaken;
     }
 
+    // Dynamic Programming
     // scan array once
     // time complexity: O(N), space complexity: O(1)
-    // beats 3.90%(1 ms)
+    // beats 56.07%(0 ms for 74 tests)
     public int rob2(int[] nums) {
         int n = nums.length;
         if (n == 0) return 0;
@@ -56,6 +57,7 @@ public class HouseRobber2 {
         return Math.max(lastMax[0], lastLastMax[1] + nums[n - 1]);
     }
 
+    // Dynamic Programming
     // time complexity: O(N), space complexity: O(N)
     // beats 3.90%(1 ms)
     public int rob3(int[] nums) {
@@ -66,7 +68,7 @@ public class HouseRobber2 {
         return Math.max(rob3(nums, 0, n - 1), rob3(nums, 1, n));
     }
 
-    public int rob3(int[] nums, int start, int end) {
+    private int rob3(int[] nums, int start, int end) {
         int[] dp = new int[end - start + 1];
         dp[1] = nums[start];
         for (int i = 2; i <= end - start; i++) {

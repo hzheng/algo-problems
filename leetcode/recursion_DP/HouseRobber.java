@@ -15,6 +15,7 @@ import static org.junit.Assert.*;
 // alerting the police.
 public class HouseRobber {
     // Solution of Choice
+    // Dynamic Programming
     // time complexity: O(N), space complexity: O(1)
     // beats 41.08%(0 ms)
     public int rob(int[] nums) {
@@ -33,6 +34,7 @@ public class HouseRobber {
         return maxLastTaken;
     }
 
+    // Dynamic Programming
     // time complexity: O(N), space complexity: O(1)
     // beats 3.25%(1 ms)
     public int rob2(int[] nums) {
@@ -48,6 +50,7 @@ public class HouseRobber {
         return even > odd ? even : odd;
     }
 
+    // Dynamic Programming
     // time complexity: O(N), space complexity: O(N)
     // beats 41.08%(0 ms)
     public int rob3(int[] nums) {

@@ -244,7 +244,7 @@ public class WordSearch2 {
     }
 
     // Solution of Choice
-    // Trie + DFS + Recursion
+    // Trie + DFS/Backtracking + Recursion
     // DFS with pruning, reverse Trie(build from target instead of source)
     // beats 22.07%(86 ms for 37 tests)
     public List<String> findWords4(char[][] board, String[] words) {
@@ -322,7 +322,8 @@ public class WordSearch2 {
     }
 
     // Solution of Choice
-    // Trie + DFS + Recursion
+    // Trie + DFS/Backtracking + Recursion
+    // https://discuss.leetcode.com/topic/33246/java-15ms-easiest-solution-100-00
     // Keeping TrieNode context makes it faster than last solution
     // beats 82.50%(23 ms for 37 tests)
     public List<String> findWords5(char[][] board, String[] words) {
