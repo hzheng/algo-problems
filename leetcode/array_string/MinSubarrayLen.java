@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/minimum-size-subarray-sum/
+// LC209: https://leetcode.com/problems/minimum-size-subarray-sum/
 //
 // Given an array of positive integers and a positive integer s, find the
 // minimal length of a subarray of which the sum >= s. If there isn't one,
@@ -18,7 +18,7 @@ public class MinSubarrayLen {
         }
     }
 
-    // DP
+    // Dynamic Programming
     // time complexity: O(N), space complexity: O(N)
     // beats 4.33%(3 ms)
     public int minSubArrayLen(int s, int[] nums) {
@@ -50,37 +50,56 @@ public class MinSubarrayLen {
         return minLen;
     }
 
+    // Solution of Choice
     // Two pointers
     // time complexity: O(N), space complexity: O(1)
-    // beats 16.03%(1 ms)
+    // beats 11.99%(1 ms for 14 tests)
     public int minSubArrayLen2(int s, int[] nums) {
         if (s <= 0) return 1;
 
-        int left = 0;
-        int sum = 0;
         int n = nums.length;
-        int minLen = n;
-        for (int i = 0; i < n; i++) {
-            sum += nums[i];
+        int minLen = n + 1;
+        for (int start = 0, end = 0, sum = 0; end < n; end++) {
+            sum += nums[end];
             if (sum < s) continue;
 
-            while (sum - nums[left] >= s) {
-                sum -= nums[left++];
+            while (sum >= s) {
+                sum -= nums[start++];
             }
-            minLen = Math.min(minLen, i - left + 1);
+            minLen = Math.min(minLen, end - start + 2);
         }
-        return sum < s ? 0 : minLen;
+        return minLen > n ? 0 : minLen;
     }
 
-    // binary search
+    // Solution of Choice
+    // Two pointers(Sliding Window)
+    // time complexity: O(N), space complexity: O(1)
+    // beats 11.99%(1 ms for 14 tests)
+    public int minSubArrayLen3(int s, int[] nums) {
+        if (s <= 0) return 1;
+
+        int n = nums.length;
+        int minLen = n + 1;
+        for (int start = 0, end = 0, sum = 0; start < n; ) {
+            if (sum < s && end < n) {
+				sum += nums[end++];
+			} else if (sum >= s) {
+                minLen = Math.min(minLen, end - start);
+                sum -= nums[start++];
+            } else break;
+        }
+        return minLen > n ? 0 : minLen;
+    }
+
+    // Binary Search
     // time complexity: O(N * log(N)), space complexity: O(1)
     // beats 4.33%(3 ms)
-    public int minSubArrayLen3(int s, int[] nums) {
+    public int minSubArrayLen4(int s, int[] nums) {
         int n = nums.length;
         int lowLen = 1;
         int highLen = n;
         while (lowLen <= highLen) {
-            int mid = lowLen + (highLen - lowLen) / 2;
+            int mid = (lowLen + highLen) >>> 1;
             if (isEnough(nums, s, mid)) {
                 highLen = mid - 1;
             } else {
@@ -102,6 +121,37 @@ public class MinSubarrayLen {
         return false;
     }
 
+    // Binary Search
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    // beats 7.67%(2 ms for 14 tests)
+    public int minSubArrayLen5(int s, int[] nums) {
+        int n = nums.length;
+        int[] sums = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            sums[i] = sums[i - 1] + nums[i - 1];
+        }
+        int minLen = Integer.MAX_VALUE;
+        for (int i = 0; i <= n; i++) {
+            int end = binarySearch(i + 1, n, sums[i] + s, sums);
+            if (end > n) break;
+
+            minLen = Math.min(minLen, end - i);
+        }
+        return minLen == Integer.MAX_VALUE ? 0 : minLen;
+    }
+
+    private int binarySearch(int low, int high, int key, int[] sums) {
+        while (low <= high) {
+           int mid = (low + high) >>> 1;
+           if (sums[mid] >= key){
+               high = mid - 1;
+           } else {
+               low = mid + 1;
+           }
+        }
+        return low;
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -121,6 +171,8 @@ public class MinSubarrayLen {
         test(m::minSubArrayLen, "minSubArrayLen", s, nums, expected);
         test(m::minSubArrayLen2, "minSubArrayLen2", s, nums, expected);
         test(m::minSubArrayLen3, "minSubArrayLen3", s, nums, expected);
+        test(m::minSubArrayLen4, "minSubArrayLen4", s, nums, expected);
+        test(m::minSubArrayLen5, "minSubArrayLen5", s, nums, expected);
     }
 
     @Test
