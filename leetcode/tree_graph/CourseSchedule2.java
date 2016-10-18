@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 // Given the total number of courses and a list of prerequisite pairs, return
 // the ordering of courses you should take to finish all courses.
 public class CourseSchedule2 {
-    // BFS / Topological Sort
+    // BFS + Queue / Topological Sort
     // beats 39.15%(20 ms for 36 tests)
     public int[] findOrder(int numCourses, int[][] prerequisites) {
         int[] order = new int[numCourses];
@@ -20,9 +20,7 @@ public class CourseSchedule2 {
         for (int[] prerequisite : prerequisites) {
             int dependant = prerequisite[0];
             int depended = prerequisite[1];
-            if (!adjacencyList.containsKey(depended)) {
-                adjacencyList.put(depended, new HashSet<>());
-            }
+            adjacencyList.putIfAbsent(depended, new HashSet<>());
             if (adjacencyList.get(depended).add(dependant)) { // avoid duplicate count
                 dependentCounts[dependant]++;
             }

@@ -126,8 +126,7 @@ public class CourseSchedule {
             int dependant = prerequisite[0];
             int depended = prerequisite[1];
             adjacencyList.putIfAbsent(depended, new HashSet<>());
-            Set<Integer> dependants = adjacencyList.get(depended);
-            if (dependants.add(dependant)) { // avoid duplicate count
+            if (adjacencyList.get(depended).add(dependant)) { // avoid duplicate count
                 dependentCounts[dependant]++;
             }
         }
