@@ -30,9 +30,8 @@ public class ShortestPalindrome {
     private String palindromeString(String s, int left, int right) {
         int i = left;
         int j = right;
-        for (; i >= 0 && s.charAt(i) == s.charAt(j); i--, j++);
-        if (i >= 0) return null;
-        return complete(s, j);
+        for (; i >= 0 && s.charAt(i) == s.charAt(j); i--, j++) {}
+        return (i >= 0) ? null : complete(s, j);
     }
 
     private String complete(String s, int right) {
@@ -60,9 +59,10 @@ public class ShortestPalindrome {
         }
     }
 
+    // Solution of Choice
     // Manacher's algorithm
     // time complexity: O(N), space complexity: O(N)
-    // beats 60.08%(10 ms)
+    // beats 63.83%(9 ms for 119 tests)
     public String shortestPalindrome3(String s) {
         int l = s.length();
         char[] s2 = addBoundaries(s.toCharArray());
@@ -116,9 +116,9 @@ public class ShortestPalindrome {
         return cs2;
     }
 
-    // recursion
+    // Divide & Conquer + Recursion
     // time complexity: O(N ^ 2), space complexity: O(N)
-    // beats 86.74%(4 ms)
+    // beats 87.15%(4 ms for 119 tests)
     public String shortestPalindrome4(String s) {
         int i = 0;
         for (int j = s.length() - 1; j >= 0; j--) {
@@ -129,16 +129,17 @@ public class ShortestPalindrome {
         if (i == s.length()) return s;
 
         String suffix = s.substring(i);
-        String prefix = new StringBuilder(suffix).reverse().toString();
-        return prefix + shortestPalindrome(s.substring(0, i)) + suffix;
+        StringBuilder prefix = new StringBuilder(suffix).reverse();
+        return prefix.append(shortestPalindrome4(s.substring(0, i)))
+                     .append(suffix).toString();
     }
 
+    // Solution of Choice
     // time complexity: O(N ^ 2), space complexity: O(1)
-    // beats 63.40%(9 ms)
+    // beats 66.53%(8 ms for 119 tests)
     public String shortestPalindrome5(String s) {
-        int end = s.length() - 1;
         int palindromeEnd = 0;
-        while (palindromeEnd <= end) {
+        for (int end = s.length() - 1; palindromeEnd <= end; ) {
             end = (palindromeEnd == 0) ? end : palindromeEnd - 1;
             palindromeEnd = 0;
             for (int i = end; i >= 0; i--) {
@@ -151,9 +152,10 @@ public class ShortestPalindrome {
                .append(s).toString();
     }
 
+    // Solution of Choice
     // KMP algorithm
     // time complexity: O(N), space complexity: O(N)
-    // beats 41.71%(15 ms)
+    // beats 60.93%(10 ms for 119 tests)
     public String shortestPalindrome6(String s) {
         String t = s + "#" + new StringBuilder(s).reverse().toString();
         int len = t.length();
