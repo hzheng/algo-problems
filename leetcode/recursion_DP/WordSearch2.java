@@ -3,7 +3,9 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/word-search-ii/
+import common.TrieNode;
+
+// LC212: https://leetcode.com/problems/word-search-ii/
 //
 // Given a 2D board and a list of words from the dictionary, find all words.
 // Each word must be constructed from letters of sequentially adjacent cell,
@@ -12,7 +14,8 @@ import static org.junit.Assert.*;
 public class WordSearch2 {
     static final int SIZE = 26;
 
-    //  Time Limit Exceeded
+    // Hash Table + Backtracking + Recursion
+    // Time Limit Exceeded
     public List<String> findWords(char[][] board, String[] words) {
         List<String> res = new ArrayList<>();
         int m = board.length;
@@ -20,10 +23,7 @@ public class WordSearch2 {
 
         Set<String> wordSet = new HashSet<>();
         for (String word : words) {
-            if (wordSet.contains(word)) continue;
-
-            wordSet.add(word);
-            if (exist(board, word)) {
+            if (wordSet.add(word) && exist(board, word)) {
                 res.add(word);
             }
         }
@@ -38,9 +38,7 @@ public class WordSearch2 {
         char c = word.charAt(0);
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
-                if (board[i][j] == c) {
-                    if (exist(board, word, i, j, 0)) return true;
-                }
+                if (board[i][j] == c && exist(board, word, i, j, 0)) return true;
             }
         }
         return false;
@@ -64,7 +62,8 @@ public class WordSearch2 {
         return res;
     }
 
-    //  Time Limit Exceeded
+    // Hash Table + Trie + Backtracking + Recursion
+    // Time Limit Exceeded
     public List<String> findWords2(char[][] board, String[] words) {
         int m = board.length;
         if (m == 0) return Collections.emptyList();
@@ -91,23 +90,6 @@ public class WordSearch2 {
     }
 
     private static class Trie {
-        class TrieNode {
-            boolean matched = true;
-
-            TrieNode[] children;
-
-            public TrieNode getChild(char c) {
-                return children == null ? null : children[c - 'a'];
-            }
-
-            public void setChild(char c, TrieNode child) {
-                if (children == null) {
-                    children = new TrieNode[SIZE];
-                }
-                children[c - 'a'] = child;
-            }
-        }
-
         private TrieNode root = new TrieNode();
 
         private void insert(String word, boolean matched) {
@@ -118,17 +100,19 @@ public class WordSearch2 {
                 }
                 cur = cur.getChild(c);
             }
-            cur.matched = matched;
+            if (!matched) {
+                cur.setEnd();
+            }
         }
 
         private Boolean search(String word) {
             TrieNode cur = root;
             for (char c : word.toCharArray()) {
-                if (cur == null || cur.children == null) return null;
+                if (cur == null) return null;
 
                 cur = cur.getChild(c);
             }
-            return cur == null ? null : Boolean.valueOf(cur.matched);
+            return cur == null ? null : Boolean.valueOf(!cur.isEnd());
         }
     }
 
@@ -217,7 +201,7 @@ public class WordSearch2 {
         char c = board[row][col];
         if (c == 0) return;
 
-        Trie3.TrieNode cur = trie.cur;
+        TrieNode cur = trie.cur;
         trie.insert(c);
         board[row][col] = 0;
 
@@ -238,18 +222,6 @@ public class WordSearch2 {
     }
 
     private static class Trie3 {
-        class TrieNode {
-            TrieNode[] children = new TrieNode[SIZE];
-
-            public TrieNode getChild(char c) {
-                return children[c - 'a'];
-            }
-
-            public void setChild(char c, TrieNode child) {
-                children[c - 'a'] = child;
-            }
-        }
-
         private TrieNode root = new TrieNode();
 
         private TrieNode cur = root;
@@ -271,15 +243,17 @@ public class WordSearch2 {
         }
     }
 
+    // Solution of Choice
+    // Trie + DFS + Recursion
     // DFS with pruning, reverse Trie(build from target instead of source)
-    // beats 37.47%(68 ms)
+    // beats 22.07%(86 ms for 37 tests)
     public List<String> findWords4(char[][] board, String[] words) {
         int m = board.length;
         if (m == 0) return Collections.emptyList();
 
         int n = board[0].length;
         boolean[][] visited = new boolean[m][n];
-        Set<String> res = new HashSet<>();
+        List<String> res = new ArrayList<>();
         Trie4 trie = new Trie4();
         for (String word : words) {
             trie.insert(word);
@@ -289,21 +263,22 @@ public class WordSearch2 {
                 findWords(board, visited, "", i, j, trie, res);
             }
         }
-        return new ArrayList<>(res);
+        return res;
     }
 
-    public void findWords(char[][] board, boolean[][] visited, String word,
-                          int x, int y, Trie4 trie, Set<String> res) {
+    private void findWords(char[][] board, boolean[][] visited, String word,
+                           int x, int y, Trie4 trie, List<String> res) {
         if (x < 0 || x >= board.length
-           || y < 0 || y >= board[0].length || visited[x][y]) return;
+            || y < 0 || y >= board[0].length || visited[x][y]) return;
 
         word += board[x][y];
-        if (!trie.startsWith(word)) return;
+        TrieNode searchRes = trie.doSearch(word);
+        if (searchRes == null) return;
 
-        if (trie.search(word)) {
+        if (searchRes.isEnd()) {
             res.add(word);
+            searchRes.clearEnd(); // avoid duplicates
         }
-
         visited[x][y] = true;
         findWords(board, visited, word, x - 1, y, trie, res);
         findWords(board, visited, word, x + 1, y, trie, res);
@@ -313,23 +288,6 @@ public class WordSearch2 {
     }
 
     private static class Trie4 {
-        class TrieNode {
-            boolean isEnd;
-
-            TrieNode[] children = new TrieNode[SIZE];
-
-            public TrieNode getChild(char c) {
-                return children == null ? null : children[c - 'a'];
-            }
-
-            public void setChild(char c, TrieNode child) {
-                if (children == null) {
-                    children = new TrieNode[SIZE];
-                }
-                children[c - 'a'] = child;
-            }
-        }
-
         private TrieNode root = new TrieNode();
 
         public void insert(String word) {
@@ -340,12 +298,12 @@ public class WordSearch2 {
                 }
                 cur = cur.getChild(c);
             }
-            cur.isEnd = true;
+            cur.setEnd();
         }
 
         public boolean search(String word) {
             TrieNode res = doSearch(word);
-            return res != null && res.isEnd;
+            return res != null && res.isEnd();
         }
 
         public boolean startsWith(String prefix) {
@@ -355,12 +313,65 @@ public class WordSearch2 {
         private TrieNode doSearch(String word) {
             TrieNode cur = root;
             for (char c : word.toCharArray()) {
-                if (cur == null || cur.children == null) return null;
+                if (cur == null) return null;
 
                 cur = cur.getChild(c);
             }
             return cur;
         }
+    }
+
+    // Solution of Choice
+    // Trie + DFS + Recursion
+    // Keeping TrieNode context makes it faster than last solution
+    // beats 82.50%(23 ms for 37 tests)
+    public List<String> findWords5(char[][] board, String[] words) {
+        List<String> res = new ArrayList<>();
+        TrieNode5 root = buildTrie(words);
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                dfs(board, i, j, root, res);
+            }
+        }
+        return res;
+    }
+
+    private void dfs(char[][] board, int i, int j, TrieNode5 cur, List<String> res) {
+        char c = board[i][j];
+        if (c == '#' || cur.next[c - 'a'] == null) return;
+
+        cur = cur.next[c - 'a'];
+        if (cur.word != null) { // found one
+            res.add(cur.word);
+            cur.word = null; // de-duplicate
+        }
+        board[i][j] = '#';
+        if (i > 0) dfs(board, i - 1, j, cur, res);
+        if (j > 0) dfs(board, i, j - 1, cur, res);
+        if (i < board.length - 1) dfs(board, i + 1, j, cur, res);
+        if (j < board[0].length - 1) dfs(board, i, j + 1, cur, res);
+        board[i][j] = c;
+    }
+
+    private TrieNode5 buildTrie(String[] words) {
+        TrieNode5 root = new TrieNode5();
+        for (String word : words) {
+            TrieNode5 cur = root;
+            for (char c : word.toCharArray()) {
+                int i = c - 'a';
+                if (cur.next[i] == null) {
+                    cur.next[i] = new TrieNode5();
+                }
+                cur = cur.next[i];
+            }
+            cur.word = word;
+        }
+        return root;
+    }
+
+    private static class TrieNode5 {
+        TrieNode5[] next = new TrieNode5[26];
+        String word;
     }
 
     @FunctionalInterface
@@ -392,6 +403,7 @@ public class WordSearch2 {
             test(w::findWords3, "findWords3", boardStr, words, expected);
         }
         test(w::findWords4, "findWords4", boardStr, words, expected);
+        test(w::findWords5, "findWords5", boardStr, words, expected);
     }
 
     @Test

@@ -42,4 +42,9 @@ public class TrieNode {
     public boolean isEnd() {
         return endFlag;
     }
+
+    // Delete a word
+    public void clearEnd() {
+        endFlag = false;
+    }
 }
