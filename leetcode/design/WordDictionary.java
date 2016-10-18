@@ -3,35 +3,15 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/add-and-search-word-data-structure-design/
+import common.TrieNode;
+
+// LC211: https://leetcode.com/problems/add-and-search-word-data-structure-design/
 //
 // Design a data structure that supports the following two operations:
 // void addWord(word) and bool search(word)
 // search(word) can search a literal word or a regular expression string
 // containing only letters a-z or .. A . means it can represent any one letter.
 public class WordDictionary {
-    private static class TrieNode {
-        public static final int SIZE = 26;
-
-        boolean isEnd;
-
-        TrieNode[] children;
-
-        public TrieNode() {
-        }
-
-        public TrieNode getChild(char c) {
-            return children == null ? null : children[c - 'a'];
-        }
-
-        public void setChild(char c, TrieNode child) {
-            if (children == null) {
-                children = new TrieNode[SIZE];
-            }
-            children[c - 'a'] = child;
-        }
-    }
-
     static abstract class AbstractWordDictionary {
         public void addWords(String ... words) {
             for (String word : words) {
@@ -47,7 +27,8 @@ public class WordDictionary {
         public abstract boolean search(String word);
     }
 
-    // beats 56.77%(26 ms)
+    // Trie + Backtracking + Recursion
+    // beats 51.36%(35 ms for 13 tests)
     static class WordDictionary1 extends AbstractWordDictionary {
         private TrieNode root;
 
@@ -63,7 +44,7 @@ public class WordDictionary {
                 }
                 cur = cur.getChild(c);
             }
-            cur.isEnd = true;
+            cur.setEnd();
         }
 
         public boolean search(String word) {
@@ -71,9 +52,7 @@ public class WordDictionary {
         }
 
         private boolean search(String word, TrieNode cur, int start) {
-            if (start == word.length()) return cur.isEnd;
-
-            if (cur.children == null) return false;
+            if (start == word.length()) return cur.isEnd();
 
             char c = word.charAt(start);
             if (c != '.') {
@@ -86,6 +65,44 @@ public class WordDictionary {
                 if (next != null && search(word, next, start + 1)) return true;
             }
             return false;
+        }
+    }
+
+    // Trie
+    // Time Limit Exceeded(slow addWord, quick search)
+    static class WordDictionary2 extends AbstractWordDictionary {
+        private TrieNode root;
+
+        public WordDictionary2() {
+            root = new TrieNode();
+        }
+
+        public void addWord(String word) {
+            char[] chars = word.toCharArray();
+            for (int i = (1 << chars.length) - 1; i >= 0; i--) {
+                addWord(chars, i);
+            }
+        }
+
+        private void addWord(char[] word, int mask) {
+            TrieNode cur = root;
+            for (int i = 0; i < word.length; i++) {
+                char c = (mask & (1 << i)) == 0 ? word[i] : '.';
+                if (cur.get(c) == null) {
+                    cur.set(c, new TrieNode());
+                }
+                cur = cur.get(c);
+            }
+            cur.setEnd();
+        }
+
+        public boolean search(String word) {
+            TrieNode cur = root;
+            for (char c : word.toCharArray()) {
+                cur = cur.get(c);
+                if (cur == null) return false;
+            }
+            return cur.isEnd();
         }
     }
 
@@ -113,11 +130,13 @@ public class WordDictionary {
     @Test
     public void test1() {
         test1(new WordDictionary1());
+        test1(new WordDictionary2());
     }
 
     @Test
     public void test2() {
         test2(new WordDictionary1());
+        test2(new WordDictionary2());
     }
 
     public static void main(String[] args) {

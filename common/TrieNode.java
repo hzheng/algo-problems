@@ -8,7 +8,7 @@ public class TrieNode {
     private TrieNode[] children;
 
     public TrieNode() {
-        children = new TrieNode[SIZE];
+        children = new TrieNode[SIZE + 1];
     }
 
     public TrieNode getChild(char c) {
@@ -21,6 +21,18 @@ public class TrieNode {
 
     public boolean containsKey(char c) {
         return children[c -'a'] != null;
+    }
+
+    // Support macro character
+    public TrieNode get(char c) {
+        int index = c - 'a';
+        return children[index < 0 ? SIZE : index];
+    }
+
+    // Support macro character
+    public void set(char c, TrieNode child) {
+        int index = c - 'a';
+        children[index < 0 ? SIZE : index] = child;
     }
 
     public void setEnd() {
