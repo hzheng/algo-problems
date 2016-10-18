@@ -71,21 +71,20 @@ public class MinWindowSubstr {
         for (char c : t.toCharArray()) {
             map[c]++;
         }
-
         int minStart = 0;
         int minLen = Integer.MAX_VALUE;
-        for (int i = 0, j = 0, toMatch = t.length(), len = s.length(); i < len; i++) {
-            if (map[s.charAt(i)]-- > 0) {
+        for (int start = 0, end = 0, toMatch = t.length(), len = s.length(); end < len; end++) {
+            if (map[s.charAt(end)]-- > 0) {
                 toMatch--;
             }
             if (toMatch > 0) continue;
 
-            for ( ; map[s.charAt(j)] < 0; j++) { // rescan from j
-                map[s.charAt(j)]++;
+            for ( ; map[s.charAt(start)] < 0; start++) { // rescan from start
+                map[s.charAt(start)]++;
             }
-            if (i - j < minLen) {
-                minStart = j;
-                minLen = i - j;
+            if (end - start < minLen) {
+                minStart = start;
+                minLen = end - start;
             }
         }
         return minLen == Integer.MAX_VALUE ?

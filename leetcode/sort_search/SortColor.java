@@ -13,13 +13,11 @@ public class SortColor {
     // Two Pointers
     // beats 53.70%(0 ms)
     public void sortColors(int[] nums) {
-        int redEnd = 0;
-        int blueStart = nums.length - 1;
-        for (int cur = 0; cur <= blueStart; cur++) {
+        for (int cur = 0, red = 0, blue = nums.length - 1; cur <= blue; cur++) {
             if (nums[cur] == 0) {
-                swap(nums, cur, redEnd++);
+                swap(nums, cur, red++);
             } else if (nums[cur] == 2) {
-                swap(nums, cur--, blueStart--);
+                swap(nums, cur--, blue--);
             }
         }
     }
