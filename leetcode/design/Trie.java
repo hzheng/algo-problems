@@ -3,34 +3,12 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import common.TrieNode;
+
 // LC208: https://leetcode.com/problems/implement-trie-prefix-tree/
 //
 // Implement a trie with insert, search, and startsWith methods.
 public class Trie {
-    private static class TrieNode {
-        private static final int SIZE = 26;
-
-        private boolean isEnd;
-
-        private TrieNode[] children;
-
-        public TrieNode() {
-            children = new TrieNode[SIZE];
-        }
-
-        public TrieNode getChild(char c) {
-            return children[c - 'a'];
-        }
-
-        public void setChild(char c, TrieNode child) {
-            children[c - 'a'] = child;
-        }
-
-        public boolean containsKey(char c) {
-            return children[c -'a'] != null;
-        }
-    }
-
     static abstract class AbstractTrie {
 
         // Inserts a word into the trie.
@@ -61,7 +39,7 @@ public class Trie {
         public void insert0(String word) {
             TrieNode cur = root;
             int i = 0;
-            while (i < word.length() && cur.children != null) {
+            while (i < word.length()) {
                 TrieNode next = cur.getChild(word.charAt(i));
                 if (next == null) break;
 
@@ -73,7 +51,7 @@ public class Trie {
                 cur.setChild(word.charAt(i), child);
                 cur = child;
             }
-            cur.isEnd = true;
+            cur.setEnd();
         }
 
         public void insert(String word) {
@@ -84,12 +62,12 @@ public class Trie {
                 }
                 cur = cur.getChild(c);
             }
-            cur.isEnd = true;
+            cur.setEnd();
         }
 
         public boolean search(String word) {
             TrieNode res = doSearch(word);
-            return res != null && res.isEnd;
+            return res != null && res.isEnd();
         }
 
         public boolean startsWith(String prefix) {
