@@ -65,7 +65,7 @@ public class LongestConsecutiveSeq {
         return maxLen;
     }
 
-    // Hashtable
+    // Hash Table
     // beats 12.68%(21 ms)
     public int longestConsecutive4(int[] nums) {
         int maxLen = 0;
@@ -84,7 +84,7 @@ public class LongestConsecutiveSeq {
         return maxLen;
     }
 
-    // Hashtable + Union Find
+    // Hash Table + Union Find
     // beats 28.09%(17 ms)
     public int longestConsecutive5(int[] nums) {
         UnionFind unionFind = new UnionFind(nums.length);

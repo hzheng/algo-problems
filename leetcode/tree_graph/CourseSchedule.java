@@ -50,7 +50,7 @@ public class CourseSchedule {
     }
 
     // Solution of Choice
-    // Hash Table + DFS + Recursion
+    // Hash Table + DFS + Recursion + 3 Colors
     // reverse mapping: actually both will do
     // beats 71.49%(11 ms for 35 tests)
     public boolean canFinish2(int numCourses, int[][] prerequisites) {

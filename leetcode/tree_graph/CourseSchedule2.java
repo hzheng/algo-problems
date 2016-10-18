@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/course-schedule-ii/
+// LC210: https://leetcode.com/problems/course-schedule-ii/
 //
 // There are a total of n courses you have to take, labeled from 0 to n - 1.
 // Some courses may have prerequisites, for example to take course 0 you have to
@@ -11,8 +11,8 @@ import static org.junit.Assert.*;
 // Given the total number of courses and a list of prerequisite pairs, return
 // the ordering of courses you should take to finish all courses.
 public class CourseSchedule2 {
-    // BFS/Topological-sorting
-    // beats 35.40%(23 ms)
+    // BFS / Topological Sort
+    // beats 39.15%(20 ms for 36 tests)
     public int[] findOrder(int numCourses, int[][] prerequisites) {
         int[] order = new int[numCourses];
         Map<Integer, Set<Integer> > adjacencyList = new HashMap<>();
@@ -23,9 +23,7 @@ public class CourseSchedule2 {
             if (!adjacencyList.containsKey(depended)) {
                 adjacencyList.put(depended, new HashSet<>());
             }
-            Set<Integer> dependants = adjacencyList.get(depended);
-            if (!dependants.contains(dependant)) { // avoid duplicate count
-                dependants.add(dependant);
+            if (adjacencyList.get(depended).add(dependant)) { // avoid duplicate count
                 dependentCounts[dependant]++;
             }
         }
@@ -36,12 +34,10 @@ public class CourseSchedule2 {
                 independents.offer(i);
             }
         }
-
         int dependentCount = numCourses;
         for (int index = 0; !independents.isEmpty(); dependentCount--) {
             int independent = independents.poll();
             order[index++] = independent;
-
             if (adjacencyList.containsKey(independent)) {
                 for (int dependant : adjacencyList.get(independent)) {
                     if (--dependentCounts[dependant] == 0) {
@@ -53,8 +49,9 @@ public class CourseSchedule2 {
         return (dependentCount == 0) ? order : new int[0];
     }
 
-    // DFS
-    // beats 50.28%(15 ms)
+    // Solution of Choice
+    // Hash Table + DFS + Recursion + 3 Colors
+    // beats 62.62%(12 ms for 36 tests)
     public int[] findOrder2(int numCourses, int[][] prerequisites) {
         int[] order = new int[numCourses];
         Map<Integer, List<Integer> > map = new HashMap<>();
@@ -68,7 +65,7 @@ public class CourseSchedule2 {
             }
         }
 
-        Boolean[] visited = new Boolean[numCourses];
+        byte[] visited = new byte[numCourses];
         int[] index = new int[1];
         for (int i = 0; i < numCourses; i++) {
             if (!canFinish(i, map, order, index, visited)) return new int[0];
@@ -77,17 +74,17 @@ public class CourseSchedule2 {
     }
 
     private boolean canFinish(int course, Map<Integer, List<Integer> > map,
-                              int[] order, int[] index, Boolean[] visited) {
-        if (visited[course] != null) return visited[course];
+                              int[] order, int[] index, byte[] visited) {
+        if (visited[course] != 0) return visited[course] > 0;
 
-        visited[course] = false;
+        visited[course] = -1; // mark for cycle detection
         if (map.containsKey(course)) {
             for (int depended : map.get(course)) {
                 if (!canFinish(depended, map, order, index, visited)) return false;
             }
         }
         order[index[0]++] = course;
-        visited[course] = true;
+        visited[course] = 1;
         return true;
     }
 
