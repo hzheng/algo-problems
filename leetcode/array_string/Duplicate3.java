@@ -3,12 +3,13 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/contains-duplicate-iii/
+// LC220: https://leetcode.com/problems/contains-duplicate-iii/
 //
 // Given an array of integers, find out whether there are two distinct indices
 // i and j in the array such that the difference between nums[i] and nums[j]
 // is at most t and the difference between i and j is at most k.
 public class Duplicate3 {
+    // Hash Table
     // time complexity: O(N * log(K)), space complexity: O(N)
     // beats 32.20%(51 ms)
     public boolean containsNearbyAlmostDuplicate(int[] nums, int k, int t) {
@@ -30,6 +31,8 @@ public class Duplicate3 {
         return false;
     }
 
+    // Solution of Choice
+    // Hash Table
     // time complexity: O(N * log(K)), space complexity: O(K)
     // beats 63.55%(41 ms)
     public boolean containsNearbyAlmostDuplicate2(int[] nums, int k, int t) {
@@ -53,6 +56,7 @@ public class Duplicate3 {
     }
 
     // time complexity: O(N * log(K)), space complexity: O(K)
+    // Hash Table
     // beats 55.34%%(45 ms)
     public boolean containsNearbyAlmostDuplicate3(int[] nums, int k, int t) {
         if (k < 1 || t < 0) return false;
@@ -70,6 +74,9 @@ public class Duplicate3 {
         return false;
     }
 
+    // Solution of Choice
+    // Hash Table + Bucket
+    // time complexity: O(N), space complexity: O(K)
     // https://discuss.leetcode.com/topic/15199/ac-o-n-solution-in-java-using-buckets-with-explanation
     // beats 86.97%(23 ms)
     public boolean containsNearbyAlmostDuplicate4(int[] nums, int k, int t) {
