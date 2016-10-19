@@ -3,22 +3,23 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/combination-sum-iii/
+// LC216: https://leetcode.com/problems/combination-sum-iii/
 //
 // Find all possible combinations of k numbers that add up to a number n, given
 // that only numbers from 1 to 9 can be used and each combination should be a
 // unique set of numbers.
 public class CombinationSum3 {
+    // Backtracking + Recursion
     // beats 65.85%(1 ms)
     public List<List<Integer> > combinationSum3(int k, int n) {
         List<List<Integer> > res = new ArrayList<>();
-        combinationSum3(new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9}, n, k,
-                        new ArrayList<>(), 0, res);
+        combinationSum3(new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9}, n, k, 0,
+                        new ArrayList<>(), res);
         return res;
     }
 
     private void combinationSum3(int[] candidates, int target, int k,
-                                 List<Integer> path, int index,
+                                 int index, List<Integer> path,
                                  List<List<Integer> > res) {
         if (path.size() == k) {
             if (target == 0) {
@@ -32,21 +33,22 @@ public class CombinationSum3 {
             if (candidate > target) break;
 
             path.add(candidate);
-            combinationSum3(candidates, target - candidate, k, path, i + 1, res);
+            combinationSum3(candidates, target - candidate, k, i + 1, path, res);
             path.remove(path.size() - 1);
         }
     }
 
+    // Solution of Choice
+    // Backtracking + Recursion
     // beats 14.43%(2 ms)
     public List<List<Integer> > combinationSum3_2(int k, int n) {
         List<List<Integer> > res = new ArrayList<>();
-        combinationSum3(n, k, new ArrayList<>(), 1, res);
+        combinationSum3(k, n, 1, new ArrayList<>(), res);
         return res;
     }
 
-    private void combinationSum3(int n, int k,
-                                 List<Integer> path, int start,
-                                 List<List<Integer> > res) {
+    private void combinationSum3(int k, int n, int start,
+                                 List<Integer> path, List<List<Integer> > res) {
         if (path.size() == k) {
             if (n == 0) {
                 res.add(new ArrayList<>(path));
@@ -57,7 +59,7 @@ public class CombinationSum3 {
         int max = Math.min(n, 9);
         for (int i = start; i <= max; i++) {
             path.add(i);
-            combinationSum3(n - i, k, path, i + 1, res);
+            combinationSum3(k, n - i, i + 1, path, res);
             path.remove(path.size() - 1);
         }
     }

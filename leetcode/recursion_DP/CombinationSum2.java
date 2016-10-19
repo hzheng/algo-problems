@@ -10,6 +10,7 @@ import static org.junit.Assert.*;
 // The same repeated number may only be chosen once.
 // All numbers (including target) will be positive integers.
 public class CombinationSum2 {
+    // Solution of Choice
     // Backtracking
     // beats 75.29%(5 ms)
     public List<List<Integer> > combinationSum2(int[] candidates, int target) {
@@ -27,7 +28,6 @@ public class CombinationSum2 {
             return;
         }
 
-        int last = 0;
         for (int i = index; i < candidates.length; i++) {
             int candidate = candidates[i];
             if (candidate > target) break;
