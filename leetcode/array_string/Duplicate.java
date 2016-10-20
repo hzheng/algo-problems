@@ -3,24 +3,26 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/contains-duplicate/
+// LC217: https://leetcode.com/problems/contains-duplicate/
 //
 // Given an array of integers, find if the array contains any duplicates. Your
 // function should return true if any value appears at least twice in the array,
 // and it should return false if every element is distinct.
 public class Duplicate {
+    // Solution of Choice
+    // Hash Table
     // time complexity: O(N), space complexity: O(N)
-    // beats 62.77%(9 ms)
+    // beats 80.34%(8 ms for 17 tests)
     public boolean containsDuplicate(int[] nums) {
-        Set<Integer> set = new HashSet<>();
+        Set<Integer> set = new HashSet<>(nums.length);
         for (int num : nums) {
             if (!set.add(num)) return true;
         }
         return false;
     }
 
+    // Sort (con: modified input)
     // time complexity: O(N * long(N)), space complexity: O(1)
-    // con: modified input
     // beats 80.04%(6 ms)
     public boolean containsDuplicate2(int[] nums) {
         Arrays.sort(nums);
