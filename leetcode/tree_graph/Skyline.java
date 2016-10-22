@@ -4,7 +4,9 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/the-skyline-problem/
+import common.Utils;
+
+// LC218: https://leetcode.com/problems/the-skyline-problem/
 //
 // A city's skyline is the outer contour of the silhouette formed by all the
 // buildings in that city when viewed from a distance. Now suppose you are given
@@ -22,9 +24,6 @@ import static org.junit.Assert.*;
 // The input list is already sorted in ascending order by the left x position Li.
 // The output list must be sorted by the x position.
 public class Skyline {
-    // TODO: https://briangordon.github.io/2014/08/the-skyline-problem.html
-    // TODO:binary indexed tree
-
     // time complexity: O(N * log(N))(?), space complexity: O(N)
     // beats 95.26%(13 ms)
     public List<int[]> getSkyline(int[][] buildings) {
@@ -87,7 +86,9 @@ public class Skyline {
         return res;
     }
 
-    // https://discuss.leetcode.com/topic/22482/short-java-solution
+    // Solution of Choice
+    // Heap
+    // https://briangordon.github.io/2014/08/the-skyline-problem.html
     // time complexity: O(N * log(N)), space complexity: O(N)
     // beats 26.43%(290 ms)
     public List<int[]> getSkyline2(int[][] buildings) {
@@ -117,8 +118,8 @@ public class Skyline {
         return res;
     }
 
-    // beats 69.085(119 ms)
-    // TreeMap remove opeartion is more efficient than PriorityQueue
+    // SortedMap (whose remove operation is more efficient than PriorityQueue)
+    // beats 69.08%(119 ms)
     public List<int[]> getSkyline3(int[][] buildings) {
         List<int[]> heights = new ArrayList<>();
         for(int[] building : buildings) {
@@ -152,7 +153,8 @@ public class Skyline {
         return res;
     }
 
-    // divide and conquer
+    // Solution of Choice
+    // Divide & Conquer
     // time complexity: O(N * log(N)), space complexity: O(N)
     // beats 97.13%(10 ms)
     public List<int[]> getSkyline4(int[][] buildings) {
@@ -168,7 +170,7 @@ public class Skyline {
                 new int[] {buildings[start][1], 0});
         }
 
-        int mid = start + (end - start) / 2;
+        int mid = (start + end) >>> 1;
         return merge(getSkyline(start, mid, buildings),
                      getSkyline(mid + 1, end, buildings));
     }
@@ -199,19 +201,16 @@ public class Skyline {
                 res.add(new int[] {Math.min(leftPt[0], rightPt[0]), maxH});
             }
         }
-        while (i < leftSize) {
+        for (; i < leftSize; i++) {
             res.add(new int[] {left.get(i)[0], left.get(i)[1]});
-            i++;
         }
-        while (j < rightSize) {
+        for (; j < rightSize; j++) {
             res.add(new int[] {right.get(j)[0], right.get(j)[1]});
-            j++;
         }
         return res;
     }
 
-
-    // Segment tree
+    // Segment Tree
     // https://discuss.leetcode.com/topic/49110/java-segment-tree-solution-47-ms
     // beats 83.54%(39 ms)
     public List<int[]> getSkyline5(int[][] buildings) {
@@ -268,7 +267,7 @@ public class Skyline {
 
             Node node = new Node(start, end);
             if (start + 1 < end) {
-                int mid = start + (end - start) / 2;
+                int mid = (start + end) >>> 1;
                 node.left = create(start, mid);
                 node.right = create(mid, end);
             }
@@ -288,9 +287,61 @@ public class Skyline {
         }
     }
 
+    // Binary Indexed Tree
+    // https://discuss.leetcode.com/topic/54780/java-binary-indexed-tree-solution
+    // beats 63.69%(114 ms for 33 tests)
+    public List<int[]> getSkyline6(int[][] buildings) {
+        int[][] xPos = new int[buildings.length * 2][3];
+        for (int i = 0; i < buildings.length; i++) {
+            xPos[2 * i] = new int[] {buildings[i][0], i, 0};
+            xPos[2 * i + 1] = new int[] {buildings[i][1], i, 1};
+        }
+        Arrays.sort(xPos, (a, b) -> (a[0] != b[0]) ? a[0] - b[0] : a[2] - b[2]);
+        Map<Integer, Integer> map = new HashMap<>();
+        int index = 0;
+        for (int[] x : xPos) {
+            map.put(x[0], ++index);
+        }
+        List<int[]> res = new ArrayList<>();
+        int[] bit = new int[index + 1];
+        int curH = 0;
+        for (int[] x : xPos) {
+            if (x[2] == 0) { // left point
+                update(bit, map.get(buildings[x[1]][1]), buildings[x[1]][2]);
+            }
+            int endpoint = buildings[x[1]][x[2]];
+            int nextH = query(bit, map.get(endpoint) + 1);
+            if (nextH != curH) {
+                int size = res.size();
+                if (size > 0 && res.get(size - 1)[0] == endpoint) {
+                    res.get(size - 1)[1] = nextH;
+                } else {
+                    res.add(new int[]{endpoint, nextH});
+                }
+                curH = nextH;
+            }
+        }
+        return res;
+    }
+
+    private void update(int[] bit, int right, int height) {
+        for (int r = right; r > 0; r -= r & (-r)) {
+            bit[r] = Math.max(bit[r], height);
+        }
+    }
+
+    private int query(int[] bit, int left) {
+        int height = 0;
+        for (int l = left; l < bit.length; l += l & (-l)) {
+            height = Math.max(height, bit[l]);
+        }
+        return height;
+    }
+
     void test(Function<int[][], List<int[]> >getSkyline,
               int[][] buildings, int[][] expected) {
-        int[][] res = getSkyline.apply(buildings).toArray(new int[0][0]);
+        buildings = Utils.clone(buildings);
+        int[][] res = getSkyline.apply(buildings).toArray(new int[0][]);
         assertArrayEquals(expected, res);
     }
 
@@ -301,11 +352,15 @@ public class Skyline {
         test(s::getSkyline3, buildings, expected);
         test(s::getSkyline4, buildings, expected);
         test(s::getSkyline5, buildings, expected);
+        test(s::getSkyline6, buildings, expected);
     }
 
     @Test
     public void test1() {
         test(new int[][] {{0, 2, 3}}, new int[][] {{0, 3}, {2, 0}});
+        test(new int[][] {{0, 2, 3}, {2, 5, 3}}, new int[][] {{0, 3}, {5, 0}});
+        test(new int[][] {{1, 2, 1}, {1, 2, 2}, {1, 2, 3}},
+             new int[][] {{1, 3}, {2, 0}});
         test(new int[][] {{3, 10, 20}, {3, 9, 19}, {3, 8, 18}, {3, 7, 17},
                           {3, 6, 16}, {3, 5, 15}, {3, 4, 14}},
              new int[][] {{3, 20}, {10, 0}});
