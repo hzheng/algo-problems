@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/maximal-square/
+// LC221: https://leetcode.com/problems/maximal-square/
 //
 // Given a 2D binary matrix filled with 0's and 1's, find the largest square
 // containing all 1's and return its area.
@@ -72,32 +72,50 @@ public class MaxSquare {
         assertEquals(expected, maxSide(nums));
     }
 
+    // 2D-Dynamic Programming
     // time complexity: O(M * N), space complexity: O(M * N)
-    // beats 67.69%(13 ms)
+    // beats 45.34%(12 ms for 68 tests)
     public int maximalSquare2(char[][] matrix) {
         int m = matrix.length;
         if (m == 0) return 0;
 
         int n = matrix[0].length;
         // largest square side that ends at (i, j)
-        int[][] sides = new int[m][n];
+        int[][] dp = new int[m + 1][n + 1];
         int maxSide = 0;
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                if (matrix[i][j] == '1') {
-                    sides[i][j] = 1;
-                    maxSide = 1;
-                }
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (matrix[i - 1][j - 1] != '1') continue;
+
+                dp[i][j] = 1 + Math.min(dp[i - 1][j], Math.min(dp[i][j - 1],
+                                                               dp[i - 1][j - 1]));
+                maxSide = Math.max(maxSide, dp[i][j]);
             }
         }
-        for (int i = 1; i < m; i++) {
-            for (int j = 1; j < n; j++) {
-                if (sides[i][j] == 0) continue;
+        return maxSide * maxSide;
+    }
 
-                sides[i][j] = 1 + Math.min(sides[i - 1][j],
-                                           Math.min(sides[i][j - 1],
-                                                    sides[i - 1][j - 1]));
-                maxSide = Math.max(maxSide, sides[i][j]);
+    // Solution of Choice
+    // 1D-Dynamic Programming
+    // time complexity: O(M * N), space complexity: O(M * N)
+    // beats 45.34%(12 ms for 68 tests)
+    public int maximalSquare3(char[][] matrix) {
+        int m = matrix.length;
+        if (m == 0) return 0;
+
+        int n = matrix[0].length;
+        int[] dp = new int[n + 1];
+        int maxSide = 0;
+        for (int i = 1, prev = 0; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                int tmp = dp[j];
+                if (matrix[i - 1][j - 1] != '1') {
+                    dp[j] = 0;
+                } else {
+                    dp[j] = 1 + Math.min(dp[j], Math.min(dp[j - 1], prev));
+                    maxSide = Math.max(maxSide, dp[j]);
+                }
+                prev = tmp;
             }
         }
         return maxSide * maxSide;
@@ -105,7 +123,7 @@ public class MaxSquare {
 
     // time complexity: O(M * N), space complexity: O(N)
     // beats 67.69%(13 ms)
-    public int maximalSquare3(char[][] matrix) {
+    public int maximalSquare4(char[][] matrix) {
         int m = matrix.length;
         if (m == 0) return 0;
 
@@ -155,6 +173,7 @@ public class MaxSquare {
         assertEquals(expected, maximalSquare(matrix));
         assertEquals(expected, maximalSquare2(matrix));
         assertEquals(expected, maximalSquare3(matrix));
+        assertEquals(expected, maximalSquare4(matrix));
     }
 
     @Test
