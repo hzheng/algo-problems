@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
  * Cracking the Coding Interview(4ed) Problem 1.3:
  * Remove the duplicate characters in a string without using any additional buffer
  */
-public class RemoveDup {
+public class RemoveDupChars {
     public int removeDup(char[] str) {
         if (str == null) return 0;
 
@@ -13,8 +13,7 @@ public class RemoveDup {
         if (len < 2) return len;
 
         int index = 1;
-        for (int i = 1; i < len; ++i) {
-            int j;
+        for (int i = 1, j; i < len; ++i) {
             for (j = 0; j < index; ++j) {
                 if (str[i] == str[j]) break;
             }
@@ -59,6 +58,6 @@ public class RemoveDup {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("RemoveDup");
+        org.junit.runner.JUnitCore.main("RemoveDupChars");
     }
 }
