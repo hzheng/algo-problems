@@ -40,7 +40,7 @@ public class MatrixSearch2 {
         }
     }
 
-    // from Cracking the Coding Interview(5ed) Problem
+    // Cracking the Coding Interview(5ed) Problem 11.6:
     // time complexity: O(N)  (T(n) = 2T(n/2) + c lg n)
     // beats 8.52%(28 ms)
     public boolean searchMatrix2(int[][] matrix, int target) {
@@ -121,7 +121,7 @@ public class MatrixSearch2 {
             column = (min.column + max.column) / 2;
         }
 
-        public Coordinate middle(Coordinate min, Coordinate max) {
+        public static Coordinate middle(Coordinate min, Coordinate max) {
             return new Coordinate((min.row + max.row) / 2,
                                   (min.column + max.column) / 2);
         }
@@ -161,6 +161,47 @@ public class MatrixSearch2 {
         return false;
     }
 
+    public boolean searchMatrix4(int[][] matrix, int target) {
+        return search(matrix, target, new Coordinate(0, 0),
+                      new Coordinate(matrix.length - 1, matrix[0].length - 1)) != null;
+    }
+
+    private Coordinate search(int[][] matrix, int x,
+                              Coordinate start, Coordinate end) {
+        if (!start.inbounds(matrix) || !end.inbounds(matrix)) return null;
+        int startVal = matrix[start.row][start.column];
+        if (startVal == x) return start;
+
+        int endVal = matrix[end.row][end.column];
+        if (endVal == x) return end;
+
+        if ((startVal > x) || (endVal < x) || !start.isBefore(end)) return null;
+
+        Coordinate minCorner = start;
+        Coordinate maxCorner = end;
+        // while (minCorner.isBefore(maxCorner)) {
+        while ((maxCorner.row - minCorner.row > 1)
+               || (maxCorner.column - minCorner.column > 1)) {
+            Coordinate mid = Coordinate.middle(minCorner, maxCorner);
+            int midVal = matrix[mid.row][mid.column];
+            if (x == midVal) return mid;
+            if (x < midVal) {
+                maxCorner = mid;
+            } else {
+                minCorner = mid;
+            }
+        }
+
+        Coordinate lowerLeftStart = new Coordinate(maxCorner.row, start.column);
+        Coordinate lowerLeftEnd = new Coordinate(end.row, maxCorner.column - 1);
+        Coordinate pos = search(matrix, x, lowerLeftStart, lowerLeftEnd);
+        if (pos != null) return pos;
+
+        Coordinate upperRightStart = new Coordinate(start.row, minCorner.column + 1);
+        Coordinate upperRightEnd = new Coordinate(minCorner.row, end.column);
+        return search(matrix, x, upperRightStart, upperRightEnd);
+    }
+
     // iterate row and binary search column
     // time complexity: O(M * log(N))
 
@@ -182,6 +223,7 @@ public class MatrixSearch2 {
             test(m::searchMatrix, "searchMatrix", matrix, tgts[i], expected[i] > 0);
             test(m::searchMatrix2, "searchMatrix2", matrix, tgts[i], expected[i] > 0);
             test(m::searchMatrix3, "searchMatrix3", matrix, tgts[i], expected[i] > 0);
+            test(m::searchMatrix4, "searchMatrix4", matrix, tgts[i], expected[i] > 0);
         }
     }
 
