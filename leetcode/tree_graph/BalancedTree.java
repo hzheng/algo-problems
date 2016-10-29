@@ -10,6 +10,8 @@ import common.TreeNode;
 //
 // Given a binary tree, determine if it is height-balanced.
 public class BalancedTree {
+    // Solution of Choice
+    // Recursion
     // beats 70.26%(1 ms)
     public boolean isBalanced(TreeNode root) {
         return depth(root) >= 0;
