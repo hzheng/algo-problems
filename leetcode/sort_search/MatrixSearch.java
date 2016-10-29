@@ -78,6 +78,7 @@ public class MatrixSearch {
         }
     }
 
+    // Solution of Choice
     // beats 6.15%(1 ms)
     public boolean searchMatrix2(int[][] matrix, int target) {
         int m = matrix.length;

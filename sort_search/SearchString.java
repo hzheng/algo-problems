@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
  * Given a sorted array of strings which is interspersed with empty strings,
  * find the location of a given string.
  */
-public class StringSearch {
+public class SearchString {
     public static int search(String tgt, String[] arr) {
         if (arr == null || tgt == null) return -1;
         if (tgt.isEmpty()) {
@@ -95,8 +95,8 @@ public class StringSearch {
 
     private void test(String[] arr, String[] tgts) {
         for (String x : tgts) {
-            int i1 = test(StringSearch::search, "search", x, arr);
-            int i2 = test(StringSearch::search2, "search2", x, arr);
+            int i1 = test(SearchString::search, "search", x, arr);
+            int i2 = test(SearchString::search2, "search2", x, arr);
 
             if (i1 != i2) { // in case of multi-solutions
                 assertTrue(i1 >= 0 && i2 >= 0);
@@ -116,6 +116,6 @@ public class StringSearch {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("StringSearch");
+        org.junit.runner.JUnitCore.main("SearchString");
     }
 }
