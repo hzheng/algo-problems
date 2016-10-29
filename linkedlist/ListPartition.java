@@ -8,7 +8,7 @@ import linkedlist.LinkedListNode;
  * Partition a linked list around a value x, such that all nodes less than x
  * come before all nodes greater than or equal to x.
  */
- public class PartitionList {
+ public class ListPartition {
      public LinkedListNode partition(LinkedListNode node, int x) {
          if (node == null) return null;
 
@@ -104,6 +104,6 @@ import linkedlist.LinkedListNode;
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("PartitionList");
+        org.junit.runner.JUnitCore.main("ListPartition");
     }
  }
