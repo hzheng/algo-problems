@@ -114,6 +114,38 @@ public class MyQueue {
         }
     }
 
+    static class MyQueue4 implements IMyQueue {
+        Stack<Integer> inputStack = new Stack<>();
+        Stack<Integer> outputStack = new Stack<>();
+
+        public void push(int x) {
+            while (!outputStack.empty()) {
+                inputStack.push(outputStack.pop());
+            }
+            inputStack.push(x);
+        }
+
+        private void inputToOutput() {
+            while (!inputStack.empty()) {
+                outputStack.push(inputStack.pop());
+            }
+        }
+
+        public void pop() {
+            inputToOutput();
+            outputStack.pop();
+        }
+
+        public int peek() {
+            inputToOutput();
+            return outputStack.peek();
+        }
+
+        public boolean empty() {
+            return inputStack.isEmpty() && outputStack.isEmpty();
+        }
+    }
+
     void test1(IMyQueue obj) {
         obj.push(4);
         obj.push(3);
