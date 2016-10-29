@@ -2,3 +2,6 @@
 .tags
 tmp
 out
+.idea
+classpath.index
+*iml
