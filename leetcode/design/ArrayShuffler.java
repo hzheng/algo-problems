@@ -10,7 +10,7 @@ import common.Interval;
 // LC384: https://leetcode.com/problems/shuffle-an-array/
 //
 // Shuffle a set of numbers without duplicates.
-public class Shuffler {
+public class ArrayShuffler {
     static interface IShuffler {
         /** Resets the array to its original configuration and return it. */
         public int[] reset();
@@ -55,6 +55,6 @@ public class Shuffler {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("Shuffler");
+        org.junit.runner.JUnitCore.main("ArrayShuffler");
     }
 }
