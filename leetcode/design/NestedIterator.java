@@ -3,24 +3,14 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/flatten-nested-list-iterator/
+import common.NestedInteger;
+import common.NestedIntegerImpl;
+
+// LC341: https://leetcode.com/problems/flatten-nested-list-iterator/
 //
 // Given a nested list of integers, implement an iterator to flatten it.
 // Each element is either an integer, or a list -- whose elements may also be
 // integers or other lists.
-interface NestedInteger {
-    // @return true if this NestedInteger holds a single integer, rather than a nested list.
-    public boolean isInteger();
-
-    // @return the single integer that this NestedInteger holds, if it holds a single integer
-    // Return null if this NestedInteger holds a nested list
-    public Integer getInteger();
-
-    // @return the nested list that this NestedInteger holds, if it holds a nested list
-    // Return null if this NestedInteger holds a single integer
-    public List<NestedInteger> getList();
-}
-
 public class NestedIterator {
     // stack
     // beats 3.13%(16 ms)
@@ -121,38 +111,6 @@ public class NestedIterator {
         @Override
         public boolean hasNext() {
             return !stack.isEmpty();
-        }
-    }
-
-    static class NestedIntegerImpl implements NestedInteger {
-        List<NestedInteger> list;
-        Integer num;
-
-        NestedIntegerImpl(Integer nested) {
-            num = nested;
-        }
-
-        NestedIntegerImpl(Object[] nested) {
-            list = new ArrayList<>();
-            for (Object obj : nested) {
-                if (obj instanceof Integer) {
-                    list.add(new NestedIntegerImpl((Integer)obj));
-                } else {
-                    list.add(new NestedIntegerImpl((Object[])obj));
-                }
-            }
-        }
-
-        public boolean isInteger() {
-            return num != null;
-        }
-
-        public Integer getInteger() {
-            return num;
-        }
-
-        public List<NestedInteger> getList() {
-            return list;
         }
     }
 

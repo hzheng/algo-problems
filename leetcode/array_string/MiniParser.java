@@ -3,6 +3,9 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import common.NestedInteger;
+import common.NestedIntegerImpl;
+
 // LC385: https://leetcode.com/problems/mini-parser/
 //
 // Given a nested list of integers represented as a string, implement a parser
@@ -13,58 +16,12 @@ import static org.junit.Assert.*;
 // String does not contain white spaces.
 // String contains only digits 0-9, [, - ,, ].
 
-class NestedInteger {
-    Integer integer;
-    List<NestedInteger> list;
-
-    // Constructor initializes an empty nested list.
-    public NestedInteger() {
-    }
-
-    // Constructor initializes a single integer.
-    public NestedInteger(int value) {
-        setInteger(value);
-    }
-
-    // @return true if this NestedInteger holds a single integer, rather than a nested list.
-    public boolean isInteger() {
-        return integer != null;
-    }
-
-    // @return the single integer that this NestedInteger holds, if it holds a single integer
-    // Return null if this NestedInteger holds a nested list
-    public Integer getInteger() {
-        return integer;
-    }
-
-    // Set this NestedInteger to hold a single integer.
-    public void setInteger(int value) {
-        integer = value;
-        list = null;
-    }
-
-    // Set this NestedInteger to hold a nested list and adds a nested integer to it.
-    public void add(NestedInteger ni) {
-        if (list == null) {
-            list = new ArrayList<>();
-            integer = null;
-        }
-        list.add(ni);
-    }
-
-    // @return the nested list that this NestedInteger holds, if it holds a nested list
-    // Return null if this NestedInteger holds a single integer
-    public List<NestedInteger> getList() {
-        return list;
-    }
-}
-
 public class MiniParser {
     // Stack
     // beats 53.90%(22 ms)
     public NestedInteger deserialize(String s) {
         if (s.charAt(0) != '[') {
-            return new NestedInteger(Integer.parseInt(s));
+            return new NestedIntegerImpl(Integer.parseInt(s));
         }
 
         Stack<NestedInteger> stack = new Stack<>();
@@ -72,7 +29,7 @@ public class MiniParser {
         for (int i = 0; i < chars.length; i++) {
             switch (chars[i]) {
             case '[':
-                stack.push(new NestedInteger());
+                stack.push(new NestedIntegerImpl());
                 break;
             case ']':
                 NestedInteger ni = stack.pop();
@@ -100,7 +57,7 @@ public class MiniParser {
                     num *= 10;
                     num += chars[i] - '0';
                 }
-                stack.peek().add(new NestedInteger(num * sign));
+                stack.peek().add(new NestedIntegerImpl(num * sign));
                 i--;
             }
         }
