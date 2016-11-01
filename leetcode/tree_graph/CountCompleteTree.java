@@ -10,6 +10,7 @@ import common.TreeNode;
 //
 // Given a complete binary tree, count the number of nodes.
 public class CountCompleteTree {
+    // Queue
     // Time Limit Exceeded
     // time complexity: O(N), space complexity: O(N)
     public int countNodes(TreeNode root) {
@@ -31,35 +32,35 @@ public class CountCompleteTree {
         return count;
     }
 
+    // Solution of Choice
     // time complexity: O(log(N) ^ 2), space complexity: O(1)
-    // beats 98.76%(48 ms)
+    // beats 95.23%(56 ms for 18 tests)
     public int countNodes2(TreeNode root) {
         if (root == null) return 0;
 
-        int h = height(root);
-        int count = (1 << h);
-        TreeNode parent = root;
-        TreeNode node = root.right;
-        for (int i = 1; node != null; i++, node = node.right) {
-            if (height(node) + i == h) {
-                count += (1 << (h - i));
+        int h = getHeight(root);
+        int count = 1 << h;
+        for (TreeNode cur = root; cur.right != null; h--) {
+            if (getHeight(cur.right) == h - 1) {
+                count += (1 << (h - 1));
+                cur = cur.right;
             } else {
-                node = parent.left;
+                cur = cur.left;
             }
-            parent = node;
         }
         return count;
     }
 
-    private int height(TreeNode root) {
+    private int getHeight(TreeNode root) {
+        if (root == null) return -1;
+
         int height = 0;
-        for (TreeNode n = root.left; n != null; n = n.left) {
-            height++;
-        }
+        for (TreeNode n = root.left; n != null; n = n.left, height++) {}
         return height;
     }
 
-    // recursion
+    // Recursion
+    // time complexity: O(log(N) ^ 2), space complexity: O(log(N))
     // beats 20.71%(122 ms)
     public int countNodes3(TreeNode root) {
         if (root == null) return 0;
@@ -78,9 +79,7 @@ public class CountCompleteTree {
         if (root == null) return 0;
 
         int height = 0;
-        for (TreeNode n = root.left; n != null; n = n.left) {
-            height++;
-        }
+        for (TreeNode n = root.left; n != null; n = n.left, height++) {}
         return height;
     }
 
@@ -88,21 +87,31 @@ public class CountCompleteTree {
         if (root == null) return 0;
 
         int height = 0;
-        for (TreeNode n = root.right; n != null; n = n.right) {
-            height++;
-        }
+        for (TreeNode n = root.right; n != null; n = n.right, height++) {}
         return height;
     }
 
-    // binary search
-    // beats 60.88%(107 ms)
+    // Recursion
+    // beats 84.80%(71 ms for 18 tests)
     public int countNodes4(TreeNode root) {
         if (root == null) return 0;
 
-        int h = height(root);
+        int h = getHeight(root);
+        return getHeight(root.right) == (h - 1)
+               ? (1 << h) + countNodes4(root.right)
+               : (1 << h - 1) + countNodes4(root.left);
+    }
+
+    // Binary Search
+    // time complexity: O(log(N) ^ 2), space complexity: O(1)
+    // beats 60.88%(107 ms)
+    public int countNodes5(TreeNode root) {
+        if (root == null) return 0;
+
+        int h = getHeight(root);
         int low = 0;
         for (int high = 1 << h; low < high; ) {
-            int mid = low + (high - low) / 2;
+            int mid = (low + high) >>> 1;
             if (isFull(root, h, mid)) {
                 low = mid + 1;
             } else {
@@ -129,6 +138,7 @@ public class CountCompleteTree {
         assertEquals(expected, countNodes2(root));
         assertEquals(expected, countNodes3(root));
         assertEquals(expected, countNodes4(root));
+        assertEquals(expected, countNodes5(root));
     }
 
     @Test
