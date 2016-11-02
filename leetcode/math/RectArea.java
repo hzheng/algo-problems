@@ -41,9 +41,19 @@ public class RectArea {
         return area - (right - left) * (top - bottom);
     }
 
+    // beats 46.06%(4 ms for 3081 tests)
+    int computeArea3(int A, int B, int C, int D, int E, int F, int G, int H) {
+        int left = Math.max(A, E);
+        int right = Math.max(Math.min(C, G), left);
+        int bottom = Math.max(B, F);
+        int top = Math.max(Math.min(D, H), bottom);
+        return (C - A) * (D - B) + (G - E) * (H - F) - (right - left) * (top - bottom);
+    }
+
     void test(int A, int B, int C, int D, int E, int F, int G, int H, int expected) {
         assertEquals(expected, computeArea(A, B, C, D, E, F, G, H));
         assertEquals(expected, computeArea2(A, B, C, D, E, F, G, H));
+        assertEquals(expected, computeArea3(A, B, C, D, E, F, G, H));
     }
 
     @Test
