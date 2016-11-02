@@ -4,12 +4,12 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import java.util.function.Function;
 
-// https://leetcode.com/problems/missing-number/
+// LC268: https://leetcode.com/problems/missing-number/
 //
 // Given an array containing n distinct numbers taken from 0, 1, 2, ..., n,
 // find the one that is missing from the array.
 public class MissingNumber {
-    // beats 42.37%
+    // beats 42.37%(1 ms)
     public int missingNumber(int[] nums) {
         int xor = 0;
         for (int num : nums) {
@@ -22,13 +22,39 @@ public class MissingNumber {
         return xor;
     }
 
-    // beats 42.37%
+    // beats 43.64%(1 ms for 121 tests)
     public int missingNumber2(int[] nums) {
-       int xor = 0;
-       for (int i = nums.length - 1; i >= 0; i--){
-           xor ^= i ^ nums[i];
-       }
-       return xor ^ nums.length;
+        int xor = nums.length;
+        for (int i = nums.length - 1; i >= 0; i--) {
+            xor ^= i ^ nums[i];
+        }
+        return xor;
+    }
+
+    // beats 43.64%(1 ms for 121 tests)
+    public int missingNumber3(int[] nums) {
+        int sum = nums.length;
+        for (int i = nums.length - 1; i >= 0; i--) {
+            sum += (i - nums[i]); // avoid overflow
+        }
+        return sum;
+    }
+
+    // Binary Search
+    // beats 6.77%(13 ms for 121 tests)
+    public int missingNumber4(int[] nums) {
+        Arrays.sort(nums);
+        int low = 0;
+        int high = nums.length;
+        while (low < high) {
+            int mid = (low + high) >>> 1;
+            if (nums[mid] > mid) {
+                high = mid;
+            } else {
+                low = mid + 1;
+            }
+        }
+        return low;
     }
 
     void test(Function<int[], Integer> missing, int expected, int ... nums) {
@@ -39,6 +65,8 @@ public class MissingNumber {
         MissingNumber m = new MissingNumber();
         test(m::missingNumber, expected, nums);
         test(m::missingNumber2, expected, nums);
+        test(m::missingNumber3, expected, nums);
+        test(m::missingNumber4, expected, nums);
     }
 
     @Test
