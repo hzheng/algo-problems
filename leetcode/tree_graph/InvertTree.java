@@ -6,10 +6,11 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
-// https://leetcode.com/problems/invert-binary-tree/
+// LC226: https://leetcode.com/problems/invert-binary-tree/
 //
 // Invert a binary tree.
 public class InvertTree {
+    // Recursion
     // beats 18.38%(0 ms)
     public TreeNode invertTree(TreeNode root) {
         if (root == null) return null;
@@ -20,6 +21,8 @@ public class InvertTree {
         return root;
     }
 
+    // Solution of Choice
+    // BFS + Queue
     // beats 0.64%(1 ms)
     public TreeNode invertTree2(TreeNode root) {
         if (root == null) return null;
@@ -31,11 +34,11 @@ public class InvertTree {
             TreeNode tmp = node.left;
             node.left = node.right;
             node.right = tmp;
-            if (node.right != null) {
-                queue.offer(node.right);
-            }
             if (node.left != null) {
                 queue.offer(node.left);
+            }
+            if (node.right != null) {
+                queue.offer(node.right);
             }
         }
         return root;
