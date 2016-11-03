@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/rectangle-area/
+// LC223: https://leetcode.com/problems/rectangle-area/
 //
 // Find the total area covered by two rectilinear rectangles in a 2D plane.
 public class RectArea {
@@ -41,6 +41,7 @@ public class RectArea {
         return area - (right - left) * (top - bottom);
     }
 
+    // Solution of Choice
     // beats 46.06%(4 ms for 3081 tests)
     int computeArea3(int A, int B, int C, int D, int E, int F, int G, int H) {
         int left = Math.max(A, E);
