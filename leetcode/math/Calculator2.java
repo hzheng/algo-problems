@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/basic-calculator-ii/
+// LC: https://leetcode.com/problems/basic-calculator-ii/
 //
 // Implement a basic calculator to evaluate a simple expression string.
 // The expression string contains only non-negative integers, +, -, *, /
@@ -26,8 +26,7 @@ public class Calculator2 {
             case '/':
                 operands[operandCount - 1] /= getNumber(s, ++i, end);
                 break;
-            case '+':
-            case '-':
+            case '+': case '-':
                 if (operandCount == 2) {
                     add(operands, addition);
                     operandCount--;
@@ -72,50 +71,78 @@ public class Calculator2 {
         return num;
     }
 
-    // beats 94.10%(15 ms)
+    // beats 96.03%(14 ms for 109 tests)
     public int calculate2(String s) {
-        Boolean multiply = null;
-        int sign = 1;
-        int lastOperand = 0;
         int res = 0;
-        int len = s.length();
-        for (int i = 0; i < len; i++) {
+        int sign = 1;
+        char operator = '+';
+        int operand = 0;
+        for (int i = 0, len = s.length(); i < len; i++) {
             char c = s.charAt(i);
             switch (c) {
             case ' ': continue;
-            case '*':
-                multiply = Boolean.TRUE;
-                break;
-            case '/':
-                multiply = Boolean.FALSE;
+            case '*': case '/':
+                operator = c;
                 break;
             case '+': case '-':
-                res += sign * lastOperand;
+                res += sign * operand;
                 sign = (c == '+') ? 1 : -1;
-                multiply = null;
+                operator = c;
                 break;
             default: // assume digits
                 int num = c - '0';
                 while (++i < len && Character.isDigit(s.charAt(i))) {
-                    num = num * 10 + s.charAt(i) - '0';
+                    num = num * 10 + (s.charAt(i) - '0');
                 }
                 i--;
-
-                if (multiply == null) {
-                    lastOperand = num;
-                } else if (multiply == Boolean.TRUE) {
-                    lastOperand *= num;
+                if (operator == '*') {
+                    operand *= num;
+                } else if (operator == '/') {
+                    operand /= num;
                 } else {
-                    lastOperand /= num;
+                    operand = num;
                 }
             }
         }
-        return res + sign * lastOperand;
+        return res + sign * operand;
+    }
+
+    // Solution of Choice
+    // beats 95.74%(15 ms for 109 tests)
+    public int calculate3(String s) {
+        int res = 0;
+        int sign = 1;
+        char operator = '+';
+        int operand = 0;
+        int num = 0;
+        for (int i = 0, len = s.length(); i <= len; i++) {
+            char c = (i == len) ? '+' : s.charAt(i);
+            if (c == ' ') continue;
+            if (Character.isDigit(c)) {
+                num = num * 10 + (c - '0');
+                continue;
+            }
+            if (operator == '*') {
+                operand *= num;
+            } else if (operator == '/') {
+                operand /= num;
+            } else {
+                operand = num;
+            }
+            if (c == '+' || c == '-') {
+                res += sign * operand;
+                sign = (c == '+') ? 1 : -1;
+            }
+            operator = c;
+            num = 0;
+        }
+        return res;
     }
 
     void test(String s, int expected) {
         assertEquals(expected, calculate(s));
         assertEquals(expected, calculate2(s));
+        assertEquals(expected, calculate3(s));
     }
 
     @Test
