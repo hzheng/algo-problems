@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/implement-stack-using-queues/
+// LC225: https://leetcode.com/problems/implement-stack-using-queues/
 //
 // Implement a stack using queues.
 // You must use only standard operations of a queue -- which means only push
@@ -95,6 +95,8 @@ public class MyStack {
         }
     }
 
+    // Solution of Choice
+    // Two Queues
     // beats 99.93%(92 ms)
     static class MyStack2 implements IMyStack {
         Queue<Integer> queue1 = new LinkedList<>();
@@ -129,7 +131,7 @@ public class MyStack {
         }
     }
 
-    // One queue
+    // Single Queue
     // beats 52.11%(113 ms)
     static class MyStack3 implements IMyStack {
         Queue<Integer> queue = new LinkedList<>();

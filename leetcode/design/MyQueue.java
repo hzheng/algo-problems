@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/implement-queue-using-stacks/
+// LC232: https://leetcode.com/problems/implement-queue-using-stacks/
 //
 // Implement the following operations of a queue using stacks.
 public class MyQueue {
@@ -17,34 +17,35 @@ public class MyQueue {
         public boolean empty();
     }
 
-    // beats 70.35%(111 ms)
+    // Solution of Choice
+    // Two Stacks
+    // beats 37.84%(112 ms for 17 tests)
     static class MyQueue1 implements IMyQueue {
         Stack<Integer> stack1 = new Stack<>();
         Stack<Integer> stack2 = new Stack<>();
+        int front;
 
         // time complexity: O(1)
         public void push(int x) {
+            if (stack1.isEmpty()) {
+                front = x;
+            }
             stack1.push(x);
         }
 
         // time complexity: Amortized O(1), Worst-case O(n).
         public void pop() {
-            shift();
-            stack2.pop();
-        }
-
-        // time complexity: O(N)
-        public int peek() {
-            shift();
-            return stack2.peek();
-        }
-
-        private void shift() {
             if (stack2.isEmpty()) {
                 while (!stack1.isEmpty()) {
                     stack2.push(stack1.pop());
                 }
             }
+            stack2.pop();
+        }
+
+        // time complexity: O(N)
+        public int peek() {
+            return stack2.isEmpty() ? front : stack2.peek();
         }
 
         public boolean empty() {
@@ -52,6 +53,8 @@ public class MyQueue {
         }
     }
 
+    // Solution of Choice
+    // Two Stacks
     // beats 55.56%(114 ms)
     static class MyQueue2 implements IMyQueue {
         Stack<Integer> stack1 = new Stack<>();
@@ -83,7 +86,7 @@ public class MyQueue {
         }
     }
 
-    // recursion
+    // Single Stack + Recursion
     // beats 60.51%(113 ms)
     static class MyQueue3 implements IMyQueue {
         Stack<Integer> stack = new Stack<>();
