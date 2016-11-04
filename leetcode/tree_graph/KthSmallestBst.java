@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
-// https://leetcode.com/problems/kth-smallest-element-in-a-bst/
+// LC230: https://leetcode.com/problems/kth-smallest-element-in-a-bst/
 //
 // Given a binary search tree, write a function kthSmallest to find the kth
 // smallest element in it.
@@ -15,6 +15,7 @@ import common.TreeNode;
 // What if the BST is modified (insert/delete operations) often and you need to
 // find the kth smallest frequently?
 public class KthSmallestBst {
+    // Recursion
     // time complexity: O(N * log(N)) for balanced tree, space complexity: O(N)
     // beats 54.10%(1 ms)
     public int kthSmallest(TreeNode root, int k) {
@@ -38,6 +39,7 @@ public class KthSmallestBst {
         return kthSmallest2(root, k, new HashMap<>());
     }
 
+    // Recursion + Hash Table
     private int kthSmallest2(TreeNode root, int k, Map<TreeNode, Integer> cache) {
         int count = count(root.left, cache);
         if (count + 1 == k) return root.val;
@@ -57,6 +59,7 @@ public class KthSmallestBst {
         return res;
     }
 
+    // Recursion + Inorder Traversal
     // time complexity: O(N), space complexity: O(N)
     // beats 54.10%(1 ms)
     public int kthSmallest3(TreeNode root, int k) {
@@ -74,6 +77,8 @@ public class KthSmallestBst {
         return traverse(root.right, k, count);
     }
 
+    // Solution of Choice
+    // Stack + Inorder Traversal
     // time complexity: O(N), space complexity: O(N)
     // beats 25.43%(2 ms)
     public int kthSmallest4(TreeNode root, int k) {
@@ -93,30 +98,26 @@ public class KthSmallestBst {
         }
     }
 
-    // Morris algorithm
+    // Morris algorithm + Inorder Traversal
     // time complexity: O(N), space complexity: O(1)
-    // beats 54.10%(1 ms)
+    // beats 51.16%(1 ms for 91 tests)
     public int kthSmallest5(TreeNode root, int k) {
         int count = k;
-        for (TreeNode cur = root; ; ) {
+        for (TreeNode cur = root, prev; ; ) {
             if (cur.left == null) {
                 if (--count == 0) return cur.val;
 
                 cur = cur.right;
                 continue;
             }
-
-            TreeNode prev = cur.left;
-            while (prev.right != null && prev.right != cur) {
-                prev = prev.right;
-            }
+            for (prev = cur.left; prev.right != null && prev.right != cur; prev = prev.right) {}
             if (prev.right == null) {
                 prev.right = cur;
                 cur = cur.left;
             } else {
-                if (--count == 0) return prev.right.val;
-
                 prev.right = null;
+                if (--count == 0) return cur.val; //prev.right.val;
+
                 cur = cur.right;
             }
         }
