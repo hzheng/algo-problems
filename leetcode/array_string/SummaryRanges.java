@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/summary-ranges/
+// LC228: https://leetcode.com/problems/summary-ranges/
 //
 // Given a sorted integer array without duplicates, return the summary of its ranges.
 public class SummaryRanges {
@@ -59,20 +59,13 @@ public class SummaryRanges {
         return res;
     }
 
-    // beats 3.93%(1 ms)
+    // beats 6.15%(1 ms for 27 tests)
     public List<String> summaryRanges3(int[] nums) {
-        int n = nums.length;
         List<String> res = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
+        for (int i = 0, n = nums.length; i < n; i++) {
             int start = nums[i];
-            while (i + 1 < n && (nums[i + 1] == nums[i] + 1)) {
-                i++;
-            }
-            if (start != nums[i]) {
-                res.add(start + "->" + nums[i]);
-            } else {
-                res.add("" + start);
-            }
+            for (; i + 1 < n && (nums[i + 1] == nums[i] + 1); i++) {}
+            res.add(start + ((start == nums[i]) ? "" : "->" + nums[i]));
         }
         return res;
     }
