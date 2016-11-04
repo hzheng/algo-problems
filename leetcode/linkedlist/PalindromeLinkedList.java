@@ -5,7 +5,7 @@ import common.ListNode;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/palindrome-linked-list/
+// LC234: https://leetcode.com/problems/palindrome-linked-list/
 //
 // Given a singly linked list, determine if it is a palindrome.
 // Could you do it in O(n) time and O(1) space?
@@ -48,16 +48,15 @@ public class PalindromeLinkedList {
 
     private ListNode reverse(ListNode head) {
         ListNode prev = null;
-        for (ListNode cur = head; cur != null; ) {
-            ListNode next = cur.next;
+        for (ListNode cur = head, next; cur != null; cur = next) {
+            next = cur.next;
             cur.next = prev;
             prev = cur;
-            cur = next;
         }
         return prev;
     }
 
-    // stack
+    // Stack
     // time complexity: O(N), space complexity: O(N)
     // beats 3.42%(9 ms)
     public boolean isPalindrome3(ListNode head) {
@@ -76,7 +75,7 @@ public class PalindromeLinkedList {
         return true;
     }
 
-    // recursion
+    // Recursion
     // time complexity: O(N), space complexity: O(N)
     // 12.51%(6 ms)
     public boolean isPalindrome4(ListNode head) {
@@ -88,7 +87,7 @@ public class PalindromeLinkedList {
 
         if (!isPalindrome(first, last.next)) return false;
 
-        boolean res = first[0].val == last.val;
+        boolean res = (first[0].val == last.val);
         first[0] = first[0].next;
         return res;
     }
