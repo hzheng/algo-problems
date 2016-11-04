@@ -3,11 +3,12 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/number-of-digit-one/
+// LC233: https://leetcode.com/problems/number-of-digit-one/
 //
 // Given an integer n, count the total number of digit 1 appearing in all
 // non-negative integers less than or equal to n.
 public class CountDigitOne {
+    // Recursion
     // beats 20.14%(0 ms)
     public int countDigitOne(int n) {
         if (n < 1) return 0;
@@ -36,23 +37,19 @@ public class CountDigitOne {
         return count + countDigitOne(n % power);
     }
 
-    // non-recursion
     // beats 20.14%(0 ms)
     public int countDigitOne2(int n) {
         int digits = 1;
         int power = 1;
-        for (int i = n; i >= 10; i /= 10, power *= 10, digits++);
+        for (int i = n; i >= 10; i /= 10, power *= 10, digits++) {}
         int total = 0;
-
         for (int i = n; i > 0; power /= 10, digits--) {
             int firstDigit = i / power;
             if (firstDigit == 0) continue;
 
-            int count = (digits - 1) * (power / 10);
-            count *= firstDigit;
+            total += (digits - 1) * (power / 10) * firstDigit;
             i %= power;
-            count += (firstDigit > 1) ? power : i + 1;
-            total += count;
+            total += (firstDigit > 1) ? power : i + 1;
         }
         return total;
     }
@@ -71,16 +68,32 @@ public class CountDigitOne {
         return count;
     }
 
-    // another recursion
+    // Recursion
     // beats 20.14%(0 ms)
     public int countDigitOne4(int n) {
         if (n < 1) return 0;
 
         int power = 1;
-        for (int i = n; i >= 10; i /= 10, power *= 10);
+        for (int i = n; i >= 10; i /= 10, power *= 10) {}
         int firstDigit = n / power;
         int count = firstDigit * countDigitOne4(power - 1) + countDigitOne4(n % power);
         return count += (firstDigit > 1) ? power : (n % power) + 1;
+    }
+
+    // Solution of Choice(almost identical to countDigitOne3)
+    // beats 14.53%(0 ms for 40 tests)
+    public int countDigitOne5(int n) {
+        int count = 0;
+        for (int i = n, power = 1; i > 0; power *= 10) {
+            int lastDigit = i % 10;
+            count += (i /= 10) * power;
+            if (lastDigit > 1) {
+                count += power;
+            } else if (lastDigit == 1) {
+                count += n % power + 1;
+            }
+        }
+        return count;
     }
 
     void test(int n, int expected) {
@@ -88,6 +101,7 @@ public class CountDigitOne {
         assertEquals(expected, countDigitOne2(n));
         assertEquals(expected, countDigitOne3(n));
         assertEquals(expected, countDigitOne4(n));
+        assertEquals(expected, countDigitOne5(n));
     }
 
     @Test
