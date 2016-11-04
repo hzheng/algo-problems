@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/product-of-array-except-self/
+// LC238: https://leetcode.com/problems/product-of-array-except-self/
 //
 // Given an array of n integers where n > 1, nums, return an array output
 // such that output[i] is equal to the product of all the elements of
@@ -75,32 +75,12 @@ public class ProductofArrayExceptSelf {
     public int[] productExceptSelf3(int[] nums) {
         int n = nums.length;
         int[] res = new int[n];
-        res[0] = nums[0];
-        for (int i = 1; i + 1 < n; i++) {
-            res[i] = res[i - 1] * nums[i];
-        }
-        res[n - 1] = res[n - 2];
-        int rightProduct = nums[n - 1];
-        for (int i = n - 2; i > 0; i--) {
-            res[i] = res[i - 1] * rightProduct;
-            rightProduct *= nums[i];
-        }
-        res[0] = rightProduct;
-        return res;
-    }
-
-    // beats 47.45%(2 ms)
-    public int[] productExceptSelf3_2(int[] nums) {
-        int n = nums.length;
-        int[] res = new int[n];
         res[0] = 1;
         for (int i = 1; i < n; i++) {
             res[i] = res[i - 1] * nums[i - 1];
         }
-        int rightProduct = 1;
-        for (int i = n - 1; i >= 0; i--) {
+        for (int i = n - 1, rightProduct = 1; i >= 0; rightProduct *= nums[i--]) {
             res[i] *= rightProduct;
-            rightProduct *= nums[i];
         }
         return res;
     }
@@ -113,16 +93,13 @@ public class ProductofArrayExceptSelf {
         for (int i = n - 2; i >= 0; i--) {
             res[i] = res[i + 1] * nums[i + 1];
         }
-
-        int leftProduct = 1;
-        for (int i = 0; i < n; i++) {
+        for (int i = 0, leftProduct = 1; i < n; leftProduct *= nums[i++]) {
             res[i] *= leftProduct;
-            leftProduct *= nums[i];
         }
         return res;
     }
 
-    // recursion(modify input)
+    // Recursion(modify input)
     public int[] productExceptSelf5(int[] nums) {
         multiply(nums, 1, 0, nums.length);
         return nums;
@@ -139,19 +116,17 @@ public class ProductofArrayExceptSelf {
         return revProduct;
     }
 
-    // one loop except intialization(from leetcode)
+    // Solution of Choice
+    // time complexity: O(N), space complexity: O(1)
+    // beats 10.73%(3 ms for 17 tests)
     public int[] productExceptSelf6(int[] nums) {
         int n = nums.length;
         int[] res = new int[n];
-        for (int i = 0; i < n; i++) {
-            res[i] = 1;
-        }
+        Arrays.fill(res, 1);
         for (int i = 0, j = n - 1, leftProduct = 1, rightProduct = 1;
-             i < n; ++i, --j) {
+             i < n; leftProduct *= nums[i++], rightProduct *= nums[j--]) {
             res[i] *= leftProduct;
-            leftProduct *= nums[i];
             res[j] *= rightProduct;
-            rightProduct *= nums[j];
         }
         return res;
     }
@@ -160,7 +135,6 @@ public class ProductofArrayExceptSelf {
         assertArrayEquals(expected, productExceptSelf(nums));
         assertArrayEquals(expected, productExceptSelf2(nums));
         assertArrayEquals(expected, productExceptSelf3(nums));
-        assertArrayEquals(expected, productExceptSelf3_2(nums));
         assertArrayEquals(expected, productExceptSelf4(nums));
         assertArrayEquals(expected, productExceptSelf5(nums.clone()));
         assertArrayEquals(expected, productExceptSelf6(nums));
