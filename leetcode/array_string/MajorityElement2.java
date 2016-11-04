@@ -4,12 +4,13 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/majority-element-ii/
+// LC229: https://leetcode.com/problems/majority-element-ii/
 //
 // Given an integer array of size n, find all elements that appear more than
 // ⌊ n/3 ⌋ times. The algorithm should run in linear time and in O(1) space.
 public class MajorityElement2 {
-    // beats 22.90%(7 ms)
+    // Boyer-Moore Majority Vote algorithm
+    // beats 37.83%(4 ms for 66 tests)
     // time complexity: O(N), space complexity: O(1)
     public List<Integer> majorityElement(int[] nums) {
         int major1 = 0;
@@ -34,23 +35,66 @@ public class MajorityElement2 {
         }
 
         List<Integer> majors = new ArrayList<>();
-        if (count1 > 0 && isMajor(nums, major1)) {
+        count1 = 0;
+        count2 = 0;
+        for (int num : nums) {
+            if (num == major1) {
+                count1++;
+            } else if (num == major2) {
+                count2++;
+            }
+        }
+        if (count1 > nums.length / 3) {
             majors.add(major1);
         }
-        if (count2 > 0 && isMajor(nums, major2)) {
+        if (count2 > nums.length / 3) {
             majors.add(major2);
         }
         return majors;
     }
 
-    private boolean isMajor(int[] nums, int x) {
-        int count = 0;
+    // General version
+    // beats 27.19%(5 ms for 66 tests)
+    public List<Integer> majorityElement2(int[] nums) {
+        final int N = 3;
+        int[] majors = new int[N - 1];
+        int[] counts = new int[N - 1];
+outerLoop:
         for (int num : nums) {
-            if (num == x) {
-                count++;
+            for (int i = N - 2; i >= 0; i--) {
+                if (num == majors[i]) {
+                    counts[i]++;
+                    continue outerLoop;
+                }
+            }
+            for (int i = N - 2; i >= 0; i--) {
+                if (counts[i] == 0) {
+                    counts[i] = 1;
+                    majors[i] = num;
+                    continue outerLoop;
+                }
+            }
+            for (int i = N - 2; i >= 0; i--) {
+                counts[i]--;
             }
         }
-        return count > nums.length / 3;
+
+        List<Integer> res = new ArrayList<>();
+        Arrays.fill(counts, 0);
+        for (int num : nums) {
+            for (int i = N - 2; i >= 0; i--) {
+                if (num == majors[i]) {
+                    counts[i]++;
+                    break;
+                }
+            }
+        }
+        for (int i = N - 2; i >= 0; i--) {
+            if (counts[i] > nums.length / N) {
+                res.add(majors[i]);
+            }
+        }
+        return res;
     }
 
     void test(Function<int[], List<Integer> > major,
@@ -67,6 +111,7 @@ public class MajorityElement2 {
     void test(Integer[] expected, int ... nums) {
         MajorityElement2 m = new MajorityElement2();
         test(m::majorityElement, expected, nums);
+        test(m::majorityElement2, expected, nums);
     }
 
     @Test
