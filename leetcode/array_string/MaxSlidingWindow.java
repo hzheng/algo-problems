@@ -3,12 +3,13 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/sliding-window-maximum/
+// LC239: https://leetcode.com/problems/sliding-window-maximum/
 //
 // Given an array nums, there is a sliding window of size k which is moving from
 // the very left of the array to the very right. You can only see the k numbers
 // in the window. Each time the sliding window moves right by one position.
 public class MaxSlidingWindow {
+    // Deque
     // time complexity: O(N), space complexity: O(K)
     // beats 70.46%(28 ms)
     public int[] maxSlidingWindow(int[] nums, int k) {
@@ -38,9 +39,10 @@ public class MaxSlidingWindow {
         return res;
     }
 
+    // Deque
     // just merge two for-loop's above
     // time complexity: O(N), space complexity: O(K)
-    // beats 61.38%(29 ms)
+    // beats 90.51%(19 ms for 18 tests)
     public int[] maxSlidingWindow2(int[] nums, int k) {
         int n = nums.length;
         if (n == 0) return new int[0];
@@ -53,17 +55,18 @@ public class MaxSlidingWindow {
                 maxQ.pollLast();
             }
             maxQ.offerLast(num);
-            if (i + 1 > k && maxQ.peekFirst() == nums[i - k]) {
+            if (i < k - 1) continue;
+
+            if (i >= k && maxQ.peekFirst() == nums[i - k]) {
                 maxQ.pollFirst();
             }
-            if (i + 1 >= k) {
-                res[i - k + 1] = maxQ.peekFirst();
-            }
+            res[i - k + 1] = maxQ.peekFirst();
         }
         return res;
     }
 
-    // almost same, except save max index instead of value
+    // Deque
+    // almost same as above except for saving max index instead of value
     // time complexity: O(N), space complexity: O(K)
     // beats 42.32%(31 ms)
     public int[] maxSlidingWindow3(int[] nums, int k) {
@@ -73,11 +76,11 @@ public class MaxSlidingWindow {
         int[] res = new int[n - k + 1];
         Deque<Integer> maxQ = new LinkedList<>();
         for (int i = 0; i < n; i++) {
-            if (!maxQ.isEmpty() && maxQ.peekFirst() == i - k) {
-                maxQ.poll();
+            if (!maxQ.isEmpty() && maxQ.peekFirst() <= i - k) {
+                maxQ.pollFirst();
             }
             while (!maxQ.isEmpty() && nums[maxQ.peekLast()] < nums[i]) {
-                maxQ.removeLast();
+                maxQ.pollLast();
             }
             maxQ.offerLast(i);
             if ((i + 1) >= k) {
@@ -87,6 +90,7 @@ public class MaxSlidingWindow {
         return res;
     }
 
+    // Heap
     // time complexity: O(N * log(K)), space complexity: O(K)
     // beats 19.56%(71 ms)
     public int[] maxSlidingWindow4(int[] nums, int k) {
@@ -107,9 +111,11 @@ public class MaxSlidingWindow {
         return res;
     }
 
+    // Solution of Choice
+    // Dynamic Programming
     // https://discuss.leetcode.com/topic/26480/o-n-solution-in-java-with-two-simple-pass-in-the-array/2
     // time complexity: O(N), space complexity: O(N)
-    // beats 92.61%(11 ms)
+    // beats 95.00%(13 ms for 18 tests)
     public int[] maxSlidingWindow5(int[] nums, int k) {
         int n = nums.length;
         if (n == 0) return new int[0];
@@ -118,16 +124,37 @@ public class MaxSlidingWindow {
         int[] maxRight = new int[n];
         maxLeft[0] = nums[0];
         maxRight[n - 1] = nums[n - 1];
-        for (int i = 1; i < n; i++) {
+        for (int i = 1, j = n - 2; i < n; i++, j--) {
             maxLeft[i] = (i % k == 0) ? nums[i] : Math.max(maxLeft[i - 1], nums[i]);
-
-            int j = n - i - 1;
             maxRight[j] = (j % k == 0) ? nums[j] : Math.max(maxRight[j + 1], nums[j]);
         }
-
         int[] res = new int[n - k + 1];
         for (int i = 0; i + k <= n; i++) {
             res[i] = Math.max(maxRight[i], maxLeft[i + k - 1]);
+        }
+        return res;
+    }
+
+    // Solution of Choice
+    // Circular Array
+    // time complexity: O(N), space complexity: O(K)
+    // beats 95.63%(8 ms for 18 tests)
+    public int[] maxSlidingWindow6(int[] nums, int k) {
+        int n = nums.length;
+        if (n == 0) return new int[0];
+
+        int[] maxQ = new int[++k];
+        int[] res = new int[n - k + 2];
+        for (int i = 0, head = 0, tail = 0; i < n; i++) {
+            int num = nums[i];
+            for (; head != tail && num > maxQ[(tail - 1 + k) % k]; tail--) {}
+            maxQ[tail++ % k] = num;
+            if (i < k - 2) continue;
+
+            if (i >= k - 1 && maxQ[head % k] == nums[i - k + 1]) {
+                head++;
+            }
+            res[i - k + 2] = maxQ[head % k];
         }
         return res;
     }
@@ -138,10 +165,12 @@ public class MaxSlidingWindow {
         assertArrayEquals(expected, maxSlidingWindow3(nums, k));
         assertArrayEquals(expected, maxSlidingWindow4(nums, k));
         assertArrayEquals(expected, maxSlidingWindow5(nums, k));
+        assertArrayEquals(expected, maxSlidingWindow6(nums, k));
     }
 
     @Test
     public void test1() {
+        test(new int[] {}, 0, new int[] {});
         test(new int[] {1, 3, 1, 2, 0, 5}, 3, new int[] {3, 3, 2, 5});
         test(new int[] {1, 3, -1, -3, 5, 3, 6, 7}, 3, new int[] {3, 3, 5, 5, 6, 7});
         test(new int[] {3, 2, 1, -3, 5, 3, 6, 7}, 3, new int[] {3, 2, 5, 5, 6, 7});
