@@ -4,12 +4,13 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/different-ways-to-add-parentheses/
+// LC241: https://leetcode.com/problems/different-ways-to-add-parentheses/
 //
 // Given a string of numbers and operators, return all possible results
 // from computing all the different possible ways to group numbers and
 // operators. The valid operators are +, - and *.
 public class DiffWaysToCompute {
+    // Stack + Recursion
     // beats 12.15%(10 ms)
     public List<Integer> diffWaysToCompute(String input) {
         int len = input.length();
@@ -88,17 +89,18 @@ public class DiffWaysToCompute {
         return stack.peek()[0];
     }
 
-    // beats 20.77%(9 ms)
+    // Divide & Conquer + Recursion
+    // beats 67.21%(6 ms for 25 tests)
     public List<Integer> diffWaysToCompute2(String input) {
         List<Integer> res = new ArrayList<>();
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
             if (c >= '0' && c <= '9') continue;
 
-            List<Integer> leftRes = diffWaysToCompute(input.substring(0, i));
-            List<Integer> rightRes = diffWaysToCompute(input.substring(i + 1));
-            for (Integer m : leftRes) {
-                for (Integer n : rightRes) {
+            List<Integer> leftRes = diffWaysToCompute2(input.substring(0, i));
+            List<Integer> rightRes = diffWaysToCompute2(input.substring(i + 1));
+            for (int m : leftRes) {
+                for (int n : rightRes) {
                     if (c == '+') {
                         res.add(m + n);
                     } else if (c == '-') {
@@ -115,6 +117,7 @@ public class DiffWaysToCompute {
         return res;
     }
 
+    // Divide & Conquer + Recursion
     // beats 20.77%(9 ms)
     public List<Integer> diffWaysToCompute3(String input) {
         int len = input.length();
@@ -160,13 +163,15 @@ public class DiffWaysToCompute {
         return res;
     }
 
-    // beats 84.68%(4 ms)
+    // Solution of Choice
+    // Divide & Conquer + Dynamic Programming(Top-Down)
+    // beats 88.60%(3 ms for 25 tests)
     public List<Integer> diffWaysToCompute4(String input) {
         return diffWaysToCompute4(input, new HashMap<>());
     }
 
     private List<Integer> diffWaysToCompute4(String s,
-                                             Map<String, List<Integer>> cache) {
+                                             Map<String, List<Integer> > cache) {
         if (cache.containsKey(s)) return cache.get(s);
 
         List<Integer> res = new ArrayList<>();
@@ -176,8 +181,8 @@ public class DiffWaysToCompute {
 
             List<Integer> leftRes = diffWaysToCompute4(s.substring(0, i), cache);
             List<Integer> rightRes = diffWaysToCompute4(s.substring(i + 1), cache);
-            for (Integer m : leftRes) {
-                for (Integer n : rightRes) {
+            for (int m : leftRes) {
+                for (int n : rightRes) {
                     if (c == '+') {
                         res.add(m + n);
                     } else if (c == '-') {
@@ -195,6 +200,45 @@ public class DiffWaysToCompute {
         return res;
     }
 
+    // Dynamic Programming(Bottom-Up)
+    // beats 50.71%(7 ms for 25 tests)
+    public List<Integer> diffWaysToCompute5(String input) {
+        List<String> tokens = new ArrayList<>();
+        for (int i = 0, j, len = input.length(); i < len; i = j + 1) {
+            for (j = i; j < len && Character.isDigit(input.charAt(j)); j++) {}
+            tokens.add(input.substring(i, j));
+            if (j < len) {
+                tokens.add(String.valueOf(input.charAt(j)));
+            }
+        }
+        int n = (tokens.size() + 1) / 2;
+        @SuppressWarnings("unchecked")
+        List<Integer>[][] dp = new List[n][n];
+        for (int i = 0; i < n; i++) {
+            dp[i][i] = Arrays.asList(Integer.valueOf(tokens.get(i * 2)));
+        }
+        for (int k = 1; k < n; k++) {
+            for (int i = 0; i < n - k; i++) {
+                dp[i][i + k] = new ArrayList<>();
+                for (int j = i; j < i + k; j++) {
+                    String operator = tokens.get(j * 2 + 1);
+                    for (int lOperand : dp[i][j]) {
+                        for (int rOperand : dp[j + 1][i + k]) {
+                            if (operator.equals("+")) {
+                                dp[i][i + k].add(lOperand + rOperand);
+                            } else if(operator.equals("-")) {
+                                dp[i][i + k].add(lOperand - rOperand);
+                            } else {
+                                dp[i][i + k].add(lOperand * rOperand);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return dp[0][n - 1];
+    }
+
     void test(Function<String, List<Integer> > compute,
               String s, int ... expected) {
         List<Integer> res = compute.apply(s);
@@ -208,6 +252,7 @@ public class DiffWaysToCompute {
         test(d::diffWaysToCompute2, s, expected);
         test(d::diffWaysToCompute3, s, expected);
         test(d::diffWaysToCompute4, s, expected);
+        test(d::diffWaysToCompute5, s, expected);
     }
 
     @Test

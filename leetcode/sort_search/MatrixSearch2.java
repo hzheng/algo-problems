@@ -41,6 +41,7 @@ public class MatrixSearch2 {
         }
     }
 
+    // Solution of Choice
     // Recursion + Divide & Conquer + Binary Search
     // Cracking the Coding Interview(5ed) Problem 11.6:
     // time complexity: O(N)  (T(n) = 2T(n/2) + c lg n)
