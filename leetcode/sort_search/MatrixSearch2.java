@@ -6,13 +6,14 @@ import java.util.Objects;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/search-a-2d-matrix-ii/
+// LC240: https://leetcode.com/problems/search-a-2d-matrix-ii/
 //
 // Write an efficient algorithm that searches for a value in an m x n matrix.
 // This matrix has the following properties:
 // Integers in each row are sorted in ascending from left to right.
 // Integers in each column are sorted in ascending from top to bottom.
 public class MatrixSearch2 {
+    // Recursion + Divide & Conquer
     // time complexity: O(N ^ 1.58) (T(n) = 3T(n/2) + c)
     // beats 4.19%(36 ms)
     public boolean searchMatrix(int[][] matrix, int target) {
@@ -25,8 +26,8 @@ public class MatrixSearch2 {
                                  int y1, int y2, int target) {
         if (x1 > x2 || y1 > y2) return false;
 
-        int midX = (x1 + x2) / 2;
-        int midY = (y1 + y2) / 2;
+        int midX = (x1 + x2) >>> 1;
+        int midY = (y1 + y2) >>> 1;
         if (target == matrix[midY][midX]) return true;
 
         if (target < matrix[midY][midX]) {
@@ -40,6 +41,7 @@ public class MatrixSearch2 {
         }
     }
 
+    // Recursion + Divide & Conquer + Binary Search
     // Cracking the Coding Interview(5ed) Problem 11.6:
     // time complexity: O(N)  (T(n) = 2T(n/2) + c lg n)
     // beats 8.52%(28 ms)
@@ -54,15 +56,13 @@ public class MatrixSearch2 {
         if (matrix[origin.row][origin.column] == x) return origin;
         if (!origin.isBefore(dest)) return null;
 
-        /* Set start to start of diagonal and end to the end of the diagonal. Since
-         * the grid may not be square, the end of the diagonal may not equal dest.
-         */
+        // Set start to start of diagonal and end to the end of the diagonal
+        // the grid may not be square, the end of the diagonal may not equal dest
         Coordinate start = (Coordinate)origin.clone();
         int diagDist = Math.min(dest.row - origin.row, dest.column - origin.column);
         Coordinate end = new Coordinate(start.row + diagDist, start.column + diagDist);
         Coordinate p = new Coordinate(0, 0);
-
-        /* binary search on the diagonal, looking for the first element greater than x */
+        // binary search on the diagonal, looking for the first greater element
         while (start.isBefore(end)) {
             p.setToAverage(start, end);
             if (x > matrix[p.row][p.column]) {
@@ -73,25 +73,21 @@ public class MatrixSearch2 {
                 end.column = p.column - 1;
             }
         }
-
-        /* Split the grid into quadrants. Search the bottom left and the top right. */
+        // Split the grid into quadrants. Search the bottom left and the top right
         return partitionAndSearch(matrix, origin, dest, start, x);
     }
 
     private Coordinate partitionAndSearch(int[][] matrix,
-                                          Coordinate origin,
-                                          Coordinate dest,
-                                          Coordinate pivot, int elem) {
+                                          Coordinate origin, Coordinate dest,
+                                          Coordinate pivot, int x) {
         Coordinate lowerLeftOrigin = new Coordinate(pivot.row, origin.column);
         Coordinate lowerLeftDest = new Coordinate(dest.row, pivot.column - 1);
+        Coordinate lowerLeft = findElement(matrix, lowerLeftOrigin, lowerLeftDest, x);
+        if (lowerLeft != null) return lowerLeft;
+
         Coordinate upperRightOrigin = new Coordinate(origin.row, pivot.column);
         Coordinate upperRightDest = new Coordinate(pivot.row - 1, dest.column);
-
-        Coordinate lowerLeft = findElement(matrix, lowerLeftOrigin, lowerLeftDest, elem);
-        if (lowerLeft == null) {
-            return findElement(matrix, upperRightOrigin, upperRightDest, elem);
-        }
-        return lowerLeft;
+        return findElement(matrix, upperRightOrigin, upperRightDest, x);
     }
 
     static class Coordinate implements Cloneable {
@@ -117,13 +113,13 @@ public class MatrixSearch2 {
         }
 
         public void setToAverage(Coordinate min, Coordinate max) {
-            row = (min.row + max.row) / 2;
-            column = (min.column + max.column) / 2;
+            row = (min.row + max.row) >>> 1;
+            column = (min.column + max.column) >>> 1;
         }
 
         public static Coordinate middle(Coordinate min, Coordinate max) {
-            return new Coordinate((min.row + max.row) / 2,
-                                  (min.column + max.column) / 2);
+            return new Coordinate((min.row + max.row) >>> 1,
+                                  (min.column + max.column) >>> 1);
         }
 
         @Override
@@ -161,6 +157,8 @@ public class MatrixSearch2 {
         return false;
     }
 
+    // Recursion + Divide & Conquer + Binary Search
+    // beats 4.07%(39 ms for 127 tests)
     public boolean searchMatrix4(int[][] matrix, int target) {
         return search(matrix, target, new Coordinate(0, 0),
                       new Coordinate(matrix.length - 1, matrix[0].length - 1)) != null;
@@ -169,17 +167,12 @@ public class MatrixSearch2 {
     private Coordinate search(int[][] matrix, int x,
                               Coordinate start, Coordinate end) {
         if (!start.inbounds(matrix) || !end.inbounds(matrix)) return null;
-        int startVal = matrix[start.row][start.column];
-        if (startVal == x) return start;
-
-        int endVal = matrix[end.row][end.column];
-        if (endVal == x) return end;
-
-        if ((startVal > x) || (endVal < x) || !start.isBefore(end)) return null;
+        if (matrix[start.row][start.column] == x) return start;
+        if (matrix[end.row][end.column] == x) return end;
+        if (!start.isBefore(end)) return null;
 
         Coordinate minCorner = start;
         Coordinate maxCorner = end;
-        // while (minCorner.isBefore(maxCorner)) {
         while ((maxCorner.row - minCorner.row > 1)
                || (maxCorner.column - minCorner.column > 1)) {
             Coordinate mid = Coordinate.middle(minCorner, maxCorner);
@@ -191,7 +184,6 @@ public class MatrixSearch2 {
                 minCorner = mid;
             }
         }
-
         Coordinate lowerLeftStart = new Coordinate(maxCorner.row, start.column);
         Coordinate lowerLeftEnd = new Coordinate(end.row, maxCorner.column - 1);
         Coordinate pos = search(matrix, x, lowerLeftStart, lowerLeftEnd);
@@ -230,6 +222,7 @@ public class MatrixSearch2 {
     @Test
     public void test1() {
         test(new int[][] {{1}}, new int[] {0}, new int[] {0});
+        test(new int[][] {{5}, {6}}, new int[] {6}, new int[] {1});
         test(new int[][] {{1,   2,  3},
                           {4,   8,  9},
                           {7,  10, 12}},
