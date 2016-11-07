@@ -6,10 +6,11 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
-// https://leetcode.com/problems/binary-tree-paths/
+// LC257: https://leetcode.com/problems/binary-tree-paths/
 //
 // Given a binary tree, return all root-to-leaf paths.
 public class TreePath {
+    // Recursion + DFS + Backtracking
     // beats 6.28%(5 ms)
     public List<String> binaryTreePaths(TreeNode root) {
         List<String> res = new ArrayList<>();
@@ -36,6 +37,7 @@ public class TreePath {
         }
     }
 
+    // Recursion + DFS
     // beats 6.28%(5 ms)
     public List<String> binaryTreePaths2(TreeNode root) {
         List<String> res = new ArrayList<>();
@@ -70,6 +72,7 @@ public class TreePath {
         return sb.toString();
     }
 
+    // Recursion + DFS
     // beats 28.45%(3 ms)
     public List<String> binaryTreePaths3(TreeNode root) {
         List<String> res = new ArrayList<>();
@@ -80,13 +83,10 @@ public class TreePath {
     }
 
     private void binaryTreePaths3(TreeNode root, String path, List<String> res) {
-        if (root == null) return;
-
         if (root.left == null && root.right == null) {
             res.add(path);
             return;
         }
-
         if (root.left != null) {
             binaryTreePaths3(root.left, path + "->" + root.left.val, res);
         }
@@ -95,7 +95,9 @@ public class TreePath {
         }
     }
 
-    // beats 75.42%(2 ms)
+    // Solution of Choice
+    // Recursion + DFS + Backtracking
+    // beats 63.57%%(2 ms for 209 tests)
     public List<String> binaryTreePaths4(TreeNode root) {
         List<String> res = new ArrayList<>();
         binaryTreePaths4(root, new StringBuilder(), res);
@@ -117,13 +119,63 @@ public class TreePath {
         sb.setLength(len); // backtracking
     }
 
-    // TODO: non-recursion solution by stack(DFS)
+    // Recursion
+    // beats 12.11%%(4 ms for 209 tests)
+    public List<String> binaryTreePaths5(TreeNode root) {
+        List<String> res = new LinkedList<>();
+        if (root == null) return res;
+
+        if (root.left == null && root.right == null) {
+            res.add(String.valueOf(root.val));
+            return res;
+        }
+        for (String path : binaryTreePaths5(root.left)) {
+            res.add(root.val + "->" + path);
+        }
+        for (String path : binaryTreePaths5(root.right)) {
+            res.add(root.val + "->" + path);
+        }
+        return res;
+    }
+
+    // Stack
+    // beats 5.77%%(5 ms for 209 tests)
+    public List<String> binaryTreePaths6(TreeNode root) {
+        List<String> res = new LinkedList<>();
+        if (root == null) return res;
+
+        Stack<NodeWithPath> stack = new Stack<>();
+        stack.push(new NodeWithPath(root, String.valueOf(root.val)));
+        while (!stack.isEmpty()) {
+            NodeWithPath cur = stack.pop();
+            if (cur.node.left == null && cur.node.right == null) {
+                res.add(cur.path);
+            }
+            int i = 0;
+            for (TreeNode child = cur.node.left; i < 2; i++, child = cur.node.right) {
+                if (child != null) {
+                    stack.add(new NodeWithPath(child, cur.path + "->" + child.val));
+                }
+            }
+        }
+        return res;
+    }
+
+    private static class NodeWithPath {
+		TreeNode node;
+		String path;
+		NodeWithPath(TreeNode node, String path) {
+			this.node = node;
+			this.path = path;
+		}
+	}
 
     void test(Function<TreeNode, List<String> > paths,
               String s, String ... expected) {
-        TreeNode root = TreeNode.of(s);
-        assertArrayEquals(expected,
-                          paths.apply(root).toArray(new String[0]));
+        String[] res = paths.apply(TreeNode.of(s)).toArray(new String[0]);
+        Arrays.sort(expected);
+        Arrays.sort(res);
+        assertArrayEquals(expected, res);
     }
 
     void test(String s, String ... expected) {
@@ -132,6 +184,8 @@ public class TreePath {
         test(t::binaryTreePaths2, s, expected);
         test(t::binaryTreePaths3, s, expected);
         test(t::binaryTreePaths4, s, expected);
+        test(t::binaryTreePaths5, s, expected);
+        test(t::binaryTreePaths6, s, expected);
     }
 
     @Test
