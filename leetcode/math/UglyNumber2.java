@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/ugly-number-ii/
+// LC264: https://leetcode.com/problems/ugly-number-ii/
 //
 // Ugly numbers are positive numbers whose prime factors only include 2, 3, 5.
 // Note that 1 is typically treated as an ugly number.
@@ -61,26 +61,24 @@ public class UglyNumber2 {
         return lastUgly;
     }
 
+    // Queue
     // time complexity: O(N), space complexity: O(N)
-    // beats 25.23%(46 ms)
+    // beats 32.87%(48 ms for 596 tests)
     public int nthUglyNumber2(int n) {
         if (n <= 0) return 0;
 
         Queue<Integer> ugly2 = new LinkedList<>();
         Queue<Integer> ugly3 = new LinkedList<>();
         Queue<Integer> ugly5 = new LinkedList<>();
-
         int res = 1;
         for (int i = n - 1; i > 0; i--) {
             ugly2.offer(res * 2);
             ugly3.offer(res * 3);
             ugly5.offer(res * 5);
-
             int cand2 = ugly2.peek();
             int cand3 = ugly3.peek();
             int cand5 = ugly5.peek();
             res = Math.min(cand2, Math.min(cand3, cand5));
-
             if (cand2 == res) {
                 ugly2.poll();
             }
@@ -94,7 +92,7 @@ public class UglyNumber2 {
         return res;
     }
 
-    //  Time Limit Exceeded
+    // Time Limit Exceeded
     public int nthUglyNumber3(int n) {
         if (n <= 0) return 0;
 
@@ -123,9 +121,9 @@ public class UglyNumber2 {
         return x;
     }
 
-    // DP
+    // Dynamic Programming
     // time complexity: O(N), space complexity: O(N)
-    // beats 63.20%(10 ms)
+    // beats 60.49%(12 ms for 596 tests)
     public int nthUglyNumber4(int n) {
         if (n <= 0) return 0;
 
@@ -154,8 +152,33 @@ public class UglyNumber2 {
         return res;
     }
 
+    // Solution of Choice
+    // Dynamic Programming
+    // time complexity: O(N), space complexity: O(N)
+    // beats 73.33%(10 ms for 596 tests)
+    public int nthUglyNumber4_2(int n) {
+        if (n <= 0) return 0;
+
+        int[] dp = new int[n];
+        dp[0] = 1;
+        for (int i = 1, i2 = 0, i3 = 0, i5 = 0; i < n; i++) {
+            dp[i] = Math.min(dp[i2] * 2, Math.min(dp[i3] * 3, dp[i5] * 5));
+            if (dp[i] == dp[i2] * 2) {
+                i2++;
+            }
+            if (dp[i] == dp[i3] * 3) {
+                i3++;
+            }
+            if (dp[i] == dp[i5] * 5) {
+                i5++;
+            }
+        }
+        return dp[n - 1];
+    }
+
+    // SortedSet
     // https://stackoverflow.com/questions/4600048/nth-ugly-number
-    // beats 9.67%(94 ms)
+    // beats 7.86%(127 ms)
     public int nthUglyNumber5(int n) {
         SortedSet<Long> next = new TreeSet<>();  // may overflow if not use long
         next.add(1L);
@@ -170,25 +193,39 @@ public class UglyNumber2 {
         }
     }
 
-    // beats 30.11%(37 ms)
+    // Solution of Choice
+    // Heap
+    // beats 39.24%(36 ms for 596 tests)
     public int nthUglyNumber6(int n) {
-        if (n == 1) return 1;
-
         Queue<Long> pq = new PriorityQueue<>();
-        pq.offer(2L);
-        pq.offer(3L);
-        pq.offer(5L);
-        for (int i = 2; ; i++) {
-            long res = pq.poll();
-            if (i >= n) return (int)res;
-
-            pq.offer(res * 2);
-            if (res % 2 > 0) {
-                pq.offer(res * 3);
-                if (res % 3 > 0 && res % 5 == 0) {
-                    pq.offer(res * 5);
+        pq.offer(1L);
+        for (int i = 1; i < n; i++) {
+            long cur = pq.poll();
+            pq.offer(cur * 2);
+            if (cur % 2 > 0) {
+                pq.offer(cur * 3);
+                if (cur % 3 > 0) {
+                    pq.offer(cur * 5);
                 }
             }
+        }
+        return pq.peek().intValue();
+    }
+
+    // Heap
+    // beats 24.57%(84 ms for 596 tests)
+    public int nthUglyNumber6_2(int n) {
+        Queue<Long> pq = new PriorityQueue<>();
+        pq.offer(1L);
+        int i = 0;
+        for (long last = 0, cur = 0; ; last = cur) {
+            cur = pq.poll();
+            if (cur == last) continue;
+            if (++i >= n) return (int)cur;
+
+            pq.offer(cur * 2);
+            pq.offer(cur * 3);
+            pq.offer(cur * 5);
         }
     }
 
@@ -201,8 +238,10 @@ public class UglyNumber2 {
             assertEquals(expected[i], nthUglyNumber2(i + 1));
             assertEquals(expected[i], nthUglyNumber3(i + 1));
             assertEquals(expected[i], nthUglyNumber4(i + 1));
+            assertEquals(expected[i], nthUglyNumber4_2(i + 1));
             assertEquals(expected[i], nthUglyNumber5(i + 1));
             assertEquals(expected[i], nthUglyNumber6(i + 1));
+            assertEquals(expected[i], nthUglyNumber6_2(i + 1));
         }
     }
 
