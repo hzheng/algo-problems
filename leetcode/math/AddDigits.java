@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/add-digits/
+// LC258: https://leetcode.com/problems/add-digits/
 //
 // Given a non-negative integer num, repeatedly add all its digits until the
 // result has only one digit.
@@ -41,6 +41,7 @@ public class AddDigits {
         return num - (num - 1) / 9 * 9;
     }
 
+    // Solution of Choice
     // beats 10.69%(3 ms)
     public int addDigits4(int num) {
         return (num - 1) % 9 + 1;

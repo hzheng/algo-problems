@@ -4,7 +4,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import java.util.function.Function;
 
-// https://leetcode.com/problems/single-number-iii/
+// LC260: https://leetcode.com/problems/single-number-iii/
 //
 // Given an array of numbers nums, in which exactly two elements appear only
 // once and all the other elements appear exactly twice. Find the two elements
@@ -16,8 +16,7 @@ public class SingleNumber3 {
         for (int num : nums) {
             xor ^= num;
         }
-        // int diffMask = xor - (xor & (xor - 1));
-        int diffMask = xor & -xor;
+        int diffMask = xor & -xor; // or:  xor - (xor & (xor - 1));
         int a = 0;
         int b = 0;
         for (int num : nums) {
@@ -30,6 +29,20 @@ public class SingleNumber3 {
         return new int[] {a, b};
     }
 
+    // Solution of Choice
+    public int[] singleNumber2(int[] nums) {
+        int xor = 0;
+        for (int num : nums) {
+            xor ^= num;
+        }
+        xor &= -xor;
+        int[] res = new int[2];
+        for (int num : nums) {
+            res[(num & xor) == 0 ? 0 : 1] ^= num;
+        }
+        return res;
+    }
+
     void test(Function<int[], int[]> single, int[] expected, int ... nums) {
         int[] res = single.apply(nums);
         Arrays.sort(res);
@@ -39,6 +52,7 @@ public class SingleNumber3 {
     void test(int[] expected, int ... nums) {
         SingleNumber3 s = new SingleNumber3();
         test(s::singleNumber, expected, nums);
+        test(s::singleNumber2, expected, nums);
     }
 
     @Test
