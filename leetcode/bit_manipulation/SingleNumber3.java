@@ -10,7 +10,7 @@ import java.util.function.Function;
 // once and all the other elements appear exactly twice. Find the two elements
 // that appear only once.
 public class SingleNumber3 {
-    // beats 34.82%
+    // beats 78.41%(1 ms for 30 tests)
     public int[] singleNumber(int[] nums) {
         int xor = 0;
         for (int num : nums) {
@@ -30,6 +30,7 @@ public class SingleNumber3 {
     }
 
     // Solution of Choice
+    // beats 35.45%(2 ms for 30 tests)
     public int[] singleNumber2(int[] nums) {
         int xor = 0;
         for (int num : nums) {

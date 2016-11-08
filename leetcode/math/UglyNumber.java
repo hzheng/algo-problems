@@ -3,12 +3,12 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/ugly-number/
+// LC263: https://leetcode.com/problems/ugly-number/
 //
 // Ugly numbers are positive numbers whose prime factors only include 2, 3, 5.
 // Note that 1 is typically treated as an ugly number.
 public class UglyNumber {
-    // beats 21.55%(2 ms)
+    // beats 19.59%(2 ms for 1012 tests)
     public boolean isUgly(int num) {
         if (num <= 0) return false;
 
@@ -25,7 +25,7 @@ public class UglyNumber {
         return x;
     }
 
-    // beats 21.55%(2 ms)
+    // beats 19.59%(2 ms for 1012 tests)
     public boolean isUgly2(int num) {
         if (num <= 0) return false;
 
@@ -34,9 +34,33 @@ public class UglyNumber {
         return divideRepeately(x, 5) == 1;
     }
 
+    // beats 19.59%(2 ms for 1012 tests)
+    public boolean isUgly3(int num) {
+        if (num <= 0) return false;
+
+        for (int factor : new int[] {2, 3, 5}) {
+            for (; num % factor == 0; num /= factor) {}
+        }
+        return num == 1;
+    }
+
+    // Recursion
+    // beats 5.19%(3 ms for 1012 tests)
+    public boolean isUgly4(int num) {
+        if (num <= 0) return false;
+        if (num == 1) return true;
+
+        if (num % 2 == 0) return isUgly4(num / 2);
+        if (num % 3 == 0) return isUgly4(num / 3);
+        if (num % 5 == 0) return isUgly4(num / 5);
+        return false;
+    }
+
     void test(int x, boolean expected) {
         assertEquals(expected, isUgly(x));
         assertEquals(expected, isUgly2(x));
+        assertEquals(expected, isUgly3(x));
+        assertEquals(expected, isUgly4(x));
     }
 
     @Test
