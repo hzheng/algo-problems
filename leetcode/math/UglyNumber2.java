@@ -123,10 +123,8 @@ public class UglyNumber2 {
 
     // Dynamic Programming
     // time complexity: O(N), space complexity: O(N)
-    // beats 60.49%(12 ms for 596 tests)
+    // beats 82.68%(9 ms for 596 tests)
     public int nthUglyNumber4(int n) {
-        if (n <= 0) return 0;
-
         int[] ugly = new int[n];
         ugly[0] = 1;
         int i2 = 0;
@@ -157,8 +155,6 @@ public class UglyNumber2 {
     // time complexity: O(N), space complexity: O(N)
     // beats 73.33%(10 ms for 596 tests)
     public int nthUglyNumber4_2(int n) {
-        if (n <= 0) return 0;
-
         int[] dp = new int[n];
         dp[0] = 1;
         for (int i = 1, i2 = 0, i3 = 0, i5 = 0; i < n; i++) {

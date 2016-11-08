@@ -3,21 +3,22 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/integer-to-english-words/
+// LC273: https://leetcode.com/problems/integer-to-english-words/
 //
 // Convert a non-negative integer to its english words representation.
 public class NumberToWords {
-    // beats 26.07%(2 ms)
-    String[] digits = {"Zero", "One", "Two", "Three", "Four",
-                       "Five", "Six", "Seven", "Eight", "Nine"};
-    String[] teens = {"Ten", "Eleven", "Twelve", "Thirteen", "Fourteen",
-                      "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
-    String[] tens = {"Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy",
-                     "Eighty", "Ninety"};
-    String[] power10s = {"Hundred", "Thousand", "Million", "Billion"};
+    static final String[] DIGITS = {"Zero", "One", "Two", "Three", "Four",
+                                    "Five", "Six", "Seven", "Eight", "Nine"};
+    static final String[] TEENS = {"Ten", "Eleven", "Twelve", "Thirteen",
+                                   "Fourteen", "Fifteen", "Sixteen",
+                                   "Seventeen", "Eighteen", "Nineteen"};
+    static final String[] TENS = {"Twenty", "Thirty", "Forty", "Fifty",
+                                  "Sixty", "Seventy", "Eighty", "Ninety"};
+    static final String[] POWER10S = {"Hundred", "Thousand", "Million", "Billion"};
 
+    // beats 34.81%(5 ms for 601 tests)
     public String numberToWords(int num) {
-        if (num == 0) return digits[0];
+        if (num == 0) return DIGITS[0];
 
         StringBuilder sb = new StringBuilder();
         for (int i = num, thousandth = 0; i > 0; i /= 1000, thousandth++) {
@@ -26,7 +27,7 @@ public class NumberToWords {
 
             String word = lessThanThousand(remainder);
             if (thousandth > 0) {
-                word += " " + power10s[thousandth];
+                word += " " + POWER10S[thousandth];
                 if (sb.length() > 0) {
                     word += " ";
                 }
@@ -37,24 +38,57 @@ public class NumberToWords {
     }
 
     private String lessThanThousand(int n) {
-        if (n < 10) return digits[n];
+        if (n < 10) return DIGITS[n];
 
-        if (n < 20) return teens[n - 10];
+        if (n < 20) return TEENS[n - 10];
 
         String res;
         int remainder;
         if (n < 100) {
-            res = tens[n / 10 - 2];
+            res = TENS[n / 10 - 2];
             remainder = n % 10;
         } else {
-            res = digits[n / 100] + " " + power10s[0];
+            res = DIGITS[n / 100] + " " + POWER10S[0];
             remainder = n % 100;
         }
         return (remainder == 0) ? res : res + " " + lessThanThousand(remainder);
     }
 
+    private final String[] LESS_THAN_20
+        = {"", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight",
+           "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen",
+           "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
+    private final String[] TYS = {"", "Ten", "Twenty", "Thirty", "Forty",
+                                  "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
+    private final String[] THOUSANDS = {"", "Thousand", "Million", "Billion"};
+
+    // Solution of Choice
+    // beats 34.81%(5 ms for 601 tests)
+    public String numberToWords2(int num) {
+        if (num == 0) return "Zero";
+
+        String words = "";
+        for (int i = 0; num > 0; num /= 1000, i++) {
+            if (num % 1000 != 0) {
+                words = smallNum(num % 1000) + THOUSANDS[i] + " " + words;
+            }
+        }
+        return words.trim();
+    }
+
+    private String smallNum(int n) {
+        if (n == 0) return "";
+
+        if (n < 20) return LESS_THAN_20[n] + " ";
+
+        if (n < 100) return TYS[n / 10] + " " + smallNum(n % 10);
+
+        return LESS_THAN_20[n / 100] + " Hundred " + smallNum(n % 100);
+    }
+
     void test(int num, String expected) {
         assertEquals(expected, numberToWords(num));
+        assertEquals(expected, numberToWords2(num));
     }
 
     @Test
