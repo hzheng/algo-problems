@@ -3,13 +3,13 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/h-index-ii/
+// LC275: https://leetcode.com/problems/h-index-ii/
 //
 // Follow up for H-Index: What if the citations array is sorted in ascending
 // order? Could you optimize your algorithm?
 public class HIndex2 {
     // time complexity: O(N), space complexity: O(1)
-    // beats 22.03%(16 ms)
+    // beats 35.54%(14 ms for 82 tests)
     public int hIndex(int[] citations) {
         int n = citations.length;
         for (int i = n - 1; i >= 0; i--) {
@@ -19,16 +19,16 @@ public class HIndex2 {
         return n;
     }
 
+    // Solution of Choice
+    // Binary Search
     // time complexity: O(log(N)), space complexity: O(1)
-    // beats 48.27%(12 ms)
+    // beats 93.91%(10 ms for 82 tests)
     public int hIndex2(int[] citations) {
         int n = citations.length;
         int low = 0;
-        int high = n - 1;
-        while (low <= high) {
-            int mid = low + (high - low) / 2;
-            int citation = citations[mid];
-            if (citation < (n - mid)) {
+        for (int high = n - 1; low <= high; ) {
+            int mid = (low + high) >>> 1;
+            if (citations[mid] < (n - mid)) {
                 low = mid + 1;
             } else {
                 high = mid - 1;

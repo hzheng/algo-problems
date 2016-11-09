@@ -16,6 +16,7 @@ public class NumberToWords {
                                   "Sixty", "Seventy", "Eighty", "Ninety"};
     static final String[] POWER10S = {"Hundred", "Thousand", "Million", "Billion"};
 
+    // Recursion
     // beats 34.81%(5 ms for 601 tests)
     public String numberToWords(int num) {
         if (num == 0) return DIGITS[0];
@@ -63,6 +64,7 @@ public class NumberToWords {
     private final String[] THOUSANDS = {"", "Thousand", "Million", "Billion"};
 
     // Solution of Choice
+    // Recursion
     // beats 34.81%(5 ms for 601 tests)
     public String numberToWords2(int num) {
         if (num == 0) return "Zero";
