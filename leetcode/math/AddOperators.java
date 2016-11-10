@@ -3,12 +3,13 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/expression-add-operators/
+// LC282: https://leetcode.com/problems/expression-add-operators/
 //
 // Given a string that contains only digits 0-9 and a target value, return all
 // possibilities to add binary operators (not unary) +, -, or * between the
 // digits so they evaluate to the target value.
 public class AddOperators {
+    // Bit Manipulation
     // beats 3.49%(476 ms)
     public List<String> addOperators(String num, int target) {
         int len = num.length();
@@ -16,7 +17,7 @@ public class AddOperators {
 
         List<String> res = new ArrayList<>();
         for (int addCode = (1 << (len * 2 - 2)) - 1; addCode >= 0; addCode--) {
-            String expression = codeToStr(num, addCode, 2);
+            String expression = codeToStr(num, addCode);
             if (expression != null && evaluate(expression) == target) {
                 res.add(expression);
             }
@@ -24,13 +25,12 @@ public class AddOperators {
         return res;
     }
 
-    private String codeToStr(String num, int code, int bits) {
+    private String codeToStr(String num, int code) {
         StringBuilder sb = new StringBuilder();
         sb.append(num.charAt(0));
         int len = num.length();
-        int mask = (1 << bits) - 1;
-        for (int i = 1; i < len; i++) {
-            switch (code & mask) {
+        for (int i = 1; i < len; i++, code >>= 2) {
+            switch (code & 3) {
             case 0:
                 if (num.charAt(i - 1) == '0') {
                     if (i == 1 || !Character.isDigit(sb.charAt(sb.length() - 2))) {
@@ -49,7 +49,6 @@ public class AddOperators {
                 break;
             }
             sb.append(num.charAt(i));
-            code >>= bits;
         }
         return sb.toString();
     }
@@ -88,6 +87,7 @@ public class AddOperators {
         return res + sign * lastOperand;
     }
 
+    // Recursion + Divide & Conquer
     // beats 7.80%(319 ms)
     public List<String> addOperators2(String num, int target) {
         int len = num.length();
@@ -137,16 +137,14 @@ public class AddOperators {
                 sb.append("*");
                 longProduct *= n;
                 n = 0;
-            } else {
-                if (num.charAt(i - 1) == '0') {
-                    for (int j = sb.length() - 2;; j--) {
-                        if (j < 0) return null;
+            } else if (num.charAt(i - 1) == '0') {
+                for (int j = sb.length() - 2;; j--) {
+                    if (j < 0) return null;
 
-                        char c = sb.charAt(j);
-                        if (c < '0' || c > '9') return null;
+                    char c = sb.charAt(j);
+                    if (c < '0' || c > '9') return null;
 
-                        if (c != '0') break;
-                    }
+                    if (c != '0') break;
                 }
             }
             char c = num.charAt(i);
@@ -161,33 +159,33 @@ public class AddOperators {
         return sb.toString();
     }
 
-    // backtracking
-    // https://discuss.leetcode.com/topic/24523/java-standard-backtrace-ac-solutoin-short-and-clear/2
-    // beats 81.59%(186 ms)
+    // Solution of Choice
+    // Recursion + Backtracking
+    // https://discuss.leetcode.com/topic/24523/java-standard-backtrace-ac-solutoin-short-and-clear/
+    // beats 92.66%(100 ms for 20 tests)
     public List<String> addOperators3(String num, int target) {
         List<String> res = new ArrayList<>();
-        addOperators3(res, new StringBuilder(), num, 0, target, 0, 0);
+        addOperators3(res, new StringBuilder(), num.toCharArray(), 0, target, 0, 0);
         return res;
     }
 
-    private void addOperators3(List<String> res, StringBuilder path, String num,
+    private void addOperators3(List<String> res, StringBuilder path, char[] num,
                                int pos, int target, long prevVal, long multed) {
-        if (pos == num.length()) {
+        if (pos == num.length) {
             if (target == prevVal) {
                 res.add(path.toString());
             }
             return;
         }
-        for (int i = pos; i < num.length(); i++) {
-            if (i != pos && num.charAt(pos) == '0') break;
+        long cur = 0;
+        for (int i = pos; i < num.length; i++) {
+            if (i != pos && num[pos] == '0') break;
 
-            long cur = Long.parseLong(num.substring(pos, i + 1));
+            cur = cur * 10 + num[i] - '0';
             int len = path.length();
             if (pos == 0) {
                 addOperators3(res, path.append(cur), num, i + 1, target, cur, cur);
-                path.setLength(len);
-            }
-            else {
+            } else {
                 addOperators3(res, path.append("+").append(cur), num, i + 1,
                               target, prevVal + cur, cur);
                 path.setLength(len);
@@ -196,8 +194,8 @@ public class AddOperators {
                 path.setLength(len);
                 addOperators3(res, path.append("*").append(cur), num, i + 1,
                               target, prevVal - multed + multed * cur, multed * cur);
-                path.setLength(len);
             }
+            path.setLength(len);
         }
     }
 
