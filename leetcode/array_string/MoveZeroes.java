@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/move-zeroes/
+// LC283: https://leetcode.com/problems/move-zeroes/
 //
 // Given an array nums, write a function to move all 0's to the end of it
 // while maintaining the relative order of the non-zero elements.
@@ -25,6 +25,7 @@ public class MoveZeroes {
         }
     }
 
+    // Solution of Choice
     // beats 23.31%(1 ms)
     public void moveZeroes2(int[] nums) {
         int nonzeroPos = 0;
@@ -40,9 +41,9 @@ public class MoveZeroes {
 
     // beats 23.31%(1 ms)
     public void moveZeroes3(int[] nums) {
-        for (int i = -1, j = 0; j < nums.length; j++) {
+        for (int i = 0, j = 0; j < nums.length; j++) {
             if (nums[j] != 0) {
-                swap(++i, j, nums);
+                swap(i++, j, nums);
             }
         }
     }

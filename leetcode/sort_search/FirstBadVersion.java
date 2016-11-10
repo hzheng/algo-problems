@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/first-bad-version/
+// LC278: https://leetcode.com/problems/first-bad-version/
 //
 // You are a product manager and currently leading a team to develop a new
 // product. Unfortunately, the latest version of your product fails the quality
@@ -23,13 +23,12 @@ class VersionControl {
 }
 
 public class FirstBadVersion extends VersionControl {
-
-    // beats 23.96(19 ms)
+    // beats 67.38%(17 ms for 21 tests)
     public int firstBadVersion(int n) {
         int low = 1;
         int high = n;
         while (low <= high) {
-            int mid = low + (high - low) / 2;
+            int mid = (low + high) >>> 1;
             if (isBadVersion(mid)) {
                 high = mid - 1;
             } else {
