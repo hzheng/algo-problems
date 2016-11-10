@@ -4,7 +4,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import java.util.function.Function;
 
-// https://leetcode.com/problems/find-the-duplicate-number/
+// LC287: https://leetcode.com/problems/find-the-duplicate-number/
 //
 // Given an array nums containing n + 1 integers where each integer is between 1
 // and n(inclusive), at least one duplicate number must exist. Assume that there
@@ -26,20 +26,21 @@ public class FindDuplicate {
         return -1;
     }
 
+    // Bit Manipulation
     // time complexity: O(N)
     // beats 8.09% (19 ms)
     public int findDuplicate2(int[] nums) {
         int[] bitCounts = new int[32];
         for (int n = 1; n < nums.length; n++) {
             for (int i = 0; i < 32; i++) {
-                if ((n & (1 << i)) != 0) {
+                if (((n >> i) & 1) != 0) { // or: if ((n & (1 << i)) != 0) {
                     bitCounts[i]++;
                 }
             }
         }
         for (int num : nums) {
             for (int i = 0; i < 32; i++) {
-                if ((num & (1 << i)) != 0) {
+                if (((num >> i) & 1) != 0) {
                     bitCounts[i]--;
                 }
             }
@@ -53,6 +54,7 @@ public class FindDuplicate {
         return duplicate;
     }
 
+    // Bit Manipulation
     // time complexity: O(N)
     // beats 8.75%(14 ms)
     public int findDuplicate3(int[] nums) {
@@ -75,6 +77,30 @@ public class FindDuplicate {
         return duplicate;
     }
 
+    // Bit Manipulation
+    // time complexity: O(N)
+    // beats 8.22%(12 ms for 53 tests)
+    public int findDuplicate3_2(int[] nums) {
+        int duplicate = 0;
+        for (int bitPos = 0, n = nums.length; bitPos < 32; bitPos++) {
+            int mask = (1 << bitPos);
+            int count = 0;
+            for (int i = 0; i < n; i++) {
+                if ((i & mask) > 0) {
+                    count++;
+                }
+                if ((nums[i] & mask) > 0) {
+                    count--;
+                }
+            }
+            if (count < 0) {
+                duplicate |= mask;
+            }
+        }
+        return duplicate;
+    }
+
+    // Binary Search
     // time complexity: O(N * Log(N))
     // Since N < 2 ^ 32, hence Log(N) < 32, it's actually faster than the above
     // beats 46.53%(5 ms)
@@ -82,7 +108,7 @@ public class FindDuplicate {
         int low = 1;
         int high = nums.length - 1;
         while (low <= high) {
-            int mid = low + (high - low) / 2;
+            int mid = (low + high) >>> 1;
             int count = 0;
             for (int n : nums) {
                 if (n <= mid) {
@@ -98,9 +124,10 @@ public class FindDuplicate {
         return low;
     }
 
+    // Solution of Choice
     // Floyd's Algorithm
     // time complexity: O(N))
-    // beats 67.66%(1 ms)
+    // beats 64.42%(1 ms for 53 tests)
     public int findDuplicate5(int[] nums) {
         int slow = 0;
         int fast = 0;
@@ -108,12 +135,7 @@ public class FindDuplicate {
             slow = nums[slow];
             fast = nums[nums[fast]];
         } while (slow != fast);
-
-        slow = 0;
-        while (slow != fast) {
-            slow = nums[slow];
-            fast = nums[fast];
-        }
+        for (slow = 0; slow != fast; slow = nums[slow], fast = nums[fast]) {}
         return slow;
     }
 
@@ -126,6 +148,7 @@ public class FindDuplicate {
         test(f::findDuplicate, expected, nums);
         test(f::findDuplicate2, expected, nums);
         test(f::findDuplicate3, expected, nums);
+        test(f::findDuplicate3_2, expected, nums);
         test(f::findDuplicate4, expected, nums);
         test(f::findDuplicate5, expected, nums);
     }

@@ -3,9 +3,10 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/implement-queue-using-stacks/
+// LC284: https://leetcode.com/problems/implement-queue-using-stacks/
 //
-// Implement the following operations of a queue using stacks.
+// Given an Iterator class interface with methods: next() and hasNext(), design
+// and implement a PeekingIterator that support the peek() operation
 public class PeekingIterator {
     static interface IPeekingIterator extends Iterator<Integer> {
         // Returns the next element in the iteration without advancing the iterator.
@@ -42,6 +43,7 @@ public class PeekingIterator {
         }
     }
 
+    // Solution of Choice
     // beats 35.46%(116 ms)
     static class MyIterator2 implements IPeekingIterator {
         private Iterator<Integer> itr;
