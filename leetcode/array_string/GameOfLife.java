@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/game-of-life/
+// LC289: https://leetcode.com/problems/game-of-life/
 //
 // Given a board with m by n cells, each cell has an initial state live (1) or
 // dead (0). Each cell interacts with its eight neighbors (horizontal, vertical,
@@ -84,8 +84,7 @@ public class GameOfLife {
         return count;
     }
 
-    // https://discuss.leetcode.com/topic/29054/easiest-java-solution-with-explanation/2
-    // beats 12.39%(1 ms)
+    // beats 11.82%(1 ms for 22 tests)
     public void gameOfLife2(int[][] board) {
         int m = board.length;
         if (m == 0) return;
@@ -94,14 +93,11 @@ public class GameOfLife {
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 int lives = liveNeighbors2(board, m, n, i, j);
-                if (board[i][j] == 1 && lives >= 2 && lives <= 3) {
-                    board[i][j] = 3;
-                } else if (board[i][j] == 0 && lives == 3) {
-                    board[i][j] = 2;
+                if (board[i][j] == 1 && lives == 2 || lives == 3) {
+                    board[i][j] |= 2;
                 }
             }
         }
-
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 board[i][j] >>= 1;
@@ -116,11 +112,9 @@ public class GameOfLife {
                 lives += board[x][y] & 1;
             }
         }
-        lives -= board[i][j] & 1;
-        return lives;
+        return lives -= board[i][j] & 1;
     }
 
-    // https://discuss.leetcode.com/topic/26112/c-o-1-space-o-mn-time/2
     // beats 12.39%(1 ms)
     public void gameOfLife3(int[][] board) {
         int m = board.length;
@@ -147,30 +141,29 @@ public class GameOfLife {
         }
     }
 
-    // beats 12.39%(1 ms)
+    // Solution of Choice
+    // beats 11.82%(1 ms for 22 tests)
     public void gameOfLife4(int[][] board) {
         int m = board.length;
         if (m == 0) return;
 
         int n = board[0].length;
-        int[] dx = {-1, -1, 0, 1, 1, 1, 0, -1};
-        int[] dy = {0, 1, 1, 1, 0, -1, -1, -1};
+        int[][] d = {{-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}};
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 int count = 0;
-                for (int k = 0; k < 8; k++) {
-                    int x = i + dx[k];
-                    int y = j + dy[k];
+                for (int[] diff : d) {
+                    int x = i + diff[0];
+                    int y = j + diff[1];
                     if (x >= 0 && x < m && y >= 0 && y < n) {
                         count += (board[x][y] & 1);
                     }
                 }
-                if (count == 3 || count == 2 && (board[i][j] & 1) == 1) {
+                if (count == 3 || count == 2 && board[i][j] == 1) {
                     board[i][j] |= 2;
                 }
             }
         }
-
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 board[i][j] >>= 1;
