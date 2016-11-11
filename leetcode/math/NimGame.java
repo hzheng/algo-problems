@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/nim-game/
+// LC292: https://leetcode.com/problems/nim-game/
 //
 // You are playing the following Nim Game with your friend: There is a heap of
 // stones on the table, each time one of you take turns to remove 1 to 3 stones.

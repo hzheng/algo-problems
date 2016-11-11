@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/find-median-from-data-stream/
+// LC295: https://leetcode.com/problems/find-median-from-data-stream/
 //
 // Design a data structure that supports the following two operations:
 // Add a integer number from the data stream to the data structure.
@@ -17,6 +17,7 @@ public class MedianFinder {
         public double findMedian();
     }
 
+    // Heap
     // beats 63.85%(36 ms)
     static class MedianFinder1 implements IMedianFinder {
         // lambda expression make beat rate drop to 8.82%(102 ms)
@@ -57,7 +58,9 @@ public class MedianFinder {
         }
     }
 
-    // beats 28.07%(48 ms)
+    // Solution of Choice
+    // Heap
+    // beats 52.90%(44 ms for 18 tests)
     static class MedianFinder2 implements IMedianFinder {
         PriorityQueue<Integer> minMaxQ = new PriorityQueue<>(
             Collections.reverseOrder());
@@ -105,7 +108,7 @@ public class MedianFinder {
 
     // Binary Search Tree
     // https://discuss.leetcode.com/topic/40917/18ms-beats-100-java-solution-with-bst
-    // beats 98.88%(20 ms)
+    // beats 99.08%(21 ms for 18 tests)
     static class MedianFinder4 implements IMedianFinder {
         static class TreeNode {
             int val;
@@ -122,26 +125,19 @@ public class MedianFinder {
                     } else {
                         right.add(num);
                     }
+                } else if (left == null) {
+                    left = new TreeNode(num, this);
                 } else {
-                    if (left == null) {
-                        left = new TreeNode(num, this);
-                    } else {
-                        left.add(num);
-                    }
+                    left.add(num);
                 }
             }
 
             TreeNode next() {
                 TreeNode node = this;
                 if (right != null) {
-                    node = right;
-                    while (node.left != null) {
-                        node = node.left;
-                    }
+                    for (node = right; node.left != null; node = node.left) {}
                 } else {
-                    while (node.parent.right == node) {
-                        node = node.parent;
-                    }
+                    for (; node.parent.right == node; node = node.parent) {}
                     node = node.parent;
                 }
                 return node;
@@ -150,14 +146,9 @@ public class MedianFinder {
             TreeNode prev() {
                 TreeNode node = this;
                 if (left != null) {
-                    node = left;
-                    while (node.right != null) {
-                        node = node.right;
-                    }
+                    for (node = left; node.right != null; node = node.right) {}
                 } else {
-                    while (node.parent.left == node) {
-                        node = node.parent;
-                    }
+                    for (; node.parent.left == node; node = node.parent) {}
                     node = node.parent;
                 }
                 return node;
