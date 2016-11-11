@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
-// https://leetcode.com/problems/serialize-and-deserialize-binary-tree/
+// LC297: https://leetcode.com/problems/serialize-and-deserialize-binary-tree/
 //
 // Design an algorithm to serialize and deserialize a binary tree.
 public class CodecTree {
@@ -21,6 +21,7 @@ public class CodecTree {
         public TreeNode deserialize(String data);
     }
 
+    // BFS + Queue
     static class Codec1 implements Codec {
         // important(UTF family doesn't work, UTF-16LE doesn't work for big tree)
         private static final String CHARSET = "ISO-8859-1";
@@ -99,11 +100,11 @@ public class CodecTree {
         }
     }
 
+    // Recursion
     // http://www.geeksforgeeks.org/serialize-deserialize-binary-tree/
     // A simple solution is to store both Inorder and Preorder traversals.
     // This solution requires space twice the size of Binary Tree. We can save
     // space by storing Preorder traversal and a marker for NULL pointers.
-
     // beats 99.06%(8 ms)
     static class Codec2 implements Codec {
         public String serialize(TreeNode root) {
@@ -140,7 +141,6 @@ public class CodecTree {
             while (index.start < end && data.charAt(index.start) != ' ') {
                 index.start++;
             }
-
             String val = data.substring(start, index.start++);
             if (val.equals(NULL)) return index; //new NodeIndex(index.start);
 
@@ -154,10 +154,10 @@ public class CodecTree {
         }
     }
 
-    // beats 98.8%(10 ms)
+    // Solution of Choice
+    // Recursion
+    // beats 98.25%(13 ms for 47 tests)
     static class Codec3 implements Codec {
-        private static final String NULL = "#";
-
         public String serialize(TreeNode root) {
             StringBuilder output = new StringBuilder();
             serialize(root, output);
@@ -191,7 +191,8 @@ public class CodecTree {
         }
     }
 
-    // beats 5.15%(114 ms)
+    // Recursion
+    // beats 7.63%(96 ms for 47 tests)
     static class Codec4 implements Codec {
         public String serialize(TreeNode root) {
             if (root == null) return NULL;

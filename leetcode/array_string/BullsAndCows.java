@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/bulls-and-cows/
+// LC299: https://leetcode.com/problems/bulls-and-cows/
 //
 // You are playing the following Bulls and Cows game with your friend: You write
 // down a number and ask your friend to guess what the number is. Each time your
@@ -17,6 +17,7 @@ import static org.junit.Assert.*;
 public class BullsAndCows {
     final static int totalDigits = 10;
 
+    // Hash Table
     // beats 83.16%(3 ms)
     public String getHint(String secret, String guess) {
         int bulls = 0;
@@ -40,7 +41,8 @@ public class BullsAndCows {
         // return String.format("%dA%dB", bulls, cows); // beats 19.84%(19 ms)
     }
 
-    // one pass one array
+    // Solution of Choice
+    // Hash Table(one pass one array)
     // beats 64.03%(4 ms)
     public String getHint2(String secret, String guess) {
         int bulls = 0;
