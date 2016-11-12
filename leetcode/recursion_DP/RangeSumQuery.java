@@ -3,12 +3,14 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/range-sum-query-immutable/
+// LC303: https://leetcode.com/problems/range-sum-query-immutable/
 public class RangeSumQuery {
     interface INumArray {
         int sumRange(int i, int j);
     }
 
+    // Solution of Choice
+    // Dynamic Programming
     // beats 18.28%(4 ms)
     class NumArray implements INumArray {
         private int[] sums;
@@ -53,8 +55,9 @@ public class RangeSumQuery {
         }
     }
 
-    // from leetcode
-    //  Time Limit Exceeded
+    // Dynamic Programming
+    // https://leetcode.com/articles/range-sum-query-immutable/#approach-2-caching-accepted
+    // Time Limit Exceeded
     class NumArray2 implements INumArray {
         private Map<Pair, Integer> map = new HashMap<>();
 

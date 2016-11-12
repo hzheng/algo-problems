@@ -158,6 +158,7 @@ public class RemoveInvalidParentheses {
         }
     }
 
+    // Solution of Choice
     // DFS + Recursion
     // https://discuss.leetcode.com/topic/34875/easy-short-concise-and-fast-java-dfs-3-ms-solution/
     // beats 85.46%(3 ms for 125 tests)

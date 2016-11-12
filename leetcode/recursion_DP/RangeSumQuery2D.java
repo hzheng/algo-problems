@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/range-sum-query-2d-immutable/
+// LC304: https://leetcode.com/problems/range-sum-query-2d-immutable/
 //
 //
 // Given a 2D matrix matrix, find the sum of the elements inside the rectangle
@@ -13,6 +13,7 @@ public class RangeSumQuery2D {
         public int sumRegion(int row1, int col1, int row2, int col2);
     }
 
+    // Dynamic Programming
     // beats 11.19%(8 ms)
     class NumMatrix implements INumMatrix {
         private int[][] sums;
@@ -41,6 +42,8 @@ public class RangeSumQuery2D {
         }
     }
 
+    // Solution of Choice
+    // Dynamic Programming
     // beats 11.19%(8 ms)
     class NumMatrix2 implements INumMatrix {
         private int[][] sums;
