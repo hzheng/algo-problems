@@ -3,21 +3,19 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC306: https://leetcode.com/problems/additive-number/
+//
 // Additive number is a string whose digits can form additive sequence.
 // A valid additive sequence should contain at least three numbers. Except for
 // the first two numbers, each subsequent number in the sequence must be the
 // sum of the preceding two.
 public class AdditiveNumber {
-    // beats 95.40(1 ms)
+    // Recursion
+    // beats 89.01%(1 ms for 37 tests)
     public boolean isAdditiveNumber(String num) {
         int len = num.length();
-        int max1 = len / 2;
-        for (int j = 1; j <= max1; j++) {
-            int max2 = len - 1;
-            if (num.charAt(j) == '0') {
-                max2 = j + 1;
-            }
-            for (int k = j + 1; k <= max2; k++) {
+        for (int j = len / 2; j > 0; j--) {
+            for (int k = (num.charAt(j) == '0') ? j + 1 : len - 1; k > j; k--) {
                 if (isAdditiveNumber(num, 0, j, k, len)) return true;
             }
         }
@@ -51,26 +49,19 @@ public class AdditiveNumber {
 
             carry = sum / 10;
         }
-        return (c + 1 == k) && (carry == 0) || (carry == 1);
+        return (carry == 1) || (c + 1 == k);
     }
 
-    // beats 74.34%(2 ms)
+    // Recursion
+    // beats 29.83%(3 ms for 37 tests)
     public boolean isAdditiveNumber2(String num) {
         int len = num.length();
         if (len < 3) return false;
 
-        int max1 = len / 2;
-        if (num.charAt(0) == '0') {
-            max1 = 0;
-        }
-        for (int i = 0; i <= max1; i++) {
-            int max2 = len - i - 2;
-            if (num.charAt(i + 1) == '0') {
-                max2 = i + 1;
-            }
-            for (int j = i + 1; j <= max2; j++) {
-                String first = num.substring(0, i + 1);
-                String second = num.substring(i + 1, j + 1);
+        for (int i = (num.charAt(0) == '0') ? 1 : len / 2 + 1; i > 0; i--) {
+            for (int j = (num.charAt(i) == '0') ? i : len - i - 1; j >= i; j--) {
+                String first = num.substring(0, i);
+                String second = num.substring(i, j + 1);
                 if (isAdditive(num, j + 1, first, second, len)) return true;
             }
         }
@@ -90,21 +81,14 @@ public class AdditiveNumber {
                isAdditive(num, start + sumLen, second, third, len);
     }
 
-    // beats 74.34%(2 ms)
+    // Recursion
+    // beats 24.15%(4 ms for 37 tests)
     public boolean isAdditiveNumber3(String num) {
         int len = num.length();
         if (len < 3) return false;
 
-        int max1 = len / 2;
-        if (num.charAt(0) == '0') {
-            max1 = 1;
-        }
-        for (int i = 1; i <= max1; ++i) {
-            int max2 = len - i;
-            if (num.charAt(i) == '0') {
-                max2 = i + 1;
-            }
-            for (int j = i + 1; j <= max2; j++) {
+        for (int i = (num.charAt(0) == '0') ? 1 : len / 2; i > 0; i--) {
+            for (int j = (num.charAt(i) == '0') ? i + 1 : len - i; j > i; j--) {
                 if (isAdditive(num, 0, i, j)) return true;
             }
         }
@@ -121,34 +105,26 @@ public class AdditiveNumber {
                || isAdditive(num, j, k, k + sum.length());
     }
 
-    // non-recursion
-    // beats 74.34%(2 ms)
+    // Solution of Choice
+    // Iteration
+    // beats 29.83%(3 ms for 37 tests)
     public boolean isAdditiveNumber4(String num) {
         int len = num.length();
         if (len < 3) return false;
 
-        int max1 = len / 2;
-        if (num.charAt(0) == '0') {
-            max1 = 1;
-        }
-        for (int i = 1; i <= max1; ++i) {
-            int max2 = len - i;
-            if (num.charAt(i) == '0') {
-                max2 = i + 1;
-            }
+        for (int i = (num.charAt(0) == '0') ? 1 : len / 2; i > 0; i--) {
             long firstNum = Long.parseLong(num.substring(0, i));
-            for (int j = i + 1; j <= max2; j++) {
+            for (int j = (num.charAt(i) == '0') ? i + 1 : len - i; j > i; j--) {
                 long first = firstNum;
                 long second = Long.parseLong(num.substring(i, j));
                 int k = j;
-                while (k < len) {
+                for (String sumStr; k < len; k += sumStr.length()) {
                     long sum = first + second;
-                    String sumStr = String.valueOf(sum);
+                    sumStr = String.valueOf(sum);
                     if (!num.substring(k).startsWith(sumStr)) break;
 
                     first = second;
                     second = sum;
-                    k += sumStr.length();
                 }
                 if (k == len) return true;
             }
