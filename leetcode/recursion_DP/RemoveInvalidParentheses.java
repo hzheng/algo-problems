@@ -5,11 +5,12 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/remove-invalid-parentheses/
+// LC301: https://leetcode.com/problems/remove-invalid-parentheses/
 //
 // Remove the minimum number of invalid parentheses in order to make the input
 // string valid. Return all possible results.
 public class RemoveInvalidParentheses {
+    // Recursion + Backtracking + SortedMap
     // beats 66.26%(10 ms)
     public List<String> removeInvalidParentheses(String s) {
         List<String> leftRes = new ArrayList<>();
@@ -111,8 +112,8 @@ public class RemoveInvalidParentheses {
         }
     }
 
-    // DFS
-    // beats 9.82%(230 ms)
+    // DFS + Recursion
+    // beats 9.41%(221 ms for 125 tests)
     public List<String> removeInvalidParentheses2(String s) {
         List<String> res = new ArrayList<>();
         removeInvalidParentheses2(s, "", 0, 0, new int[] {0}, res);
@@ -157,8 +158,9 @@ public class RemoveInvalidParentheses {
         }
     }
 
-    // https://discuss.leetcode.com/topic/34875/easy-short-concise-and-fast-java-dfs-3-ms-solution/2
-    // beats 79.88%(3 ms)
+    // DFS + Recursion
+    // https://discuss.leetcode.com/topic/34875/easy-short-concise-and-fast-java-dfs-3-ms-solution/
+    // beats 85.46%(3 ms for 125 tests)
     public List<String> removeInvalidParentheses3(String s) {
         List<String> res = new ArrayList<>();
         removeParens(s, res, 0, 0, true);
@@ -170,7 +172,7 @@ public class RemoveInvalidParentheses {
         char paren1 = leftToRight ? '(' : ')';
         char paren2 = leftToRight ? ')' : '(';
         int len = s.length();
-        for (int parenDiff = 0, i = lastI; i < len; ++i) {
+        for (int parenDiff = 0, i = lastI; i < len; i++) {
             if (s.charAt(i) == paren1) {
                 parenDiff++;
             } else if (s.charAt(i) == paren2) {
@@ -187,7 +189,6 @@ public class RemoveInvalidParentheses {
             }
             return;
         }
-
         String reversed = new StringBuilder(s).reverse().toString();
         if (leftToRight) { // finished left to right
             removeParens(reversed, res, 0, 0, false);
@@ -196,27 +197,27 @@ public class RemoveInvalidParentheses {
         }
     }
 
-    // BFS(non-recursion)
-    // https://discuss.leetcode.com/topic/28827/share-my-java-bfs-solution
-    // beats 41.59%(103 ms)
+    // BFS + Queue
+    // beats 61.16%(40 ms for 125 tests)
     public List<String> removeInvalidParentheses4(String s) {
         List<String> res = new ArrayList<>();
         Set<String> visited = new HashSet<>();
         Queue<String> queue = new LinkedList<>();
-
         queue.add(s);
         visited.add(s);
         boolean found = false;
         while (!queue.isEmpty()) {
             s = queue.poll();
-            if (isValid(s)) {
+            int balance = parenBalance(s);
+            if (balance == 0) {
                 res.add(s);
                 found = true;
             }
             if (found) continue;
 
             for (int i = 0; i < s.length(); i++) {
-                if (s.charAt(i) != '(' && s.charAt(i) != ')') continue;
+                if (s.charAt(i) != '(' && s.charAt(i) != ')'
+                    || s.charAt(i) == '(' && balance < 0) continue;
 
                 String candidate = s.substring(0, i) + s.substring(i + 1);
                 if (!visited.contains(candidate)) {
@@ -228,14 +229,62 @@ public class RemoveInvalidParentheses {
         return res;
     }
 
-    private boolean isValid(String s) {
+    private int parenBalance(String s) {
         int count = 0;
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-            if (c == '(') count++;
-            if (c == ')' && count-- == 0) return false;
+            if (c == '(') {
+                count++;
+            } else if (c == ')' && count-- == 0) return -1;
         }
-        return count == 0;
+        return count;
+    }
+
+    // DFS/Backtracking + Recursion + Set
+    // https://discuss.leetcode.com/topic/30743/easiest-9ms-java-solution
+    // beats 71.01%(10 ms for 125 tests)
+    public List<String> removeInvalidParentheses5(String s) {
+        int maxLeftRemoves = 0;
+        int maxRightRemoves = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '(') {
+                maxLeftRemoves++;
+            } else if (s.charAt(i) == ')') {
+                if (maxLeftRemoves != 0) {
+                    maxLeftRemoves--;
+                } else {
+                    maxRightRemoves++;
+                }
+            }
+        }
+        Set<String> res = new HashSet<>();
+        dfs(s, 0, res, new StringBuilder(), maxLeftRemoves, maxRightRemoves, 0);
+        return new ArrayList<>(res);
+    }
+
+    public void dfs(String s, int i, Set<String> res, StringBuilder sb,
+                   int maxLeftRemoves, int maxRightRemoves, int open) {
+        if (maxLeftRemoves < 0 || maxRightRemoves < 0 || open < 0) return;
+
+        if (i == s.length()) {
+            if (maxLeftRemoves == 0 && maxRightRemoves == 0) {
+                res.add(sb.toString());
+            }
+            return;
+        }
+
+        char c = s.charAt(i);
+        int len = sb.length();
+        if (c == '(') {
+            dfs(s, i + 1, res, sb, maxLeftRemoves - 1, maxRightRemoves, open);
+            dfs(s, i + 1, res, sb.append(c), maxLeftRemoves, maxRightRemoves, open + 1);
+        } else if (c == ')') {
+            dfs(s, i + 1, res, sb, maxLeftRemoves, maxRightRemoves - 1, open);
+            dfs(s, i + 1, res, sb.append(c), maxLeftRemoves, maxRightRemoves, open - 1);
+        } else {
+            dfs(s, i + 1, res, sb.append(c), maxLeftRemoves, maxRightRemoves, open);
+        }
+        sb.setLength(len);
     }
 
     void test(Function<String, List<String> > remove, String name,
@@ -257,6 +306,7 @@ public class RemoveInvalidParentheses {
         test(r::removeInvalidParentheses2, "removeInvalidParentheses2", s, expected);
         test(r::removeInvalidParentheses3, "removeInvalidParentheses3", s, expected);
         test(r::removeInvalidParentheses4, "removeInvalidParentheses4", s, expected);
+        test(r::removeInvalidParentheses5, "removeInvalidParentheses5", s, expected);
     }
 
     @Test
