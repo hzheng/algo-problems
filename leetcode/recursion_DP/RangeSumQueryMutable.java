@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/range-sum-query-immutable/
+// LC307: https://leetcode.com/problems/range-sum-query-mutable/
 //
 // Given an integer array nums, find the sum of the elements between indices
 // i and j (i <= j), inclusive. The update(i, val) function modifies nums by
@@ -14,6 +14,7 @@ public class RangeSumQueryMutable {
         int sumRange(int i, int j);
     }
 
+    // SortedMap
     //  Time Limit Exceeded
     class NumArray implements INumArray {
         private int[] sums;
@@ -84,8 +85,9 @@ public class RangeSumQueryMutable {
         }
     }
 
+    // Solution of Choice
     // Binary Indexed Tree
-    // beats 68.67%(7 ms)
+    // beats 76.32%(6 ms for 10 tests)
     class NumArray3 implements INumArray {
         private int[] bit;
         private int[] nums;
@@ -126,9 +128,9 @@ public class RangeSumQueryMutable {
         }
     }
 
-    // from leetcode
+    // https://leetcode.com/articles/range-sum-query-mutable/#approach-3-segment-tree-accepted
     // Segment Tree
-    // beats 38.11%(14 ms)
+    // beats 57.52%(8 ms for 10 tests)
     class NumArray4 implements INumArray {
         private int[] tree;
         private int n;
@@ -136,13 +138,7 @@ public class RangeSumQueryMutable {
         // time complexity: O(N), space complexity: O(N)
         public NumArray4(int[] nums) {
             n = nums.length;
-            if (n > 0) {
-                tree = new int[n * 2];
-                buildTree(nums);
-            }
-        }
-
-        private void buildTree(int[] nums) {
+            tree = new int[n * 2];
             for (int i = n, j = 0; i < 2 * n; i++, j++) {
                 tree[i] = nums[j];
             }
@@ -154,26 +150,19 @@ public class RangeSumQueryMutable {
         // time complexity: O(log(N)), space complexity: O(1)
         public void update(int pos, int val) {
             tree[pos += n] = val;
-            for (; pos > 0; pos /= 2) {
-                int left = pos;
-                int right = pos;
-                if (pos % 2 == 0) {
-                    right = pos + 1;
-                } else {
-                    left = pos - 1;
-                }
-                tree[pos / 2] = tree[left] + tree[right];
+            for (; pos > 0; pos >>= 1) {
+                tree[pos >> 1] = tree[pos] + tree[pos + 1 - ((pos & 1) << 1)];
             }
         }
 
         // time complexity: O(log(N)), space complexity: O(1)
         public int sumRange(int i, int j) {
             int sum = 0;
-            for (int l = i + n, r = j + n; l <= r; l /= 2, r /= 2) {
-                if ((l % 2) == 1) {
+            for (int l = i + n, r = j + n; l <= r; l >>= 1, r >>= 1) {
+                if ((l & 1) == 1) {
                     sum += tree[l++];
                 }
-                if ((r % 2) == 0) {
+                if ((r & 1) == 0) {
                     sum += tree[r--];
                 }
             }
@@ -181,9 +170,9 @@ public class RangeSumQueryMutable {
         }
     }
 
-    // from leetcode
-    // Sqrt decomposition
-    // beats 38.11%(14 ms)
+    // https://leetcode.com/articles/range-sum-query-mutable/#approach-2-sqrt-decomposition-accepted
+    // Sqrt Decomposition
+    // beats 49.78%(12 ms for 10 tests)
     class NumArray5 implements INumArray {
         private int[] block;
         private int len;
@@ -193,7 +182,7 @@ public class RangeSumQueryMutable {
         public NumArray5(int[] nums) {
             this.nums = nums;
             int n = nums.length;
-            len = (int) Math.ceil(nums.length / Math.sqrt(n));
+            len = (int)Math.ceil(nums.length / Math.sqrt(n));
             block = new int[len];
             for (int i = 0; i < n; i++) {
                 block[i / len] += nums[i];
@@ -230,10 +219,11 @@ public class RangeSumQueryMutable {
         }
     }
 
+    // Segment Tree + Recursion
     // https://discuss.leetcode.com/topic/29918/17-ms-java-solution-with-segment-tree
-    // beats 17.33(16 ms)
+    // beats 35.17%(17 ms for 10 tests)
     class NumArray6 implements INumArray {
-        class SegmentTreeNode {
+        private class SegmentTreeNode {
             int start, end;
             SegmentTreeNode left, right;
             int sum;
@@ -257,7 +247,7 @@ public class RangeSumQueryMutable {
             if (start == end) {
                 node.sum = nums[start];
             } else {
-                int mid = start  + (end - start) / 2;
+                int mid = (start + end) >>> 1;
                 node.left = buildTree(nums, start, mid);
                 node.right = buildTree(nums, mid + 1, end);
                 node.sum = node.left.sum + node.right.sum;
@@ -273,7 +263,7 @@ public class RangeSumQueryMutable {
             if (root.start == root.end) {
                 root.sum = val;
             } else {
-                int mid = root.start + (root.end - root.start) / 2;
+                int mid = (root.start + root.end) >>> 1;
                 if (pos <= mid) {
                     update(root.left, pos, val);
                 } else {
@@ -290,7 +280,7 @@ public class RangeSumQueryMutable {
         private int sumRange(SegmentTreeNode root, int start, int end) {
             if (root.end == end && root.start == start) return root.sum;
 
-            int mid = root.start + (root.end - root.start) / 2;
+            int mid = (root.start + root.end) >>> 1;
             if (end <= mid) return sumRange(root.left, start, end);
 
             if (start > mid) return sumRange(root.right, start, end);
