@@ -4,6 +4,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC313: https://leetcode.com/problems/super-ugly-number/
 //
 // Write a program to find the nth super ugly number.
 // Super ugly numbers are positive numbers whose all prime factors are in the
@@ -41,33 +42,32 @@ public class SuperUglyNumber {
         }
     }
 
+    // Solution of Choice
+    // Heap + Dynamic Programming
     // time complexity: O(N * log(K))
-    // beats 20.65%(57 ms)
+    // beats 32.70%(48 ms for 83 tests)
     public int nthSuperUglyNumber2(int n, int[] primes) {
         int[] ugly = new int[n];
         ugly[0] = 1;
         int k = primes.length;
         int[] indices = new int[k];
-        // PriorityQueue<UglyNumber> next = new PriorityQueue<>(
-        //     (a, b) -> a.val - b.val); // lambda is very slow(136 ms)
-        PriorityQueue<UglyNumber> next = new PriorityQueue<>();
+        PriorityQueue<UglyNumber> pq = new PriorityQueue<>();
         for (int i = 0; i < k; i++) {
-            next.add(new UglyNumber(primes[i], i));
+            pq.add(new UglyNumber(primes[i], i));
         }
-
         for (int i = 1; i < n; i++) {
-            int val = next.peek().val;
+            int val = pq.peek().val;
             ugly[i] = val;
-            while (next.peek().val == val) {
-                UglyNumber nextUgly = next.poll();
-                int j = nextUgly.index;
-                nextUgly.val = ugly[++indices[j]] * primes[j];
-                next.offer(nextUgly);
-            }
+            do {
+                UglyNumber next = pq.poll();
+                next.val = ugly[++indices[next.index]] * primes[next.index];
+                pq.offer(next);
+            } while (pq.peek().val == val);
         }
         return ugly[n - 1];
     }
 
+    // Dynamic Programming
     // time complexity: O(N * K)
     // beats 59.01%(31 ms)
     public int nthSuperUglyNumber3(int n, int[] primes) {
@@ -81,7 +81,6 @@ public class SuperUglyNumber {
                 min = Math.min(min, primes[j] * ugly[multIndex[j]]);
             }
             ugly[i] = min;
-
             for (int j = 0; j < k; j++) {
                 if (primes[j] * ugly[multIndex[j]] == min) {
                     multIndex[j]++;
@@ -91,17 +90,17 @@ public class SuperUglyNumber {
         return ugly[n - 1];
     }
 
+    // Dynamic Programming
     // https://discuss.leetcode.com/topic/34841/java-three-methods-23ms-36-ms-58ms-with-heap-performance-explained
     // time complexity: O(N * K)
-    // 98.11%(21 ms)
+    // beats 95.18%(21 ms for 83 tests)
     public int nthSuperUglyNumber4(int n, int[] primes) {
         int[] ugly = new int[n];
         int k = primes.length;
         int[] multIndex = new int[k];
         int[] val = new int[k];
         Arrays.fill(val, 1);
-        int next = 1;
-        for (int i = 0; i < n; i++) {
+        for (int i = 0, next = 1; i < n; i++) {
             ugly[i] = next;
             next = Integer.MAX_VALUE;
             for (int j = 0; j < k; j++) {
