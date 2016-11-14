@@ -6,6 +6,7 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC312: https://leetcode.com/problems/burst-balloons/
 //
 // Given n balloons, indexed from 0 to n-1. Each balloon is painted with a
 // number on it represented by array nums. You are asked to burst all the
@@ -18,8 +19,8 @@ import static org.junit.Assert.*;
 // can not burst them.
 // (2) 0 <= n <= 500, 0 <= nums[i] <= 100
 public class BurstBalloons {
-    // Divide and Conquer with Memoization
-    // beats 27.36%(18 ms)
+    // Recursion + Divide & Conquer + Dynamic Programming(Top-Down)
+    // beats 25.14%(18 ms for 70 tests)
     public int maxCoins(int[] nums) {
         int n = nums.length;
         return maxCoins(nums, -1, n, new int[n + 1][n + 1]);
@@ -46,6 +47,7 @@ public class BurstBalloons {
         return max;
     }
 
+    // Recursion + Divide & Conquer + Dynamic Programming(Top-Down)
     // beats 3.71%(34 ms)
     public int maxCoins2(int[] nums) {
         Integer[] cache = new Integer[1 << 18];
@@ -67,8 +69,8 @@ public class BurstBalloons {
         return max;
     }
 
-    // almost same as the first solution, but much faster(why?)
-    // beats 94.90%(11 ms)
+    // Recursion + Divide & Conquer + Dynamic Programming(Top-Down)
+    // beats 97.29%(9 ms for 70 tests)
     public int maxCoins3(int[] nums) {
         int[] nums2 = new int[nums.length + 2];
         int n = 1;
@@ -87,15 +89,15 @@ public class BurstBalloons {
         if (cache[start][end] > 0) return cache[start][end];
 
         int max = 0;
-        for (int i = start + 1; i < end; ++i)
+        for (int i = start + 1; i < end; ++i) {
             max = Math.max(max, nums[start] * nums[i] * nums[end]
                            + burst(nums, start, i, cache) + burst(nums, i, end, cache));
-        cache[start][end] = max;
-        return max;
+        }
+        return cache[start][end] = max;
     }
 
-    // Dynamic programming
-    // beats 61.51%(15 ms)
+    // Dynamic programming(Bottom-Up)
+    // beats 72.08%(12 ms for 70 tests)
     public int maxCoins4(int[] nums) {
         int[] nums2 = new int[nums.length + 2];
         int n = 1;
@@ -105,7 +107,6 @@ public class BurstBalloons {
             }
         }
         nums2[0] = nums2[n++] = 1;
-
         int[][] dp = new int[n][n];
         for (int i = 2; i < n; i++) {
             for (int left = 0; left < n - i; left++) {
