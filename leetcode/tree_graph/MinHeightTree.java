@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/minimum-height-trees/
+// LC310: https://leetcode.com/problems/minimum-height-trees/
 //
 // For a undirected graph with tree characteristics, we can choose any node as
 // the root. The result graph is then a rooted tree. Among all possible rooted
@@ -51,13 +51,12 @@ public class MinHeightTree {
         adjancencies.get(i).add(j);
     }
 
-    // BFS
-    // beats 88.15%(32 ms)
+    // Solution of Choice
+    // BFS + List
+    // beats 90.42%(29 ms for 66 tests)
     public List<Integer> findMinHeightTrees2(int n, int[][] edges) {
-        if (edges.length == 0 || n < 2) return Arrays.asList(0);
-
         @SuppressWarnings("unchecked")
-        List<Integer>[] adjancencies = new ArrayList[n];
+        List<Integer>[] adjancencies = new List[n];
         for (int i = 0; i < n; i++) {
             adjancencies[i] = new ArrayList<>();
         }
@@ -73,7 +72,6 @@ public class MinHeightTree {
                 leaves.add(i);
             }
         }
-
         for (int count = n; count > 2; ) {
             List<Integer> nextLeaves = new LinkedList<>();
             for (Integer leaf : leaves) {
@@ -87,9 +85,10 @@ public class MinHeightTree {
             count -= leaves.size();
             leaves = nextLeaves;
         }
-        return leaves;
+        return (edges.length == 0 || n < 2) ? Arrays.asList(0) : leaves;
     }
 
+    // Graph + List
     // beats 15.71%(93 ms)
     public List<Integer> findMinHeightTrees3(int n, int[][] edges) {
         if (edges.length == 0 || n < 2) return Arrays.asList(0);
@@ -105,12 +104,10 @@ public class MinHeightTree {
             adjancencies[v1].add(v2);
             adjancencies[v2].add(v1);
         }
-
         int[] degrees = new int[n];
         for (int i = 0; i < n; i++) {
             degrees[i] = adjancencies[i].size();
         }
-
         for (int vertices = n; vertices > 2; ) {
             List<Integer> leaves = new LinkedList<>();
             for (int i = 0; i < n; i++) {
@@ -135,10 +132,11 @@ public class MinHeightTree {
         return res;
     }
 
+    // Set
     // beats 8.79%(271 ms)
     public List<Integer> findMinHeightTrees4(int n, int[][] edges) {
         @SuppressWarnings("unchecked")
-        Set<Integer>[] adjancencies = new HashSet[n];
+        Set<Integer>[] adjancencies = new Set[n];
         Set<Integer> res = new HashSet<>();
         for (int i = 0; i < n; ++i) {
             res.add(i);
@@ -146,14 +144,12 @@ public class MinHeightTree {
         for (int i = 0; i < n; i++) {
             adjancencies[i] = new HashSet<>();
         }
-
         for (int i = edges.length - 1; i >= 0; i--) {
             int v1 = edges[i][0];
             int v2 = edges[i][1];
             adjancencies[v1].add(v2);
             adjancencies[v2].add(v1);
         }
-
         Set<Integer> leaves = new HashSet<>();
         while (res.size() > 2) {
             for (int v : res) {
