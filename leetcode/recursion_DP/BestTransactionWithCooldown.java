@@ -4,7 +4,7 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/
+// LC309:https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/
 
 //Say you have an array for which the ith element is the price of a given stock
 // on day i. Design an algorithm to find the maximum profit. You may complete as
@@ -13,7 +13,8 @@ import static org.junit.Assert.*;
 // You may not engage in multiple transactions at the same time.
 // After you sell your stock, you cannot buy stock on next day.
 public class BestTransactionWithCooldown {
-    // beats 50.82%
+    // Dynamic Programming
+    // beats 50.82%(2 ms)
     // space complexity: O(N)
     public int maxProfit(int[] prices) {
         int n = prices.length;
@@ -26,8 +27,7 @@ public class BestTransactionWithCooldown {
                 profits[i] = profits[i - 1];
             } else if (i < 3) {
                 profits[i] = profits[i - 1] + diff;
-            } else {
-                // ignore day i; day (i - 2) cooldown
+            } else { // ignore day i; day (i - 2) cooldown
                 profits[i] = Math.max(profits[i - 1], profits[i - 3] + diff);
                 for (int j = i; j > i - 3; j--) { // extend day (j - 1)
                     if (j < 2 || prices[j - 1] > prices[j - 2]) {
@@ -40,7 +40,8 @@ public class BestTransactionWithCooldown {
         return n == 0 ? 0 : profits[n - 1];
     }
 
-    // beats 50.82%
+    // Dynamic Programming
+    // beats 50.82%(2 ms)
     // space complexity: O(N)
     public int maxProfit2(int[] prices) {
         int n = prices.length;
@@ -59,7 +60,9 @@ public class BestTransactionWithCooldown {
         return sell[n - 1];
     }
 
-    // beats 50.82%
+    // Solution of Choice
+    // Dynamic Programming
+    // beats 50.82%(2 ms)
     // space complexity: O(1)
     public int maxProfit3(int[] prices) {
         int buy = Integer.MIN_VALUE;
@@ -74,7 +77,8 @@ public class BestTransactionWithCooldown {
         return sell;
     }
 
-    // beats 8.28%
+    // Dynamic Programming
+    // beats 36.32%(2 ms for 212 tests)
     // space complexity: O(1)
     public int maxProfit4(int[] prices) {
         int n = prices.length;
@@ -90,7 +94,7 @@ public class BestTransactionWithCooldown {
             // cooldown state, cooldown yesterday or sold yesterday
             dp[2][index] = Math.max(dp[2][1 - index], dp[1][1 - index]);
         }
-        return Math.max(dp[1][(n - 1) % 2], dp[2][(n - 1) % 2]);
+        return Math.max(dp[1][(n - 1) & 1], dp[2][(n - 1) & 1]);
     }
 
     void test(Function<int[], Integer> maxProfit, int expected, int ... prices) {
