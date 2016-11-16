@@ -4,7 +4,7 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/shortest-palindrome/
+// LC214: https://leetcode.com/problems/shortest-palindrome/
 //
 // Given a string S, you are allowed to convert it to a palindrome by adding
 // characters in front of it. Find and return the shortest palindrome you can
@@ -152,10 +152,9 @@ public class ShortestPalindrome {
                .append(s).toString();
     }
 
-    // Solution of Choice
     // KMP algorithm
     // time complexity: O(N), space complexity: O(N)
-    // beats 60.93%(10 ms for 119 tests)
+    // beats 49.65%(13 ms for 120 tests)
     public String shortestPalindrome6(String s) {
         String t = s + "#" + new StringBuilder(s).reverse().toString();
         int len = t.length();
@@ -171,6 +170,26 @@ public class ShortestPalindrome {
             }
         }
         return new StringBuilder(s.substring(failTable[len - 1])).reverse()
+               .append(s).toString();
+    }
+
+    // Solution of Choice
+    // KMP algorithm
+    // time complexity: O(N), space complexity: O(N)
+    // beats 58.66%(10 ms for 120 tests)
+    public String shortestPalindrome7(String s) {
+        String t = s + "#" + new StringBuilder(s).reverse().toString();
+        int len = t.length();
+        int[] kmp = new int[len];
+        for (int i = 0, j = 1; i < len && j < len; j++) {
+            if (t.charAt(i) == t.charAt(j)) {
+                kmp[j] = ++i;
+            } else if (i > 0) {
+                i = kmp[i - 1];
+                j--;
+            }
+        }
+        return new StringBuilder(s.substring(kmp[len - 1])).reverse()
                .append(s).toString();
     }
 
@@ -192,6 +211,7 @@ public class ShortestPalindrome {
         test(p::shortestPalindrome4, "shortestPalindrome4", s, expected);
         test(p::shortestPalindrome5, "shortestPalindrome5", s, expected);
         test(p::shortestPalindrome6, "shortestPalindrome6", s, expected);
+        test(p::shortestPalindrome7, "shortestPalindrome7", s, expected);
     }
 
     @Test
