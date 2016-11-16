@@ -96,6 +96,7 @@ public class BurstBalloons {
         return cache[start][end] = max;
     }
 
+    // Solution of Choice
     // Dynamic programming(Bottom-Up)
     // beats 72.08%(12 ms for 70 tests)
     public int maxCoins4(int[] nums) {
