@@ -310,7 +310,7 @@ public class CountSmaller {
     }
 
     // Segment Tree
-    // beats 39.24%(30 ms for 16 tests)
+    // beats 38.16%(34 ms for 16 tests)
     public List<Integer> countSmaller7(int[] nums) {
         if (nums.length == 0) return Collections.emptyList();
 
@@ -322,14 +322,14 @@ public class CountSmaller {
         for (int i : nums) {
             max = Math.max(max, i);
         }
-        SegementTreeNode root = build(min, max);
+        SegementTreeNode root = SegementTreeNode.build(min, max);
         for (int num : nums) {
-            update(root, num, 1);
+            root.update(num, 1);
         }
         List<Integer> res = new ArrayList<>();
         for (int num : nums) {
-            update(root, num, -1);
-            res.add(query(root, min, num - 1));
+            root.update(num, -1);
+            res.add(root.query(min, num - 1));
         }
         return res;
     }
@@ -341,39 +341,41 @@ public class CountSmaller {
             this.start = start;
             this.end = end;
         }
-    }
 
-    private SegementTreeNode build(int start, int end) {
-        SegementTreeNode root = new SegementTreeNode(start, end);
-        if (start == end) return root;
+        public static SegementTreeNode build(int start, int end) {
+            SegementTreeNode root = new SegementTreeNode(start, end);
+            if (start == end) return root;
 
-        int mid = start + (end - start) / 2; // NOT (start + end) >>> 1;
-        root.left = build(start, mid);
-        root.right = build(mid + 1, end);
-        return root;
-    }
-
-    private void update(SegementTreeNode root, int val, int change) {
-        if (root == null || root.start > val || root.end < val) return;
-
-        if (root.start == val && root.end == val) {
-            root.count += change;
-            return;
+            int mid = start + (end - start) / 2; // NOT (start + end) >>> 1;
+            root.left = build(start, mid);
+            root.right = build(mid + 1, end);
+            return root;
         }
-        int mid = root.start + (root.end - root.start) / 2;
-        update(val <= mid ? root.left : root.right, val, change);
-        root.count = root.left.count + root.right.count;
-    }
 
-    private int query(SegementTreeNode root, int start, int end) {
-        if (root == null) return 0;
+        public void update(int val, int change) {
+            if (start > val || end < val) return;
 
-        if (root.start == start && root.end == end) return root.count;
+            if (start == val && end == val) {
+                count += change;
+                return;
+            }
+            int mid = start + (end - start) / 2;
+            if (val <= mid) {
+                left.update(val, change);
+            } else {
+                right.update(val, change);
+            }
+            count = left.count + right.count;
+        }
 
-        int mid = root.start + (root.end - root.start) / 2;
-        if (end < mid) return query(root.left, start, end);
+        public int query(int start, int end) {
+            if (this.start == start && this.end == end) return count;
 
-        return query(root.left, start, mid) + query(root.right, mid + 1, end);
+            int mid = this.start + (this.end - this.start) / 2;
+            if (end < mid) return left == null ? 0 : left.query(start, end);
+
+            return left.query(start, mid) + right.query(mid + 1, end);
+        }
     }
 
     void test(Function<int[], List<Integer> > count, String name,
