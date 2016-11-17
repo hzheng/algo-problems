@@ -4,15 +4,16 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/count-of-smaller-numbers-after-self/
+// LC315: https://leetcode.com/problems/count-of-smaller-numbers-after-self/
 //
 // You are given an integer array nums and you have to return a new counts array.
 // The counts array has the property where counts[i] is the number of smaller
 // elements to the right of nums[i].
 public class CountSmaller {
-    // Binary Indexed Tree
+    // Solution of Choice
+    // Sort + Binary Indexed Tree
     // time complexity: O(N * log(N)), space complexity: O(N)
-    // beats 46.27%(20 ms)
+    // beats 44.89%(23 ms for 16 tests)
     public List<Integer> countSmaller(int[] nums) {
         int n = nums.length;
         if (n == 0) return Collections.emptyList();
@@ -24,9 +25,9 @@ public class CountSmaller {
         for (int i = 0; i < n; i++) {
             place.put(buffer[i], i + 1);
         }
-
-        buffer[n - 1] = 0; // buffer is now reused to save result
         int[] bit = new int[n + 1];
+        List<Integer> res = new LinkedList<>();
+        res.add(0);
         for (int i = n - 2; i >= 0; i--) {
             for (int j = place.get(nums[i + 1]); j <= n; j += (j & -j)) {
                 bit[j]++;
@@ -35,22 +36,17 @@ public class CountSmaller {
             for (int j = place.get(nums[i]) - 1; j > 0; j -= (j & -j)) {
                 count += bit[j]; // "-1" to skip all equal values
             }
-            buffer[i] = count;
-        }
-
-        List<Integer> res = new ArrayList<>(n);
-        for (int i = 0; i < n; i++) {
-            res.add(buffer[i]);
+            res.add(0, count);
         }
         return res;
     }
 
     // Binary Indexed Tree
-    // https://discuss.leetcode.com/topic/39656/short-java-binary-index-tree-beat-97-33-with-detailed-explanation/2
+    // https://discuss.leetcode.com/topic/39656/short-java-binary-index-tree-beat-97-33-with-detailed-explanation/
     // time complexity: O(N * log(N)), space complexity: O(N)
-    // beats 98.38%(7 ms)
     // although it's fastest(no sorting process like above solution), but if
     // range of numbers is large, it will take much memory
+    // beats 99.94%(6 ms for 16 tests)
     public List<Integer> countSmaller1(int[] nums) {
         List<Integer> res = new LinkedList<>();
         int n = nums.length;
@@ -66,7 +62,6 @@ public class CountSmaller {
             nums2[i] = nums[i] - min + 1;
             max = Math.max(nums2[i], max);
         }
-
         int[] bit = new int[max + 1];
         for (int i = n - 1; i >= 0; i--) {
             int count = 0;
@@ -74,7 +69,7 @@ public class CountSmaller {
                 count += bit[j];
             }
             res.add(0, count);
-            for (int j = nums2[i]; j < bit.length; j += j & -j) {
+            for (int j = nums2[i]; j < bit.length; j += (j & -j)) {
                 bit[j]++;
             }
         }
@@ -134,9 +129,9 @@ public class CountSmaller {
     }
 
     // Binary Search Tree
-    // https://discuss.leetcode.com/topic/31405/9ms-short-java-bst-solution-get-answer-when-building-bst/2
+    // https://discuss.leetcode.com/topic/31405/9ms-short-java-bst-solution-get-answer-when-building-bst/
     // time complexity: average: O(N * log(N)) Worse case: O(N  ^ 2)
-    // beats 89.05(9 ms)
+    // beats 89.05%(9 ms)
     public List<Integer> countSmaller3(int[] nums) {
         Integer[] res = new Integer[nums.length];
         Node root = null;
@@ -175,14 +170,14 @@ public class CountSmaller {
         }
     }
 
-    // Merge Sort
-    // https://discuss.leetcode.com/topic/31162/mergesort-solution/9
+    // Recursion + Divide & Conquer + Merge Sort
+    // https://discuss.leetcode.com/topic/31162/mergesort-solution/
     // time complexity: O(N * log(N)), space complexity: O(N)
     // beats 31.22%(47 ms)
     public List<Integer> countSmaller4(int[] nums) {
         int n = nums.length;
         List<Integer> res = new ArrayList<>(Collections.nCopies(n, 0));
-        List<NumWithPos> numWithPos = new ArrayList<>();
+        List<NumWithPos> numWithPos = new ArrayList<>(n);
         for (int i = 0; i < n; i++) {
             numWithPos.add(new NumWithPos(nums[i], i));
         }
@@ -236,16 +231,16 @@ public class CountSmaller {
 
     // Binary Search
     // time complexity: O(N * log(N)), space complexity: O(N)
-    // beats 28.23%(52 ms)
+    // beats 25.78%(55 ms for 16 tests)
     public List<Integer> countSmaller5(int[] nums) {
-        Integer[] res = new Integer[nums.length];
+        List<Integer> res = new LinkedList<>();
         List<Integer> sorted = new ArrayList<>();
         for (int i = nums.length - 1; i >= 0; i--) {
             int index = find(sorted, nums[i]);
-            res[i] = index;
+            res.add(0, index);
             sorted.add(index, nums[i]);
         }
-        return Arrays.asList(res);
+        return res;
     }
 
     private int find(List<Integer> sorted, int target) {
@@ -255,10 +250,8 @@ public class CountSmaller {
         int high = sorted.size() - 1;
         if (sorted.get(high) < target) return high + 1;
 
-        if (sorted.get(low) >= target) return 0;
-
         while (low <= high) {
-            int mid = low + (high - low) / 2;
+            int mid = (low + high) >>> 1;
             if (sorted.get(mid) < target) {
                 low = mid + 1;
             } else {
@@ -268,7 +261,18 @@ public class CountSmaller {
         return (sorted.get(low) >= target) ? low : high;
     }
 
-    // Divide and Conquer & bit manipulation
+    // slower than <code>find</code>
+    private int find2(List<Integer> sorted, int target) {
+        int index = Collections.binarySearch(sorted, target);
+        if (index < 0) {
+            index = -index - 1;
+        } else {
+            for (; index > 0 && sorted.get(index - 1) == target; index--) {}
+        }
+        return index;
+    }
+
+    // Recursion + Divide and Conquer & Bit Manipulation
     // https://discuss.leetcode.com/topic/31924/o-nlogn-divide-and-conquer-java-solution-based-on-bit-by-bit-comparison
     // time complexity: O(N), space complexity: O(N)
     // beats 18.03%(62 ms)
@@ -277,8 +281,8 @@ public class CountSmaller {
         List<Integer> res = new ArrayList<>(n);
         List<Integer> index = new ArrayList<>(n);
         for (int i = n - 1; i >= 0; i--) {
-        	res.add(0);
-        	index.add(i);
+            res.add(0);
+            index.add(i);
         }
         countSmaller(nums, index, 1 << 31, res);
         return res;
@@ -286,28 +290,91 @@ public class CountSmaller {
 
     private void countSmaller(int[] nums, List<Integer> index, int mask,
                               List<Integer> res) {
-    	if (mask == 0 || index.size() <= 1) return;
+        if (mask == 0 || index.size() <= 1) return;
 
         int n = index.size();
-    	List<Integer> highGroup = new ArrayList<>(n);
-    	List<Integer> lowGroup = new ArrayList<>(n);
-    	int highBit = (mask < 0 ? 0 : mask);
-    	for (int j = 0; j < n; j++) {
+        List<Integer> highGroup = new ArrayList<>(n);
+        List<Integer> lowGroup = new ArrayList<>(n);
+        int highBit = (mask < 0 ? 0 : mask);
+        for (int j = 0; j < n; j++) {
             int i = index.get(j);
-    		if ((nums[i] & mask) == highBit) {
-    			res.set(i, res.get(i) + lowGroup.size());
-    			highGroup.add(i);
-    		} else {
-    			lowGroup.add(i);
-    		}
-    	}
-    	countSmaller(nums, lowGroup, mask >>> 1, res);
-    	countSmaller(nums, highGroup, mask >>> 1, res);
+            if ((nums[i] & mask) == highBit) {
+                res.set(i, res.get(i) + lowGroup.size());
+                highGroup.add(i);
+            } else {
+                lowGroup.add(i);
+            }
+        }
+        countSmaller(nums, lowGroup, mask >>> 1, res);
+        countSmaller(nums, highGroup, mask >>> 1, res);
     }
 
-    // TODO: Segment Tree
-    // https://discuss.leetcode.com/topic/47633/java-clear-segment-tree-solution
-    // https://discuss.leetcode.com/topic/31154/complicated-segmentree-solution-hope-to-find-a-better-one
+    // Segment Tree
+    // beats 39.24%(30 ms for 16 tests)
+    public List<Integer> countSmaller7(int[] nums) {
+        if (nums.length == 0) return Collections.emptyList();
+
+        int min = Integer.MAX_VALUE;
+        for (int i : nums) {
+            min = Math.min(min, i);
+        }
+        int max = Integer.MIN_VALUE;
+        for (int i : nums) {
+            max = Math.max(max, i);
+        }
+        SegementTreeNode root = build(min, max);
+        for (int num : nums) {
+            update(root, num, 1);
+        }
+        List<Integer> res = new ArrayList<>();
+        for (int num : nums) {
+            update(root, num, -1);
+            res.add(query(root, min, num - 1));
+        }
+        return res;
+    }
+
+    private static class SegementTreeNode {
+        int start, end, count;
+        SegementTreeNode left, right;
+        SegementTreeNode(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+    }
+
+    private SegementTreeNode build(int start, int end) {
+        SegementTreeNode root = new SegementTreeNode(start, end);
+        if (start == end) return root;
+
+        int mid = start + (end - start) / 2; // NOT (start + end) >>> 1;
+        root.left = build(start, mid);
+        root.right = build(mid + 1, end);
+        return root;
+    }
+
+    private void update(SegementTreeNode root, int val, int change) {
+        if (root == null || root.start > val || root.end < val) return;
+
+        if (root.start == val && root.end == val) {
+            root.count += change;
+            return;
+        }
+        int mid = root.start + (root.end - root.start) / 2;
+        update(val <= mid ? root.left : root.right, val, change);
+        root.count = root.left.count + root.right.count;
+    }
+
+    private int query(SegementTreeNode root, int start, int end) {
+        if (root == null) return 0;
+
+        if (root.start == start && root.end == end) return root.count;
+
+        int mid = root.start + (root.end - root.start) / 2;
+        if (end < mid) return query(root.left, start, end);
+
+        return query(root.left, start, mid) + query(root.right, mid + 1, end);
+    }
 
     void test(Function<int[], List<Integer> > count, String name,
               int[] nums, Integer ... expected) {
@@ -325,10 +392,13 @@ public class CountSmaller {
         test(c::countSmaller4, "countSmaller4", nums, expected);
         test(c::countSmaller5, "countSmaller5", nums, expected);
         test(c::countSmaller6, "countSmaller6", nums, expected);
+        test(c::countSmaller7, "countSmaller7", nums, expected);
     }
 
     @Test
     public void test1() {
+        test(new int[] {});
+        test(new int[] {-1, -2}, 1, 0);
         test(new int[] {5, 2, 6, 1}, 2, 1, 1, 0);
         test(new int[] {5, 2, 8, 9, 7, 4, 3, 6, 1}, 4, 1, 5, 5, 4, 2, 1, 1, 0);
         test(new int[] {5, 2, 6, 3, 7, 4, 3, 6, 1}, 5, 1, 4, 1, 4, 2, 1, 1, 0);
