@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/wiggle-sort-ii/
+// LC324: https://leetcode.com/problems/wiggle-sort-ii/
 //
 // Given an unsorted array nums, reorder it such that
 // nums[0] < nums[1] > nums[2] < nums[3]....
@@ -77,10 +77,11 @@ public class WiggleSort2 {
         nums[j] = tmp;
     }
 
-    // median of median + three-way partitioning
+    // Solution of Choice
+    // Median of Median + Three-way Partitioning
     // https://discuss.leetcode.com/topic/41464/step-by-step-explanation-of-index-mapping-in-java
     // time complexity: O(N), space complexity: O(1)
-    // beats 49.13%(20 ms)
+    // beats 49.47%(18 ms for 44 tests)
     public void wiggleSort2(int[] nums) {
         int n = nums.length;
         int median = findKthSmallest(nums, 0, n - 1, n / 2 + 1);
@@ -88,8 +89,7 @@ public class WiggleSort2 {
             int index = mapIndex(i, n);
             if (nums[index] > median) {
                 swap(nums, mapIndex(left++, n), index);
-            }
-            else if (nums[index] < median) {
+            } else if (nums[index] < median) {
                 swap(nums, mapIndex(right--, n), index);
                 i--;
             }
@@ -107,12 +107,8 @@ public class WiggleSort2 {
         int pivot = nums[findPivot(nums, start, end, len / 2 + 1)];
         int i = start;
         for (int j = end; i < j; ) {
-            while (i < j && nums[i] < pivot) {
-                i++;
-            }
-            while (i < j && nums[j] > pivot) {
-                j--;
-            }
+            for (; i < j && nums[i] < pivot; i++) {}
+            for (; i < j && nums[j] > pivot; j--) {}
             if (i < j) {
                 swap(nums, i++, j--);
             }
@@ -141,8 +137,9 @@ public class WiggleSort2 {
         return findPivot(nums, start, start + len / 5, len / 10 + 1);
     }
 
+    // Median
     // time complexity: O(N ^ 2), space complexity: O(N)
-    // beats 1.88%(249 ms)
+    // beats 5.98%(188 ms for 44 tests)
     public void wiggleSort3(int[] nums) {
         int n = nums.length;
         int median = getMedian(nums, n);
@@ -150,18 +147,16 @@ public class WiggleSort2 {
             int index = mapIndex(i, n);
             if (nums[index] > median) {
                 swap(nums, mapIndex(left++, n), index);
-            }
-            else if (nums[index] < median) {
+            } else if (nums[index] < median) {
                 swap(nums, mapIndex(right--, n), index);
                 i--;
             }
         }
     }
 
-    // beats 5.22%(184 ms)
     private int getMedian(int[] nums, int n) {
         for (int start = 0, end = n - 1, target = n / 2;; ) {
-            swap(nums, start, (start + end) / 2);
+            swap(nums, start, (start + end) >>> 1);
             int swapIndex = start;
             for (int i = start + 1; i <= end; i++) {
                 if (nums[i] >= nums[start]) {
@@ -180,11 +175,11 @@ public class WiggleSort2 {
         }
     }
 
+    // Sort
     // time complexity: O(N * log(N)), space complexity: O(N)
     // beats 64.35%(7 ms)
     public void wiggleSort4(int[] nums) {
         Arrays.sort(nums);
-
         int n = nums.length;
         int[] buffer = new int[n];
         for (int i = 0, j = (n + 1) / 2, k = n; i < n; i++) {
