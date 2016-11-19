@@ -49,7 +49,7 @@ public class KthLargest {
     }
 
     // Solution of Choice
-    // Divide & Conquer(Median of medians)
+    // Divide & Conquer(Median of Medians)
     // time complexity: O(N), space complexity: O(N)
     // beats 78.14%(6 ms for 31 tests)
     public int findKthLargest3(int[] nums, int k) {

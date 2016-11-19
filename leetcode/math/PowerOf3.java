@@ -3,18 +3,17 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/power-of-three/
+// LC326: https://leetcode.com/problems/power-of-three/
 //
 // Given an integer, write a function to determine if it is a power of three.
 // Could you do it without using any loop / recursion?
 public class PowerOf3 {
-    // recursive
+    // Recursion
     // beats 87.73%(16 ms)
     public boolean isPowerOfThree(int n) {
         return n == 1 || n > 0 && (n % 3 == 0) && isPowerOfThree(n / 3);
     }
 
-    // iterative
     // beats 60.90%(18 ms)
     public boolean isPowerOfThree2(int n) {
         int i = n;
@@ -24,6 +23,7 @@ public class PowerOf3 {
         return i == 1;
     }
 
+    // Logarithm
     // beats 76.96%(17 ms)
     public boolean isPowerOfThree3(int n) {
         if (n < 1) return false;
@@ -35,6 +35,7 @@ public class PowerOf3 {
         return delta < e || (1 - delta) < e;
     }
 
+    // Logarithm
     // beats 93.72%(15 ms)
     public boolean isPowerOfThree4(int n) {
         if (n < 1) return false;
@@ -45,16 +46,22 @@ public class PowerOf3 {
         return Math.abs(log - (int)(log + 0.5)) < 1E-10;
     }
 
+    // Logarithm + Power
     // beats 9.28%(24 ms)
     public boolean isPowerOfThree5(int n) {
         return n > 0 && n == Math.pow(3, Math.round(Math.log(n) / Math.log(3)));
     }
 
-    // beats 43.05(19 ms)
+    // Solution of Choice
+    // Logarithm
+    // beats 19.68%(21 ms)
     public boolean isPowerOfThree6(int n) {
-        return n > 0 && 1162261467 % n == 0; //1162261467 = 3^19
+        return Math.log10(n) / Math.log10(3) % 1 == 0;
+        // safer version:
+        // return (Math.log(n) / Math.log(3) + epsilon) % 1 <= 2 * epsilon;
     }
 
+    // String
     // beats 3.08%(78 ms)
     public boolean isPowerOfThree7(int n) {
         return n > 0 && Integer.toString(n, 3).matches("10*");
@@ -62,8 +69,13 @@ public class PowerOf3 {
         // return Integer.toString(n, 3).matches("^10*$");
     }
 
-    // beats 19.68%(21 ms)
+    // beats 43.05(19 ms)
     public boolean isPowerOfThree8(int n) {
+        return n > 0 && 1162261467 % n == 0; //1162261467 = 3^19
+    }
+
+    // beats 19.68%(21 ms)
+    public boolean isPowerOfThree9(int n) {
         int[] list = {1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683, 59049,
                       177147, 531441, 1594323, 4782969, 14348907, 43046721,
                       129140163, 387420489, 1162261467};
@@ -71,13 +83,6 @@ public class PowerOf3 {
             if (n == powerOf3) return true;
         }
         return false;
-    }
-
-    // beats 19.68%(21 ms)
-    public boolean isPowerOfThree9(int n) {
-        return Math.log10(n) / Math.log10(3) % 1 == 0;
-        // safer version:
-        // return (Math.log(n) / Math.log(3) + epsilon) % 1 <= 2 * epsilon;
     }
 
     void test(int n, boolean expected) {
