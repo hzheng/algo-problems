@@ -4,14 +4,14 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/create-maximum-number/
+// LC321: https://leetcode.com/problems/create-maximum-number/
 //
 // Given two arrays of length m and n with digits 0-9 representing two numbers.
 // Create the maximum number of length k <= m + n from digits of the two.
 // The relative order of the digits from the same array must be preserved.
 // Return an array of the k digits.
 public class CreateMaxNumber {
-    // Backtracking
+    // Dynamic Programming + Backtracking + Recursion
     // Time Limit Exceeded
     public int[] maxNumber(int[] nums1, int[] nums2, int k) {
         int[] max = new int[k];
@@ -86,8 +86,8 @@ public class CreateMaxNumber {
         return dp;
     }
 
-    // Dynamic Programming
-    // beats 92.87(17 ms) or: 81.21%(19ms)
+    // Dynamic Programming + Greedy
+    // beats 92.87%(17 ms)
     public int[] maxNumber2(int[] nums1, int[] nums2, int k) {
         int[] max = new int[k];
         int[][] dp1 = createDp(nums1);
@@ -201,7 +201,8 @@ public class CreateMaxNumber {
         }
     }
 
-    // Merge
+    // Solution of Choice
+    // Greedy + Merge
     // https://discuss.leetcode.com/topic/32272/share-my-greedy-solution
     // time complexity: O((M+N)^3), space complexity: O(K)
     // beats 71.24%(20 ms)
