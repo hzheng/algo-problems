@@ -7,13 +7,14 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC316: https://leetcode.com/problems/remove-duplicate-letters/
 //
 // Given a string which contains only lowercase letters, remove
 // duplicate letters so that every letter appears once and only once.
 // You must make sure your result is the smallest in lexicographical order
 // among all possible results.
 public class RemoveDuplicateLetters {
-    // DFS + backtracking
+    // Hash Table + Heap + Recursion + DFS/Backtracking
     // Time Limit Exceeded
     public String removeDuplicateLetters(String s) {
         int[] count = new int[26];
@@ -54,7 +55,7 @@ public class RemoveDuplicateLetters {
         }
     }
 
-    // Deque
+    // Hash Table + Deque
     // time complexity: O(N), space complexity: O(1)
     // beats 57.50%(9 ms)
     public String removeDuplicateLetters2(String s) {
@@ -62,7 +63,6 @@ public class RemoveDuplicateLetters {
         for (char c : s.toCharArray()) {
             counts[c - 'a']++;
         }
-
         StringBuilder sb = new StringBuilder();
         Deque<Character> deque = new LinkedList<>();
         for (int i = 0; i < s.length(); i++) {
@@ -94,7 +94,6 @@ public class RemoveDuplicateLetters {
                     i--;
                     continue;
                 }
-
                 while (!deque.isEmpty()) {
                     d = deque.pollFirst();
                     sb.append(d);
@@ -116,7 +115,7 @@ public class RemoveDuplicateLetters {
         return sb.toString();
     }
 
-    // https://discuss.leetcode.com/topic/35686/clean-and-easy-understand-java-stack-solution-with-explanation
+    // Hash Table + Stack
     // beats 81.45%(6 ms)
     public String removeDuplicateLetters3(String s) {
         boolean[] visited = new boolean[26];
@@ -136,11 +135,9 @@ public class RemoveDuplicateLetters {
                     visited[stack.pop() - 'a'] = false;
                 } else break;
             }
-
             stack.push(c);
             visited[index] = true;
         }
-
         StringBuilder sb = new StringBuilder();
         for (char c : stack) {
             sb.append(c);
@@ -148,20 +145,13 @@ public class RemoveDuplicateLetters {
         return sb.toString();
     }
 
-    // recursive
-    // https://discuss.leetcode.com/topic/31404/a-short-o-n-recursive-greedy-solution/2
-    // beats 28.13%(33 ms)
+    // Hash Table + Recursion + Greedy
+    // beats 10.73%(36 ms for 286 tests)
     public String removeDuplicateLetters4(String s) {
         int[] counts = new int[26];
         for (char c : s.toCharArray()) {
             counts[c - 'a']++;
         }
-        return removeDuplicateLetters4(s, counts);
-    }
-
-    private String removeDuplicateLetters4(String s, int[] counts) {
-        if (s.isEmpty()) return "";
-
         int min = 0;
         for (int i = 0; i < s.length(); i++) {
             if (s.charAt(i) < s.charAt(min)) {
@@ -169,11 +159,12 @@ public class RemoveDuplicateLetters {
             }
             if (--counts[s.charAt(i) - 'a'] == 0) break;
         }
-        return s.charAt(min)
+        return s.isEmpty() ? "" : s.charAt(min)
                + removeDuplicateLetters4(s.substring(min + 1)
                                          .replaceAll("" + s.charAt(min), ""));
     }
 
+    // Hash Table
     // https://discuss.leetcode.com/topic/31413/easy-to-understand-iterative-java-solution
     // beats 35.09%(21 ms)
     public String removeDuplicateLetters5(String s) {
@@ -183,11 +174,10 @@ public class RemoveDuplicateLetters {
         for (int i = 0; i < s.length(); i++) {
             lastPosMap.put(s.charAt(i), i);
         }
-
         char[] res = new char[lastPosMap.size()];
         int begin = 0;
         int end = findMinLastPos(lastPosMap);
-        for (int i = 0; ; i++) {
+        for (int i = 0;; i++) {
             char minChar = 'z' + 1;
             for (int j = begin; j <= end; j++) {
                 char c = s.charAt(j);
@@ -197,14 +187,13 @@ public class RemoveDuplicateLetters {
                 }
             }
             res[i] = minChar;
-            if (i == res.length - 1) break;
+            if (i == res.length - 1) return new String(res);
 
             lastPosMap.remove(minChar);
             if (s.charAt(end) == minChar) {
                 end = findMinLastPos(lastPosMap);
             }
         }
-        return new String(res);
     }
 
     private int findMinLastPos(Map<Character, Integer> lastPosMap) {
@@ -217,9 +206,10 @@ public class RemoveDuplicateLetters {
         return minLastPos;
     }
 
-    // https://discuss.leetcode.com/topic/32172/c-simple-solution-easy-understanding/2
-    // no stack/deque
-    // beats 96.90%(3 ms)
+    // Solution of Choice
+    // Hash Table
+    // https://discuss.leetcode.com/topic/32172/c-simple-solution-easy-understanding/
+    // beats 95.04%(4 ms for 286 tests)
     public String removeDuplicateLetters6(String s) {
         boolean[] visited = new boolean[26];
         int[] counts = new int[26];
