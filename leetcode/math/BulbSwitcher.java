@@ -1,11 +1,11 @@
-// https://leetcode.com/problems/bulb-switcher/
-
 import java.util.*;
 import java.util.function.Function;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-//
+
+// LC319: https://leetcode.com/problems/bulb-switcher/
+
 // There are n bulbs that are initially off. You first turn on all the bulbs.
 // Then, you turn off every second bulb. On the third round, you toggle every
 // third bulb. For the ith round, you toggle every i bulb. For the nth round,
@@ -41,6 +41,7 @@ public class BulbSwitcher {
         return count;
     }
 
+    // Solution of Choice
     // time complexity: O(1), space complexity: O(1)
     // beats 28.29%(0 ms)
     public int bulbSwitch3(int n) {
