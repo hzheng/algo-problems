@@ -3,6 +3,8 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC322: https://leetcode.com/problems/coin-change/
+//
 // You are given coins of different denominations and a total amount
 // of money amount. Write a function to compute the fewest number of coins that
 // you need to make up that amount. If that amount of money cannot be made up
@@ -37,7 +39,7 @@ public class CoinChange {
         return min > amount ? -1 : min;
     }
 
-    // Dynamic Programming(Top Down, recursive)
+    // Recursion + Dynamic Programming(Top-Down)
     // Time Limit Exceeded
     public int coinChange2(int[] coins, int amount) {
         int n = coins.length;
@@ -79,7 +81,7 @@ public class CoinChange {
         return min;
     }
 
-    // Dynamic Programming(Bottom up, iterative)
+    // Sort + Dynamic Programming(Bottom-Up)
     // beats 3.60%(261 ms)
     public int coinChange3(int[] coins, int amount) {
         int n = coins.length;
@@ -110,11 +112,10 @@ public class CoinChange {
         return dp[amount];
     }
 
-    // Dynamic Programming(Bottom up, iterative)
-    // from leetcode
+    // Sort + Dynamic Programming(Bottom-Up)
     // Time complexity : O(S * n). S is amount, n is denomination count.
     // Space complexity: O(S)
-    // beats 74.39%(25 ms)
+    // beats 32.76%(29 ms for 182 tests)
     public int coinChange4(int[] coins, int amount) {
         int n = coins.length;
         int[] dp = new int[amount + 1];
@@ -129,13 +130,12 @@ public class CoinChange {
         return dp[amount] > amount ? -1 : dp[amount];
     }
 
-    // Dynamic Programming(Top Down, recursive)
-    // from leetcode
+    // Recursion + Dynamic Programming(Top-Down)
     // Time complexity : O(S * n). S is amount, n is denomination count.
     // Space complexity: O(S)
-    // beats 12.81%(51 ms)
+    // beats 14.07%(46 ms for 182 tests)
     public int coinChange5(int[] coins, int amount) {
-        return amount < 1 ? 0 : coinChange(coins, amount, new int[amount]);
+        return coinChange(coins, amount, new int[amount]);
     }
 
     private int coinChange(int[] coins, int amount, int[] count) {
@@ -152,12 +152,10 @@ public class CoinChange {
                 min = res + 1;
             }
         }
-        count[amount - 1] = (min == Integer.MAX_VALUE) ? -1 : min;
-        return count[amount - 1];
+        return count[amount - 1] = (min == Integer.MAX_VALUE) ? -1 : min;
     }
 
-    // brute force
-    // from leetcode
+    // Recursion(brute force)
     // Time complexity : O(S ^ n). S is amount, n is denomination count.
     // Space complexity: O(n)
     // Time Limit Exceeded
@@ -183,11 +181,12 @@ public class CoinChange {
         return (minCost == Integer.MAX_VALUE) ? -1 : minCost;
     }
 
-    // Dynamic Programming(Bottom up, iterative)
+    // Solution of Choice
+    // Dynamic Programming(Bottom-Up)
     // compared to coinChange4, loop coin first then amount
     // Time complexity : O(S * n). S is amount, n is denomination count.
     // Space complexity: O(S)
-    // beats 91.72%(20 ms)
+    // beats 94.93%(17 ms for 182 tests)
     public int coinChange7(int[] coins, int amount) {
         int[] dp = new int[amount + 1];
         Arrays.fill(dp, amount + 1);
@@ -200,8 +199,8 @@ public class CoinChange {
         return dp[amount] > amount ? -1 : dp[amount];
     }
 
-    // BFS
-    // beats 18.33%(44 ms)
+    // BFS + Queue
+    // beats 16.61%(41 ms for 182 tests)
     public int coinChange8(int[] coins, int amount) {
         if (amount == 0) return 0;
 
@@ -214,8 +213,7 @@ public class CoinChange {
         Queue<Integer> values = new LinkedList<>();
         values.offer(0);
         for (int level = 1; !values.isEmpty(); level++) {
-            int size = values.size();
-            for (int i = 0; i < size; i++) {
+            for (int i = values.size() - 1; i >= 0; i--) {
                 int v = values.poll();
                 for (int coin : coins) {
                     int val = v + coin;
@@ -252,19 +250,18 @@ public class CoinChange {
 
     void test(int expected, int amount, int ... coins) {
         CoinChange c = new CoinChange();
-        coins = coins.clone();
         if (amount <= 1000) {
-            test(c::coinChange, "coinChange", expected, amount, coins);
+            test(c::coinChange, "coinChange", expected, amount, coins.clone());
             if (amount <= 100) {
-                test(c::coinChange6, "coinChange6", expected, amount, coins);
+                test(c::coinChange6, "coinChange6", expected, amount, coins.clone());
             }
         }
-        test(c::coinChange2, "coinChange2", expected, amount, coins);
-        test(c::coinChange3, "coinChange3", expected, amount, coins);
-        test(c::coinChange4, "coinChange4", expected, amount, coins);
-        test(c::coinChange5, "coinChange5", expected, amount, coins);
-        test(c::coinChange7, "coinChange7", expected, amount, coins);
-        test(c::coinChange8, "coinChange8", expected, amount, coins);
+        test(c::coinChange2, "coinChange2", expected, amount, coins.clone());
+        test(c::coinChange3, "coinChange3", expected, amount, coins.clone());
+        test(c::coinChange4, "coinChange4", expected, amount, coins.clone());
+        test(c::coinChange5, "coinChange5", expected, amount, coins.clone());
+        test(c::coinChange7, "coinChange7", expected, amount, coins.clone());
+        test(c::coinChange8, "coinChange8", expected, amount, coins.clone());
     }
 
     @Test
@@ -272,6 +269,7 @@ public class CoinChange {
         test(0, 0, 1);
         test(-1, 3, 2);
         test(-1, 2, 2147483647);
+        test(8, 264, 474, 83, 404, 3);
         test(3, 11, 1, 2, 5);
         test(7, 50, 2, 5, 11);
         test(11, 100, 2, 5, 11);
