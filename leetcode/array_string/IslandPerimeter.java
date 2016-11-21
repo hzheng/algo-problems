@@ -111,7 +111,7 @@ public class IslandPerimeter {
 
     @Test
     public void test() {
-        test(new int[][] {{0,1,0,0}, {1,1,1,0}, {0,1,0,0}, {1,1,0,0}}, 16);
+        test(new int[][] {{0, 1, 0, 0}, {1, 1, 1, 0}, {0, 1, 0, 0}, {1, 1, 0, 0}}, 16);
         test(new int[][] {{1}}, 4);
         test(new int[][] {{1, 1}, {1, 1}}, 8);
     }
