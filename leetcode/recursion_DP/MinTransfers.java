@@ -157,7 +157,10 @@ public class MinTransfers {
     private void transfer(int[] balances1, int count1, int[] balances2,
                           int count2, int cur, int[] min) {
         int last = balances1[count1 - 1];
-        int[] copy = balances2.clone(); // can we avoid clone?
+        int[] copy = new int[count2]; //balances2.clone(); // can we avoid copy?
+        for (int i = 0; i < count2; i++) {
+            copy[i] = balances2[i];
+        }
         for (int i = 0; i < count2; i++) {
             int old = copy[i];
             for (int j = 0; j < count2; j++) {
@@ -176,9 +179,108 @@ public class MinTransfers {
         }
     }
 
+    // Recursion + Bit Manipulation
+    // beats N/A(4 ms for 27 tests)
+    public int minTransfers3(int[][] transactions) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int[] transaction : transactions) {
+            int person1 = transaction[0];
+            int person2 = transaction[1];
+            int money = transaction[2];
+            map.put(person1, map.getOrDefault(person1, 0) + money);
+            map.put(person2, map.getOrDefault(person2, 0) - money);
+        }
+        List<Integer> balances = new ArrayList<>();
+        for (int person : map.keySet()) {
+            int money = map.get(person);
+            if (money != 0) {
+                balances.add(money);
+            }
+        }
+        int n = balances.size();
+        int[] balArray = new int[n];
+        for (int i = 0; i < n; i++) {
+            balArray[i] = balances.get(i);
+        }
+        int[] maxGroups = {0};
+        transfer(balArray, (1 << n) - 1, 0, maxGroups);
+        return n - maxGroups[0];
+    }
+
+    private boolean zeroBalance(int[] balances, int mask) {
+        int sum = 0;
+        for (int i = balances.length - 1; i >= 0; i--) {
+            if ((mask & (1 << i)) != 0) {
+                sum += balances[i];
+            }
+        }
+        return sum == 0;
+    }
+
+    private void transfer(int[] balances, int mask, int groups, int[] maxGroups) {
+        for (int subMask = mask; subMask != 0; subMask = (subMask - 1) & mask) {
+            if (zeroBalance(balances, subMask)) {
+                if (mask == subMask) {
+                    // maxGroups[0] = groups + 1;
+                    maxGroups[0] = Math.max(maxGroups[0], groups + 1);
+                } else if (groups < maxGroups[0]) {
+                    transfer(balances, mask - subMask, groups + 1, maxGroups);
+                }
+            }
+        }
+    }
+
+    // Bit Manipulation + Dynamic Programming
+    // beats N/A(5 ms for 27 tests)
+    public int minTransfers4(int[][] transactions) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int[] transaction : transactions) {
+            int person1 = transaction[0];
+            int person2 = transaction[1];
+            int money = transaction[2];
+            map.put(person1, map.getOrDefault(person1, 0) + money);
+            map.put(person2, map.getOrDefault(person2, 0) - money);
+        }
+        List<Integer> balances = new ArrayList<>();
+        for (int person : map.keySet()) {
+            int money = map.get(person);
+            if (money != 0) {
+                balances.add(money);
+            }
+        }
+        int n = balances.size();
+        int[] balArray = new int[n];
+        for (int i = 0; i < n; i++) {
+            balArray[i] = balances.get(i);
+        }
+        int maskCount = 1 << n;
+        int[] dp = new int[maskCount];
+        for (int mask = 1; mask < maskCount; mask++) {
+            int sum = 0;
+            for (int i = 0; i < n; i++) {
+                if ((mask & (1 << i)) != 0) {
+                    sum += balArray[i];
+                }
+            }
+            if (sum != 0) {
+                dp[mask] = -1;
+                continue;
+            }
+            dp[mask] = 1;
+            for (int i = (mask - 1) & mask; i != 0; i = (i - 1) & mask) {
+                if (dp[i] >= 0) {
+                    dp[mask] = Math.max(dp[mask], dp[i] + 1);
+                }
+            }
+        }
+        return n - dp[maskCount - 1];
+    }
+
     void test(int[][] transactions, int expected) {
         assertEquals(expected, minTransfers(transactions));
         assertEquals(expected, minTransfers2(transactions));
+        assertEquals(expected, minTransfers3(transactions));
+        assertEquals(expected, minTransfers4(transactions));
     }
 
     @Test
