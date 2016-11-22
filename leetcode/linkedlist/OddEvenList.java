@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 
 import common.ListNode;
 
-// https://leetcode.com/problems/odd-even-linked-list/
+// LC328: https://leetcode.com/problems/odd-even-linked-list/
 //
 // Given a singly linked list, group all odd nodes together followed by the even
 // nodes. Please note here we are talking about the node number and not the
@@ -50,18 +50,16 @@ public class OddEvenList {
         return oddDummy.next;
     }
 
-    // from leetcode
+    // https://leetcode.com/articles/odd-even-linked-list/
     // beats 3.44%(1 ms)
     public ListNode oddEvenList3(ListNode head) {
         if (head == null) return null;
 
         ListNode odd = head;
         ListNode evenHead = head.next;
-        for (ListNode even = evenHead; even != null && even.next != null;
-             even = even.next) {
-            odd.next = even.next;
-            odd = odd.next;
-            even.next = odd.next;
+        for (ListNode even = evenHead; even != null && even.next != null; ) {
+            odd = odd.next = even.next;
+            even = even.next = odd.next;
         }
         odd.next = evenHead;
         return head;
@@ -72,7 +70,6 @@ public class OddEvenList {
         nums = nums.clone();
         ListNode res = oddEvenList.apply(ListNode.of(nums));
         int[] resArray = res == null ? new int[] {} : res.toArray();
-        // System.out.println(Arrays.toString(resArray));
         assertArrayEquals(expected, resArray);
     }
 
