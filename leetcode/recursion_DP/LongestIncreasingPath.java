@@ -3,13 +3,14 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/longest-increasing-path-in-a-matrix/
+// LC329: https://leetcode.com/problems/longest-increasing-path-in-a-matrix/
 //
 // Given an integer matrix, find the length of the longest increasing path.
 // From each cell, you can either move to four directions: left, right, up or
 // down. You may NOT move diagonally or move outside of the boundary .
 public class LongestIncreasingPath {
-    // DFS + Memoization
+    // Solution of Choice
+    // Recursion + DFS + Dynamic Programming(Top-Down)
     // time complexity: O(M * N), space complexity: O(M * N)
     // beats 66.10%(16 ms)
     private static final int[][] shifts = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
@@ -44,7 +45,7 @@ public class LongestIncreasingPath {
         return memo[i][j] = max + 1;
     }
 
-    // Topological Sort
+    // Topological Sort(con: changed input)
     // beats 2.95%(164ms) or 5.21%(95 ms)
     public int longestIncreasingPath2(int[][] matrix) {
         int m = matrix.length;
@@ -77,8 +78,7 @@ public class LongestIncreasingPath {
                     }
                 }
             }
-
-            while (!removeList.isEmpty()) {
+            while (!removeList.isEmpty()) { // remove all local maximum
                 long pos = removeList.poll();
                 matrix[(int)(pos >> 32)][(int)pos] = Integer.MIN_VALUE;
                 count--;
