@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/patching-array/
+// LC330: https://leetcode.com/problems/patching-array/
 //
 // Given a sorted positive integer array nums and an integer n, add/patch
 // elements to the array such that any number in range [1, n] inclusive can be
@@ -17,7 +17,6 @@ public class PatchArray {
         for (int i = 1; i <= n; i++) {
             unfinished.add(i);
         }
-
         List<Integer> finished = new ArrayList<>();
         combine(nums, 0, nums.length, unfinished, finished);
         return patch(unfinished, finished);
@@ -75,7 +74,6 @@ public class PatchArray {
         for (int i = 1; i <= n; i++) {
             unfinished.add(i);
         }
-
         List<Integer> finished = new ArrayList<>();
         combine(nums, 0, nums.length, unfinished, finished);
         for (int patches = 0;; patches++) {
@@ -316,18 +314,19 @@ public class PatchArray {
         return false;
     }
 
-    // greedy
+    // Solution of Choice
+    // Greedy
     // time complexity: O(N), space complexity: O(1)
-    // beats 12.62%(1 ms)
+    // beats 11.29%(1 ms for 149 tests)
     public int minPatches4(int[] nums, int n) {
         int cur = 0;
         int patches = 0;
-        for (long target = 1; target <= n; ) {
-            if (cur < nums.length && nums[cur] <= target) {
-                target += nums[cur++];
+        for (long minMiss = 1; minMiss <= n; ) {
+            if (cur < nums.length && nums[cur] <= minMiss) {
+                minMiss += nums[cur++];
             } else {
-                patches++; // patching the target
-                target <<= 1; // old target contains prefix sum
+                patches++; // patching the missing
+                minMiss <<= 1; // minMiss += minMiss;
             }
         }
         return patches;
