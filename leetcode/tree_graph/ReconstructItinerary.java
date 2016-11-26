@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 // You may assume all tickets form at least one valid itinerary.
 public class ReconstructItinerary {
     // Recursion + DFS + Backtracking
-    // beats 20.41%(21 ms for 79 tests)
+    // beats 27.47%(18 ms for 79 tests)
     public List<String> findItinerary(String[][] tickets) {
         Map<String, List<String> > map = new HashMap<>();
         for (String[] ticket : tickets) {
@@ -29,7 +29,7 @@ public class ReconstructItinerary {
             Collections.sort(arrivals);
         }
         String departure = "JFK";
-        List<String> iternary = new LinkedList<>();
+        LinkedList<String> iternary = new LinkedList<>();
         iternary.add(departure);
         findItinerary(departure, tickets.length + 1, map, iternary);
         return iternary;
@@ -37,7 +37,7 @@ public class ReconstructItinerary {
 
     private boolean findItinerary(String departure, int len,
                                   Map<String, List<String> > map,
-                                  List<String> iternary) {
+                                  LinkedList<String> iternary) {
         List<String> arrivals = map.getOrDefault(departure, Collections.emptyList());
         for (int i = 0; i < arrivals.size(); i++) {
             String arrival = arrivals.get(i);
@@ -48,7 +48,7 @@ public class ReconstructItinerary {
             if (findItinerary(arrival, len, map, iternary)) return true;
 
             // backtracking
-            iternary.remove(iternary.size() - 1);
+            iternary.removeLast(); // iternary.remove(iternary.size() - 1);
             arrivals.set(i, arrival);
         }
         return iternary.size() == len;
