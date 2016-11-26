@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/verify-preorder-serialization-of-a-binary-tree/
+// LC331: https://leetcode.com/problems/verify-preorder-serialization-of-a-binary-tree/
 //
 // One way to serialize a binary tree is to use pre-order traversal. When we
 // encounter a non-null node, we record the node's value. If it is a null node,
@@ -12,7 +12,8 @@ import static org.junit.Assert.*;
 //  preorder traversal serialization of a binary tree. Find an algorithm without
 //  reconstructing the tree.
 public class VerifyPreorderTreeSerialization {
-    // beats 24.43%(21 ms)
+    // Stack
+    // beats 30.55%(19 ms for 150 tests)
     public boolean isValidSerialization(String preorder) {
         Stack<Integer> stack = new Stack<>();
         String[] nodes = preorder.split(",");
@@ -22,7 +23,6 @@ public class VerifyPreorderTreeSerialization {
                 stack.push(2);
                 continue;
             }
-
             while (!stack.isEmpty()) {
                 int top = stack.pop();
                 if (--top > 0) {
@@ -35,23 +35,42 @@ public class VerifyPreorderTreeSerialization {
         return stack.isEmpty();
     }
 
-    // graph theory
+    // Stack
+    // beats 30.55%(19 ms for 150 tests)
+    public boolean isValidSerialization1(String preorder) {
+        Stack<Boolean> stack = new Stack<>();
+        for (String token : preorder.split(",")) {
+            boolean isNull = token.equals("#");
+            if (isNull) {
+                for (; !stack.isEmpty() && stack.peek(); stack.pop()) {
+                    stack.pop(); // pop the left null-sibling
+                    if (stack.isEmpty()) return false;
+                }
+            }
+            stack.push(isNull);
+        }
+        return stack.size() == 1 && stack.peek();
+    }
+
+    // Solution of Choice
+    // Graph Theory
     // https://discuss.leetcode.com/topic/35976/7-lines-easy-java-solution
-    // beats 52.68%(12 ms)
+    // beats 94.19%(9 ms for 150 tests)
     public boolean isValidSerialization2(String preorder) {
-        int diff = 1; // diff = outdegree - indegree
+        int degreeDiff = 1; // degreeDiff = outdegree - indegree
         for (String node : preorder.split(",")) {
-            if (--diff < 0) return false;
+            if (--degreeDiff < 0) return false;
 
             if (!node.equals("#")) {
-                diff += 2;
+                degreeDiff += 2;
             }
         }
-        return diff == 0;
+        return degreeDiff == 0;
     }
 
     void test(String s, boolean expected) {
         assertEquals(expected, isValidSerialization(s));
+        assertEquals(expected, isValidSerialization1(s));
         assertEquals(expected, isValidSerialization2(s));
     }
 
