@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// Given a list of airline tickets represented by pairs of departure and
+// LC332: Given a list of airline tickets represented by pairs of departure and
 // arrival airports [from, to], reconstruct the itinerary in order. All of the
 // tickets belong to a man who departs from JFK. Thus, the itinerary must begin
 // with JFK.
@@ -13,8 +13,8 @@ import static org.junit.Assert.*;
 // All airports are represented by three capital letters (IATA code).
 // You may assume all tickets form at least one valid itinerary.
 public class ReconstructItinerary {
-    // DFS + backtracking
-    // beats 37.55%(19 ms)
+    // Recursion + DFS + Backtracking
+    // beats 20.41%(21 ms for 79 tests)
     public List<String> findItinerary(String[][] tickets) {
         Map<String, List<String> > map = new HashMap<>();
         for (String[] ticket : tickets) {
@@ -25,11 +25,9 @@ public class ReconstructItinerary {
                 map.put(departure, new ArrayList<>(Arrays.asList(ticket[1])));
             }
         }
-
         for (List<String> arrivals : map.values()) {
             Collections.sort(arrivals);
         }
-
         String departure = "JFK";
         List<String> iternary = new LinkedList<>();
         iternary.add(departure);
@@ -56,9 +54,9 @@ public class ReconstructItinerary {
         return iternary.size() == len;
     }
 
-    // DFS + Greedy
-    // Hierholzer's algorithm
-    // beats 83.50%(11 ms)
+    // Recursion + Heap + Graph
+    // https://en.wikipedia.org/wiki/Eulerian_path#Hierholzer.27s_algorithm
+    // beats 57.11%(12 ms for 79 tests)
     public List<String> findItinerary2(String[][] tickets) {
         Map<String, Queue<String> > map = new HashMap<>();
         for (String[] ticket : tickets) {
@@ -68,7 +66,6 @@ public class ReconstructItinerary {
             }
             map.get(departure).offer(ticket[1]);
         }
-
         List<String> iternary = new LinkedList<>();
         findItinerary2("JFK", map, iternary);
         return iternary;
@@ -86,13 +83,13 @@ public class ReconstructItinerary {
         iternary.add(0, departure);
     }
 
-    // https://discuss.leetcode.com/topic/36370/short-ruby-python-java-c/2
-    // iterative version
-    // beats 33.70%(20 ms)
+    // Solution of Choice
+    // Stack + Heap + Graph
+    // beats 39.09%(15 ms for 79 tests)
     public List<String> findItinerary3(String[][] tickets) {
         Map<String, Queue<String> > map = new HashMap<>();
         for (String[] ticket : tickets) {
-            // targets.computeIfAbsent(
+            // map.computeIfAbsent(
             //     ticket[0], k -> new PriorityQueue<>()).add(ticket[1]);
             String departure = ticket[0];
             if (!map.containsKey(departure)) {
@@ -100,17 +97,13 @@ public class ReconstructItinerary {
             }
             map.get(departure).offer(ticket[1]);
         }
-        
         List<String> itinerary = new LinkedList<>();
         Stack<String> stack = new Stack<>();
         stack.push("JFK");
         while (!stack.empty()) {
             while (true) {
-                String departure = stack.peek();
-                if (!map.containsKey(departure)) break;
-
-                Queue<String> arrivals = map.get(departure);
-                if (arrivals.isEmpty()) break;
+                Queue<String> arrivals = map.get(stack.peek());
+                if (arrivals == null || arrivals.isEmpty()) break;
 
                 stack.push(arrivals.poll());
             }
