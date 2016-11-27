@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/increasing-triplet-subsequence/
+// LC334: https://leetcode.com/problems/increasing-triplet-subsequence/
 //
 // Given an unsorted array return whether an increasing subsequence of length 3
 // exists or not in the array.
@@ -40,6 +40,7 @@ public class IncreasingTriplet {
         return false;
     }
 
+    // Solution of Choice
     // beats 40.56%(1 ms)
     public boolean increasingTriplet2(int[] nums) {
         int first = Integer.MAX_VALUE;
