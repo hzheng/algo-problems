@@ -4,7 +4,7 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/palindrome-pairs/
+// LC336: https://leetcode.com/problems/palindrome-pairs/
 //
 // Given a list of unique words. Find all pairs of distinct indices (i, j) in
 // the given list, so that the concatenation of the two words, i.e.
@@ -29,7 +29,8 @@ public class PalindromePairs {
         }
     }
 
-    // Trie + backtracking
+    // Trie + Recursion + Backtracking
+    // time complexity: O(N * K ^ 2)
     // beats 32.41%(172 ms)
     public List<List<Integer> > palindromePairs(String[] words) {
         int len = words.length;
@@ -86,12 +87,11 @@ public class PalindromePairs {
 
     private void findPalindrome(TrieNode node, int index, StringBuilder sb,
                                 Set<List<Integer> > res, boolean dir) {
-        TrieNode[] children = node.children;
         if (node.index >= 0 && node.index != index && isPalindrome(sb)) {
             res.add(dir ? Arrays.asList(index, node.index)
-                        : Arrays.asList(node.index, index));
+                    : Arrays.asList(node.index, index));
         }
-
+        TrieNode[] children = node.children;
         if (children == null) return;
 
         for (int i = 0; i < children.length; i++) {
@@ -111,20 +111,76 @@ public class PalindromePairs {
         return true;
     }
 
-    // Hash Table
+    // Trie
+    // time complexity: O(N * K ^ 2)
+    // beats 92.71%(64 ms for 134 tests)
+    public List<List<Integer> > palindromePairs1(String[] words) {
+        List<List<Integer> > res = new ArrayList<>();
+        TrieNode1 root = new TrieNode1();
+        for (int i = 0; i < words.length; i++) {
+            addWord(root, words[i], i);
+        }
+        for (int i = 0; i < words.length; i++) {
+            search(words, i, root, res);
+        }
+        return res;
+    }
+
+    static class TrieNode1 {
+        TrieNode1[] children = new TrieNode1[26];
+        int index = -1;
+        // indices of words which are of form: palindrome + suffix represented by 'this'
+        List<Integer> list = new ArrayList<>();
+    }
+
+    private void addWord(TrieNode1 root, String word, int index) {
+        for (int i = word.length() - 1; i >= 0; i--) {
+            int j = word.charAt(i) - 'a';
+            if (root.children[j] == null) {
+                root.children[j] = new TrieNode1();
+            }
+            if (isPalindrome(word, 0, i)) {
+                root.list.add(index);
+            }
+            root = root.children[j];
+        }
+        root.list.add(index);
+        root.index = index;
+    }
+
+    private void search(String[] words, int i, TrieNode1 root, List<List<Integer> > res) {
+        for (int j = 0, len = words[i].length(); j < len; j++) {
+            if (root.index >= 0 && root.index != i && isPalindrome(words[i], j, len - 1)) {
+                res.add(Arrays.asList(i, root.index));
+            }
+            root = root.children[words[i].charAt(j) - 'a'];
+            if (root == null) return;
+        }
+        for (int j : root.list) {
+            if (i != j) {
+                res.add(Arrays.asList(i, j));
+            }
+        }
+    }
+
+    private boolean isPalindrome(String word, int i, int j) {
+        while (i < j) {
+            if (word.charAt(i++) != word.charAt(j--)) return false;
+        }
+        return true;
+    }
+
+    // Hash Table + Two Pointers
     // https://discuss.leetcode.com/topic/39631/accepted-short-java-solution-using-hashmap
     // time complexity: O(N * K ^ 2)
-    // beats 16.69%(261 ms)
-    public List<List<Integer>> palindromePairs2(String[] words) {
-        List<List<Integer>> res = new LinkedList<>();
+    // beats 17.11%(235 ms for 134 tests)
+    public List<List<Integer> > palindromePairs2(String[] words) {
+        List<List<Integer> > res = new LinkedList<>();
         int len = words.length;
-        if (len == 0) return res;
-
         Map<String, Integer> map = new HashMap<>();
         for (int i = 0; i < len; i++) {
             map.put(words[i], i);
         }
-
         for (int i = 0; i < len; i++) {
             String word = words[i];
             for (int left = 0, right = 0; left <= right; ) {
@@ -132,9 +188,9 @@ public class PalindromePairs {
                 Integer j = map.get(new StringBuilder(s).reverse().toString());
                 if (j != null && i != j) {
                     if (left == 0 && isPalindrome(word.substring(right))) {
-                        res.add(Arrays.asList(new Integer[]{i, j}));
+                        res.add(Arrays.asList(new Integer[] {i, j}));
                     } else if (left > 0 && isPalindrome(word.substring(0, left))) {
-                        res.add(Arrays.asList(new Integer[]{j, i}));
+                        res.add(Arrays.asList(new Integer[] {j, i}));
                     }
                 }
                 if (right < word.length()) {
@@ -152,6 +208,37 @@ public class PalindromePairs {
             if (s.charAt(i) != s.charAt(j)) return false;
         }
         return true;
+    }
+
+    // Hash Table
+    // time complexity: O(N * K ^ 2)
+    // beats 71.77%(133 ms for 134 tests)
+    public List<List<Integer> > palindromePairs3(String[] words) {
+        List<List<Integer> > res = new ArrayList<>();
+        int len = words.length;
+        Map<String, Integer> map = new HashMap<>();
+        for (int i = 0; i < len; i++) {
+            map.put(words[i], i);
+        }
+        for (int i = 0; i < len; i++) {
+            for (int j = 0; j <= words[i].length(); j++) {
+                String s1 = words[i].substring(0, j);
+                String s2 = words[i].substring(j);
+                if (isPalindrome(s1)) {
+                    Integer index = map.get(new StringBuilder(s2).reverse().toString());
+                    if (index != null && index != i) {
+                        res.add(Arrays.asList(new Integer[] {index, i}));
+                    }
+                }
+                if (isPalindrome(s2)) {
+                    Integer index = map.get(new StringBuilder(s1).reverse().toString());
+                    if (index != null && index != i && s2.length() > 0) {
+                        res.add(Arrays.asList(new Integer[] {i, index}));
+                    }
+                }
+            }
+        }
+        return res;
     }
 
     // TODO: Manacher algorithm
@@ -181,11 +268,14 @@ public class PalindromePairs {
     void test(Integer[][] expected, String ... words) {
         PalindromePairs p = new PalindromePairs();
         test(p::palindromePairs, expected, words);
+        test(p::palindromePairs1, expected, words);
         test(p::palindromePairs2, expected, words);
+        test(p::palindromePairs3, expected, words);
     }
 
     @Test
     public void test1() {
+        test(new Integer[][] {{0, 1}, {1, 0}}, "a", "");
         test(new Integer[][] {{0, 1}, {1, 0}}, "bat", "tab", "cat");
         test(new Integer[][] {{0, 1}, {1, 0}, {3, 2}, {2, 4}},
              "abcd", "dcba", "lls", "s", "sssll");
