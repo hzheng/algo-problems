@@ -111,6 +111,7 @@ public class PalindromePairs {
         return true;
     }
 
+    // Solution of Choice
     // Trie
     // time complexity: O(N * K ^ 2)
     // beats 92.71%(64 ms for 134 tests)

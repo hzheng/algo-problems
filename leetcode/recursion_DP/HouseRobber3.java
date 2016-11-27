@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
-// https://leetcode.com/problems/house-robber-iii/
+// LC337: https://leetcode.com/problems/house-robber-iii/
 //
 // There is only one entrance to this area, called the "root." Besides the root,
 // each house has one and only one parent house. After a tour, the smart thief
@@ -30,11 +30,9 @@ public class HouseRobber3 {
         return root == null ? 0 : rob(root.left) + rob(root.right);
     }
 
-    // Recursion + Memoization
-    // beats 30.27%(3 ms)
+    // Recursion + Dynamic Programming(Top-Down)
+    // beats 39.14%(8 ms for 124 tests)
     public int rob2(TreeNode root) {
-        if (root == null) return 0;
-
         return rob(root, new HashMap<>());
     }
 
@@ -55,8 +53,8 @@ public class HouseRobber3 {
         return root == null ? 0 : rob(root.left, memo) + rob(root.right, memo);
     }
 
-    // Recursion + Memoization
-    // beats 51.19%(1 ms)
+    // Recursion + DFS + Greedy
+    // beats 51.55%(2 ms for 124 tests)
     public int rob3(TreeNode root) {
         int[] res = doRob(root);
         return Math.max(res[0], res[1]);
@@ -73,8 +71,9 @@ public class HouseRobber3 {
         return res;
     }
 
-    // Recursion + Memoization
-    // beats 51.19%(1 ms)
+    // Solution of Choice
+    // Recursion + DFS + Greedy
+    // beats 51.55%(2 ms for 124 tests)
     public int rob4(TreeNode root) {
         return doRob4(root)[1];
     }
@@ -90,6 +89,20 @@ public class HouseRobber3 {
         return res;
     }
 
+    // Recursion
+    // Time Limit Exceeded
+    public int rob5(TreeNode root) {
+        return Math.max(robInclude(root), robExclude(root));
+    }
+
+    private int robInclude(TreeNode node) {
+        return node == null ? 0 : robExclude(node.left) + robExclude(node.right) + node.val;
+    }
+
+    private int robExclude(TreeNode node) {
+        return node == null ? 0 : rob(node.left) + rob(node.right);
+    }
+
     void test(Function<TreeNode, Integer> rob, String name,
               String s, int expected) {
         long t1 = System.nanoTime();
@@ -103,6 +116,7 @@ public class HouseRobber3 {
         test(h::rob2, "rob2", s, expected);
         test(h::rob3, "rob3", s, expected);
         test(h::rob4, "rob4", s, expected);
+        test(h::rob5, "rob5", s, expected);
     }
 
     @Test
