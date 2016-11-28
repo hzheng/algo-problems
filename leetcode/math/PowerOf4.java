@@ -1,7 +1,7 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/power-of-four/
+// LC342: https://leetcode.com/problems/power-of-four/
 //
 // Given an integer, write a function to determine if it is a power of four.
 // Could you do it without using any loop / recursion?

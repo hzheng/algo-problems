@@ -4,7 +4,7 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/integer-break/
+// LC343: https://leetcode.com/problems/integer-break/
 //
 // Given a positive integer n, break it into the sum of at least two positive
 // integers and maximize the product of those integers. Return the maximum
@@ -14,11 +14,7 @@ public class IntegerBreak {
     // Recursion
     // Time Limit Exceeded
     public int integerBreak(int n) {
-        if (n == 2) return 1;
-
-        if (n == 3) return 2;
-
-        return intBreak(n);
+        return n < 4 ? n - 1 : intBreak(n);
     }
 
     private int intBreak(int n) {
@@ -31,15 +27,11 @@ public class IntegerBreak {
         return max;
     }
 
-    // Recursion + Memoization
+    // Recursion + Dynamic Programming(Top-Down)
     // time complexity: O(N ^ 2), space complexity: O(N)
     // beats 7.67%(3 ms)
     public int integerBreak2(int n) {
-        if (n == 2) return 1;
-
-        if (n == 3) return 2;
-
-        return intBreak(n, new HashMap<Integer, Integer>());
+        return n < 4 ? n - 1 : intBreak(n, new HashMap<Integer, Integer>());
     }
 
     private int intBreak(int n, Map<Integer, Integer> memo) {
@@ -55,20 +47,18 @@ public class IntegerBreak {
         return max;
     }
 
-    // Math
+    // Math(fact 1: a>=4, 2*(a-2)>= a if a>=4; fact 2: 2 * 2 * 2 < 3 * 3)
     // time complexity: O(N), space complexity: O(1)
     // beats 39.81%(0 ms)
     public int integerBreak3(int n) {
         if (n < 4) return n - 1;
 
         int max = 1;
-        while (n > 4) {
-            max *= 3;
-            n -= 3;
-        }
+        for (; n > 4; max *= 3, n -= 3) {}
         return max * n;
     }
 
+    // Solution of Choice
     // Math
     // time complexity: O(log(N)), space complexity: O(1)
     // beats 39.81%(0 ms)
@@ -79,7 +69,7 @@ public class IntegerBreak {
         return (int)Math.pow(3, times) * (n - times * 3);
     }
 
-    // Dynamic Programming
+    // Dynamic Programming(Bottom-Up)
     // time complexity: O(N ^ 2), space complexity: O(N)
     // beats 28.65%(1 ms)
     public int integerBreak5(int n) {
