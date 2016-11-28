@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/reverse-string/
+// LC344: https://leetcode.com/problems/reverse-string/
 //
 // Write a function that takes a string as input and returns the string reversed.
 public class ReverseString {
@@ -16,6 +16,7 @@ public class ReverseString {
         return sb.toString();
     }
 
+    // Solution of Choice
     // beats 90.17%(2 ms)
     public String reverseString2(String s) {
         char[] chars = s.toCharArray();

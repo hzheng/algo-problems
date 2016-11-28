@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/reverse-vowels-of-a-string/
+// LC345: https://leetcode.com/problems/reverse-vowels-of-a-string/
 //
 // Write a function that reverses only the vowels of a string.
 public class ReverseVowels {
@@ -16,7 +16,6 @@ public class ReverseVowels {
         for (char c : vowels) {
             isVowel[c] = true;
         }
-
         int len = s.length();
         StringBuilder sb = new StringBuilder(s);
         for (int i = 0, j = len - 1;; i++, j--) {
@@ -26,7 +25,6 @@ public class ReverseVowels {
             while (i < j && !isVowel[s.charAt(j)]) {
                 j--;
             }
-
             if (i >= j) break;
 
             char tmp = s.charAt(j);
@@ -42,7 +40,6 @@ public class ReverseVowels {
         for (char c : vowels) {
             isVowel[c] = true;
         }
-
         char[] chars = s.toCharArray();
         for (int i = 0, j = chars.length - 1;; i++, j--) {
             while (i < j && !isVowel[chars[i]]) {
@@ -51,7 +48,6 @@ public class ReverseVowels {
             while (i < j && !isVowel[chars[j]]) {
                 j--;
             }
-
             if (i >= j) break;
 
             char tmp = chars[j];
@@ -61,13 +57,13 @@ public class ReverseVowels {
         return new String(chars);
     }
 
+    // Solution of Choice
     // beats 97.83%(4 ms)
     public String reverseVowels3(String s) {
         boolean[] isVowel = new boolean[256];
         for (char c : vowels) {
             isVowel[c] = true;
         }
-
         char[] chars = s.toCharArray();
         for (int i = 0, j = chars.length - 1; i < j; ) {
             if (!isVowel[chars[i]]) {
@@ -76,10 +72,8 @@ public class ReverseVowels {
                 j--;
             } else {
                 char tmp = chars[j];
-                chars[j] = chars[i];
-                chars[i] = tmp;
-                i++;
-                j--;
+                chars[j--] = chars[i];
+                chars[i++] = tmp;
             }
         }
         return new String(chars);
