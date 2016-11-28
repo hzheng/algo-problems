@@ -12,7 +12,7 @@ import common.NestedIntegerImpl;
 // Each element is either an integer, or a list -- whose elements may also be
 // integers or other lists.
 public class NestedIterator {
-    // stack
+    // Stack
     // beats 3.13%(16 ms)
     static class NestedIterator1 implements Iterator<Integer> {
         List<NestedInteger> list;
@@ -54,7 +54,6 @@ public class NestedIterator {
                 }
                 valStack.pop();
             }
-
             int index = indexStack.pop(); // root index
             if (++index < list.size()) {
                 indexStack.push(index);
@@ -75,9 +74,8 @@ public class NestedIterator {
         }
     }
 
-    // stack
-    // https://discuss.leetcode.com/topic/42042/simple-java-solution-using-a-stack-with-explanation
-    // the solution in the link has design problem: hasNext shouldn't change state.
+    // Solution of Choice
+    // Stack
     // beats 10.27%(12 ms)
     static class NestedIterator2 implements Iterator<Integer> {
         private Stack<NestedInteger> stack = new Stack<>();

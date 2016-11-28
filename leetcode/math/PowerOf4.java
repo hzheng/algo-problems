@@ -29,14 +29,20 @@ public class PowerOf4 {
         return Math.log10(n) / Math.log10(4) % 1 == 0;
     }
 
-    // beats 22.67%(2 ms)
+    // Solution of Choice
+    // beats 25.05%(2 ms for 1060 tests)
     public boolean isPowerOfFour5(int n) {
         return (n & (n - 1)) == 0 && (n & 0x55555555) > 0;
     }
 
-    // beats 22.67%(2 ms)
+    // beats 11.57%(3 ms for 1060 tests)
     public boolean isPowerOfFour6(int n) {
         return n > 0 && Integer.bitCount(n) == 1 && (n & 0x55555555) > 0;
+    }
+
+    // beats 1.55%(20 ms for 1060 tests)
+    public boolean isPowerOfFour7(int n) {
+        return Integer.toString(n, 4).matches("10*");
     }
 
     // https://discuss.leetcode.com/topic/42960/one-of-my-favorite-tricks
@@ -53,6 +59,7 @@ public class PowerOf4 {
         assertEquals(expected, isPowerOfFour4(n));
         assertEquals(expected, isPowerOfFour5(n));
         assertEquals(expected, isPowerOfFour6(n));
+        assertEquals(expected, isPowerOfFour7(n));
     }
 
     void test(int n) {
