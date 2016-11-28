@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 // Time complexity must be better than O(n log n), where n is the array's size.
 public class TopKFrequent {
     // Solution of Choice
-    // Hash table + Counting Sort
+    // Hash Table + Counting Sort
     // time complexity: O(N), space complexity: O(N)
     // beats 95.74%(23 ms for 20 tests)
     public List<Integer> topKFrequent(int[] nums, int k) {
@@ -103,7 +103,7 @@ public class TopKFrequent {
         return res;
     }
 
-    // Hash table + Bucket Sort
+    // Hash Table + Bucket Sort
     // time complexity: O(N), space complexity: O(N)
     // beats 83.91%(29 ms)
     public List<Integer> topKFrequent4(int[] nums, int k) {

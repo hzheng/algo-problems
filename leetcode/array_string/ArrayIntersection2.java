@@ -4,7 +4,7 @@ import java.util.stream.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/intersection-of-two-arrays-ii/
+// LC350: https://leetcode.com/problems/intersection-of-two-arrays-ii/
 //
 // Given two arrays, write a function to compute their intersection.
 // Note:
@@ -31,6 +31,7 @@ public class ArrayIntersection2 {
         return Arrays.copyOf(intersection, n);
     }
 
+    // Solution of Choice
     // Sort + Two Pointers
     // time complexity: O(N * log(N)), space complexity: O(N)
     // beats 84.91%(4 ms)
