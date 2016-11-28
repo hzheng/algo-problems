@@ -3,16 +3,17 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/top-k-frequent-elements/
+// LC347: https://leetcode.com/problems/top-k-frequent-elements/
 //
 // Given a non-empty array of integers, return the k most frequent elements.
 // Note:
 // You may assume k is always valid, 1 ≤ k ≤ number of unique elements.
 // Time complexity must be better than O(n log n), where n is the array's size.
 public class TopKFrequent {
+    // Solution of Choice
     // Hash table + Counting Sort
     // time complexity: O(N), space complexity: O(N)
-    // beats 83.91%(29 ms)
+    // beats 95.74%(23 ms for 20 tests)
     public List<Integer> topKFrequent(int[] nums, int k) {
         Map<Integer, Integer> countMap = new HashMap<>();
         for (int num : nums) {
@@ -46,7 +47,7 @@ public class TopKFrequent {
         return res;
     }
 
-    // Hash table + Heap
+    // Hash Table + Heap
     // time complexity: O(N * log(K)), space complexity: O(N)
     // beats 68.05%(34 ms)
     public List<Integer> topKFrequent2(int[] nums, int k) {
@@ -54,15 +55,12 @@ public class TopKFrequent {
         for (int num : nums) {
             countMap.put(num, countMap.getOrDefault(num, 0) + 1);
         }
-
-        // slow, have to abandon
         // Queue<int[]> heap = new PriorityQueue<int[]>((a, b) -> a[1] - b[1]);
         Queue<int[]> heap = new PriorityQueue<>(new Comparator<int[]>() {
             public int compare(int[] a, int[] b) {
                 return a[1] - b[1];
             }
         });
-
         for (Map.Entry<Integer, Integer> count : countMap.entrySet()) {
             heap.offer(new int[] {count.getKey(), count.getValue()});
             if (heap.size() > k) {
@@ -77,7 +75,7 @@ public class TopKFrequent {
         return res;
     }
 
-    // Hash table + Heap
+    // Hash Table + Heap
     // time complexity: O(N * log(K)), space complexity: O(N)
     // beats 65.15%(35 ms)
     public List<Integer> topKFrequent3(int[] nums, int k) {
@@ -86,12 +84,11 @@ public class TopKFrequent {
             countMap.put(num, countMap.getOrDefault(num, 0) + 1);
         }
         Queue<Map.Entry<Integer, Integer> > heap =
-            new PriorityQueue<>(new Comparator<Map.Entry<Integer, Integer>>() {
+            new PriorityQueue<>(new Comparator<Map.Entry<Integer, Integer> >() {
             public int compare(Map.Entry<Integer, Integer> a, Map.Entry<Integer, Integer> b) {
                 return a.getValue() - b.getValue();
             }
         });
-        // heap.addAll(countMap.entrySet());
         for (Map.Entry<Integer, Integer> count : countMap.entrySet()) {
             heap.offer(count);
             if (heap.size() > k) {
@@ -108,7 +105,6 @@ public class TopKFrequent {
 
     // Hash table + Bucket Sort
     // time complexity: O(N), space complexity: O(N)
-    // https://discuss.leetcode.com/topic/44237/java-o-n-solution-bucket-sort/2
     // beats 83.91%(29 ms)
     public List<Integer> topKFrequent4(int[] nums, int k) {
         Map<Integer, Integer> countMap = new HashMap<>();
@@ -136,6 +132,29 @@ public class TopKFrequent {
         return res;
     }
 
+    // Hash Table + SortedMap
+    // time complexity: O(N * log(K)), space complexity: O(N)
+    // beats 76.40%(29 ms for 20 tests)
+    public List<Integer> topKFrequent5(int[] nums, int k) {
+        Map<Integer, Integer> countMap = new HashMap<>();
+        for (int num : nums) {
+            countMap.put(num, countMap.getOrDefault(num, 0) + 1);
+        }
+        NavigableMap<Integer, List<Integer> > freqMap = new TreeMap<>();
+        for (int num : countMap.keySet()) {
+            int freq = countMap.get(num);
+            if (!freqMap.containsKey(freq)) {
+                freqMap.put(freq, new LinkedList<>());
+            }
+            freqMap.get(freq).add(num);
+        }
+        List<Integer> res = new ArrayList<>();
+        while (res.size() < k) {
+            res.addAll(freqMap.pollLastEntry().getValue());
+        }
+        return res;
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -154,6 +173,7 @@ public class TopKFrequent {
         test(t::topKFrequent2, k, nums, expected);
         test(t::topKFrequent3, k, nums, expected);
         test(t::topKFrequent4, k, nums, expected);
+        test(t::topKFrequent5, k, nums, expected);
     }
 
     @Test
