@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/counting-bits/
+// LC338: https://leetcode.com/problems/counting-bits/
 //
 // Given a non negative integer number num. For every numbers i in the range
 // 0 ≤ i ≤ num calculate the number of 1's in their binary representation and
@@ -46,7 +46,9 @@ public class CountingBits {
         return counts;
     }
 
-    // beats 68.35%(2 ms)
+    // Solution of Choice
+    // Dynamic Programming
+    // beats 86.25%(2 ms for 15 tests)
     public int[] countBits3(int num) {
         int[] counts = new int[num + 1];
         for (int i = 1; i <= num; i++) {
@@ -55,8 +57,9 @@ public class CountingBits {
         return counts;
     }
 
-    // https://discuss.leetcode.com/topic/40162/three-line-java-solution
-    // beats 68.35%(2 ms)
+    // Solution of Choice
+    // Dynamic Programming
+    // beats 86.25%(2 ms for 15 tests)
     public int[] countBits4(int num) {
         int[] counts = new int[num + 1];
         for (int i = 1; i <= num; i++) {
@@ -65,11 +68,55 @@ public class CountingBits {
         return counts;
     }
 
-    void test(int num, int... expected) {
+    // Dynamic Programming
+    // beats 40.94%(3 ms for 15 tests)
+    public int[] countBits5(int num) {
+        int[] counts = new int[num + 1];
+        for (int i = 1; i <= num; i++) {
+            if ((i & 1) == 1) {
+                counts[i] = counts[i - 1] + 1;
+            } else {
+                counts[i] = counts[i >> 1];
+            }
+        }
+        return counts;
+    }
+
+    // Dynamic Programming
+    // beats 40.94%(3 ms for 15 tests)
+    public int[] countBits6(int num) {
+        int[] counts = new int[num + 1];
+        for (int i = 1, j = 0, power = 1; i <= num; i++, j++) {
+            if (i == power) {
+                power <<= 1;
+                j = 0;
+            }
+            counts[i] = counts[j] + 1;
+        }
+        return counts;
+    }
+
+    // Dynamic Programming
+    // beats 86.25%(2 ms for 15 tests)
+    public int[] countBits7(int num) {
+        int[] counts = new int[num + 1];
+        for (int i = 1, offset = 1; i <= num; i++) {
+            if ((offset << 1) == i) {
+                offset <<= 1;
+            }
+            counts[i] = counts[i - offset] + 1;
+        }
+        return counts;
+    }
+
+    void test(int num, int ... expected) {
         assertArrayEquals(expected, countBits(num));
         assertArrayEquals(expected, countBits2(num));
         assertArrayEquals(expected, countBits3(num));
         assertArrayEquals(expected, countBits4(num));
+        assertArrayEquals(expected, countBits5(num));
+        assertArrayEquals(expected, countBits6(num));
+        assertArrayEquals(expected, countBits7(num));
     }
 
     @Test
