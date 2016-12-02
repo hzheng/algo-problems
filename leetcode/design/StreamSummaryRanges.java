@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 
 import common.Interval;
 
-// https://leetcode.com/problems/data-stream-as-disjoint-intervals/
+// LC352: https://leetcode.com/problems/data-stream-as-disjoint-intervals/
 //
 // Given a data stream input of non-negative integers a1, a2, ..., an, ...,
 // summarize the numbers seen so far as a list of disjoint intervals.
@@ -92,12 +92,10 @@ public class StreamSummaryRanges {
         }
     }
 
+    // Binary Search Tree
     // beats 83.13%(206 ms)
     static class SummaryRanges1 implements SummaryRanges {
         private Node root = new Node(-2);
-
-        public SummaryRanges1() {
-        }
 
         public void addNum(int val) {
             root.insert(val);
@@ -170,12 +168,10 @@ public class StreamSummaryRanges {
         }
     }
 
+    // Binary Search Tree
     // beats 41.12%(230 ms)
     static class SummaryRanges2 implements SummaryRanges {
         private Node2 root = new Node2(-2);
-
-        public SummaryRanges2() {
-        }
 
         public void addNum(int val) {
             root.insert(val);
@@ -196,13 +192,12 @@ public class StreamSummaryRanges {
         }
     }
 
+    // SortedMap
     // https://discuss.leetcode.com/topic/46887/java-solution-using-treemap-real-o-logn-per-adding
     // beats 24.70%(239 ms)
+    // beats 54.95%(192 ms for 9 tests)
     static class SummaryRanges3 implements SummaryRanges {
         NavigableMap<Integer, Interval> map = new TreeMap<>();
-
-        public SummaryRanges3() {
-        }
 
         public void addNum(int val) {
             if (map.containsKey(val)) return;
@@ -228,17 +223,16 @@ public class StreamSummaryRanges {
         }
     }
 
-    // beats 52.41%(224 ms)
+    // Solution of Choice
+    // SortedSet
+    // beats 61.11%(187 ms for 9 tests)
     static class SummaryRanges4 implements SummaryRanges {
-        private NavigableSet<Interval> intervals;
-
-        public SummaryRanges4() {
+        private NavigableSet<Interval> intervals =
             intervals = new TreeSet<>(new Comparator<Interval>() {
-                public int compare(Interval a, Interval b) {
-                    return a.start - b.start;
-                }
-            });
-        }
+            public int compare(Interval a, Interval b) {
+                return a.start - b.start;
+            }
+        });
 
         public void addNum(int val) {
             Interval interval = new Interval(val, val);
@@ -251,7 +245,6 @@ public class StreamSummaryRanges {
                     intervals.remove(low);
                 }
             }
-            
             Interval high = intervals.higher(interval);
             if (high != null && high.start == val + 1) {
                 interval.end = high.end;
