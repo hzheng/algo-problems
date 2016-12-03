@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/russian-doll-envelopes/
+// LC354: https://leetcode.com/problems/russian-doll-envelopes/
 //
 // You have a number of envelopes with widths and heights given as a pair of
 // integers (w, h). One envelope can fit into another if and only if both the
@@ -39,9 +39,10 @@ public class RussianDollEnvelopes {
         return max;
     }
 
-    // http://www.algorithmist.com/index.php/Longest_Increasing_Subsequence
+    // Solution of Choice
+    // Dynamic Programming + Binary Search(LIS problem)
     // time complexity: O(N ^ log(N)), space complexity: O(N)
-    // beats 93.39%(21 ms)
+    // beats 91.03%(19 ms for 85 tests)
     public int maxEnvelopes2(int[][] envelopes) {
         Arrays.sort(envelopes, new Comparator<int[]>() {
             public int compare(int[] a, int[] b) {
@@ -50,11 +51,10 @@ public class RussianDollEnvelopes {
                 return diff == 0 ? (b[1] - a[1]) : diff;
             }
         });
-
         int n = envelopes.length;
         int[] seq = new int[n];
         int len = 0;
-        for (int[] envelope : envelopes){
+        for (int[] envelope : envelopes) {
             int index = Arrays.binarySearch(seq, 0, len, envelope[1]);
             if (index < 0) {
                 index = -(index + 1);
@@ -67,9 +67,33 @@ public class RussianDollEnvelopes {
         return len;
     }
 
+    // Dynamic Programming
+    // time complexity: O(N ^ 2), space complexity: O(N)
+    // beats 20.29%(562 ms for 85 tests)
+    public int maxEnvelopes3(int[][] envelopes) {
+        Arrays.sort(envelopes, new Comparator<int[]>() {
+            public int compare(int[] a, int[] b) { return a[0] - b[0]; }
+        });
+        int n = envelopes.length;
+        int[] dp = new int[n];
+        int len = 0;
+        for (int i = 0; i < n; i++) {
+            dp[i] = 1;
+            for (int j = 0; j < i; j++) {
+                if (envelopes[i][0] > envelopes[j][0]
+                       && envelopes[i][1] > envelopes[j][1]) {
+                    dp[i] = Math.max(dp[i], 1 + dp[j]);
+                }
+            }
+            len = Math.max(len, dp[i]);
+        }
+        return len;
+    }
+
     void test(int[][] envelopes, int expected) {
         assertEquals(expected, maxEnvelopes(envelopes.clone()));
         assertEquals(expected, maxEnvelopes2(envelopes.clone()));
+        assertEquals(expected, maxEnvelopes3(envelopes.clone()));
     }
 
     @Test
