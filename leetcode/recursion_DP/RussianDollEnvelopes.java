@@ -46,9 +46,8 @@ public class RussianDollEnvelopes {
     public int maxEnvelopes2(int[][] envelopes) {
         Arrays.sort(envelopes, new Comparator<int[]>() {
             public int compare(int[] a, int[] b) {
-                int diff = a[0] - b[0];
                 // notice: b[1] - a[1] not a[1] - b[1]
-                return diff == 0 ? (b[1] - a[1]) : diff;
+                return a[0] == b[0] ? (b[1] - a[1]) : (a[0] - b[0]);
             }
         });
         int n = envelopes.length;
