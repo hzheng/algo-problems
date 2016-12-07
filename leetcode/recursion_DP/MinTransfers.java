@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 // Person's IDs may not be linear
 public class MinTransfers {
     // Hash Table + Recursion + DFS/Backtracking
-    // beats N/A(7 ms for 27 tests)
+    // beats 49.67%(27 ms for 28 tests)
     public int minTransfers(int[][] transactions) {
         Map<Integer, Integer> map = new HashMap<>();
         for (int[] transaction : transactions) {
@@ -91,7 +91,7 @@ public class MinTransfers {
     }
 
     // Hash Table + Recursion + DFS/Backtracking
-    // beats N/A(5 ms for 27 tests)
+    // beats 53.00%(13 ms for 28 tests)
     public int minTransfers2(int[][] transactions) {
         Map<Integer, Integer> map = new HashMap<>();
         for (int[] transaction : transactions) {
@@ -180,7 +180,7 @@ public class MinTransfers {
     }
 
     // Recursion + Bit Manipulation
-    // beats N/A(4 ms for 27 tests)
+    // beats 53.00%(13 ms for 28 tests)
     public int minTransfers3(int[][] transactions) {
         Map<Integer, Integer> map = new HashMap<>();
         for (int[] transaction : transactions) {
@@ -231,7 +231,7 @@ public class MinTransfers {
     }
 
     // Bit Manipulation + Dynamic Programming
-    // beats N/A(5 ms for 27 tests)
+    // beats 70.67%(7 ms for 28 tests)
     public int minTransfers4(int[][] transactions) {
         Map<Integer, Integer> map = new HashMap<>();
         for (int[] transaction : transactions) {
