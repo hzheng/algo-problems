@@ -7,13 +7,13 @@ import static org.junit.Assert.*;
 //
 // Check whether the original sequence org can be uniquely reconstructed from
 // the sequences in seqs. The org sequence is a permutation of the integers from
-// 1 to n, with 1 ≤ n ≤ 104. Reconstruction means building a shortest common
+// 1 to n, with 1 ≤ n ≤ 10 ^ 4. Reconstruction means building a shortest common
 // supersequence of the sequences in seqs (i.e., a shortest sequence so that all
 // sequences in seqs are subsequences of it). Determine whether there is only
 // one sequence that can be reconstructed from seqs and it is the org sequence.
 public class SeqReconstruction {
     // Heap + Hash Table
-    // beats N/A(27 ms for 106 tests)
+    // beats 83.22%(26 ms for 107 tests)
     public boolean sequenceReconstruction(int[] org, int[][] seqs) {
         final int size = 10001;
         int n = org.length;
@@ -71,18 +71,20 @@ public class SeqReconstruction {
     }
 
     // Hash Table
-    // beats N/A(103 ms for 106 tests)
+    // beats 80.98%(55 ms for 107 tests)
     public boolean sequenceReconstruction2(int[] org, int[][] seqs) {
-        Map<Integer, Integer> order = new HashMap<>();
-        for (int i = 0; i < org.length; i++) {
-            order.put(org[i], i);
+        int n = org.length;
+        int[] order = new int[n + 1];
+        for (int i = 0; i < n; i++) {
+            order[org[i]] = i + 1;
         }
         Set<Long> consecutives = new HashSet<>();
         for (int[] seq : seqs) {
-            if (seq.length > 0 && !order.containsKey(seq[0])) return false;
+            if (seq.length == 0) continue;
+            if (seq[0] <= 0 || seq[0] > n) return false;
 
             for (int i = 1; i < seq.length; i++) {
-                if (order.get(seq[i - 1]) > order.getOrDefault(seq[i], -1)) return false;
+                if (seq[i] <= 0 || seq[i] > n || order[seq[i - 1]] >= order[seq[i]]) return false;
 
                 consecutives.add((long)seq[i - 1] << 32 | seq[i]);
             }
@@ -93,22 +95,47 @@ public class SeqReconstruction {
         return seqs.length > 0;
     }
 
-    // Topological sorting
-    // beats N/A(45 ms for 106 tests)
+    // Hash Table
+    // beats 91.47%(16 ms for 107 tests)
+    public boolean sequenceReconstruction2_2(int[] org, int[][] seqs) {
+        int n = org.length;
+        int[] order = new int[n + 1];
+        for (int i = 0; i < n; i++) {
+            order[org[i]] = i;
+        }
+        boolean[] hasNext = new boolean[n + 1];
+        int matched = 0;
+        for (int[] seq : seqs) {
+            if (seq.length == 0) continue;
+            if (seq[0] <= 0 || seq[0] > n) return false;
+
+            for (int i = 1; i < seq.length; i++) {
+                if (seq[i] <= 0 || seq[i] > n || order[seq[i - 1]] >= order[seq[i]]) return false;
+
+                if (!hasNext[seq[i - 1]] && order[seq[i - 1]] + 1 == order[seq[i]]) {
+                    hasNext[seq[i - 1]] = true;
+                    matched++;
+                }
+            }
+        }
+        return seqs.length > 0 && matched == n - 1;
+    }
+
+    // Topological Sort
+    // beats 82.10%(48 ms for 107 tests)
     @SuppressWarnings("unchecked")
     public boolean sequenceReconstruction3(int[] org, int[][] seqs) {
         int n = org.length;
         int[] indegree = new int[n];
-        Arrays.fill(indegree, -1);
         for (int[] seq : seqs) {
             for (int k : seq) {
                 if (k > n || k < 1) return false;
-
-                indegree[k - 1] = 0;
+                indegree[k - 1] = 1;
             }
         }
         for (int i = 0; i < n; i++) {
-            if (indegree[i] != 0) return false;
+            if (indegree[i] != 1) return false;
+            indegree[i] = 0; // reset
         }
         List<Integer>[] edges = new List[n];
         for (int i = 0; i < n; i++) {
@@ -128,9 +155,9 @@ public class SeqReconstruction {
                 } else return false;
             }
         }
-        for (int i = 0; ; i++) {
+        for (int i = 0;; i++) {
             if (next < 0) return i == n;
-            if (next + 1 != org[i]) return false;
+            if (next != org[i] - 1) return false;
 
             List<Integer> edge = edges[next];
             next = -1;
@@ -146,11 +173,13 @@ public class SeqReconstruction {
     void test(int[] org, int[][] seqs, boolean expected) {
         assertEquals(expected, sequenceReconstruction(org, seqs));
         assertEquals(expected, sequenceReconstruction2(org, seqs));
+        assertEquals(expected, sequenceReconstruction2_2(org, seqs));
         assertEquals(expected, sequenceReconstruction3(org, seqs));
     }
 
     @Test
     public void test() {
+        test(new int[] {1}, new int[][] {{1, 1}}, false);
         test(new int[] {1}, new int[][] {}, false);
         test(new int[] {1, 4, 2, 3}, new int[][] {{1, 2}, {2, 3}}, false);
         test(new int[] {1, 4, 2, 3}, new int[][] {{1, 2}, {1, 3}, {2, 3}}, false);
@@ -158,6 +187,7 @@ public class SeqReconstruction {
         test(new int[] {1, 2, 3}, new int[][] {{1, 2}, {2, 3}}, true);
         test(new int[] {1, 2, 3}, new int[][] {{1, 2}, {1, 3}}, false);
         test(new int[] {1, 2, 3}, new int[][] {{1, 2, 3}}, true);
+        test(new int[] {1, 2, 3}, new int[][] {{1, 2, 3}, {}}, true);
         test(new int[] {1, 2, 3}, new int[][] {{1, 2}}, false);
         test(new int[] {1, 2, 3}, new int[][] {{1, 2}, {1, 3}, {2, 3}}, true);
         test(new int[] {1, 2}, new int[][] {{1, 2}, {1, 2}}, true);
