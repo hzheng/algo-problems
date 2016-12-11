@@ -17,6 +17,8 @@ import static org.junit.Assert.*;
 // be a digit.
 // The result of the expression will always evaluate to either a digit 0-9, T or F.
 public class ParseTernary {
+    // Recursion
+    // beats 8.45%(261 ms for 49 tests)
     public String parseTernary(String expression) {
         int len = expression.length();
         if (len <= 1) return expression;
@@ -30,6 +32,8 @@ public class ParseTernary {
         return parseTernary(next + expression.substring(lastBranch + 3));
     }
 
+    // Recursion
+    // beats 75.80%(13 ms for 49 tests)
     public String parseTernary2(String expression) {
         return parse(new StringBuilder(expression)).toString();
     }
@@ -49,9 +53,31 @@ public class ParseTernary {
         return parse(expression);
     }
 
+    // Stack
+    // beats 36.85%(36 ms for 49 tests)
+    public String parseTernary3(String expression) {
+        Stack<Character> stack = new Stack<>();
+        for (int i = expression.length() - 1; i >= 0; i--) {
+            char c = expression.charAt(i);
+            if (stack.isEmpty() || stack.peek() != '?') {
+                stack.push(c);
+            } else {
+                stack.pop(); // '?'
+                char first = stack.pop();
+                stack.pop(); // ':'
+                char second = stack.pop();
+                stack.push(c == 'T' ? first : second);
+            }
+        }
+        return stack.isEmpty() ? "" : String.valueOf(stack.peek());
+    }
+
+    // TODO: Binary Tree
+
     void test(String expression, String expected) {
         assertEquals(expected, parseTernary(expression));
         assertEquals(expected, parseTernary2(expression));
+        assertEquals(expected, parseTernary3(expression));
     }
 
     @Test
