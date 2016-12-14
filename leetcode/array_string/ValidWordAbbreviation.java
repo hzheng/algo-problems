@@ -5,11 +5,11 @@ import static org.junit.Assert.*;
 
 // LC408: https://leetcode.com/problems/valid-word-abbreviation
 //
+// Given a non-empty string s and an abbreviation abbr, return whether the
+// string matches with the given abbreviation.
 public class ValidWordAbbreviation {
-    // beats
+    // beats 32.60%(24 ms for 315 tests)
     public boolean validWordAbbreviation(String word, String abbr) {
-        if (word == null) return false;
-
         int len1 = word.length();
         int len2 = abbr.length();
         if (len1 == 0) return len2 == 0;
@@ -24,21 +24,26 @@ public class ValidWordAbbreviation {
                 j++;
                 continue;
             }
-            if (abbr.charAt(j) == '0') return false;
+            if (abbr.charAt(j) <= '0' || abbr.charAt(j) > '9') return false;
+
             int count = 0;
             for (int power = 1; j < len2 && Character.isDigit(abbr.charAt(j)); j++) {
                 count *= 10;
                 count += (abbr.charAt(j) - '0');
             }
-            if (count == 0) return false;
-
             i += count;
         }
         return i == len1 && j == len2;
     }
 
+    // beats 3.63%(44 ms for 315 tests)
+    public boolean validWordAbbreviation2(String word, String abbr) {
+        return word.matches(abbr.replaceAll("[1-9]\\d*", ".{$0}"));
+    }
+
     void test(String word, String abbr, boolean expected) {
         assertEquals(expected, validWordAbbreviation(word, abbr));
+        assertEquals(expected, validWordAbbreviation2(word, abbr));
     }
 
     @Test
