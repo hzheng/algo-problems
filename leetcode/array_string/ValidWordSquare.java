@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 // Word length will be at least 1 and does not exceed 500.
 // Each word contains only lowercase English alphabet a-z.
 public class ValidWordSquare {
-    // beats N/A(17 ms for 33 tests)
+    // beats 88.54%(19 ms for 35 tests)
     public boolean validWordSquare(List<String> words) {
         int row = words.size();
         for (int i = 0; i < row; i++) {

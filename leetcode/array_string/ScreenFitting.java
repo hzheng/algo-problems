@@ -43,24 +43,22 @@ public class ScreenFitting {
         return times;
     }
 
-    // beats N/A(88 ms for 51 tests)
+    // beats 9.88%(87 ms for 51 tests)
     public int wordsTyping2(String[] sentence, int rows, int cols) {
         int count = sentence.length;
-        int[] lens = new int[count];
         int sentenceLen = 0;
         for (int i = 0; i < count; i++) {
-            lens[i] = sentence[i].length();
-            sentenceLen += lens[i] + 1;
+            sentenceLen += sentence[i].length() + 1;
         }
         int times = 0;
         for (int colLeft = cols, rowLeft = rows, index = 0; rowLeft > 0; ) {
             times += colLeft / sentenceLen;
             colLeft %= sentenceLen;
-            if (colLeft < lens[index]) {
+            if (colLeft < sentence[index].length()) {
                 rowLeft--;
                 colLeft = cols;
             } else {
-                colLeft -= lens[index] + 1;
+                colLeft -= sentence[index].length() + 1;
                 if (++index == count) {
                     index = 0;
                     times++;
@@ -70,9 +68,96 @@ public class ScreenFitting {
         return times;
     }
 
+    // beats 44.01%(22 ms for 51 tests)
+    public int wordsTyping3(String[] sentence, int rows, int cols) {
+        String s = String.join(" ", sentence) + " ";
+        int len = s.length();
+        int cur = 0;
+        for (int i = 0; i < rows; i++) {
+            cur += cols;
+            if (s.charAt(cur % len) == ' ') {
+                cur++;
+            } else {
+                for (; cur > 0 && s.charAt((cur - 1) % len) != ' '; cur--) {}
+            }
+        }
+        return cur / len;
+    }
+
+    // Solution of Choice
+    // Dynamic Programming
+    // beats 91.59%(13 ms for 51 tests)
+    public int wordsTyping4(String[] sentence, int rows, int cols) {
+        String s = String.join(" ", sentence) + " ";
+        int len = s.length();
+        int[] shift = new int[len];
+        for (int i = 1; i < len; ++i) {
+            shift[i] = (s.charAt(i) == ' ') ? 1 : shift[i - 1] - 1;
+        }
+        int cur = 0;
+        for (int i = 0; i < rows; ++i) {
+            cur += cols;
+            cur += shift[cur % len];
+        }
+        return cur / len;
+    }
+
+    // Memoization
+    // beats 82.02%(16 ms for 51 tests)
+    public int wordsTyping5(String[] sentence, int rows, int cols) {
+        int n = sentence.length;
+        int[] next = new int[n];
+        int[] times = new int[n];
+        for (int i = 0; i < n; i++) {
+            int cur = i;
+            int time = 0;
+            for (int len = 0; len + sentence[cur].length() <= cols; ) {
+                len += sentence[cur++].length() + 1;
+                if (cur == n) {
+                    cur = 0;
+                    time++;
+                }
+            }
+            next[i] = cur;
+            times[i] = time;
+        }
+        int res = 0;
+        for (int i = 0, cur = 0; i < rows; i++, cur = next[cur]) {
+            res += times[cur];
+        }
+        return res;
+    }
+
+    // Memoization
+    // https://discuss.leetcode.com/topic/65173/12ms-java-solution-using-dp
+    // beats 91.59%(13 ms for 51 tests)
+    public int wordsTyping6(String[] sentence, int rows, int cols) {
+        int n = sentence.length;
+        int[] next = new int[n];
+        for (int i = 0, cur = 0, len = 0; i < n; i++) {
+            if (i > 0 && len > 0) { // adjust length
+                len -= sentence[i - 1].length() + 1;
+            }
+            while (len + sentence[cur % n].length() <= cols) {
+                len += sentence[cur++ % n].length() + 1;
+            }
+            next[i] = cur;
+        }
+        int words = 0;
+        for(int i = 0, cur = 0; i < rows; i++, cur = next[cur] % n) {
+            // if(next[cur] == cur) return 0;
+            words += next[cur] - cur;
+        }
+        return words / n;
+    }
+
     void test(String[] sentence, int rows, int cols, int expected) {
         assertEquals(expected, wordsTyping(sentence, rows, cols));
         assertEquals(expected, wordsTyping2(sentence, rows, cols));
+        assertEquals(expected, wordsTyping3(sentence, rows, cols));
+        assertEquals(expected, wordsTyping4(sentence, rows, cols));
+        assertEquals(expected, wordsTyping5(sentence, rows, cols));
+        assertEquals(expected, wordsTyping6(sentence, rows, cols));
     }
 
     @Test
