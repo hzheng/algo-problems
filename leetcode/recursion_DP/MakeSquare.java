@@ -89,7 +89,7 @@ public class MakeSquare {
     }
 
     // Recursion + DFS + Dynamic Programming
-    // beats N/A(1350 ms for 173 tests)
+    // beats N/A(1145 ms for 173 tests)
     public boolean makesquare3(int[] nums) {
         int total = 0;
         for (int num : nums) {
@@ -100,9 +100,8 @@ public class MakeSquare {
     }
 
     private boolean makesquare3(int[] nums, int[] sums, int index, int side) {
-        if (index == nums.length) {
-            return sums[0] == side && sums[1] == side && sums[2] == side;
-        }
+        if (index == nums.length) return true;
+
         for (int i = 0; i < 4; i++) {
             if (sums[i] + nums[index] > side) continue;
 
