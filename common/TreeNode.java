@@ -49,7 +49,7 @@ public class TreeNode {
     public Integer[] toArray() {
         List<Integer> list = new ArrayList<>();
         Queue<TreeNode> queue = new LinkedList<>();
-        queue.add(this);
+        queue.offer(this);
         list.add(val);
         while (!queue.isEmpty()) {
             TreeNode node = queue.poll();
