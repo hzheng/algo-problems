@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/lru-cache/
+// LC146: https://leetcode.com/problems/lru-cache/
 //
 // Design and implement a data structure for Least Recently Used (LRU) cache. It
 // should support the following operations: get and set.
@@ -74,6 +74,7 @@ class LRUCache0 {
 // Solution of Choice
 // LinkedList + Hashtable
 // beats 59.41%(18 ms for 17 tests)
+// beats 3.49%(158 ms for 18 tests)
 public class LRUCache {
     static class Node {
         int key;
@@ -101,25 +102,25 @@ public class LRUCache {
 
     // time complexity: O(1)
     public int get(int key) {
-        if (!map.containsKey(key)) return -1;
-
         Node node = map.get(key);
+        if (node == null) return -1;
+
         remove(node);
         putFront(node);
         return node.val;
     }
 
     // time complexity: O(1)
-    public void set(int key, int value) {
-        if (map.containsKey(key)) {
-            Node node = map.get(key);
+    public void put(int key, int value) {
+        Node node = map.get(key);
+        if (node != null) {
             remove(node);
             putFront(node);
             node.val = value;
             return;
         }
 
-        Node node = new Node(key, value);
+        node = new Node(key, value);
         if (map.size() >= capacity) {
             map.remove(tail.prev.key);
             remove(tail.prev);
@@ -142,24 +143,24 @@ public class LRUCache {
 
     static void test1() {
         LRUCache cache = new LRUCache(3);
-        cache.set(1, 1);
-        cache.set(2, 4);
-        cache.set(3, 9);
+        cache.put(1, 1);
+        cache.put(2, 4);
+        cache.put(3, 9);
         assertEquals(4, cache.get(2));
-        cache.set(4, 16);
+        cache.put(4, 16);
         assertEquals(16, cache.get(4));
         assertEquals(-1, cache.get(1));
     }
 
     static void test2() {
         LRUCache cache = new LRUCache(2);
-        cache.set(2, 1);
+        cache.put(2, 1);
         // System.out.println(cache.map);
-        cache.set(2, 2);
+        cache.put(2, 2);
         // System.out.println(cache.map);
         assertEquals(2, cache.get(2));
-        cache.set(1, 1);
-        cache.set(4, 1);
+        cache.put(1, 1);
+        cache.put(4, 1);
         assertEquals(-1, cache.get(2));
     }
 
@@ -172,6 +173,7 @@ public class LRUCache {
 
 // LinkedHashMap
 // beats 90.87%(15 ms for 17 tests)
+// beats 3.73%(157 ms for 18 tests)
 class LRUCache2 {
     private LinkedHashMap<Integer, Integer> map;
 
@@ -187,7 +189,7 @@ class LRUCache2 {
         return map.getOrDefault(key, -1);
     }
 
-    public void set(int key, int value) {
+    public void put(int key, int value) {
         map.put(key, value);
     }
 }

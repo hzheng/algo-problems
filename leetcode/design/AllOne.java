@@ -71,7 +71,7 @@ public class AllOne {
         }
     }
 
-    // DoublyLinkedList
+    // DoublyLinkedList + Hashtable
     // beats 70.76%(148 ms for 15 tests)
     static class AllOne1 implements IAllOne {
         private DoublyLinkedList valList = new DoublyLinkedList();
