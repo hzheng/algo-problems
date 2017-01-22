@@ -26,7 +26,9 @@ public class LFUCache {
         T val;
         Node<T> prev;
         Node<T> next;
-        Node(T val) { this.val = val; }
+        Node(T val) {
+            this.val = val;
+        }
     }
 
     static class DoublyLinkedList<T> {
@@ -85,7 +87,9 @@ public class LFUCache {
     static class Bucket {
         int freq;
         DoublyLinkedList<BucketVal> list = new DoublyLinkedList<>();
-        Bucket(int freq) { this.freq = freq; }
+        Bucket(int freq) {
+            this.freq = freq;
+        }
     }
 
     // DoublyLinkedList + Hashtable
@@ -94,7 +98,7 @@ public class LFUCache {
         private int capacity;
         private int count;
         DoublyLinkedList<Bucket> freqList = new DoublyLinkedList<>();
-        private Map<Integer, Node<BucketVal>> map = new HashMap<>();
+        private Map<Integer, Node<BucketVal> > map = new HashMap<>();
 
         public LFUCache1(int capacity) {
             this.capacity = capacity;
@@ -154,17 +158,55 @@ public class LFUCache {
         }
     }
 
-    static void test3(ILFUCache cache) {
-        cache.put(253, 668);
-        cache.put(202, 206);
-        cache.put(1231,3177);
-        assertEquals(-1, cache.get(465));
-        assertEquals(-1, cache.get(1333));
-    }
+    // https://discuss.leetcode.com/topic/69737/java-o-1-very-easy-solution-using-3-hashmaps-and-linkedhashset
+    // DoublyLinkedSet + Hashtable
+    // beats 66.44%(199 ms for 23 tests)
+    static class LFUCache2 implements ILFUCache {
+        Map<Integer, Integer> vals = new HashMap<>();
+        Map<Integer, Integer> visits = new HashMap<>();
+        Map<Integer, Set<Integer> > lists = new HashMap<>();
+        int capacity;
+        int min = -1;
 
-    static void test2(ILFUCache cache) {
-        cache.put(0, 0);
-        assertEquals(-1, cache.get(0));
+        public LFUCache2(int capacity) {
+            this.capacity = capacity;
+            lists.put(1, new LinkedHashSet<>());
+        }
+
+        public int get(int key) {
+            if (!vals.containsKey(key)) return -1;
+
+            int visit = visits.get(key);
+            visits.put(key, visit + 1);
+            lists.get(visit).remove(key);
+            if (visit == min && lists.get(visit).isEmpty()) {
+                min++;
+            }
+            if (!lists.containsKey(++visit)) {
+                lists.put(visit, new LinkedHashSet<>());
+            }
+            lists.get(visit).add(key);
+            return vals.get(key);
+        }
+
+        public void put(int key, int value) {
+            if (capacity <= 0) return;
+
+            if (vals.containsKey(key)) {
+                vals.put(key, value);
+                get(key);
+                return;
+            }
+            if (vals.size() >= capacity) {
+                int evit = lists.get(min).iterator().next();
+                lists.get(min).remove(evit);
+                vals.remove(evit);
+            }
+            vals.put(key, value);
+            visits.put(key, 1);
+            min = 1;
+            lists.get(1).add(key);
+        }
     }
 
     static void test1(ILFUCache cache) {
@@ -182,10 +224,26 @@ public class LFUCache {
         assertEquals(-1, cache.get(4));
     }
 
+    static void test2(ILFUCache cache) {
+        cache.put(0, 0);
+        assertEquals(-1, cache.get(0));
+    }
+
+    static void test3(ILFUCache cache) {
+        cache.put(253, 668);
+        cache.put(202, 206);
+        cache.put(1231,3177);
+        assertEquals(-1, cache.get(465));
+        assertEquals(-1, cache.get(1333));
+    }
+
     @Test
     public void test1() {
         test1(new LFUCache1(2));
+        test1(new LFUCache2(2));
         test2(new LFUCache1(0));
+        test2(new LFUCache2(0));
+        test3(new LFUCache1(1101));
         test3(new LFUCache1(1101));
     }
 
