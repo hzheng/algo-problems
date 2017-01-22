@@ -3,7 +3,10 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// LC476: https://leetcode.com/problems/number-complement/
 //
+// Given a positive integer, output its complement number. The complement
+// strategy is to flip the bits of its binary representation.
 public class NumberComplement {
     // beats 82.95%(10 ms for 149 tests)
     public int findComplement(int num) {
