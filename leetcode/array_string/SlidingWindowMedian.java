@@ -10,6 +10,7 @@ import static org.junit.Assert.*;
 // in the window. Each time the sliding window moves right by one position. Your
 // job is to output the median array for each window in the original array.
 public class SlidingWindowMedian {
+    // SortedSet
     // time complexity: O(N * log(K))
     // beats 79.77%(62 ms for 42 tests)
     public double[] medianSlidingWindow(int[] nums, int k) {
@@ -53,6 +54,7 @@ public class SlidingWindowMedian {
         return res;
     }
 
+    // SortedSet
     // time complexity: O(N * log(K))
     // beats 78.20%(63 ms for 42 tests)
     public double[] medianSlidingWindow2(int[] nums, int k) {
@@ -65,24 +67,55 @@ public class SlidingWindowMedian {
         double[] res = new double[n - k + 1];
         int[][] win = new int[k][2];
         for (int i = 0; i < k; i++) {
-            win[i] = new int[]{i, nums[i]};
+            win[i] = new int[] {i, nums[i]};
         }
         Arrays.sort(win, cmp);
         int[] median = win[(k - 1) / 2];
         NavigableSet<int[]> winSet = new TreeSet<>(cmp);
         for (int i = 0; i < k; i++) {
-            winSet.add(new int[]{i, nums[i]});
+            winSet.add(new int[] {i, nums[i]});
         }
-        for (int i = 1; ; i++) {
+        for (int i = 1;; i++) {
             res[i - 1] = (k & 1) == 1 ? median[1] : ((long)median[1] + winSet.higher(median)[1]) / 2.0;
             if (i > n - k) return res;
 
-            int[] oldItem = new int[]{i - 1, nums[i - 1]};
-            int[] newItem = new int[]{i + k - 1, nums[i + k - 1]};
+            int[] oldItem = new int[] {i - 1, nums[i - 1]};
+            int[] newItem = new int[] {i + k - 1, nums[i + k - 1]};
             winSet.remove(oldItem);
             winSet.add(newItem);
             if (cmp.compare(oldItem, median) * cmp.compare(newItem, median) <= 0) {
                 median = cmp.compare(newItem, oldItem) > 0 ? winSet.higher(median) : winSet.lower(median);
+            }
+        }
+    }
+
+    // SortedSet
+    // time complexity: O(N * log(K))
+    // beats 86.29%(58 ms for 42 tests)
+    public double[] medianSlidingWindow3(int[] nums, int k) {
+        int n = nums.length;
+        double[] res = new double[n - k + 1];
+        double[] win = new double[k];
+        for (int i = 0; i < k; i++) {
+            win[i] = (long)nums[i] + 1 - 1.0 / (i + 1); // avoid duplicate
+        }
+        Arrays.sort(win);
+        double median = win[(k - 1) / 2];
+        NavigableSet<Double> winSet = new TreeSet<>();
+        for (int i = 0; i < k; i++) {
+            winSet.add((long)nums[i] + 1 - 1.0 / (i + 1));
+        }
+        for (int i = 1;; i++) {
+            res[i - 1] = (k & 1) == 1 ? Math.floor(median)
+                         : (Math.floor(median) + Math.floor(winSet.higher(median))) / 2.0;
+            if (i > n - k) return res;
+
+            double oldItem = (long)nums[i - 1] + 1 - 1.0 / i;
+            double newItem = (long)nums[i + k - 1] + 1 - 1.0 / (i + k);
+            winSet.remove(oldItem);
+            winSet.add(newItem);
+            if ((oldItem - median) * (newItem - median) <= 0.0) {
+                median = newItem > oldItem ? winSet.higher(median) : winSet.lower(median);
             }
         }
     }
@@ -93,6 +126,7 @@ public class SlidingWindowMedian {
     void test(int[] nums, int k, double[] expected) {
         assertArrayEquals(expected, medianSlidingWindow(nums, k), 1e-6);
         assertArrayEquals(expected, medianSlidingWindow2(nums, k), 1e-6);
+        assertArrayEquals(expected, medianSlidingWindow3(nums, k), 1e-6);
     }
 
     @Test
