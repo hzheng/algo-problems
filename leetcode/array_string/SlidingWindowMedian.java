@@ -54,7 +54,7 @@ public class SlidingWindowMedian {
     }
 
     // time complexity: O(N * log(K))
-    // beats 60.31%(73 ms for 42 tests)
+    // beats 78.20%(63 ms for 42 tests)
     public double[] medianSlidingWindow2(int[] nums, int k) {
         Comparator<int[]> cmp = new Comparator<int[]>(){
             public int compare(int[] a, int[] b) {
@@ -69,12 +69,14 @@ public class SlidingWindowMedian {
         }
         Arrays.sort(win, cmp);
         int[] median = win[(k - 1) / 2];
-        res[0] = (k & 1) == 1 ? median[1] : ((long)median[1] + win[k / 2][1]) / 2.0;
         NavigableSet<int[]> winSet = new TreeSet<>(cmp);
         for (int i = 0; i < k; i++) {
             winSet.add(new int[]{i, nums[i]});
         }
-        for (int i = 1; i <= n - k; i++) {
+        for (int i = 1; ; i++) {
+            res[i - 1] = (k & 1) == 1 ? median[1] : ((long)median[1] + winSet.higher(median)[1]) / 2.0;
+            if (i > n - k) return res;
+
             int[] oldItem = new int[]{i - 1, nums[i - 1]};
             int[] newItem = new int[]{i + k - 1, nums[i + k - 1]};
             winSet.remove(oldItem);
@@ -82,10 +84,11 @@ public class SlidingWindowMedian {
             if (cmp.compare(oldItem, median) * cmp.compare(newItem, median) <= 0) {
                 median = cmp.compare(newItem, oldItem) > 0 ? winSet.higher(median) : winSet.lower(median);
             }
-            res[i] = (k & 1) == 1 ? median[1] : ((long)median[1] + winSet.higher(median)[1]) / 2.0;
         }
-        return res;
     }
+
+    // Note: Use double PQ like https://leetcode.com/problems/find-median-from-data-stream/
+    // is not good enough since we need remove operation here which has linear complexity
 
     void test(int[] nums, int k, double[] expected) {
         assertArrayEquals(expected, medianSlidingWindow(nums, k), 1e-6);
