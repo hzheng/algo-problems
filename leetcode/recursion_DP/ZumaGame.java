@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 // these balls is called "hand" in the input.
 // Both input strings will be non-empty and only contain characters 'R','Y','B','G','W'.
 public class ZumaGame {
-    // DFS + Recursion + Hashtable
+    // Recursion + DFS + Backtracking + Hashtable
     // beats 72.73%(20 ms for 106 tests)
     public int findMinStep(String board, String hand) {
         Map<Character, Integer> map = new HashMap<>();
@@ -115,7 +115,7 @@ public class ZumaGame {
         }
     }
 
-    // DFS + Recursion + Hashtable
+    // Recursion + DFS + Backtracking + Hashtable
     // beats 85.75%(17 ms for 106 tests)
     public int findMinStep2(String board, String hand) {
         Map<Character, Integer> map = new HashMap<>();
@@ -128,7 +128,7 @@ public class ZumaGame {
     }
 
     private void add2(String board, Map<Character, Integer> hand,
-                     int index, int steps, int[] min) {
+                      int index, int steps, int[] min) {
         if (steps >= min[0]) return;
 
         if (board.isEmpty()) {
@@ -179,9 +179,105 @@ public class ZumaGame {
         }
     }
 
+    // Recursion + DFS + Backtracking
+    // beats 62.90%(26 ms for 106 tests)
+    public int findMinStep3(String board, String hand) {
+        char[] handArray = hand.toCharArray();
+        Arrays.sort(handArray); // for efficiency
+        int res = minStep(board, new String(handArray));
+        return res > hand.length() ? -1 : res;
+    }
+
+    private int minStep(String boardStr, String handStr) {
+        if (boardStr.isEmpty()) return 0;
+
+        int min = Integer.MAX_VALUE - 1;
+        char[] hand = handStr.toCharArray();
+        char[] board = boardStr.toCharArray();
+        for (int i = 0; i < hand.length; i++) {
+            if (i > 0 && hand[i] == hand[i - 1]) continue;
+
+            char c = hand[i];
+            String nextHand = handStr.substring(0, i) + handStr.substring(i + 1);
+            for (int j = 0; j < board.length; j++) {
+                if (board[j] != c || (j > 0 && board[j] == board[j - 1])) continue;
+
+                int k = j;
+                for (; j < board.length && board[j] == c; j++) {}
+                String nextBoard = "";
+                if (j - k < 2) {
+                    nextBoard = boardStr.substring(0, j) + c + boardStr.substring(j);
+                } else {
+                    for (k--; k >= 0 && j < board.length && board[k] == board[j]; k--, j++) {
+                        if ((k == 0 || board[k - 1] != board[k])
+                            && (j + 1 == board.length || board[j + 1] != board[j])) break;
+                        for (; k > 0 && board[k - 1] == board[k]; k--) {}
+                        for (; j + 1 < board.length && board[j + 1] == board[j]; j++) {}
+                    }
+                    nextBoard = boardStr.substring(0, k + 1) + boardStr.substring(j--);
+                }
+                min = Math.min(min, minStep(nextBoard, nextHand) + 1);
+            }
+        }
+        return min;
+    }
+
+    // Recursion + DFS + Backtracking
+    // beats 3.56%(356 ms for 106 tests)
+    public int findMinStep4(String board, String hand) {
+        List<Character> boardList =  new ArrayList<>(board.length());
+        List<Character> handList = new ArrayList<>(hand.length());
+        for (char c : board.toCharArray()) {
+            boardList.add(c);
+        }
+        for (char c : hand.toCharArray()) {
+            handList.add(c);
+        }
+        int res = minStep(boardList, handList, 0);
+        return res == Integer.MAX_VALUE ? -1 : res;
+    }
+
+    private int minStep(List<Character> board, List<Character> hand, int steps) {
+        if (board.isEmpty()) return steps;
+
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i < hand.size(); i++) {
+            Character ball = hand.remove(i);
+            for (int j = 0; j < board.size(); j++) {
+                if (!board.get(j).equals(ball)) continue;
+
+                board.add(j, ball);
+                min = Math.min(min, minStep(reduce(board), hand, steps + 1));
+                board.remove(j);
+            }
+            hand.add(i, ball);
+        }
+        return min;
+    }
+
+    private List<Character> reduce(List<Character> board) {
+        List<Character> res = new ArrayList<>(board.size());
+        int len = board.size();
+        for (int i = 1, count = 1; i <= len; i++) {
+            if (i < len && board.get(i) == board.get(i - 1)) {
+                count++;
+            } else {
+                if (count < 3) {
+                    while (count-- > 0) {
+                        res.add(board.get(i - 1));
+                    }
+                }
+                count = 1;
+            }
+        }
+        return res.size() == len ? res : reduce(res);
+    }
+
     void test(String board, String hand, int expected) {
         assertEquals(expected, findMinStep(board, hand));
         assertEquals(expected, findMinStep2(board, hand));
+        assertEquals(expected, findMinStep3(board, hand));
+        assertEquals(expected, findMinStep4(board, hand));
     }
 
     void test(String board, int index, String expected) {
@@ -192,12 +288,13 @@ public class ZumaGame {
 
     @Test
     public void test() {
-        test("BWYYBBYRRYWB", "BRBW", 4);
+        test("G", "GGGGG", 2);
         test("RRWWRRW", "RR", 2);
         test("WRRBBW", "RB", -1);
         test("WWRRBBWW", "WRBRW", 2);
-        test("G", "GGGGG", 2);
+        test("GGRRGRRG", "RRYBB", 2);
         test("RBYYBBRRB", "YRBGB", 3);
+        test("BWYYBBYRRYWB", "BRBW", 4);
     }
 
     @Test
