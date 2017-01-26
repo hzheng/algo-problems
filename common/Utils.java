@@ -47,6 +47,20 @@ public class Utils {
         return toArray(listOfList, Integer.class);
     }
 
+    public static int[] toArray(List<Integer> list) {
+        return list.stream().mapToInt(i->i).toArray();
+    }
+
+    public static int[][] toInts(List<List<Integer> > listOfList) {
+        return listOfList.stream().map(i->toArray(i)).toArray(int[][]::new);
+    }
+
+    public static int[][] toSortedInts(List<List<Integer> > listOfList) {
+        int[][] res = listOfList.stream().map(i->toArray(i)).toArray(int[][]::new);
+        Arrays.sort(res, new IntArrayComparator());
+        return res;
+    }
+
     @SuppressWarnings("unchecked")
     public static <T> T[][] toArray(List<List<T>> listOfList, Class<T> clazz) {
         int size = listOfList.size();
