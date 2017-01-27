@@ -9,6 +9,7 @@ import common.ListNode;
 //
 // Merge two sorted linked lists and return it as a new list.
 public class MergeSortedLists {
+    // Solution of Choice
     // beats 11.81%(1 ms)
     public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
         ListNode dummy = new ListNode(0);

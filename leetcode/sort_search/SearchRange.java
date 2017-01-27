@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// L034: https://leetcode.com/problems/search-for-a-range/
+// LC034: https://leetcode.com/problems/search-for-a-range/
 //
 // Given a sorted array, find the range of a given target.
 public class SearchRange {

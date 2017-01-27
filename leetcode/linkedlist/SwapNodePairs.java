@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 
 import common.ListNode;
 
-// L024: https://leetcode.com/problems/swap-nodes-in-pairs/
+// LC024: https://leetcode.com/problems/swap-nodes-in-pairs/
 //
 // Given a linked list, swap every two adjacent nodes and return its head.
 public class SwapNodePairs {
