@@ -42,6 +42,8 @@ public class ReorderList {
         }
     }
 
+    // Solution of Choice
+    // Reverse + Merge
     // beats 77.74%(2 ms)
     public void reorderList3(ListNode head) {
         if (head == null || head.next == null) return;

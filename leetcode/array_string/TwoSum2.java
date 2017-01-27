@@ -9,6 +9,7 @@ import static org.junit.Assert.*;
 // find two numbers such that they add up to a specific target number.
 // You may assume that each input would have exactly one solution.
 public class TwoSum2 {
+    // Solution of Choice
     // Two Pointers
     // beats 24.59%(2 ms for 15 tests)
     public int[] twoSum(int[] numbers, int target) {

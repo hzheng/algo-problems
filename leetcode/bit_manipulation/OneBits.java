@@ -17,6 +17,7 @@ public class OneBits {
         return count;
     }
 
+    // Solution of Choice
     // beats 89.42%(1 ms for 600 tests)
     public int hammingWeight2(int n) {
         int count = 0;

@@ -10,6 +10,7 @@ import common.ListNode;
 //
 // Given a sorted linked list, delete all duplicates.
 public class RemoveDupList {
+    // Solution of Choice
     // beats 16.55%(1 ms)
     public ListNode deleteDuplicates(ListNode head) {
         if (head == null) return null;

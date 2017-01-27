@@ -28,7 +28,8 @@ public class CloneGraph {
         return map.get(node);
     }
 
-    // BFS + Queue
+    // Solution of Choice
+    // BFS + Queue + Hash Table
     // beats 31.89%(9 ms)
     public UndirectedGraphNode cloneGraph2(UndirectedGraphNode node) {
         if (node == null) return null;

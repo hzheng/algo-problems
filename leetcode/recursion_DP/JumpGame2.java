@@ -33,6 +33,7 @@ public class JumpGame2 {
         return jumps;
     }
 
+    // Solution of Choice
     // Greedy
     // beats 29.35%(10 ms)
     public int jump2(int[] nums) {

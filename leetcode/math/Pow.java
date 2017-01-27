@@ -56,6 +56,7 @@ public class Pow {
         return n == Integer.MIN_VALUE ? pow / x : pow;
     }
 
+    // Solution of Choice
     // Iteration
     // beats 38.10%(19 ms)
     public double myPow3(double x, int n) {

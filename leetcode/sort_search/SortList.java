@@ -80,6 +80,7 @@ public class SortList {
         return merge(sort(dummy, len / 2), sort(dummy, len - len / 2));
     }
 
+    // Solution of Choice
     // beats 1.75% (24 ms)
     // time complexity: O(N * log(N)), space complexity: O(1))
     public ListNode sortList3(ListNode head) {

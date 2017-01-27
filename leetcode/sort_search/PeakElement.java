@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/find-peak-element/
+// LC162: https://leetcode.com/problems/find-peak-element/
 //
 // A peak element is an element that is greater than its neighbors.
 // The array may contain multiple peaks, in that case return the index to any
@@ -20,6 +20,7 @@ public class PeakElement {
         return nums.length - 1;
     }
 
+    // Solution of Choice
     // Binary Search
     // time complexity: O(log(N)), space complexity: O(1)
     // beats 34.74%(0 ms for 58 tests)
