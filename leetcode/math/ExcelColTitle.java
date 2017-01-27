@@ -18,9 +18,20 @@ public class ExcelColTitle {
         return title.toString();
     }
 
+    // Solution of Choice
+    // beats 9.21%(0 ms for 18 tests)
+    public String convertToTitle2(int n) {
+        StringBuilder title = new StringBuilder();
+        final int radix = 26;
+        for (int x = n - 1; x >= 0; x /= radix, x--) {
+            title.append((char)('A' + (x % radix)));
+        }
+        return title.reverse().toString();
+    }
+
     // Recursion
     // beats 12.78%(0 ms for 18 tests)
-    public String convertToTitle2(int n) {
+    public String convertToTitle3(int n) {
         if (n < 1) return "";
 
         final int radix = 26;
@@ -30,6 +41,7 @@ public class ExcelColTitle {
     void test(int n, String expected) {
         assertEquals(expected, convertToTitle(n));
         assertEquals(expected, convertToTitle2(n));
+        assertEquals(expected, convertToTitle3(n));
     }
 
     @Test
