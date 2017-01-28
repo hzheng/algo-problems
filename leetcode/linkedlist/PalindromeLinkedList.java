@@ -23,6 +23,7 @@ public class PalindromeLinkedList {
         return true;
     }
 
+    // Solution of Choice
     // time complexity: O(N), space complexity: O(1)
     // beats 23.11%(3 ms)
     public boolean isPalindrome2(ListNode head) {

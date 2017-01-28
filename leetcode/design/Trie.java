@@ -28,6 +28,7 @@ public class Trie {
         }
     }
 
+    // Solution of Choice
     // beat 40.00%(28 ms for 14 tests)
     static class Trie1 extends AbstractTrie {
         private TrieNode root;

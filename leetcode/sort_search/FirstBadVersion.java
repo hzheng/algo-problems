@@ -23,6 +23,7 @@ class VersionControl {
 }
 
 public class FirstBadVersion extends VersionControl {
+    // Solution of Choice
     // beats 67.38%(17 ms for 21 tests)
     public int firstBadVersion(int n) {
         int low = 1;

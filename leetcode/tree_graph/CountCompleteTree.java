@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
-// https://leetcode.com/problems/count-complete-tree-nodes/
+// LC222: https://leetcode.com/problems/count-complete-tree-nodes/
 //
 // Given a complete binary tree, count the number of nodes.
 public class CountCompleteTree {

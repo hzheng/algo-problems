@@ -40,7 +40,7 @@ public class OddEvenList {
         ListNode evenDummy = new ListNode(0);
         ListNode[] heads = new ListNode[] {oddDummy, evenDummy};
         ListNode cur = head;
-        for (int i = 0; cur != null; i = 1 - i) {
+        for (int i = 0; cur != null; i ^= 1) {
             ListNode next = cur.next;
             heads[i] = heads[i].next = cur;
             cur.next = null;
@@ -50,6 +50,7 @@ public class OddEvenList {
         return oddDummy.next;
     }
 
+    // Solution of Choice
     // https://leetcode.com/articles/odd-even-linked-list/
     // beats 3.44%(1 ms)
     public ListNode oddEvenList3(ListNode head) {

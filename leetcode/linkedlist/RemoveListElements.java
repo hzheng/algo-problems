@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 
 import common.ListNode;
 
-// L203: https://leetcode.com/problems/remove-linked-list-elements/
+// LC203: https://leetcode.com/problems/remove-linked-list-elements/
 //
 // Remove all elements from a linked list of integers that have value val.
 public class RemoveListElements {

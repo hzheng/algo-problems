@@ -59,13 +59,14 @@ public class SummaryRanges {
         return res;
     }
 
-    // beats 6.15%(1 ms for 27 tests)
+    // Solution of Choice
+    // beats 61.86%(0 ms for 27 tests)
     public List<String> summaryRanges3(int[] nums) {
         List<String> res = new ArrayList<>();
         for (int i = 0, n = nums.length; i < n; i++) {
-            int start = nums[i];
+            int j = i; // int start = nums[i];
             for (; i + 1 < n && (nums[i + 1] == nums[i] + 1); i++) {}
-            res.add(start + ((start == nums[i]) ? "" : "->" + nums[i]));
+            res.add(nums[j] + ((i == j) ? "" : "->" + nums[i]));
         }
         return res;
     }

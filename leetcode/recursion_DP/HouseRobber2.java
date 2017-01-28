@@ -37,6 +37,7 @@ public class HouseRobber2 {
         return maxLastTaken;
     }
 
+    // Solution of Choice
     // Dynamic Programming
     // scan array once
     // time complexity: O(N), space complexity: O(1)

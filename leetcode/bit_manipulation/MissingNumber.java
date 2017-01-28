@@ -22,6 +22,7 @@ public class MissingNumber {
         return xor;
     }
 
+    // Solution of Choice
     // beats 43.64%(1 ms for 121 tests)
     public int missingNumber2(int[] nums) {
         int xor = nums.length;

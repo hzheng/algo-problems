@@ -9,6 +9,7 @@ import static org.junit.Assert.*;
 // Given an integer array of size n, find all elements that appear more than
 // ⌊ n/3 ⌋ times. The algorithm should run in linear time and in O(1) space.
 public class MajorityElement2 {
+    // Solution of Choice
     // Boyer-Moore Majority Vote algorithm
     // beats 37.83%(4 ms for 66 tests)
     // time complexity: O(N), space complexity: O(1)

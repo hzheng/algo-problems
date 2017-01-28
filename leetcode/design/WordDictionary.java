@@ -27,6 +27,7 @@ public class WordDictionary {
         public abstract boolean search(String word);
     }
 
+    // Solution of Choice
     // Trie + Backtracking + Recursion
     // beats 51.36%(35 ms for 13 tests)
     static class WordDictionary1 extends AbstractWordDictionary {

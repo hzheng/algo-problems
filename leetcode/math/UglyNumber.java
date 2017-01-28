@@ -25,6 +25,7 @@ public class UglyNumber {
         return x;
     }
 
+    // Solution of Choice
     // beats 19.59%(2 ms for 1012 tests)
     public boolean isUgly2(int num) {
         if (num <= 0) return false;
