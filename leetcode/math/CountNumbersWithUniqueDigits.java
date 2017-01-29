@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 //
 // Given a non-negative integer n, count all numbers with unique digits, x,
 // where 0 ≤ x < 10 ^ n.
-public class CountNumberswithUniqueDigits {
+public class CountNumbersWithUniqueDigits {
     // Solution of Choice
     // Combinatorics + Dynamic Programming
     // beats 13.76%(0 ms for 9 tests)
@@ -102,6 +102,6 @@ public class CountNumberswithUniqueDigits {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("CountNumberswithUniqueDigits");
+        org.junit.runner.JUnitCore.main("CountNumbersWithUniqueDigits");
     }
 }
