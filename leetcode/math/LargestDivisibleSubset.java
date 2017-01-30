@@ -4,7 +4,7 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/largest-divisible-subset/
+// LC368: https://leetcode.com/problems/largest-divisible-subset/
 //
 // Given a set of distinct positive integers, find the largest subset such that
 // every pair (Si, Sj) of elements in this subset satisfies: Si % Sj = 0 or
@@ -12,34 +12,59 @@ import static org.junit.Assert.*;
 public class LargestDivisibleSubset {
     // Dynamic Programming
     // time complexity: O(N ^ 2), space complexity: O(N)
-    // beats 68.64%(36 ms)
+    // beats 74.85%(33 ms for 36 tests)
     public List<Integer> largestDivisibleSubset(int[] nums) {
         int n = nums.length;
-        if (n == 0) return Collections.emptyList();
-
-        Arrays.sort(nums);
-        int[][] factors = new int[n][];
+        int[][] dp = new int[n][];
         int max = 0;
         int maxIndex = 0;
+        Arrays.sort(nums);
         for (int i = 0; i < n; i++) {
             int num = nums[i];
-            factors[i] = new int[2];
+            dp[i] = new int[2];
             for (int j = i - 1; j >= 0; j--) {
-                if (num % nums[j] == 0 && factors[j][0] > factors[i][0]) {
-                    factors[i][0] = factors[j][0];
-                    factors[i][1] = j;
+                if (num % nums[j] == 0 && dp[j][0] > dp[i][0]) {
+                    dp[i][0] = dp[j][0];
+                    dp[i][1] = j;
                 }
             }
-            if (++factors[i][0] > max) {
+            if (++dp[i][0] > max) {
                 maxIndex = i;
-                max = factors[i][0];
+                max = dp[i][0];
             }
         }
         List<Integer> res = new LinkedList<>();
-        for (int i = factors[maxIndex][0] - 1; i >= 0; i--) {
-            int[] maxCount = factors[maxIndex];
-            res.add(0, nums[maxIndex]);
-            maxIndex = maxCount[1];
+        for (int i = maxIndex, j = max; j > 0; i = dp[i][1], j--) {
+            res.add(0, nums[i]);
+        }
+        return res;
+    }
+
+    // Solution of Choice
+    // beats 66.25%(34 ms for 36 tests)
+    public List<Integer> largestDivisibleSubset2(int[] nums) {
+        int n = nums.length;
+        int[] dp = new int[n];
+        int[] prev = new int[n];
+        int max = 0;
+        int maxIndex = 0;
+        Arrays.sort(nums);
+        for (int i = 0; i < n; i++) {
+            int num = nums[i];
+            for (int j = i - 1; j >= 0; j--) {
+                if (num % nums[j] == 0 && dp[j] > dp[i]) {
+                    dp[i] = dp[j];
+                    prev[i] = j;
+                }
+            }
+            if (++dp[i] > max) {
+                maxIndex = i;
+                max = dp[i];
+            }
+        }
+        List<Integer> res = new LinkedList<>();
+        for (int i = maxIndex, j = max; j > 0; i = prev[i], j--) {
+            res.add(0, nums[i]);
         }
         return res;
     }
@@ -53,10 +78,12 @@ public class LargestDivisibleSubset {
     void test(int[] nums, Integer ... expected) {
         LargestDivisibleSubset l = new LargestDivisibleSubset();
         test(l::largestDivisibleSubset, nums, expected);
+        test(l::largestDivisibleSubset2, nums, expected);
     }
 
     @Test
     public void test1() {
+        test(new int[] {});
         test(new int[] {1, 2, 3}, 1, 2);
         test(new int[] {1, 2, 4, 8}, 1, 2, 4, 8);
         test(new int[] {1, 2, 4, 8, 12, 32}, 1, 2, 4, 8, 32);
