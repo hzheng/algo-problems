@@ -3,47 +3,40 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/valid-perfect-square/
+// LC367: https://leetcode.com/problems/valid-perfect-square/
 //
 // Given a positive integer num, write a function which returns True if num is
 // a perfect square else False.
 public class PerfectSquare {
     // Newton method
-    // beats 36.67%(0 ms)
+    // time complexity: O(log(N))
+    // beats 35.86%(0 ms for 67 tests)
     public boolean isPerfectSquare(int num) {
-        if (num == 1) return true;
-
         double a = num / 2d;
-        while (true) {
-            double b = (a * a - num) / (2 * a);
-            a -= b;
-            if (b < 1) break;
+        for (double b = 1; b >= 1; a -= b) {
+            b = (a * a - num) / (2 * a);
         }
-        int root = (int)a;
-        return root * root == num;
+        return (int)a * (int)a == num;
     }
 
+    // Solution of Choice
     // Newton method
     // https://en.wikipedia.org/wiki/Integer_square_root#Using_only_integer_division
-    // beats 36.67%(0 ms)
+    // time complexity: O(log(N))
+    // beats 35.86%(0 ms for 67 tests)
     public boolean isPerfectSquare2(int num) {
-        for (int a = num / 2 + 1;; ) {
-            int b = num / a;
+        for (int a = num / 2 + 1, b;; a = (a + b) / 2) {
+            b = num / a;
             if (a <= b) return a * a == num;
-
-            a = (a + b) / 2;
         }
     }
 
     // Binary Search
-    // beats 36.67%(0 ms)
+    // time complexity: O(log(N))
+    // beats 35.86%(0 ms for 67 tests)
     public boolean isPerfectSquare3(int num) {
-        if (num < 4) return num == 1;
-
-        int low = 1;
-        int high = num / 2 + 1;
-        while (low <= high) {
-            int mid = low + (high - low) / 2;
+        for (int low = 1, high = num / 2 + 1; low <= high; ) {
+            int mid = (low + high) >>> 1;
             int inverse = num / mid; // avoid overflow(optionally, we can use long)
             if (mid == inverse) return num % mid == 0;
 
@@ -56,8 +49,8 @@ public class PerfectSquare {
         return false;
     }
 
+    // time complexity: O(N ^ 1/2)
     // beats 18.23%(1 ms)
-    // short but slow
     public boolean isPerfectSquare4(int num) {
         for (int i = 1; num > 0; num -= i, i += 2) {}
         return num == 0;
