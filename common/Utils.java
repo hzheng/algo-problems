@@ -12,6 +12,14 @@ public class Utils {
         return cloned;
     }
 
+    public static<T> T[][] clone(T[][] items) {
+        T[][] cloned = items.clone();
+        for (int i = 0; i < items.length; i++) {
+            cloned[i] = items[i].clone();
+        }
+        return cloned;
+    }
+
     public static class IntArrayComparator implements Comparator<int[]> {
         public int compare(int[] a, int[] b) {
             int len = Math.min(a.length, b.length);
