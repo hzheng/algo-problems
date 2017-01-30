@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/water-and-jug-problem/
+// LC365: https://leetcode.com/problems/water-and-jug-problem/
 //
 // You are given two jugs with capacities x and y litres. There is an infinite
 // amount of water supply available. You need to determine whether it is
@@ -17,9 +17,14 @@ import static org.junit.Assert.*;
 // Pour water from one jug into another till the other jug is completely full
 // or the first jug itself is empty.
 public class WaterAndJug {
-    // DFS
+    // DFS + Recursion + Set
     // stack overflow when x or y is too big
     public boolean canMeasureWater(int x, int y, int z) {
+        if (x + y == z) return true;
+        if (x + y < z) return false;
+
+        int factor = gcd(x, y);
+        if (z % factor != 0) return false;
         return canMeasureWater(x, y, z, 0, 0, new HashSet<>());
     }
 
@@ -44,17 +49,15 @@ public class WaterAndJug {
             int min = Math.min(a, y - b);
             if (canMeasureWater(x, y, z, a - min, b + min, visited)) return true;
         }
-
         if (b > 0 && a < x) {
             int min = Math.min(b, x - a);
             if (canMeasureWater(x, y, z, a + min, b - min, visited)) return true;
         }
-
         return false;
     }
 
-    // BFS
-    // beats 1.38%(109 ms)
+    // BFS + Set + Queue
+    // beats 1.01%(102 ms for 33 tests)
     public boolean canMeasureWater2(int x, int y, int z) {
         if (x + y < z) return false;
 
@@ -62,27 +65,26 @@ public class WaterAndJug {
 
         if (x < y) return canMeasureWater2(y, x, z);
 
-        if (y == 0) return false;
+        if (y == 0 || x == y) return false;
 
         if (z > x) return canMeasureWater2(x, y, z - x);
 
         if (z > y) return canMeasureWater2(x, y, z % y);
-
+        // from now on, x > y > z
         Set<Integer> visited = new HashSet<>();
         Queue<Integer> queue = new LinkedList<>();
         queue.offer(y);
         visited.add(y);
         while (!queue.isEmpty()) {
             int head = queue.poll();
-            int next = y - (x - head) % y; // fill Jug A first
+            int next = y - (x - head) % y; // put head in Jug A
             if (next == z) return true;
 
             if (!visited.contains(next)) {
                 visited.add(next);
                 queue.offer(next);
             }
-
-            next = head > y ? head - y : x + head - y; // fill Jug B first
+            next = head > y ? head - y : x + head - y; // put head in Jug B
             if (next == z) return true;
 
             if (!visited.contains(next)) {
@@ -93,6 +95,7 @@ public class WaterAndJug {
         return false;
     }
 
+    // Solution of Choice
     // Math
     // From above queue generation, we know all generated liters are of
     // the form a * x + b * y - (k * m) % y
@@ -101,7 +104,7 @@ public class WaterAndJug {
     // hence result must be linear combinations of x and y, and its sufficient
     // and necessary condition is its GCD is divisible by z.
     // https://en.wikipedia.org/wiki/B%C3%A9zout%27s_identity
-    // beats 22.45%(0 ms)
+    // beats 14.45%(0 ms for 33 tests)
     public boolean canMeasureWater3(int x, int y, int z) {
         return x + y == z || (x + y > z && z % gcd(x, y) == 0);
         // return z == 0 || x + y >= z && z % gcd(x, y) == 0;
