@@ -3,26 +3,25 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/sum-of-two-integers/
+// LC371: https://leetcode.com/problems/sum-of-two-integers/
 //
 // Calculate the sum of two integers a and b, but you are not allowed to use
 // the operator + and -.
 public class IntegerSum {
-    // recursive
-    // beats 7.22%(0 ms)
+    // Recursion
+    // beats 7.55%(0 ms for 13 tests)
     public int getSum(int a, int b) {
         return b == 0 ? a : getSum(a ^ b, (a & b) << 1);
     }
 
-    // iterative
-    // beats 7.22%(0 ms)
+    // Solution of Choice
+    // beats 7.55%(0 ms for 13 tests)
     public int getSum2(int a, int b) {
-        while (b != 0) {
-            int carry = (a & b) << 1;
-            a ^= b;
-            b = carry;
+        int sum = a;
+        for (int second = b, carry; second != 0; sum ^= second, second = carry) {
+            carry = (sum & second) << 1;
         }
-        return a;
+        return sum;
     }
 
     void test(int a, int b) {
