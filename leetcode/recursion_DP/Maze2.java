@@ -22,24 +22,24 @@ import static org.junit.Assert.*;
 // The ball and hole coordinates are represented by row and column indexes.
 public class Maze2 {
     // Recursion + DFS + Backtracking + Set + Bit Manipulation
-    // beats N/A(124 ms for 64 tests)
+    // beats 57.14%(41 ms for 64 tests)
     public String findShortestWay(int[][] maze, int[] ball, int[] hole) {
-        Path min = new Path();
-        find(maze, hole, ball[0], ball[1],
-             new StringBuilder(), 0, min, (1 << 4) - 1, new HashSet<>());
+        Path min = new Path("impossible", Integer.MAX_VALUE);
+        find(maze, hole, ball[0], ball[1], "", 0, min, 15, new HashMap<>());
         return min.path;
     }
 
-    private static class Path {
+    private static class Path implements Comparable<Path> {
         String path;
         int distance;
-        Path() {
-            this("impossible", Integer.MAX_VALUE);
-        }
 
         Path(String path, int distance) {
             this.path = path;
             this.distance = distance;
+        }
+
+        public int compareTo(Path other) {
+            return distance != other.distance ? distance - other.distance : path.compareTo(other.path);
         }
     }
 
@@ -47,34 +47,32 @@ public class Maze2 {
     private static final int[][] dirShifts = {{1, 0}, {0, -1}, {0, 1}, {-1, 0}};
     private static final int[] dirMasks = {6, 9, 9, 6}; // next possible directions
 
-    private void find(int[][] maze, int[] hole, int row, int col,
-                      StringBuilder path, int dist, Path min,
-                      int dirs, Set<Long> visited) {
+    private void find(int[][] maze, int[] hole, int row, int col, String path,
+                      int dist, Path min, int dirs, Map<Long, Path> visited) {
         if (dist >= min.distance) return;
 
-        long pos = ((long)row << 32) | col;
-        if (visited.contains(pos)) return;
+        long key = ((long)row << 32) | col;
+        Path last = visited.get(key);
+        Path next = new Path(path, dist);
+        if (last != null && last.compareTo(next) < 0) return;
 
-        visited.add(pos);
-        visited = new HashSet<>(visited);
-        for (int i = 0, size = path.length(); i < 4; i++) {
-            if ((dirs & (1 << i)) == 0) continue;
+        visited.put(key, next); // visited = new HashSet<>(visited); // as slow as 124 ms
+        for (int i = 0; i < 4; i++) {
+            if ((dirs & (1 << i)) == 0) continue; // for performance
 
             int dx = dirShifts[i][0];
             int dy = dirShifts[i][1];
-            path.setLength(size + 1);
-            path.setCharAt(size, dirChars[i]);
             for (int d = dist, x = row + dx, y = col + dy;; x += dx, y += dy, d++) {
-                if (x < 0 || y < 0 || x >= maze.length || y >= maze[0].length || maze[x][y] == 1) {
-                    find(maze, hole, x - dx, y - dy, path, d, min, dirMasks[i], visited);
-                    break;
-                }
                 if (x == hole[0] && y == hole[1]) {
                     if (d < min.distance) {
                         min.distance = d;
-                        min.path = new String(path);
+                        min.path = path + dirChars[i];
                     }
                     return;
+                }
+                if (x < 0 || y < 0 || x >= maze.length || y >= maze[0].length || maze[x][y] == 1) {
+                    find(maze, hole, x - dx, y - dy, path + dirChars[i], d, min, dirMasks[i], visited);
+                    break;
                 }
             }
         }
