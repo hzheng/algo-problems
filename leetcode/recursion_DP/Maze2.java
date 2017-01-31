@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// LC499:
+// LC499: https://leetcode.com/problems/the-maze-ii/
 //
 // There is a ball in a maze with empty spaces and walls. The ball can go through
 // empty spaces by rolling up (u), down (d), left (l) or right (r), but it won't
@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 // The ball and hole coordinates are represented by row and column indexes.
 public class Maze2 {
     // Recursion + DFS + Backtracking + Set + Bit Manipulation
-    // beats 57.14%(41 ms for 64 tests)
+    // beats 45.51%(35 ms for 64 tests)
     public String findShortestWay(int[][] maze, int[] ball, int[] hole) {
         Path min = new Path("impossible", Integer.MAX_VALUE);
         find(maze, hole, ball[0], ball[1], "", 0, min, 15, new HashMap<>());
@@ -58,20 +58,23 @@ public class Maze2 {
 
         visited.put(key, next); // visited = new HashSet<>(visited); // as slow as 124 ms
         for (int i = 0; i < 4; i++) {
-            if ((dirs & (1 << i)) == 0) continue; // for performance
+            if ((dirs & (1 << i)) == 0) continue; // avoid same directions(for performance)
 
             int dx = dirShifts[i][0];
             int dy = dirShifts[i][1];
             for (int d = dist, x = row + dx, y = col + dy;; x += dx, y += dy, d++) {
                 if (x == hole[0] && y == hole[1]) {
-                    if (d < min.distance) {
+                    if (d < min.distance) { // no equal sign here, path already sorted
                         min.distance = d;
                         min.path = path + dirChars[i];
                     }
                     return;
                 }
                 if (x < 0 || y < 0 || x >= maze.length || y >= maze[0].length || maze[x][y] == 1) {
-                    find(maze, hole, x - dx, y - dy, path + dirChars[i], d, min, dirMasks[i], visited);
+                    if (d > dist) {
+                        find(maze, hole, x - dx, y - dy, path + dirChars[i], d,
+                             min, dirMasks[i], visited);
+                    }
                     break;
                 }
             }
@@ -79,11 +82,11 @@ public class Maze2 {
     }
 
     // BFS + Heap
-    // beats 85.71%(16 ms for 64 tests)
+    // beats 72.46%(18 ms for 64 tests)
     public String findShortestWay2(int[][] maze, int[] ball, int[] hole) {
-        int n = maze.length;
-        int m = maze[0].length;
-        boolean[][][] visited = new boolean[4][n][m];
+        int m = maze.length;
+        int n = maze[0].length;
+        boolean[][][] visited = new boolean[4][m][n];
         PriorityQueue<Position> pq = new PriorityQueue<>();
         pq.offer(new Position(ball[0], ball[1], -1, 0, ""));
         while (!pq.isEmpty()) {
@@ -92,7 +95,7 @@ public class Maze2 {
 
             int x = pos.dir < 0 ? -1 : pos.x + dirShifts[pos.dir][0];
             int y = pos.dir < 0 ? -1 : pos.y + dirShifts[pos.dir][1];
-            if (x >= 0 && x < n && y >= 0 && y < m && maze[x][y] == 0) {
+            if (x >= 0 && x < m && y >= 0 && y < n && maze[x][y] == 0) {
                 if (!visited[pos.dir][x][y]) {
                     pq.offer(new Position(x, y, pos.dir, pos.distance + 1, pos.path));
                     visited[pos.dir][x][y] = true;
@@ -102,7 +105,7 @@ public class Maze2 {
             for (int i = 0; i < 4; i++) { // hit the wall
                 x = pos.x + dirShifts[i][0];
                 y = pos.y + dirShifts[i][1];
-                if (x >= 0 && x < n && y >= 0 && y < m && maze[x][y] == 0) {
+                if (x >= 0 && x < m && y >= 0 && y < n && maze[x][y] == 0) {
                     if (!visited[i][x][y]) {
                         pq.offer(new Position(x, y, i, pos.distance + 1, pos.path + dirChars[i]));
                         visited[i][x][y] = true;
@@ -134,7 +137,7 @@ public class Maze2 {
     }
 
     // BFS + Queue
-    // beats 85.71%(18 ms for 64 tests)
+    // beats 72.46%(18 ms for 64 tests)
     public String findShortestWay3(int[][] maze, int[] ball, int[] hole) {
         int m = maze.length;
         int n = maze[0].length;
