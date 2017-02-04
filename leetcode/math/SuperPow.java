@@ -3,14 +3,16 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/super-pow/
+// LC372: https://leetcode.com/problems/super-pow/
 //
 // Your task is to calculate a ^ b mod 1337 where a is a positive integer and
 // b is an extremely large positive integer given in the form of an array.
 public class SuperPow {
     static final int MOD = 1337;
 
-    // beats 94.57%(3 ms)
+    // Solution of Choice
+    // Dynamic Programming
+    // beats 89.81%(2 ms for 54 tests)
     public int superPow(int a, int[] b) {
         if (a == 1 || b.length == 1 && b[0] == 0) return 1;
 
@@ -28,7 +30,7 @@ public class SuperPow {
         return modules[(modIndex > 0 ? modIndex : cycle) - 1];
     }
 
-    // beats 84.70%(6 ms)
+    // beats 61.35%(8 ms for 54 tests)
     public int superPow2(int a, int[] b) {
         int pow = 1;
         a %= MOD;
@@ -50,11 +52,12 @@ public class SuperPow {
         return pow;
     }
 
+    // Solution of Choice
     // Fermat Litter Theorem and Chinese Remainder Theorem
     // https://discuss.leetcode.com/topic/50591/fermat-and-chinese-remainder
-    // beats 94.57%(3 ms)
+    // beats 89.81%(2 ms for 54 tests)
     public int superPow3(int a, int[] b) {
-        if (a == 1 || b.length == 1 && b[0] == 0) return 1;
+        if (b.length == 1 && b[0] == 0) return 1;
 
         return (764 * superPow(a, b, 7) + 574 * superPow(a, b, 191)) % MOD;
     }
@@ -70,14 +73,15 @@ public class SuperPow {
         return fastPow(a, exp, prime);
     }
 
-    // recursive
-    // beats 41.30%(11 ms)
+    // Solution of Choice
+    // Recursion
+    // beats 48.65%(9 ms for 54 tests)
     public int superPow4(int a, int[] b) {
         int pow = 1;
         for (int num : b) {
-            pow = modPow(pow, 10) * modPow(a, num) % MOD;
+            pow = modPow(pow, 10) * modPow(a, num);
         }
-        return pow;
+        return pow % MOD;
     }
 
     private int modPow(int x, int n) {
@@ -88,12 +92,34 @@ public class SuperPow {
         return modPow(x % MOD, n / 2) * modPow(x % MOD, n - n / 2) % MOD;
     }
 
-    // Euler Theorem: https://en.wikipedia.org/wiki/Euler%27s_theorem
-    // beats 95.65%(2 ms)
-    public int superPow5(int a, int[] b) {
-        if (a == 1 || b.length == 1 && b[0] == 0) return 1;
+    // Recursion
+    // beats 30.58%(12 ms for 54 tests)
+    public int superPow4_2(int a, int[] b) {
+        return superPow(a, b, b.length, MOD);
+    }
 
-        final int mod = MOD;
+    private int superPow(int a, int[] b, int length, int k) {
+        if (length == 1) return powMod(a, b[0], k);
+
+        return powMod(superPow(a, b, length - 1, k), 10, k)
+               * powMod(a, b[length - 1], k) % k;
+    }
+
+    private int powMod(int a, int b, int k) {
+        a %= k;
+        int pow = 1;
+        for (int i = 0; i < b; i++) {
+            pow = (pow * a) % k;
+        }
+        return pow;
+    }
+
+    // Solution of Choice
+    // Euler Theorem: https://en.wikipedia.org/wiki/Euler%27s_theorem
+    // beats 89.81%(2 ms for 54 tests)
+    public int superPow5(int a, int[] b) {
+        if (b.length == 1 && b[0] == 0) return 1;
+
         final int factor1 = 7; // one of 1337's prime factor
         final int factor2 = 191; // mod / factor1
         // phi(Euler totient value): 1337 - 191 - 7 + 1
@@ -105,12 +131,12 @@ public class SuperPow {
             exp = (exp * 10 + num) % phi;
         }
         if (exp == 0) {
-            if (a % factor1 != 0 && a % factor2 != 0) return 1;
+            // if (a % factor1 != 0 && a % factor2 != 0) return 1;
 
             // exceptional case: a is NOT coprime to 1337 and b is divisible by phi
             exp = phi;
         }
-        return fastPow(a, exp, mod);
+        return fastPow(a, exp, MOD);
     }
 
     void test(int a, int[] b, int expected) {
@@ -118,6 +144,7 @@ public class SuperPow {
         assertEquals(expected, superPow2(a, b));
         assertEquals(expected, superPow3(a, b));
         assertEquals(expected, superPow4(a, b));
+        assertEquals(expected, superPow4_2(a, b));
         assertEquals(expected, superPow5(a, b));
     }
 
