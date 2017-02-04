@@ -53,7 +53,7 @@ public class SuperPow {
     }
 
     // Solution of Choice
-    // Fermat Litter Theorem and Chinese Remainder Theorem
+    // Fermat Little Theorem and Chinese Remainder Theorem
     // https://discuss.leetcode.com/topic/50591/fermat-and-chinese-remainder
     // beats 89.81%(2 ms for 54 tests)
     public int superPow3(int a, int[] b) {
