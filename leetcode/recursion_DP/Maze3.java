@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// LC499: https://leetcode.com/problems/the-maze-ii/
+// LC499: https://leetcode.com/problems/the-maze-iii/
 //
 // There is a ball in a maze with empty spaces and walls. The ball can go through
 // empty spaces by rolling up (u), down (d), left (l) or right (r), but it won't
@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 // The maze is represented by a binary 2D array. 1 means the wall and 0 means
 // the empty space. You may assume that the borders of the maze are all walls.
 // The ball and hole coordinates are represented by row and column indexes.
-public class Maze2 {
+public class Maze3 {
     // Recursion + DFS + Backtracking + Set + Bit Manipulation
     // beats 45.51%(35 ms for 64 tests)
     public String findShortestWay(int[][] maze, int[] ball, int[] hole) {
@@ -285,6 +285,6 @@ public class Maze2 {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("Maze2");
+        org.junit.runner.JUnitCore.main("Maze3");
     }
 }
