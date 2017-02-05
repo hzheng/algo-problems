@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/guess-number-higher-or-lower/
+// LC374: https://leetcode.com/problems/guess-number-higher-or-lower/
 //
 // I pick a number from 1 to n. You have to guess which number I picked. Every
 // time you guess wrong, I'll tell you whether the number is higher or lower.
@@ -20,6 +20,7 @@ class GuessGame {
 }
 
 public class GuessNumber extends GuessGame {
+    // Solution of Choice
     // Binary Search
     // time complexity: O(log2(N)), space complexity: O(1)
     // beats 4.63%(2 ms)
@@ -40,7 +41,7 @@ public class GuessNumber extends GuessGame {
         return low;
     }
 
-    // ernary Search
+    // Ternary Search
     // time complexity: O(log3(N)), space complexity: O(1)
     // https://leetcode.com/articles/guess-number-higher-or-lower/
     // beats 4.63%(2 ms)

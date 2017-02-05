@@ -4,7 +4,7 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/guess-number-higher-or-lower-ii/
+// LC375: https://leetcode.com/problems/guess-number-higher-or-lower-ii/
 //
 // I pick a number from 1 to n. You have to guess which number I picked.
 // Every time you guess wrong, I'll tell you whether the number I picked is
@@ -12,9 +12,9 @@ import static org.junit.Assert.*;
 // wrong, you pay $x. You win the game when you guess the number I picked.
 // Given a particular n ≥ 1, find out how much money you need to have to guarantee a win.
 public class GuessNumber2 {
-    // Memoization (Top-Down)
+    // Recursion + Dynamic Programming(Top-Down) + Minmax
     // time complexity: O(N ^ 3), space complexity: O(N ^ 2)
-    // beats 0%(816 ms)
+    // beats 0.17%(820 ms for 13 tests)
     public int getMoneyAmount(int n) {
         return getMoneyAmount(1, n, new HashMap<>());
     }
@@ -35,9 +35,9 @@ public class GuessNumber2 {
         return min;
     }
 
-    // Memoization (Top-Down)
+    // Recursion + Dynamic Programming(Top-Down) + Minmax
     // time complexity: O(N ^ 3), space complexity: O(N ^ 2)
-    // beats 64.82%(16 ms)
+    // beats 72.00%(14 ms for 13 tests)
     public int getMoneyAmount2(int n) {
         return getMoneyAmount2(1, n, new int[n + 1][n + 1]);
     }
@@ -55,12 +55,10 @@ public class GuessNumber2 {
         return memo[start][end] = min;
     }
 
-    // Dynamic Programming(Bottom-up)
+    // Dynamic Programming(Bottom-Up) + Minmax
     // time complexity: O(N ^ 3), space complexity: O(N ^ 2)
-    // beats 83.09%(14 ms)
+    // beats 86.72%(13 ms for 13 tests)
     public int getMoneyAmount3(int n) {
-        if (n < 2) return 0;
-
         int[][] dp = new int[n + 1][n + 1];
         for (int step = 1; step < n; step++) {
             for (int i = 1; i + step <= n; i++) {
@@ -75,17 +73,15 @@ public class GuessNumber2 {
         return dp[1][n];
     }
 
-    // Dynamic Programming(Bottom-up)
+    // Dynamic Programming(Bottom-Up) + Minmax
     // time complexity: O(N ^ 3), space complexity: O(N ^ 2)
-    // beats 83.09%(14 ms)
+    // beats 86.72%(13 ms for 13 tests)
     public int getMoneyAmount4(int n) {
-        if (n < 2) return 0;
-
         int[][] dp = new int[n + 1][n + 1];
         for (int step = 1; step < n; step++) {
             for (int i = 1; i + step <= n; i++) {
-                int j = i;
                 int min = Integer.MAX_VALUE;
+                int j = i;
                 for (; j < i + step; j++) {
                     if (dp[i][j - 1] > dp[j + 1][i + step]) break;
 
@@ -97,12 +93,30 @@ public class GuessNumber2 {
         return dp[1][n];
     }
 
-    // Dynamic Programming(Bottom-up)
+    // Solution of Choice
+    // Dynamic Programming(Bottom-Up) + Minmax
     // time complexity: O(N ^ 3), space complexity: O(N ^ 2)
-    // beats 23.70%(21 ms)
-    public int getMoneyAmount5(int n) {
-        if (n < 2) return 0;
+    // https://leetcode.com/articles/guess-number-higher-or-lower-ii/#approach-4-better-approach-using-dp-accepted
+    // beats 86.72%(13 ms for 13 tests)
+    public int getMoneyAmount4_2(int n) {
+        int[][] dp = new int[n + 1][n + 1];
+        for (int len = 2; len <= n; len++) {
+            for (int start = 1; start <= n - len + 1; start++) {
+                int min = Integer.MAX_VALUE;
+                for (int i = start + (len - 1) / 2; i < start + len - 1; i++) {
+                    min = Math.min(min, i + Math.max(
+                                       dp[start][i - 1], dp[i + 1][start + len - 1]));
+                }
+                dp[start][start + len - 1] = min;
+            }
+        }
+        return dp[1][n];
+    }
 
+    // Dynamic Programming(Bottom-Up) + Minmax
+    // time complexity: O(N ^ 3), space complexity: O(N ^ 2)
+    // beats 86.72%(13 ms for 13 tests)
+    public int getMoneyAmount5(int n) {
         int[][] dp = new int[n + 1][n + 1];
         for (int j = 2; j <= n; j++) {
             dp[j - 1][j] = j - 1;
@@ -118,12 +132,12 @@ public class GuessNumber2 {
         return dp[1][n];
     }
 
+    // Solution of Choice
+    // Dynamic Programming + Deque
     // http://artofproblemsolving.com/community/c296841h1273742
     // time complexity: O(N ^ 2), space complexity: O(N ^ 2)
-    // beats 15.66%(22 ms)
+    // beats 37.96%(17 ms for 13 tests)
     public int getMoneyAmount6(int n) {
-        if (n < 2) return 0;
-
         int[][] dp = new int[n + 1][n + 1];
         for (int j = 2; j <= n; j++) {
             Deque<int[]> mins = new LinkedList<>();
@@ -163,13 +177,14 @@ public class GuessNumber2 {
         test(g::getMoneyAmount2, "getMoneyAmount2", n, expected);
         test(g::getMoneyAmount3, "getMoneyAmount3", n, expected);
         test(g::getMoneyAmount4, "getMoneyAmount4", n, expected);
+        test(g::getMoneyAmount4_2, "getMoneyAmount4_2", n, expected);
         test(g::getMoneyAmount5, "getMoneyAmount5", n, expected);
         test(g::getMoneyAmount6, "getMoneyAmount6", n, expected);
     }
 
     @Test
     public void test1() {
-        test(0, 0);
+        // test(0, 0);
         test(1, 0);
         test(2, 1);
         test(3, 2);
