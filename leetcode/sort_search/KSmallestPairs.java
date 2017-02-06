@@ -117,6 +117,9 @@ public class KSmallestPairs {
         return res;
     }
 
+    // TODO: time complexity: O(K)
+    // https://discuss.leetcode.com/topic/53380/o-k-solution
+
     @FunctionalInterface
     interface Function<A, B, C, D> {
         public D apply(A a, B b, C c);

@@ -18,10 +18,7 @@ public class KthSmallestInMatrix {
         if (k == 1) return matrix[0][0];
 
         int n = matrix.length;
-        int m = (int)Math.sqrt(k);
-        if (m * m < k) {
-            m++;
-        }
+        int m = (int)Math.ceil(Math.sqrt(k));
         int pivot = matrix[m - 1][m - 1];
         PriorityQueue<Integer> pq = new PriorityQueue<>(new Comparator<Integer>() {
             public int compare(Integer a, Integer b) {
@@ -68,30 +65,27 @@ public class KthSmallestInMatrix {
         return i == 0 ? pq.peek() : Math.max(pq.peek(), matrix[i - 1][i - 1]);
     }
 
+    // Heap + Binary Search
     // time complexity: O(N * log(N)), space complexity: O(N)
-    // beats 76.75%(21 ms)
+    // beats 64.42%(18 ms for 85 tests)
     public int kthSmallest2(int[][] matrix, int k) {
         int n = matrix.length;
-        int m = (int)Math.sqrt(k);
-        if (m * m < k) {
-            m++;
-        }
+        int m = (int)Math.ceil(Math.sqrt(k));
         int pivot = matrix[m - 1][m - 1];
         PriorityQueue<int[]> pq = new PriorityQueue<>(new Comparator<int[]>() {
             public int compare(int[] a, int[] b) {
                 return matrix[b[0]][b[1]] - matrix[a[0]][a[1]];
             }
         });
-
         int count = 0;
         for (int i = 0; i < n; i++) {
             int colIndex = Arrays.binarySearch(matrix[i], pivot);
             if (colIndex < 0) {
                 colIndex = -colIndex - 2;
                 if (colIndex < 0) break;
-            // the following 'else' part may be needed in case of duplicate pivots
-            // even the code is accepted without it
-            // } else {
+                // the following 'else' part may be needed in case of duplicate pivots
+                // even the code is accepted without it
+                // } else {
                 // while (colIndex + 1 < n && matrix[i][colIndex + 1] == pivot) {
                 //     colIndex++;
                 // }
@@ -109,8 +103,10 @@ public class KthSmallestInMatrix {
         return matrix[pos[0]][pos[1]];
     }
 
+    // Solution of Choice
+    // Heap
     // time complexity: O(N * log(K)), space complexity: O(K)
-    // beats 24.86%(42 ms)
+    // beats 28.49%(39 ms for 85 tests)
     public int kthSmallest3(int[][] matrix, int k) {
         int n = matrix.length;
         PriorityQueue<int[]> pq = new PriorityQueue<>(new Comparator<int[]>() {
@@ -118,18 +114,73 @@ public class KthSmallestInMatrix {
                 return matrix[a[0]][a[1]] - matrix[b[0]][b[1]];
             }
         });
-        for(int i = 0; i < n; i++) {
-            pq.offer(new int[]{0, i});
+        for (int i = Math.min(n, k) - 1; i >= 0; i--) {
+            pq.offer(new int[] {0, i});
         }
-        for(int i = 0; i < k - 1; i++) {
+        for (int i = k - 1; i > 0; i--) {
             int[] pos = pq.poll();
             if (pos[0] + 1 < n) {
-                pq.offer(new int[]{pos[0] + 1, pos[1]});
+                pq.offer(new int[] {pos[0] + 1, pos[1]});
             }
         }
         int[] pos = pq.peek();
         return matrix[pos[0]][pos[1]];
     }
+
+    // Binary Search
+    // beats 79.43%(1 ms for 85 tests)
+    public int kthSmallest4(int[][] matrix, int k) {
+        int n = matrix.length;
+        int low = matrix[0][0];
+        for (int high = matrix[n - 1][n - 1] + 1; low < high; ) {
+            int mid = low + (high - low) / 2;
+            int count = 0;
+            for (int i = 0, j = n - 1; i < n; i++) {
+                for (; j >= 0 && matrix[i][j] > mid; j--) {}
+                // j = Arrays.binarySearch(matrix[i], mid); // why BS is slower?
+                // if (j < 0) {
+                //     j = -j - 2;
+                // }
+                // for (; j < n - 1 && matrix[i][j + 1] <= mid; j++) {}
+                count += (j + 1);
+            }
+            if (count < k) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        return low;
+    }
+
+    // Solution of Choice
+    // Binary Search
+    // beats 79.43%(1 ms for 85 tests)
+    public int kthSmallest5(int[][] matrix, int k) {
+        int n = matrix.length;
+        int low = matrix[0][0];
+        for (int high = matrix[n - 1][n - 1] + 1; low <= high; ) {
+            int mid = low + (high - low) / 2;
+            int count = 0;
+            for (int i = n - 1, j = 0; i >= 0 && j < n; ) {
+                if (matrix[i][j] > mid) {
+                    i--;
+                } else {
+                    count += i + 1;
+                    j++;
+                }
+            }
+            if (count < k) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+        return low;
+    }
+
+    // TODO: time complexity: O(N)
+    // https://discuss.leetcode.com/topic/54262/c-o-n-time-o-n-space-solution-with-detail-intuitive-explanation
 
     @FunctionalInterface
     interface Function<A, B, C> {
@@ -148,12 +199,15 @@ public class KthSmallestInMatrix {
         test(k::kthSmallest, matrix, expected);
         test(k::kthSmallest2, matrix, expected);
         test(k::kthSmallest3, matrix, expected);
+        test(k::kthSmallest4, matrix, expected);
+        test(k::kthSmallest5, matrix, expected);
     }
 
     @Test
     public void test1() {
         test(new int[][] {{-5}}, new int[] {1, -5});
         test(new int[][] {{1, 2}, {1, 3}}, new int[] {4, 3});
+        test(new int[][] {{1, 2}, {3, 3}}, new int[] {4, 3});
         test(new int[][] {{1, 2, 6}, {3, 6, 10}, new int[] {7, 11, 12}},
              new int[] {4, 6}, new int[] {5, 6}, new int[] {6, 7});
         test(new int[][] {{1, 3, 4}, {1, 8, 8}, {4, 12, 17}}, new int[] {5, 4});
