@@ -128,6 +128,7 @@ public class KthSmallestInMatrix {
     }
 
     // Binary Search
+    // time complexity: O(N * log(Max-Min)), space complexity: O(1)
     // beats 79.43%(1 ms for 85 tests)
     public int kthSmallest4(int[][] matrix, int k) {
         int n = matrix.length;
@@ -155,6 +156,7 @@ public class KthSmallestInMatrix {
 
     // Solution of Choice
     // Binary Search
+    // time complexity: O(N * log(Max-Min)), space complexity: O(1)
     // beats 79.43%(1 ms for 85 tests)
     public int kthSmallest5(int[][] matrix, int k) {
         int n = matrix.length;

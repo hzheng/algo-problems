@@ -29,7 +29,8 @@ public class RandomizedSet {
         public int getRandom();
     }
 
-    // beat 37.91%(147 ms)
+    // 2 Hash Tables
+    // beat 52.68%(137 ms for 18 tests)
     static class RandomizedSet1 implements IRandomizedSet {
         private Random rand = new Random();
         private Map<Integer, Integer> valMap = new HashMap<>();
@@ -63,7 +64,9 @@ public class RandomizedSet {
         }
     }
 
-    // beat 28.86%(153 ms)
+    // Solution of Choice
+    // Hash Table + List
+    // beat 57.10%(135 ms for 18 tests)
     static class RandomizedSet2 implements IRandomizedSet {
         private Random rand = new Random();
 

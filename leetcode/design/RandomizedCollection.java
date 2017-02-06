@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 
 import common.Interval;
 
-// https://leetcode.com/problems/insert-delete-getrandom-o1-duplicates-allowed/
+// LC381: https://leetcode.com/problems/insert-delete-getrandom-o1-duplicates-allowed/
 //
 // Design a data structure that supports all following operations in average O(1) time.
 
@@ -31,7 +31,9 @@ public class RandomizedCollection {
         public int getRandom();
     }
 
-    // beat 47.36%(148 ms)
+    // Solution of Choice
+    // Hash Table + List
+    // beat 95.43%(127 ms for 28 tests)
     static class RandomizedCollection1 implements IRandomizedCollection {
         private Random rand = new Random();
         private Map<Integer, Set<Integer>> map = new HashMap<>();
@@ -41,6 +43,7 @@ public class RandomizedCollection {
             boolean res = !map.containsKey(val);
             if (res) {
                 map.put(val, new HashSet<>());
+                // map.put(val, new LinkedHashSet<>()); // maybe better
             }
             map.get(val).add(list.size());
             list.add(val);
