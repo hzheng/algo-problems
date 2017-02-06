@@ -123,8 +123,7 @@ public class GuessNumber2 {
             for (int i = j - 2; i > 0; i--) {
                 int min = Integer.MAX_VALUE;
                 for (int k = i + 1; k < j; k++) {
-                    min = Math.min(min, k + Math.max(
-                                       dp[i][k - 1], dp[k + 1][j]));
+                    min = Math.min(min, k + Math.max(dp[i][k - 1], dp[k + 1][j]));
                 }
                 dp[i][j] = min;
             }

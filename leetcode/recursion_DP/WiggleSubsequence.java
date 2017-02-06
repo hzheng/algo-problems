@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 public class WiggleSubsequence {
     // Dynamic Programming
     // time complexity: O(N), space complexity: O(N)
-    // beats 20.93%(1 ms)
+    // beats 40.20%(0 ms for 24 tests)
     public int wiggleMaxLength(int[] nums) {
         int n = nums.length;
         if (n == 0) return 0;
@@ -41,7 +41,7 @@ public class WiggleSubsequence {
 
     // Dynamic Programming
     // time complexity: O(N), space complexity: O(1)
-    // beats 56.36%(0 ms)
+    // beats 40.20%(0 ms for 24 tests)
     public int wiggleMaxLength2(int[] nums) {
         return Math.max(wiggleMaxLength2(nums, 1), wiggleMaxLength2(nums, 0));
     }
@@ -59,10 +59,11 @@ public class WiggleSubsequence {
         return len;
     }
 
+    // Solution of Choice
     // Dynamic Programming
     // https://leetcode.com/articles/wiggle-subsequence/
     // time complexity: O(N), space complexity: O(1)
-    // beats 56.36%(0 ms)
+    // beats 40.20%(0 ms for 24 tests)
     public int wiggleMaxLength3(int[] nums) {
         if (nums.length < 2) return nums.length;
 
@@ -78,6 +79,7 @@ public class WiggleSubsequence {
         return Math.max(down, up);
     }
 
+    // Solution of Choice
     // Greedy
     // https://leetcode.com/articles/wiggle-subsequence/
     // time complexity: O(N), space complexity: O(1)
@@ -106,6 +108,7 @@ public class WiggleSubsequence {
 
     @Test
     public void test1() {
+        test(new int[] {}, 0);
         test(new int[] {3, 3, 3, 2, 5}, 3);
         test(new int[] {1, 7, 4, 9, 2, 5}, 6);
         test(new int[] {1, 17, 5, 10, 13, 15, 10, 5, 16, 8}, 7);
