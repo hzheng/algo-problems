@@ -102,6 +102,7 @@ public class CombinationSum4 {
         }
     }
 
+    // Dynamic Programming(Bottom-Up)
     // beats 1.9%(48 ms)
     // time complexity: O(?), space complexity: O(N * T)
     public int combinationSum4_2(int[] nums, int target) {
@@ -146,19 +147,45 @@ public class CombinationSum4 {
         }
     }
 
+    // Solution of Choice
+    // Dynamic Programming(Bottom-Up)
     // time complexity: O(N * T), space complexity: O(T)
-    // beats 22.32%(6 ms)
+    // beats 70.22%(4 ms for 17 tests)
     public int combinationSum4_3(int[] nums, int target) {
+        Arrays.sort(nums); // for perfomance's sake
         int[] dp = new int[target + 1];
         dp[0] = 1;
         for (int sum = 1; sum <= target; sum++) {
             for (int num : nums) {
                 if (sum >= num) {
                     dp[sum] += dp[sum - num];
-                }
+                } else break; // don't break if not sorted
             }
         }
         return dp[target];
+    }
+
+    // Solution of Choice
+    // Dynamic Programming(Top-Down)
+    // beats 86.52%(1 ms for 17 tests)
+    public int combinationSum4_4(int[] nums, int target) {
+        int[] dp = new int[target + 1];
+        Arrays.fill(dp, -1);
+        dp[0] = 1;
+        // return combinationSum4(nums, target, new HashMap<>());
+        return combinationSum4(nums, target, dp);
+    }
+
+    private int combinationSum4(int[] nums, int target, int[] dp) {
+        if (dp[target] >= 0) return dp[target];
+
+        int count = 0;
+        for (int num : nums) {
+            if (target >= num) {
+                count += combinationSum4(nums, target - num, dp);
+            }
+        }
+        return dp[target] = count;
     }
 
     @FunctionalInterface
@@ -177,8 +204,9 @@ public class CombinationSum4 {
         if (nums.length < 20) {
             test(sum::combinationSum4, nums, target, expected);
         }
-        test(sum::combinationSum4_2, nums, target, expected);
-        test(sum::combinationSum4_3, nums, target, expected);
+        test(sum::combinationSum4_2, nums.clone(), target, expected);
+        test(sum::combinationSum4_3, nums.clone(), target, expected);
+        test(sum::combinationSum4_4, nums.clone(), target, expected);
     }
 
     @Test
@@ -186,6 +214,7 @@ public class CombinationSum4 {
         test(new int[] {9}, 3, 0);
         test(new int[] {1, 2, 3}, 4, 7);
         test(new int[] {1, 2, 3, 4}, 4, 8);
+        test(new int[] {3, 1, 2, 4}, 4, 8);
         test(new int[] {1, 50}, 100, 53);
         test(new int[] {1, 50}, 200, 28730);
         test(new int[] {10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130,
