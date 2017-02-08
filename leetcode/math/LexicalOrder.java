@@ -24,7 +24,8 @@ public class LexicalOrder {
         return res;
     }
 
-    // beats 84.66%(166 ms)
+    // Solution of Choice
+    // beats 71.55%(179 ms for 26 tests)
     public List<Integer> lexicalOrder(int n) {
         List<Integer> res = new ArrayList<>();
         for (int i = 1, count = 0, limit = n / 10; count < n; count++) {
@@ -42,6 +43,27 @@ public class LexicalOrder {
         return res;
     }
 
+    // DFS + Recursion
+    // beats 39.04%(208 ms for 26 tests)
+    public List<Integer> lexicalOrder2(int n) {
+        List<Integer> res = new ArrayList<>();
+        for (int i = 1; i < 10; i++) {
+            dfs(i, n, res);
+        }
+        return res;
+    }
+
+    private void dfs(int cur, int n, List<Integer> res){
+        if (cur > n) return;
+
+        res.add(cur);
+        cur *= 10;
+        for (int i = 0; i < 10; i++) {
+            if (cur + i > n) return;
+            dfs(cur + i, n, res);
+        }
+    }
+
     void test(int n, Integer ... expected) {
         assertArrayEquals(expected, lexicalOrder0(n).toArray(new Integer[0]));
     }
@@ -56,6 +78,7 @@ public class LexicalOrder {
     void test(int n) {
         Integer[] res = lexicalOrder0(n).toArray(new Integer[0]);
         assertArrayEquals(res, lexicalOrder(n).toArray(new Integer[0]));
+        assertArrayEquals(res, lexicalOrder2(n).toArray(new Integer[0]));
     }
 
     @Test
