@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// https://leetcode.com/problems/ransom-note/
+// LC383: https://leetcode.com/problems/ransom-note/
 //
 // Given an arbitrary ransom note string and another string containing a
 // from all the magazines, write a function that will return true.
@@ -13,7 +13,9 @@ import static org.junit.Assert.*;
 // Note:
 // You may assume that both strings contain only lowercase letters.
 public class RansomNote {
-    // beats 95.22%(13 ms)
+    // Solution of Choice
+    // Hash Table
+    // beats 91.79%(14 ms for 126 tests)
     public boolean canConstruct(String ransomNote, String magazine) {
         int[] counts = new int[26];
         for (char c : magazine.toCharArray()) {

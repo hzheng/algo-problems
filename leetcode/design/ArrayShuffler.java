@@ -19,7 +19,9 @@ public class ArrayShuffler {
         public int[] shuffle();
     }
 
-    // beat 81.87%(242 ms)
+    // Solution of Choice
+    // https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
+    // beat 87.40%(239 ms for 10 tests)
     static class Shuffler1 implements IShuffler {
         private Random rand = new Random();
 
