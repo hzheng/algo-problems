@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 // Note: You may assume the string contain only lowercase letters.
 public class FirstUniqChar {
     // one pass, worse case: N + 26
-    // beats 91.56%(19 ms)
+    // beats 93.78%(18 ms for 104 tests)
     public int firstUniqChar(String s) {
         int[] indices = new int[26];
         int i = 0;
@@ -31,8 +31,9 @@ public class FirstUniqChar {
         return min == Integer.MAX_VALUE ? -1 : min;
     }
 
+    // Solution of Choice
     // two passes, worse case: 2N
-    // beats 93.23%(18 ms)
+    // beats 96.42%(16 ms for 104 tests)
     public int firstUniqChar2(String s) {
         int[] counts = new int[26];
         char[] chars = s.toCharArray();
@@ -47,13 +48,33 @@ public class FirstUniqChar {
         return -1;
     }
 
+    // Fast/Slow Pointers
+    // beats 88.40%(21 ms for 104 tests)
+    public int firstUniqChar3(String s) {
+        char[] cs = s.toCharArray();
+        int[] count = new int[26];
+        for (int slow = 0, fast = 0, len = s.length(); slow < len; ) {
+            if (count[cs[slow] - 'a'] == 0) {
+                count[cs[slow] - 'a']++;
+                fast = slow;
+            }
+            if (++fast >= len) return slow;
+            count[cs[fast] - 'a']++;
+            for ( ; slow < len && count[cs[slow] - 'a'] > 1; slow++) {}
+        }
+        return -1;
+    }
+
     void test(String s, int expected) {
         assertEquals(expected, firstUniqChar(s));
         assertEquals(expected, firstUniqChar2(s));
+        assertEquals(expected, firstUniqChar3(s));
     }
 
     @Test
     public void test1() {
+        test("", -1);
+        test("a", 0);
         test("lleettccoodde", -1);
         test("lleettccoode", 10);
         test("lleettcode", 6);
