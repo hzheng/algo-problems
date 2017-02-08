@@ -52,4 +52,35 @@ public class NestedIntegerImpl implements NestedInteger {
         }
         list.add(ni);
     }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        toString(this, sb);
+        return sb.toString();
+    }
+
+    private void toString(NestedInteger obj, StringBuilder sb) {
+        if (obj.isInteger()) {
+            sb.append(obj.getInteger());
+            return;
+        }
+        sb.append("[");
+        List<NestedInteger> list = obj.getList();
+        if (list != null) {
+            for (NestedInteger ni : list) {
+                if (ni.isInteger()) {
+                    sb.append(ni.getInteger());
+                } else {
+                    toString(ni, sb);
+                }
+                sb.append(",");
+            }
+        }
+        int last = sb.length() - 1;
+        if (sb.charAt(last) == ',') {
+            sb.setCharAt(last, ']');
+        } else {
+            sb.append("]");
+        }
+    }
 }
