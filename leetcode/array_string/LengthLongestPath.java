@@ -18,7 +18,8 @@ import static org.junit.Assert.*;
 // The name of a file contains at least a '.' and an extension.
 // The name of a directory or sub-directory will not contain a '.'.
 public class LengthLongestPath {
-    // beats 73.84%(4 ms)
+    // Stack
+    // beats 61.18%(4 ms for 25 tests)
     public int lengthLongestPath(String input) {
         Stack<Integer> dirs = new Stack<>();
         int maxPath = 0;
@@ -37,8 +38,26 @@ public class LengthLongestPath {
         return maxPath;
     }
 
+    // Solution of Choice
+    // Stack(Array)
+    // beats 61.18%(4 ms for 25 tests)
+    public int lengthLongestPath2(String input) {
+        String[] paths = input.split("\n");
+        int[] stack = new int[paths.length + 1];
+        int maxPath = 0;
+        for (String s : paths) {
+            int level = s.lastIndexOf('\t') + 1;
+            stack[level + 1] = stack[level] + s.length() - level + 1;
+            if (s.contains(".")) {
+                maxPath = Math.max(maxPath, stack[level + 1] - 1);
+            }
+        }
+        return maxPath;
+    }
+
     void test(String input, int expected) {
         assertEquals(expected, lengthLongestPath(input));
+        assertEquals(expected, lengthLongestPath2(input));
     }
 
     @Test
