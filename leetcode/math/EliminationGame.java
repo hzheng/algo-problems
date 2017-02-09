@@ -48,6 +48,7 @@ public class EliminationGame {
     }
 
     // Solution of Choice
+    // Bit Manipulation
     // https://en.wikipedia.org/wiki/Josephus_problem
     // beats 80.00%(78 ms for 3377 tests)
     public int lastRemaining4(int n) {
