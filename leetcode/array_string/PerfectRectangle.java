@@ -125,8 +125,6 @@ public class PerfectRectangle {
     // https://discuss.leetcode.com/topic/56052/really-easy-understanding-solution-o-n-java/
     // beats 79.97%(105 ms for 46 tests)
     public boolean isRectangleCover3(int[][] rectangles) {
-        if (rectangles.length == 0 || rectangles[0].length == 0) return false;
-
         int x1 = Integer.MAX_VALUE;
         int x2 = Integer.MIN_VALUE;
         int y1 = Integer.MAX_VALUE;
