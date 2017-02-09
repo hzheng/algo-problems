@@ -13,7 +13,8 @@ import static org.junit.Assert.*;
 // right to left, until a single number remains.
 // Find the last number that remains starting with a list of length n.
 public class EliminationGame {
-    // beats 26.73%(93 ms)
+    // Recursion
+    // beats 23.43%(95 ms for 3377 tests)
     public int lastRemaining(int n) {
         return lastRemaining(n, true);
     }
@@ -25,37 +26,39 @@ public class EliminationGame {
         return (left2Right || (n & 1) == 1) ? res : res - 1;
     }
 
-    // beats 40.10%(87 ms)
+    // Solution of Choice
+    // Recursion
+    // beats 48.14%(85 ms for 3377 tests)
     public int lastRemaining2(int n) {
         return n == 1 ? 1 : ((n >> 1) + 1 - lastRemaining2(n >> 1)) << 1;
     }
 
-    // beats 89.60%(75 ms)
-    public int lastRemaining2_2(int n) {
-        if (n == 1) return 1;
-
-        n >>= 1;
-        return (n + 1 - lastRemaining(n)) << 1;
-    }
-
-    // beats 59.41%(82 ms)
+    // Solution of Choice
+    // Bit Manipulation
+    // beats 84.86%(77 ms for 3377 tests)
     public int lastRemaining3(int n) {
         int head = 1;
-        boolean left2Right = true;
-        for (int count = n, step = 1; count > 1; count >>= 1, step <<= 1) {
-            if (left2Right || (count & 1) == 1) {
+        for (int left = n, step = 1, dir = 1; left > 1; left >>= 1, step <<= 1, dir ^= 1) {
+            // if (dir == 1 || (left & 1) == 1) {
+            if ((dir | (left & 1)) != 0) {
                 head += step;
             }
-            left2Right = !left2Right;
         }
         return head;
+    }
+
+    // Solution of Choice
+    // https://en.wikipedia.org/wiki/Josephus_problem
+    // beats 80.00%(78 ms for 3377 tests)
+    public int lastRemaining4(int n) {
+        return ((Integer.highestOneBit(n) - 1) & (n | 0x55555555)) + 1;
     }
 
     void test(int n, int expected) {
         assertEquals(expected, lastRemaining(n));
         assertEquals(expected, lastRemaining2(n));
-        assertEquals(expected, lastRemaining2_2(n));
         assertEquals(expected, lastRemaining3(n));
+        assertEquals(expected, lastRemaining4(n));
     }
 
     @Test
