@@ -14,19 +14,20 @@ import static org.junit.Assert.*;
 // Furthermore, you may assume that the original data does not contain any
 // digits and that digits are only for those repeat numbers, k.
 public class DecodeString {
-    // beats 20.91%(5 ms)
+    // Solution of Choice
+    // Stack
+    // beats 22.14%(5 ms for 27 tests)
     public String decodeString(String s) {
-        Stack<Integer> counts = new Stack<>();
-        Stack<StringBuilder> strs = new Stack<>();
+        Deque<Integer> counts = new ArrayDeque<>();
+        Deque<StringBuilder> strs = new ArrayDeque<>();
         int count = 0;
         strs.push(new StringBuilder());
-        for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
+        for (char c : s.toCharArray()) {
             if (Character.isDigit(c)) {
                 count = count * 10 + (c - '0');
             } else if (c == '[') {
                 strs.push(new StringBuilder());
-                counts.push(Math.max(1, count));
+                counts.push(count);
                 count = 0;
             } else if (c == ']') {
                 StringBuilder oldTop = strs.pop();
@@ -41,8 +42,35 @@ public class DecodeString {
         return strs.peek().toString();
     }
 
+    // Recursion
+    // beats 83.64%(3 ms for 27 tests)
+    public String decodeString2(String s) {
+        return decode(s.toCharArray(), new int[1]);
+    }
+
+    private String decode(char[] s, int[] index) {
+        StringBuilder res = new StringBuilder();
+        for (; index[0] < s.length && s[index[0]] != ']'; index[0]++) {
+            if (!Character.isDigit(s[index[0]])) {
+                res.append(s[index[0]]);
+            } else {
+                int count = 0;
+                while (Character.isDigit(s[index[0]])) {
+                    count = count * 10 + s[index[0]++] - '0';
+                }
+                index[0]++;     //'['
+                String expand = decode(s, index);
+                while (count-- > 0) {
+                    res.append(expand);
+                }
+            }
+        }
+        return res.toString();
+    }
+
     void test(String s, String expected) {
         assertEquals(expected, decodeString(s));
+        assertEquals(expected, decodeString2(s));
     }
 
     @Test
