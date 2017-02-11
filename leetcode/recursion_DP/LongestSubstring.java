@@ -113,8 +113,7 @@ middle:
     }
 
     private int longestSubstring3(char[] chars, int k, int start, int end) {
-        int len = end - start;
-        if (k > len) return 0;
+        if (k > end - start) return 0;
 
         int[] counts = new int[26];
         for (int i = start; i < end; i++) {
@@ -126,20 +125,19 @@ middle:
                                 longestSubstring3(chars, k, i + 1, end));
             }
         }
-        return len;
+        return end - start;
     }
 
     // Solution of Choice
     // Divide & Conquer/Recursion
-    // time complexity: O(N ^ 2), space complexity: O(N)
+    // time complexity: O(N)?, space complexity: O(N)
     // beats 86.33%(3 ms for 28 tests)
     public int longestSubstring4(String s, int k) {
         return longestSubstring4(s.toCharArray(), k, 0, s.length());
     }
 
     private int longestSubstring4(char[] chars, int k, int start, int end) {
-        int len = end - start;
-        if (k > len) return 0;
+        if (k > end - start) return 0;
 
         int[] counts = new int[26];
         for (int i = start; i < end; i++) {
@@ -154,7 +152,7 @@ middle:
             }
         }
         return (split == start)
-               ? len : Math.max(max, longestSubstring4(chars, k, split, end));
+               ? end - start : Math.max(max, longestSubstring4(chars, k, split, end));
     }
 
     // Divide & Conquer/Recursion + Dynamic Programming
@@ -221,7 +219,7 @@ middle:
         return end - start;
     }
 
-    // Bit Manipulation
+    // Two Pointers + Bit Manipulation
     // time complexity: O(N ^ 2), space complexity: O(N)
     // beats 13.56%(99 ms for 28 tests)
     public int longestSubstring7(String s, int k) {
@@ -247,7 +245,7 @@ middle:
         return max;
     }
 
-    // Two Pointers
+    // Two Pointers + Delimiter
     // time complexity: O(N), space complexity: O(N)
     // beats 41.11%(10 ms for 28 tests)
     public int longestSubstring8(String s, int k) {
