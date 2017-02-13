@@ -16,7 +16,9 @@ public class RandomPickIndex {
         public int pick(int target);
     }
 
-    // beats N/A(350 ms) or Memory Limit Exceeded
+    // Hash Table
+    // beats 40.57%(378 ms for 13 tests)
+    // beats 59.25%(347 ms for 13 tests) (changed input)
     static class RandomPickIndex1 implements IRandomPickIndex {
         private Map<Integer, Indices> map = new HashMap<>();
         private Random rand = new Random();
@@ -36,15 +38,16 @@ public class RandomPickIndex {
 
         // time complexity: O(N), space complexity: O(N)
         public RandomPickIndex1(int[] nums) {
-            this.nums = nums;
+            // this.nums = nums;
+            this.nums = nums.clone();
             for (int i = 0; i < nums.length; i++) {
-                int a = nums[i];
-                if (!map.containsKey(a)) {
-                    map.put(a, new Indices(1, i));
+                int num = this.nums[i];
+                Indices indices = map.get(num);
+                if (indices == null) {
+                    map.put(num, new Indices(1, i));
                 } else {
-                    Indices indices = map.get(a);
                     indices.count++;
-                    nums[indices.lastIndex] = i;
+                    this.nums[indices.lastIndex] = i;
                     indices.lastIndex = i;
                 }
             }
@@ -62,7 +65,8 @@ public class RandomPickIndex {
         }
     }
 
-    // Memory Limit Exceeded
+    // Hash Table
+    // beats 19.65%(419 ms for 13 tests)
     static class RandomPickIndex2 implements IRandomPickIndex {
         private int[] next;
         private Map<Integer, Integer> headMap = new HashMap<>();
@@ -73,28 +77,26 @@ public class RandomPickIndex {
             next = new int[nums.length + 1];
             for (int i = 0; i < nums.length; i++) {
                 int num = nums[i];
-                if (headMap.containsKey(num)) { // reversed linked list
-                    next[i + 1] = headMap.get(num);
-                }
-                headMap.put(num, i + 1);
+                next[i + 1] = headMap.getOrDefault(num, 0);
+                headMap.put(num, i + 1); // reversed linked list
             }
         }
 
-        // time complexity: O(1)
+        // time complexity: O(1)?
         public int pick(int target) {
             int index = headMap.get(target);
             int count = 0;
             for (int i = index; i > 0; i = next[i], count++) {}
-            int chosen = rand.nextInt(count);
-            for (int i = 0; i < chosen; i++) {
+            for (int i = rand.nextInt(count) - 1; i >= 0; i--) {
                 index = next[index];
             }
             return index - 1;
         }
     }
 
+    // Solution of Choice
     // Reservoir sampling
-    // beats 24.23%(397 ms)
+    // beats 42.15%(376 ms for 13 tests)
     static class RandomPickIndex3 implements IRandomPickIndex {
         private Random rand = new Random();
         private int[] nums;
@@ -116,15 +118,44 @@ public class RandomPickIndex {
         }
     }
 
+    // Binary Search
+    // beats 10.89%(443 ms for 13 tests)
+    static class RandomPickIndex4 implements IRandomPickIndex {
+        private Random rand = new Random();
+        private List<int[]> pairs = new ArrayList<>();
+        private static final Comparator<int[]> CMP =
+            new Comparator<int[]>() {
+                public int compare(int[] a , int[] b) {
+                    //return a[0] - b[0]; // may overflow
+                    return a[0] > b[0] ? 1 : a[0] < b[0] ? - 1 : 0;
+                }
+            };
+
+        // time complexity: O(N * log(N)), space complexity: O(N)
+        public RandomPickIndex4(int[] nums) {
+            for (int i = 0; i < nums.length; i++) {
+                pairs.add(new int[]{nums[i], i});
+            }
+            Collections.sort(pairs, CMP);
+        }
+
+        // time complexity: O(log(N))
+        public int pick(int target) {
+            int index = Collections.binarySearch(pairs, new int[]{target, 0}, CMP);
+            int begin = index;
+            for ( ; begin > 0 && pairs.get(begin - 1)[0] == target; begin--) {}
+            int end = index;
+            for ( ; end < pairs.size() - 1 && pairs.get(end + 1)[0] == target; end++) {}
+            return pairs.get(begin + rand.nextInt(end - begin + 1))[1];
+        }
+    }
+
     void test(IRandomPickIndex picker, int target, int[] range) {
         int n = 100000;
         Map<Integer, Integer> counts = new HashMap<>();
-        for (int i : range) {
-            counts.put(i, 0);
-        }
         for (int i = 0; i < n; i++) {
             int index = picker.pick(target);
-            counts.put(index, counts.get(index) + 1);
+            counts.put(index, counts.getOrDefault(index, 0) + 1);
         }
         double avg = (double)n / range.length;
         for (int k : counts.keySet()) {
@@ -138,6 +169,7 @@ public class RandomPickIndex {
         test(new RandomPickIndex1(nums.clone()), target, range);
         test(new RandomPickIndex2(nums), target, range);
         test(new RandomPickIndex3(nums), target, range);
+        test(new RandomPickIndex4(nums), target, range);
     }
 
     @Test
