@@ -28,8 +28,10 @@ public class RotateFunction {
         return maxSum;
     }
 
+    // Solution of Choice
+    // Dynamic Programming
     // time complexity: O(N), space complexity: O(1)
-    // beats 42.67%(5 ms)
+    // beats 21.61%(6 ms for 17 tests)
     public int maxRotateFunction2(int[] A) {
         int n = A.length;
         int coefficientSum = 0;
