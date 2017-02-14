@@ -50,7 +50,7 @@ public class BottomLeftTreeValue {
         }
     }
 
-    // DFS + Recursion
+    // DFS + Stack
     // beats 45.51%(10 ms for 74 tests)
     public int findBottomLeftValue3(TreeNode root) {
         ArrayDeque<LevelNode> stack = new ArrayDeque<>();
@@ -83,10 +83,37 @@ public class BottomLeftTreeValue {
         }
     }
 
+    // DFS + Stack
+    // beats 12.18%(14 ms for 74 tests)
+    public int findBottomLeftValue4(TreeNode root) {
+        ArrayDeque<TreeNode> nodeStack = new ArrayDeque<>();
+        ArrayDeque<Integer> levelStack = new ArrayDeque<>();
+        int maxLevel = 0;
+        int level = 0;
+        int res = -1;
+        for (TreeNode n = root; n != null || !nodeStack.isEmpty(); ) {
+            if (n != null) {
+                nodeStack.push(n);
+                levelStack.push(++level);
+                n = n.left;
+            } else {
+                TreeNode top = nodeStack.pop();
+                level = levelStack.pop();
+                if (level > maxLevel) {
+                    res = top.val;
+                    maxLevel = level;
+                }
+                n = top.right;
+            }
+        }
+        return res;
+    }
+
     void test(String s, int expected) {
         assertEquals(expected, findBottomLeftValue(TreeNode.of(s)));
         assertEquals(expected, findBottomLeftValue2(TreeNode.of(s)));
         assertEquals(expected, findBottomLeftValue3(TreeNode.of(s)));
+        assertEquals(expected, findBottomLeftValue4(TreeNode.of(s)));
     }
 
     @Test
