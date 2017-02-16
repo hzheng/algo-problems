@@ -129,7 +129,8 @@ public class ConnectTree {
     void test(Function<TreeLinkNode> connect, String s, String expected) {
         TreeLinkNode root = TreeLinkNode.of(s);
         connect.apply(root);
-        assertEquals(expected, root.toString());
+        // assertEquals(expected, root.toString());
+        assertEquals(TreeLinkNode.of(expected), root);
     }
 
     void test(String s, String expected) {

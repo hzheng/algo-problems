@@ -82,8 +82,7 @@ public class RecoverBst {
     void test(Function<TreeNode> recover, String s, String expected) {
         TreeNode root = TreeNode.of(s);
         recover.apply(root);
-        TreeNode expectedNode = TreeNode.of(expected);
-        assertArrayEquals(expectedNode.toArray(), root.toArray());
+        assertEquals(TreeNode.of(expected), root);
     }
 
     void test(String s, String expected) {

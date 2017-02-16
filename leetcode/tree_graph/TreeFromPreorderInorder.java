@@ -177,7 +177,7 @@ public class TreeFromPreorderInorder {
 
     void test(Function<int[], int[], TreeNode> build, int[] preorder,
               int[] inorder, String expected) {
-        assertEquals(expected, build.apply(preorder, inorder).toString());
+        assertEquals(TreeNode.of(expected), build.apply(preorder, inorder));
     }
 
     void test(int[] preorder, int[] inorder, String expected) {
@@ -191,13 +191,13 @@ public class TreeFromPreorderInorder {
 
     @Test
     public void test1() {
-        test(new int[] {4, 2, 1, 3}, new int[] {1, 2, 3, 4}, "{4,2,#,1,3}");
-        test(new int[] {4, 1, 2, 3}, new int[] {1, 2, 3, 4}, "{4,1,#,#,2,#,3}");
-        test(new int[] {3, 1, 2, 4}, new int[] {1, 2, 3, 4}, "{3,1,4,#,2}");
-        test(new int[] {1, 2, 4, 3}, new int[] {1, 2, 3, 4}, "{1,#,2,#,4,3}");
-        test(new int[] {1, 2, 3}, new int[] {1, 3, 2}, "{1,#,2,3}");
+        test(new int[] {4, 2, 1, 3}, new int[] {1, 2, 3, 4}, "4,2,#,1,3");
+        test(new int[] {4, 1, 2, 3}, new int[] {1, 2, 3, 4}, "4,1,#,#,2,#,3");
+        test(new int[] {3, 1, 2, 4}, new int[] {1, 2, 3, 4}, "3,1,4,#,2");
+        test(new int[] {1, 2, 4, 3}, new int[] {1, 2, 3, 4}, "1,#,2,#,4,3");
+        test(new int[] {1, 2, 3}, new int[] {1, 3, 2}, "1,#,2,3");
         test(new int[] {3, 9, 20, 15, 7}, new int[] {9, 3, 15, 20, 7},
-             "{3,9,20,#,#,15,7}");
+             "3,9,20,#,#,15,7");
     }
 
     public static void main(String[] args) {

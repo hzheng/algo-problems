@@ -159,7 +159,7 @@ public class FlattenTree {
     void test(Function<TreeNode> flatten, String s, String expected) {
         TreeNode root = TreeNode.of(s);
         flatten.apply(root);
-        assertEquals(expected, root.toString());
+        assertEquals(TreeNode.of(expected), root);
     }
 
     void test(String s, String expected) {
@@ -174,12 +174,12 @@ public class FlattenTree {
 
     @Test
     public void test1() {
-        test("1", "{1}");
-        test("1,#,2,3", "{1,#,2,#,3}");
-        test("1,2,#,3,4,5", "{1,#,2,#,3,#,5,#,4}");
-        test("1,2,5,3,4,#,6", "{1,#,2,#,3,#,4,#,5,#,6}");
-        test("1,2", "{1,#,2}");
-        test("1,2,#,3", "{1,#,2,#,3}");
+        test("1", "1");
+        test("1,#,2,3", "1,#,2,#,3");
+        test("1,2,#,3,4,5", "1,#,2,#,3,#,5,#,4");
+        test("1,2,5,3,4,#,6", "1,#,2,#,3,#,4,#,5,#,6");
+        test("1,2", "1,#,2");
+        test("1,2,#,3", "1,#,2,#,3");
     }
 
     public static void main(String[] args) {

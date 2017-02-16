@@ -55,8 +55,8 @@ public class CloneGraph {
 
     void test(String s) {
         UndirectedGraphNode node = UndirectedGraphNode.of(s);
-        assertEquals("{" + s + "}", cloneGraph(node).toString());
-        assertEquals("{" + s + "}", cloneGraph2(node).toString());
+        assertEquals(node, cloneGraph(node));
+        assertEquals(node, cloneGraph2(node));
     }
 
     @Test

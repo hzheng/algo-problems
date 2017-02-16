@@ -80,10 +80,7 @@ public class ArrayToBst {
     }
 
     void test(Function<int[], TreeNode> convert, int[] nums, String expected) {
-        TreeNode expectedTree = TreeNode.of(expected);
-        TreeNode res = convert.apply(nums);
-        // System.out.println(res);
-        assertArrayEquals(expectedTree.toArray(), res.toArray());
+        assertEquals(TreeNode.of(expected), convert.apply(nums));
     }
 
     void test(int[] nums, String expected) {

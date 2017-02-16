@@ -83,7 +83,7 @@ public class ListToBst {
         TreeNode expectedTree = TreeNode.of(expected);
         TreeNode res = convert.apply(ListNode.of(nums));
         // System.out.println(res);
-        assertArrayEquals(expectedTree.toArray(), res.toArray());
+        assertEquals(expectedTree, res);
     }
 
     void test(int[] nums, String ... expected) {

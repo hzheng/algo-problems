@@ -72,7 +72,8 @@ public class Codec {
     void test(String rootStr) {
         TreeNode root = TreeNode.of(rootStr);
         TreeNode deserialized = deserialize(serialize(root));
-        assertEquals("{" + rootStr + "}", deserialized.toString());
+        // assertEquals("{" + rootStr + "}", deserialized.toString());
+        assertEquals(root, deserialized);
     }
 
     @Test

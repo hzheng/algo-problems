@@ -46,6 +46,14 @@ public class UndirectedGraphNode {
     }
 
     @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof UndirectedGraphNode)) return false;
+
+        UndirectedGraphNode o = (UndirectedGraphNode)other;
+        return toString().equals(o.toString());
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");

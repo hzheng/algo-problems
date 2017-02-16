@@ -78,6 +78,14 @@ public class TreeNode {
     }
 
     @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof TreeNode)) return false;
+
+        TreeNode o = (TreeNode)other;
+        return Arrays.equals(toArray(), o.toArray());
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
