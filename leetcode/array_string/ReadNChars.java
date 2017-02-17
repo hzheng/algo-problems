@@ -10,18 +10,25 @@ import static org.junit.Assert.*;
 // By using the read4 API, implement the function int read(char *buf, int n) that
 // reads n characters from the file.
 public class ReadNChars {
-    private static final String STREAM = "abcdefghijklmnopqrstuvwxyz";
+    private static String input;
     private static int offset = 0;
 
+    public static void setInput(String input) {
+        ReadNChars.input = input;
+        offset = 0;
+    }
+
     public int read4(char[] buf) {
-        int len = STREAM.length();
+        int len = input.length();
         for (int i = 0; i < 4; i++, offset++) {
             if (offset < len) {
-                buf[i] = STREAM.charAt(offset);
+                buf[i] = input.charAt(offset);
             } else return i;
         }
         return 4;
     }
+
+    /////////////////////////////////////////////
 
     // beats 5.35%(2 ms for 49 tests)
     public int read(char[] buf, int n) {
@@ -52,22 +59,25 @@ public class ReadNChars {
         public C apply(A a, B b);
     }
 
-    void test(Function<char[], Integer, Integer> read, char[] buf, int n, int expected) {
-        offset = 0;
+    void test(Function<char[], Integer, Integer> read, String input, int n, int expected) {
+        setInput(input);
+        char[] buf = new char[n];
         assertEquals(expected, (int)read.apply(buf, n));
-        assertEquals(STREAM.substring(0, n), new String(buf, 0, n));
+        assertEquals(input.substring(0, expected), new String(buf, 0, expected));
     }
 
-    void test(char[] buf, int n, int expected) {
+    void test(String input, int n, int expected) {
         ReadNChars r = new ReadNChars();
-        test(r::read, buf, n, expected);
-        test(r::read2, buf, n, expected);
+        test(r::read, input, n, expected);
+        test(r::read2, input, n, expected);
     }
 
     @Test
     public void test() {
-        char[] buf = new char[STREAM.length()];
-        test(buf, 6, 6);
+        test("123456", 6, 6);
+        test("abcdefghijklmnopqrstuvwxyz", 26, 26);
+        test("abcdefghijklmnopqrstuvwxyz", 27, 26);
+        test("abcdefghijklmnopqrstuvwxyz", 37, 26);
     }
 
     public static void main(String[] args) {
