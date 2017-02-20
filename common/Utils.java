@@ -69,6 +69,12 @@ public class Utils {
         return res;
     }
 
+    public static String[][] toSortedStrs(List<List<String> > listOfList) {
+        String[][] res = toStrArray(listOfList);
+        Arrays.sort(res, new StrArrayComparator());
+        return res;
+    }
+
     @SuppressWarnings("unchecked")
     public static <T> T[][] toArray(List<List<T>> listOfList, Class<T> clazz) {
         int size = listOfList.size();
