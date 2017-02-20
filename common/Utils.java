@@ -20,6 +20,14 @@ public class Utils {
         return cloned;
     }
 
+    public static<T> List<List<T>> toList(T[][] items) {
+        List<List<T>> res = new ArrayList<>();
+        for (T[] item : items) {
+            res.add(Arrays.asList(item));
+        }
+        return res;
+    }
+
     public static class IntArrayComparator implements Comparator<int[]> {
         public int compare(int[] a, int[] b) {
             int len = Math.min(a.length, b.length);
