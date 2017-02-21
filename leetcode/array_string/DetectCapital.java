@@ -38,6 +38,18 @@ public class DetectCapital {
     }
 
     // beats 89.42%(28 ms for 550 tests)
+    public boolean detectCapitalUse2_2(String word) {
+        int len = word.length();
+        if (len == 1) return true;
+
+        boolean secondCapital = Character.isUpperCase(word.charAt(1));
+        for (int i = 2; i < len; i++) {
+            if (Character.isUpperCase(word.charAt(i)) != secondCapital) return false;
+        }
+        return !secondCapital || Character.isUpperCase(word.charAt(0));
+    }
+
+    // beats 89.42%(28 ms for 550 tests)
     public boolean detectCapitalUse3(String word) {
         int capitals = 0;
         char[] cs = word.toCharArray();
@@ -67,6 +79,7 @@ public class DetectCapital {
     void test(String word, boolean expected) {
         assertEquals(expected, detectCapitalUse(word));
         assertEquals(expected, detectCapitalUse2(word));
+        assertEquals(expected, detectCapitalUse2_2(word));
         assertEquals(expected, detectCapitalUse3(word));
         assertEquals(expected, detectCapitalUse4(word));
         assertEquals(expected, detectCapitalUse5(word));
