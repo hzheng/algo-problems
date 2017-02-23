@@ -71,16 +71,24 @@ public class Utils {
         return listOfList.stream().map(i->toArray(i)).toArray(int[][]::new);
     }
 
+    public static int[][] sort(int[][] arrays) {
+        Arrays.sort(arrays, new IntArrayComparator());
+        return arrays;
+    }
+
     public static int[][] toSortedInts(List<List<Integer> > listOfList) {
         int[][] res = listOfList.stream().map(i->toArray(i)).toArray(int[][]::new);
-        Arrays.sort(res, new IntArrayComparator());
-        return res;
+        return sort(res);
+    }
+
+    public static String[][] sort(String[][] arrays) {
+        Arrays.sort(arrays, new StrArrayComparator());
+        return arrays;
     }
 
     public static String[][] toSortedStrs(List<List<String> > listOfList) {
         String[][] res = toStrArray(listOfList);
-        Arrays.sort(res, new StrArrayComparator());
-        return res;
+        return sort(res);
     }
 
     @SuppressWarnings("unchecked")
