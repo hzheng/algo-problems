@@ -11,49 +11,38 @@ import static org.junit.Assert.*;
 // edges are undirected, [0, 1] is the same as [1, 0] and thus will not appear
 // together in edges.
 public class GraphValidTree {
-    // DFS + Hash Table + Set + Recursion
-    // beats 29.74%(13 ms for 44 tests)
+    // DFS + List + Set + Recursion
+    // beats 40.14%(8 ms for 44 tests)
     public boolean validTree(int n, int[][] edges) {
-        Map<Integer, List<Integer> > map = new HashMap<>();
-        for (int[] edge : edges) {
-            save(map, edge[0], edge[1]);
-            save(map, edge[1], edge[0]);
-        }
-        return n < 2 || map.get(0) != null && dfs(0, -1, new HashSet<>(), map) == n - 1;
+        return n < 2 || dfs(0, -1, new HashSet<>(), createAdjacencyList(n, edges)) == n;
     }
 
-    private int dfs(int cur, int prev, Set<Integer> visited, Map<Integer, List<Integer> > map) {
-        for (int neighbor : map.get(cur)) {
-            if (neighbor != prev) {
-                if (visited.contains(neighbor)) return 0;
-
-                visited.add(neighbor);
-                if (dfs(neighbor, cur, visited, map) == 0) return 0;
-            }
+    private int dfs(int cur, int prev, Set<Integer> visited, List<Integer>[] list) {
+        visited.add(cur);
+        for (int neighbor : list[cur]) {
+            if (neighbor != prev && (visited.contains(neighbor)
+                                     || dfs(neighbor, cur, visited, list) == 0)) return 0;
         }
         return visited.size();
     }
 
-    private void save(Map<Integer, List<Integer> > map, int a, int b) {
-        List<Integer> neighbors = map.get(a);
-        if (neighbors == null) {
-            map.put(a, neighbors = new ArrayList<>());
+    private List<Integer>[] createAdjacencyList(int n, int[][] edges) {
+        @SuppressWarnings("unchecked")
+        List<Integer>[] adjacencyList = new List[n];
+        for (int i = 0; i < n; i++) {
+            adjacencyList[i] = new ArrayList<>();
         }
-        neighbors.add(b);
+        for (int[] edge : edges) {
+            adjacencyList[edge[0]].add(edge[1]);
+            adjacencyList[edge[1]].add(edge[0]);
+        }
+        return adjacencyList;
     }
 
-    // BFS + Hash Table + Set + Queue
-    // beats 27.86%(14 ms for 44 tests)
+    // BFS + List + Set + Queue
+    // beats 34.69%(10 ms for 44 tests)
     public boolean validTree2(int n, int[][] edges) {
-        if (n < 2) return true;
-
-        Map<Integer, List<Integer> > map = new HashMap<>();
-        for (int[] edge : edges) {
-            save(map, edge[0], edge[1]);
-            save(map, edge[1], edge[0]);
-        }
-        if (map.get(0) == null) return false;
-
+        List<Integer>[] adjacencyList = createAdjacencyList(n, edges);
         Queue<int[]> queue = new LinkedList<>();
         queue.offer(new int[] {0, -1});
         boolean[] visited = new boolean[n];
@@ -63,7 +52,7 @@ public class GraphValidTree {
             int[] head = queue.poll();
             int cur = head[0];
             int prev = head[1];
-            for (int neighbor : map.get(cur)) {
+            for (int neighbor : adjacencyList[cur]) {
                 if (neighbor != prev) {
                     if (visited[neighbor]) return false;
 
@@ -76,27 +65,20 @@ public class GraphValidTree {
         return count == n;
     }
 
-    // BFS + Hash Table + Queue
-    // beats 25.83%(15 ms for 44 tests)
+    // BFS + List + Queue
+    // beats 34.69%(10 ms for 44 tests)
     public boolean validTree3(int n, int[][] edges) {
-        if (n < 2) return true;
-
-        Map<Integer, List<Integer> > map = new HashMap<>();
-        for (int[] edge : edges) {
-            save(map, edge[0], edge[1]);
-            save(map, edge[1], edge[0]);
-        }
-        if (map.get(0) == null) return false;
-
+        List<Integer>[] adjacencyList = createAdjacencyList(n, edges);
         Queue<Integer> queue = new LinkedList<>();
         int count = 0;
         for (queue.offer(0); !queue.isEmpty(); count++) {
             int cur = queue.poll();
-            List<Integer> neighbors = map.remove(cur);
+            List<Integer> neighbors = adjacencyList[cur];
             if (neighbors == null) return false;
 
+            adjacencyList[cur] = null;
             for (int neighbor : neighbors) {
-                map.get(neighbor).remove((Object)cur);
+                adjacencyList[neighbor].remove((Object)cur);
                 queue.offer(neighbor);
             }
         }
