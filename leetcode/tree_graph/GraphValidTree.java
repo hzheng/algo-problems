@@ -85,10 +85,78 @@ public class GraphValidTree {
         return count == n;
     }
 
+    // BFS + List + Queue
+    // beats 40.14%(8 ms for 44 tests)
+    public boolean validTree4(int n, int[][] edges) {
+        List<Integer>[] adjacencyList = createAdjacencyList(n, edges);
+        int[] visited = new int[n];
+        Queue<Integer> queue = new LinkedList<>();
+        for (queue.offer(0); !queue.isEmpty(); ) {
+            int cur = queue.poll();
+            for (int neighbor : adjacencyList[cur]) {
+                if (visited[neighbor] == 1) return false;
+                if (visited[neighbor] == 0) {
+                    queue.offer(neighbor);
+                    visited[neighbor] = 1;  // visiting
+                }
+            }
+            visited[cur] = 2;  // visited
+        }
+        for (int v : visited) {
+            if (v == 0) return false;
+        }
+        return true;
+    }
+
+    // Union Find
+    // beats 67.24%(1 ms for 44 tests)
+    public boolean validTree5(int n, int[][] edges) {
+        if (edges.length != n - 1) return false;
+
+        int[] id = new int[n];
+        for (int i = 0; i < n; i++) {
+            id[i] = i;
+        }
+        for (int[] edge : edges) {
+            int p = edge[0];
+            int q = edge[1];
+            for (; id[p] != p; p = id[p]) {}
+            for (; id[q] != q; q = id[q]) {}
+            if (id[p] == id[q]) return false;
+
+            id[q] = p;
+        }
+        return true;
+    }
+
+    // Union Find
+    // beats 67.24%(1 ms for 44 tests)
+    public boolean validTree6(int n, int[][] edges) {
+        if (edges.length != n - 1) return false;
+
+        int[] id = new int[n];
+        Arrays.fill(id, -1);
+        for (int[] edge : edges) {
+            int p = root(id, edge[0]);
+            int q = root(id, edge[1]);
+            if (p == q) return false;
+
+            id[q] = p;
+        }
+        return true;
+    }
+
+    private int root(int[] id, int i) {
+        return (id[i] == -1) ? i : root(id, id[i]);
+    }
+
     void test(int n, int[][] edges, boolean expected) {
         assertEquals(expected, validTree(n, edges));
         assertEquals(expected, validTree2(n, edges));
         assertEquals(expected, validTree3(n, edges));
+        assertEquals(expected, validTree4(n, edges));
+        assertEquals(expected, validTree5(n, edges));
+        assertEquals(expected, validTree6(n, edges));
     }
 
     @Test
