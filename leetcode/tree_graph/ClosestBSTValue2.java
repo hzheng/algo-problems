@@ -134,6 +134,52 @@ public class ClosestBSTValue2 {
         return res.val;
     }
 
+    // Queue + DFS + Recursion
+    // time complexity: O(N), space complexity: O(N)
+    // beats 89.68%(2 ms for 68 tests)
+    public List<Integer> closestKValues4(TreeNode root, double target, int k) {
+        LinkedList<Integer> queue = new LinkedList<>();
+        traverse(root, target, k, queue);
+        return queue;
+    }
+
+    private boolean traverse(TreeNode root, double target, int k, Queue<Integer> queue) {
+        if (root == null) return false;
+        if (traverse(root.left, target, k, queue)) return true;
+
+        if (queue.size() == k) {
+            if (Math.abs(queue.peek() - target) < Math.abs(root.val - target)) return true;
+
+            queue.poll();
+        }
+        queue.offer(root.val);
+        return traverse(root.right, target, k, queue);
+    }
+
+    // Stack + Queue
+    // time complexity: O(N), space complexity: O(N)
+    // beats 50.83%(5 ms for 68 tests)
+    public List<Integer> closestKValues5(TreeNode root, double target, int k) {
+        ArrayDeque<TreeNode> stack = new ArrayDeque<>();
+        LinkedList<Integer> res = new LinkedList<>();
+        for (TreeNode cur = root; cur != null || !stack.isEmpty(); ) {
+            if (cur != null) {
+                stack.push(cur);
+                cur = cur.left;
+            } else {
+                cur = stack.pop();
+                if (res.size() >= k) {
+                    if (Math.abs(res.getFirst() - target) < Math.abs(cur.val - target)) break;
+
+                    res.removeFirst();
+                }
+                res.addLast(cur.val);
+                cur = cur.right;
+            }
+        }
+        return res;
+    }
+
     @FunctionalInterface
     interface Function<A, B, C, D> {
         public D apply(A a, B b, C c);
@@ -153,6 +199,8 @@ public class ClosestBSTValue2 {
         test(c::closestKValues, s, target, k, expected);
         test(c::closestKValues2, s, target, k, expected);
         test(c::closestKValues3, s, target, k, expected);
+        test(c::closestKValues4, s, target, k, expected);
+        test(c::closestKValues5, s, target, k, expected);
     }
 
     @Test
