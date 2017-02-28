@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
-// LC530: https://leetcode.com/problems/minimum-absolute-difference-in-bst/?tab=Description
+// LC530: https://leetcode.com/problems/minimum-absolute-difference-in-bst/
 //
 // Given a binary search tree with non-negative values, find the minimum absolute
 // difference between values of any two nodes.
@@ -13,7 +13,7 @@ public class MinimumDiffInBST {
     // DFS + Recursion
     // beats 69.03%(18 ms for 186 tests)
     public int getMinimumDifference(TreeNode root) {
-        int[] min = new int[]{Integer.MAX_VALUE};
+        int[] min = new int[] {Integer.MAX_VALUE};
         dfs(root, -1, min);
         return min[0];
     }
@@ -32,7 +32,7 @@ public class MinimumDiffInBST {
     // DFS + Recursion
     // beats 75.66%(17 ms for 186 tests)
     public int getMinimumDifference2(TreeNode root) {
-        int[] res = new int[]{-1, Integer.MAX_VALUE};
+        int[] res = new int[] {-1, Integer.MAX_VALUE};
         dfs2(root, res);
         return res[1];
     }
@@ -72,10 +72,38 @@ public class MinimumDiffInBST {
         return min;
     }
 
+    // SortedSet + DFS + Recursion
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    // beats 10.18%(46 ms for 186 tests)
+    public int getMinimumDifference4(TreeNode root) {
+        int[] min = new int[] {Integer.MAX_VALUE};
+        preorder(root, new TreeSet<>(), min);
+        return min[0];
+    }
+
+    private void preorder(TreeNode root, NavigableSet<Integer> set, int[] min) {
+        if (root == null) return;
+
+        if (!set.isEmpty()) {
+            Integer val = set.floor(root.val);
+            if (val != null) {
+                min[0] = Math.min(min[0], root.val - val);
+            }
+            val = set.ceiling(root.val);
+            if (val != null) {
+                min[0] = Math.min(min[0], val - root.val);
+            }
+        }
+        set.add(root.val);
+        preorder(root.left, set, min);
+        preorder(root.right, set, min);
+    }
+
     void test(String s, int expected) {
         assertEquals(expected, getMinimumDifference(TreeNode.of(s)));
         assertEquals(expected, getMinimumDifference2(TreeNode.of(s)));
         assertEquals(expected, getMinimumDifference3(TreeNode.of(s)));
+        assertEquals(expected, getMinimumDifference4(TreeNode.of(s)));
     }
 
     @Test
