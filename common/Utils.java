@@ -12,6 +12,14 @@ public class Utils {
         return cloned;
     }
 
+    public static char[][] clone(char[][] nums) {
+        char[][] cloned = nums.clone();
+        for (int i = 0; i < nums.length; i++) {
+            cloned[i] = nums[i].clone();
+        }
+        return cloned;
+    }
+
     public static<T> T[][] clone(T[][] items) {
         T[][] cloned = items.clone();
         for (int i = 0; i < items.length; i++) {
