@@ -183,11 +183,119 @@ public class FreedomTrail {
         return res + kLen;
     }
 
+    // Dynamic Programming(Bottom-Up)
+    // time complexity: O(K * R ^ 2), space complexity: O(K * R)
+    // beats 33.33%(102 ms for 302 tests)
+    public int findRotateSteps5(String ring, String key) {
+        int rLen = ring.length();
+        int kLen = key.length();
+        int[][] dp = new int[kLen + 1][rLen]; // min dist to pos j of ring after aligning i-th key
+        for (int i = kLen - 1; i >= 0; i--) { // reverse!
+            char c = key.charAt(i);
+            for (int j = 0; j < rLen; j++) {
+                dp[i][j] = Integer.MAX_VALUE;
+                for (int k = 0; k < rLen; k++) {
+                    if (ring.charAt(k) != c) continue;
+
+                    int d = Math.abs(j - k);
+                    dp[i][j] = Math.min(dp[i][j], dp[i + 1][k] + Math.min(d, rLen - d));
+                }
+            }
+        }
+        return dp[0][0] + kLen;
+    }
+
+    // Dynamic Programming(Bottom-Up)
+    // time complexity: O(K * R ^ 2), space complexity: O(R)
+    // beats 39.55%(94 ms for 302 tests)
+    public int findRotateSteps6(String ring, String key) {
+        int rLen = ring.length();
+        int kLen = key.length();
+        int[] dp = new int[rLen];
+        int[] buf = new int[rLen];
+        for (int i = kLen - 1; i >= 0; i--) {
+            char c = key.charAt(i);
+            for (int j = 0; j < rLen; j++) {
+                buf[j] = Integer.MAX_VALUE;
+                for (int k = 0; k < rLen; k++) {
+                    if (ring.charAt(k) != c) continue;
+
+                    int d = Math.abs(j - k);
+                    buf[j] = Math.min(buf[j], dp[k] + Math.min(d, rLen - d));
+                }
+            }
+            System.arraycopy(buf, 0, dp, 0, rLen);
+        }
+        return dp[0] + kLen;
+    }
+
+    // Dynamic Programming(Top-Down)
+    // beats 44.07%(90 ms for 302 tests)
+    public int findRotateSteps7(String ring, String key) {
+        return dfs(ring, key, 0, new HashMap<>());
+    }
+
+    private int dfs(String ring, String key, int cur, Map<String, Map<Integer, Integer> > memo) {
+        if (cur == key.length()) return 0;
+
+        char c = key.charAt(cur);
+        Map<Integer, Integer> cache = memo.get(ring);
+        if (cache == null) {
+            memo.put(ring, cache = new HashMap<>());
+        } else if (cache.containsKey(cur)) return cache.get(cur);
+
+        int pos = ring.indexOf(c);
+        int clockwise = pos
+                        + dfs(ring.substring(pos) + ring.substring(0, pos), key, cur + 1, memo);
+        pos = 0;
+        for (int i = ring.length() -1; i > 0; i--) {
+            if (ring.charAt(i) == c) {
+                pos = i;
+                break;
+            }
+        }
+        int anticlockwise = ring.length() - pos
+                            + dfs(ring.substring(pos) + ring.substring(0, pos), key, cur + 1, memo);
+        int res = Math.min(clockwise, anticlockwise) + 1;
+        cache.put(cur, res);
+        return res;
+    }
+
+    // DFS + Dynamic Programming(Top-Down)
+    // beats 98.87%(37 ms for 302 tests)
+    public int findRotateSteps8(String ring, String key) {
+        int[][] dp = new int[ring.length()][key.length()];
+        for (int[] d : dp) {
+            Arrays.fill(d, -1);
+        }
+        return dfs(ring, 0, key, 0, dp) + key.length();
+    }
+
+    private int dfs(String ring, int rIndex, String key, int kIndex, int[][] dp) {
+        if (kIndex == key.length()) return 0;
+        if (dp[rIndex][kIndex] >= 0) return dp[rIndex][kIndex];
+
+        int min = Integer.MAX_VALUE;
+        char c = key.charAt(kIndex);
+        for (int i = ring.indexOf(c); i >= 0; i = ring.indexOf(c, i + 1)) {
+            int d = Math.abs(rIndex - i);
+            d = Math.min(d, ring.length() - d);
+            min = Math.min(min, dfs(ring, i, key, kIndex + 1, dp) + d);
+        }
+        return dp[rIndex][kIndex] = min;
+    }
+
+    // TODO: Divide & Conquer
+
     void test(String ring, String key, int expected) {
         assertEquals(expected, findRotateSteps(ring, key));
         assertEquals(expected, findRotateSteps2(ring, key));
         assertEquals(expected, findRotateSteps3(ring, key));
         assertEquals(expected, findRotateSteps4(ring, key));
+        assertEquals(expected, findRotateSteps5(ring, key));
+        assertEquals(expected, findRotateSteps6(ring, key));
+        assertEquals(expected, findRotateSteps7(ring, key));
+        assertEquals(expected, findRotateSteps8(ring, key));
     }
 
     @Test
