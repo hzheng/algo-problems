@@ -235,12 +235,80 @@ public class PhoneDirectory {
         }
 
         public boolean check(int number) {
-            return number >= 0 && number < max && !used.contains(number);
+            return !used.contains(number);
         }
 
         public void release(int number) {
             if (used.remove(number)) {
                 available.offer(number);
+            }
+        }
+    }
+
+    // Set + Queue
+    // beats 48.91%(583 ms for 18 tests)
+    static class PhoneDirectory6 implements Directory {
+        private Set<Integer> used = new HashSet<>();
+        private Queue<Integer> unused = new LinkedList<>();
+        private int next;
+        private int max;
+
+        public PhoneDirectory6(int maxNumbers) {
+            max = maxNumbers;
+        }
+
+        public int get() {
+            int res = -1;
+            if (!unused.isEmpty()) {
+                res = unused.poll();
+            } else if (next < max) {
+                res = next++;
+            }
+            if (res != -1) {
+                used.add(res);
+            }
+            return res;
+        }
+
+        public boolean check(int number) {
+            return !used.contains(number);
+        }
+
+        public void release(int number) {
+            if (used.remove(number)) {
+                unused.offer(number);
+            }
+        }
+    }
+
+    // Set + List
+    // beats 68.79%(538 ms for 18 tests)
+    static class PhoneDirectory7 implements Directory {
+        private int max;
+        private List<Integer> list = new ArrayList<>();
+        private Set<Integer> set = new HashSet<>();
+
+        public PhoneDirectory7(int maxNumbers) {
+            max = maxNumbers;
+        }
+
+        public int get() {
+            if (max > 0) return --max;
+            if (list.isEmpty()) return -1;
+
+            int res = list.remove(list.size() - 1);
+            set.remove(res);
+            return res;
+        }
+
+        public boolean check(int number) {
+            return number < max || set.contains(number);
+        }
+
+        public void release(int number) {
+            if (!check(number)) {
+                list.add(number);
+                set.add(number);
             }
         }
     }
@@ -331,6 +399,8 @@ public class PhoneDirectory {
         test("PhoneDirectory3");
         test("PhoneDirectory4");
         test("PhoneDirectory5");
+        test("PhoneDirectory6");
+        // test("PhoneDirectory7"); // different get algorithm
     }
 
     public static void main(String[] args) {
