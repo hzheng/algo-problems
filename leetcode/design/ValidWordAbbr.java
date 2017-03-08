@@ -117,7 +117,7 @@ public class ValidWordAbbr {
         }
     }
 
-    public void test(String className, String[] dictionary, String[] uniques, String[] nonUniques) {
+    private void test(String className, String[] dictionary, String[] uniques, String[] nonUniques) {
         try {
             Class<?> clazz = Class.forName("ValidWordAbbr$" + className);
             Constructor<?> ctor = clazz.getConstructor(String[].class);
@@ -127,7 +127,7 @@ public class ValidWordAbbr {
         }
     }
 
-    public void test(String[] dictionary, String[] uniques, String[] nonUniques) {
+    private void test(String[] dictionary, String[] uniques, String[] nonUniques) {
         test("ValidWordAbbr1", dictionary, uniques, nonUniques);
         test("ValidWordAbbr2", dictionary, uniques, nonUniques);
         test("ValidWordAbbr3", dictionary, uniques, nonUniques);
