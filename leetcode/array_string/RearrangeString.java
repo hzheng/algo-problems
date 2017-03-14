@@ -174,7 +174,7 @@ public class RearrangeString {
         test("aaa", 2, "");
         test("aaabc", 3, "");
         test("abb", 2, "bab");
-        test("aabbc", 3, "abcab"); // try to ontribute Testcase for leetcode
+        test("aabbc", 3, "abcab"); // try to contribute Testcase for Leetcode
         test("aabbcc", 2, "abcabc", "abacbc", "acbacb", "acbcab");
         test("aabbcc", 3, "abcabc", "acbacb");
         test("aaadbbcc", 2, "abacabcd", "abcabcda", "acacabdb", "ababacdc", "abcabcad", "abcabacd");
