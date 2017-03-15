@@ -18,8 +18,8 @@ import static org.junit.Assert.*;
 public class UnlockPatterns {
     private static final int[][][] JUMPS = new int[][][] {
         {{3, 7, 9}, {2, 4, 5}}, {{8}, {5}}, {{1, 7, 9}, {2, 5, 6}},
-         {{6}, {5}}, {{}}, {{4}, {5}}, {{1, 3, 9}, {4, 5, 8}}, {{2}, {5}},
-          {{1, 3, 7}, {5, 6, 8}}
+        {{6}, {5}}, {{}}, {{4}, {5}}, {{1, 3, 9}, {4, 5, 8}}, {{2}, {5}},
+        {{1, 3, 7}, {5, 6, 8}}
     };
 
     private static final int[][] OBSTACLES = new int[][] {
@@ -70,6 +70,13 @@ public class UnlockPatterns {
         // method 3:
         int obstacle = OBSTACLES[prev][cur];
         return obstacle == 0 || (chosen & (1 << obstacle - 1)) != 0;
+    }
+
+    // the following method also works without OBSTACLES array
+    private boolean isValid2(int prev, int cur, int chosen) {
+        if (prev == cur || prev == 4 || cur == 4) return true;
+        int sum = prev + cur;
+        return (sum % 4 != 2 || cur % 2 == 1) && sum != 8 || (chosen & (1 << sum / 2)) != 0;
     }
 
     // DFS + Recursion + Bit Manipulation(Set)
@@ -125,13 +132,13 @@ public class UnlockPatterns {
         int[][][] dp = new int[n + 1][10][SIZE];
         for (int step = n - 1; step >= 0; step--) {
             for (int prev = 0; prev <= 9; prev++) { // or: for (int prev = 9; prev >= 0; prev--) {
-                for (int chosen = 0; chosen < SIZE; chosen++) {
+                for (int chosen = 0; chosen < SIZE; chosen++) { // or: iterate all possible permutations
                     if (Integer.bitCount(chosen) != step + 1) continue;
                     for (int i = 0; i < 9; i++) {
                         int mask = 1 << i;
                         if (prev == 0 || (chosen & mask) != 0 && isValid(prev - 1, i, chosen)) {
                             dp[step][prev][chosen & ~mask]
-                              += dp[step + 1][i + 1][chosen] + (step + 1 >= m ? 1 : 0);
+                                += dp[step + 1][i + 1][chosen] + (step + 1 >= m ? 1 : 0);
                         }
                     }
                 }
@@ -140,11 +147,38 @@ public class UnlockPatterns {
         return dp[0][0][0];
     }
 
+    // DFS + Recursion + Bit Manipulation(Set)
+    // beats 79.78%(12 ms for 24 tests)
+    public int numberOfPatterns5(int m, int n) {
+        int res = 0;
+        for (int i = m; i <= n; i++) {
+            res += dfs5(0, i - 1, 1) * 4;
+            res += dfs5(1, i - 1, 1 << 1) * 4;
+            res += dfs5(4, i - 1, 1 << 4);
+        }
+        return res;
+    }
+
+    private int dfs5(int cur, int remain, int chosen) {
+        if (remain < 0) return 0;
+        if (remain == 0) return 1;
+
+        int res = 0;
+        for (int i = 0; i < 9; i++) {
+            int mask = 1 << i;
+            if ((chosen & mask) == 0 && isValid(cur, i, chosen)) {
+                res += dfs5(i, remain - 1, chosen | mask);
+            }
+        }
+        return res;
+    }
+
     void test(int m, int n, int expected) {
         assertEquals(expected, numberOfPatterns(m, n));
         assertEquals(expected, numberOfPatterns2(m, n));
         assertEquals(expected, numberOfPatterns3(m, n));
         assertEquals(expected, numberOfPatterns4(m, n));
+        assertEquals(expected, numberOfPatterns5(m, n));
     }
 
     @Test
