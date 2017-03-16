@@ -173,12 +173,46 @@ public class UnlockPatterns {
         return res;
     }
 
+    // DFS + Recursion + Backtracking + Array(Set)
+    // https://leetcode.com/articles/android-unlock-patterns/
+    // beats 18.60%(42 ms for 24 tests)
+    public int numberOfPatterns6(int m, int n) {
+        int res = 0;
+        for (int len = m; len <= n; len++) {
+            res += calcPatterns(-1, len, new boolean[9]);
+        }
+        return res;
+    }
+
+    private int calcPatterns(int prev, int len, boolean[] used) {
+        if (len == 0) return 1;
+
+        int sum = 0;
+        for (int i = 0; i < 9; i++) {
+            if (prev < 0 || !used[i] && isValid(i, prev, used)) {
+                used[i] = true;
+                sum += calcPatterns(i, len - 1, used);
+                used[i] = false;
+            }
+        }
+        return sum;
+    }
+
+    private boolean isValid(int cur, int prev, boolean[] used) {
+        int sum = cur + prev;
+        if (sum % 2 == 1) return true;
+
+        if (sum != 8 && (cur % 3 != prev % 3) && (cur / 3 != prev / 3)) return true;
+        return used[sum / 2];
+    }
+
     void test(int m, int n, int expected) {
         assertEquals(expected, numberOfPatterns(m, n));
         assertEquals(expected, numberOfPatterns2(m, n));
         assertEquals(expected, numberOfPatterns3(m, n));
         assertEquals(expected, numberOfPatterns4(m, n));
         assertEquals(expected, numberOfPatterns5(m, n));
+        assertEquals(expected, numberOfPatterns6(m, n));
     }
 
     @Test
