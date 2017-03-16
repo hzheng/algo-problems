@@ -47,7 +47,7 @@ public class ValidBst {
 
         if (root.val <= min || root.val >= max) return false;
 
-        return (isValidBST2(root.left, min, root.val))
+        return isValidBST2(root.left, min, root.val)
                && isValidBST2(root.right, root.val, max);
     }
 
