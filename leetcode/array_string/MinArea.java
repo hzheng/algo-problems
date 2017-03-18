@@ -47,34 +47,22 @@ public class MinArea {
     // Binary Search
     // beats 63.21%(1 ms for 111 tests)
     public int minArea2(char[][] image, int x, int y) {
-        int leftMost = minSearch(image, 0, y, false);
-        int rightMost = maxSearch(image, y, image[0].length - 1, false);
-        int topMost = minSearch(image, 0, x, true);
-        int bottomMost = maxSearch(image, x, image.length - 1, true);
+        int leftMost = search(image, 0, y, false, true);
+        int rightMost = search(image, y, image[0].length - 1, false, false);
+        int topMost = search(image, 0, x, true, true);
+        int bottomMost = search(image, x, image.length - 1, true, false);
         return (rightMost - leftMost + 1) * (bottomMost - topMost + 1);
     }
 
-    private int minSearch(char[][] image, int min, int max, boolean isRow) {
+    private int search(char[][] image, int min, int max, boolean isRow, boolean isMin) {
+        int diff = isMin ? 0 : 1;
         int low = min;
         for (int high = max; low < high; ) {
-            int mid = (low + high) >>> 1;
-            if (whiteLine(image, mid, isRow)) {
-                low = mid + 1;
+            int mid = (low + high + diff) >>> 1;
+            if (whiteLine(image, mid, isRow) == isMin) {
+                low = mid - diff + 1;
             } else {
-                high = mid;
-            }
-        }
-        return low;
-    }
-
-    private int maxSearch(char[][] image, int min, int max, boolean isRow) {
-        int low = min;
-        for (int high = max; low < high; ) {
-            int mid = (low + high + 1) >>> 1;
-            if (whiteLine(image, mid, isRow)) {
-                high = mid - 1;
-            } else {
-                low = mid;
+                high = mid - diff;
             }
         }
         return low;
