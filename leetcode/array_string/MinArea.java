@@ -48,21 +48,20 @@ public class MinArea {
     // beats 63.21%(1 ms for 111 tests)
     public int minArea2(char[][] image, int x, int y) {
         int leftMost = search(image, 0, y, false, true);
-        int rightMost = search(image, y, image[0].length - 1, false, false);
+        int rightMost = search(image, y + 1, image[0].length, false, false);
         int topMost = search(image, 0, x, true, true);
-        int bottomMost = search(image, x, image.length - 1, true, false);
-        return (rightMost - leftMost + 1) * (bottomMost - topMost + 1);
+        int bottomMost = search(image, x + 1, image.length, true, false);
+        return (rightMost - leftMost) * (bottomMost - topMost);
     }
 
     private int search(char[][] image, int min, int max, boolean isRow, boolean isMin) {
-        int diff = isMin ? 0 : 1;
         int low = min;
         for (int high = max; low < high; ) {
-            int mid = (low + high + diff) >>> 1;
+            int mid = (low + high) >>> 1;
             if (whiteLine(image, mid, isRow) == isMin) {
-                low = mid - diff + 1;
+                low = mid + 1;
             } else {
-                high = mid - diff;
+                high = mid;
             }
         }
         return low;
@@ -81,10 +80,37 @@ public class MinArea {
         return true;
     }
 
+    // Binary Search
+    // beats 63.21%(1 ms for 111 tests)
+    public int minArea3(char[][] image, int x, int y) {
+        int m = image.length;
+        int n = image[0].length;
+        int top = search(image, 0, x, 0, n, true, true);
+        int bottom = search(image, x + 1, m, 0, n, true, false);
+        int left = search(image, 0, y, top, bottom, false, true);
+        int right = search(image, y + 1, n, top, bottom, false, false);
+        return (right - left) * (bottom - top);
+    }
+
+    private int search(char[][] image, int low, int high, int min, int max, boolean isRow, boolean isMin) {
+        while (low < high) {
+            int mid = (low + high) >>> 1;
+            int i = min;
+            for (; i < max &&  (isRow ? image[mid][i] : image[i][mid]) == '0'; i++) {}
+            if ((i < max) == isMin) {
+                high = mid;
+            } else {
+                low = mid + 1;
+            }
+        }
+        return low;
+    }
+
     void test(String[] s, int x, int y, int expected) {
         char[][] image = Stream.of(s).map(a -> a.toCharArray()).toArray(char[][]::new);
         assertEquals(expected, minArea(image, x, y));
         assertEquals(expected, minArea2(image, x, y));
+        assertEquals(expected, minArea3(image, x, y));
     }
 
     @Test
