@@ -13,11 +13,12 @@ import java.util.function.Function;
 // adjacent lands horizontally or vertically. You may assume all four edges of
 // the grid are all surrounded by water.
 public class IslandNumber2 {
+    private static final int[][] MOVES = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
+
     // Union Find
     // beats 96.87%(16 ms for 158 tests)
     // time complexity: O(K * log(M * N))
     public List<Integer> numIslands2(int m, int n, int[][] positions) {
-        final int[][] SHIFTS = {{-1, 0, -n}, {1, 0, n}, {0, -1, -1}, {0, 1, 1}};
         List<Integer> res = new ArrayList<>();
         int[] id = new int[m * n];
         Arrays.fill(id, -1);
@@ -27,10 +28,10 @@ public class IslandNumber2 {
             int y = position[1];
             int index = x * n + y;
             int root = -1;
-            for (int[] shift : SHIFTS) {
-                int nx = x + shift[0];
-                int ny = y + shift[1];
-                int ni = index + shift[2];
+            for (int[] move : MOVES) {
+                int nx = x + move[0];
+                int ny = y + move[1];
+                int ni = n * nx + ny;
                 if (nx < 0 || nx >= m || ny < 0 || ny >= n || id[ni] < 0) continue;
 
                 for (; ni != id[ni]; ni = id[ni] = id[id[ni]]) {}
@@ -52,9 +53,42 @@ public class IslandNumber2 {
         return res;
     }
 
+    // Union Find
+    // beats 96.87%(16 ms for 158 tests)
+    // time complexity: O(K * log(M * N))
+    public List<Integer> numIslands2_2(int m, int n, int[][] positions) {
+        List<Integer> res = new ArrayList<>();
+        int[] id = new int[m * n];
+        Arrays.fill(id, -1);
+        int islands = 0;
+        for (int[] position : positions) {
+            int x = position[0];
+            int y = position[1];
+            int index = x * n + y;
+            id[index] = index;
+            islands++;
+            for (int[] move : MOVES) {
+                int nx = x + move[0];
+                int ny = y + move[1];
+                int ni = n * nx + ny;
+                if (nx < 0 || nx >= m || ny < 0 || ny >= n || id[ni] < 0) continue;
+
+                for (; ni != id[ni]; ni = id[ni] = id[id[ni]]) {}
+                if (index != ni) {
+                    id[index] = ni;
+                    index = ni;
+                    islands--;
+                }
+            }
+            res.add(islands);
+        }
+        return res;
+    }
+
     void test(int m, int n, int[][] positions, Integer[] expected) {
         List<Integer> expectedList = Arrays.asList(expected);
         assertEquals(expectedList, numIslands2(m, n, positions));
+        assertEquals(expectedList, numIslands2_2(m, n, positions));
     }
 
     @Test
