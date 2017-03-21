@@ -407,6 +407,8 @@ public class NumMatrix {
         }
     }
 
+    // TODO: Segment Tree in form of array; better Quad Tree & 2D Segment Tree implementations
+
     // Dynamic Programming
     // beats 94.87%(274 ms for 17 tests)
     static class NumMatrix6 implements INumMatrix {
