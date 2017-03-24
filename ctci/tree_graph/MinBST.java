@@ -1,7 +1,7 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import tree_graph.TreeNode;
+import common.TreeNode2;
 
 /**
  * Cracking the Coding Interview(5ed) Problem 4.3:
@@ -9,22 +9,22 @@ import tree_graph.TreeNode;
  * binary search tree with minimal height.
  */
 public class MinBST {
-    private static TreeNode createMinBST(int[] n, int start, int end) {
+    private static TreeNode2 createMinBST(int[] n, int start, int end) {
         if (start > end) return null;
 
         int middle = (end + start) / 2;
-        TreeNode node = new TreeNode(n[middle]);
+        TreeNode2 node = new TreeNode2(n[middle]);
         node.left = createMinBST(n, start, middle - 1);
         node.right = createMinBST(n, middle + 1, end);
         return node;
     }
 
-    public static TreeNode createMinBST(int[] n) {
+    public static TreeNode2 createMinBST(int[] n) {
         return createMinBST(n, 0, n.length - 1);
     }
 
     void test(int[] n, int[] expected) {
-        TreeNode tree = createMinBST(n);
+        TreeNode2 tree = createMinBST(n);
         // assertArrayEquals(expected, treeArray);
     }
 

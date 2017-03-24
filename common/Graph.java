@@ -1,12 +1,12 @@
-package tree_graph;
+package common;
 
 import java.util.List;
 
-public class Graph
-{
+public class Graph {
     public enum State {
         UNVISITED, VISITING, VISITED
     }
+
     public class Node {
         public int data;
         public State state;

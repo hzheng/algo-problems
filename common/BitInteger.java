@@ -1,4 +1,4 @@
-package bit_manipulation;
+package common;
 
 // https://ctci.googlecode.com/svn/trunk/Java/Chapter%205/Question5_7/BitInteger.java
 

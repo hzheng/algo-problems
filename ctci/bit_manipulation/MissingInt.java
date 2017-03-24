@@ -10,7 +10,7 @@ import java.util.Collections;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import bit_manipulation.BitInteger;
+import common.BitInteger;
 
 /**
  * Cracking the Coding Interview(5ed) Problem 5.7:

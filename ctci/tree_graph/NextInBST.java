@@ -1,9 +1,8 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import tree_graph.TreeNode;
-import static tree_graph.TreeUtils.*;
-import tree_graph.CheckBST;
+import common.TreeNode2;
+import static common.TreeUtils.*;
 
 /**
  * Cracking the Coding Interview(5ed) Problem 4.6:
@@ -11,7 +10,7 @@ import tree_graph.CheckBST;
  * tree. You may assume that each node has a link to its parent.
  */
 public class NextInBST {
-    private static TreeNode leftmostDescendant(TreeNode node) {
+    private static TreeNode2 leftmostDescendant(TreeNode2 node) {
         if (node == null) return null;
 
         while (node.left != null) {
@@ -20,7 +19,7 @@ public class NextInBST {
         return node;
     }
 
-    public static TreeNode nextNode(TreeNode node) {
+    public static TreeNode2 nextNode(TreeNode2 node) {
         if (node == null) return null;
 
         if (node.right != null) {
@@ -37,11 +36,11 @@ public class NextInBST {
     }
 
     void test(Integer[] bst, int[] n, Integer[] expected) {
-        TreeNode tree = createTree(bst, true);
+        TreeNode2 tree = createTree(bst, true);
         print(tree);
-        assertTrue(CheckBST.isBST(tree));
+        // assertTrue(CheckBST.isBST(tree));
         for (int i = 0; i < n.length; i++) {
-            TreeNode node = findBST(tree, n[i]);
+            TreeNode2 node = findBST(tree, n[i]);
             if (expected[i] != null) {
                 assertEquals((int)expected[i], nextNode(node).data);
             } else {

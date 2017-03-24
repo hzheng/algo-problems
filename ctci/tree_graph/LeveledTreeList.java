@@ -8,8 +8,8 @@ import java.util.function.Function;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import tree_graph.TreeNode;
-import static tree_graph.TreeUtils.createTree;
+import common.TreeNode2;
+import static common.TreeUtils.createTree;
 
 /**
  * Cracking the Coding Interview(5ed) Problem 4.4:
@@ -18,26 +18,26 @@ import static tree_graph.TreeUtils.createTree;
  */
 public class LeveledTreeList {
     static class LeveledTreeNode {
-        TreeNode node;
+        TreeNode2 node;
         int level;
-        LeveledTreeNode(TreeNode node, int level) {
+        LeveledTreeNode(TreeNode2 node, int level) {
             this.node = node;
             this.level = level;
         }
     }
 
-    public static List<LinkedList<TreeNode> > createList(TreeNode root) {
+    public static List<LinkedList<TreeNode2> > createList(TreeNode2 root) {
         if (root == null) return null;
 
-        List<LinkedList<TreeNode> > lists = new ArrayList<LinkedList<TreeNode> >();
-        LinkedList<LeveledTreeNode> queue = new LinkedList<LeveledTreeNode>();
+        List<LinkedList<TreeNode2> > lists = new ArrayList<>();
+        LinkedList<LeveledTreeNode> queue = new LinkedList<>();
         queue.add(new LeveledTreeNode(root, 0));
         while (!queue.isEmpty()) {
             LeveledTreeNode current = queue.removeFirst();
             int level = current.level;
-            TreeNode node = current.node;
+            TreeNode2 node = current.node;
             if (lists.size() <= level) {
-                lists.add(new LinkedList<TreeNode>());
+                lists.add(new LinkedList<TreeNode2>());
             }
             lists.get(level).add(node);
             ++level;
@@ -52,18 +52,18 @@ public class LeveledTreeList {
         return lists;
     }
 
-    public static List<LinkedList<TreeNode> > createList2(TreeNode root) {
+    public static List<LinkedList<TreeNode2> > createList2(TreeNode2 root) {
         if (root == null) return null;
 
-        List<LinkedList<TreeNode> > lists
-            = new ArrayList<LinkedList<TreeNode> >();
-        LinkedList<TreeNode> current
-            = new LinkedList<TreeNode>(Collections.singletonList(root));
+        List<LinkedList<TreeNode2> > lists
+            = new ArrayList<>();
+        LinkedList<TreeNode2> current
+            = new LinkedList<>(Collections.singletonList(root));
         while (current.size() > 0) {
             lists.add(current);
-            LinkedList<TreeNode> parents = current;
-            current = new LinkedList<TreeNode>();
-            for (TreeNode parent : parents) {
+            LinkedList<TreeNode2> parents = current;
+            current = new LinkedList<>();
+            for (TreeNode2 parent : parents) {
                 if (parent.left != null) {
                     current.add(parent.left);
                 }
@@ -75,20 +75,20 @@ public class LeveledTreeList {
         return lists;
     }
 
-    public static List<LinkedList<TreeNode> > createListRecursive(TreeNode root) {
+    public static List<LinkedList<TreeNode2> > createListRecursive(TreeNode2 root) {
         if (root == null) return null;
 
-        List<LinkedList<TreeNode> > lists = new ArrayList<LinkedList<TreeNode> >();
+        List<LinkedList<TreeNode2> > lists = new ArrayList<>();
         createListRecursive(lists, root, 0);
         return lists;
     }
 
-    private static void createListRecursive(List<LinkedList<TreeNode> > lists,
-                                            TreeNode node, int level) {
+    private static void createListRecursive(List<LinkedList<TreeNode2> > lists,
+                                            TreeNode2 node, int level) {
         if (node == null) return;
 
         if (lists.size() <= level) {
-            lists.add(new LinkedList<TreeNode>());
+            lists.add(new LinkedList<>());
         }
         lists.get(level++).add(node);
 
@@ -103,9 +103,9 @@ public class LeveledTreeList {
     }
 
     void test(Integer[] array, int[][] expected,
-              Function<TreeNode, List<LinkedList<TreeNode>>> createList) {
+              Function<TreeNode2, List<LinkedList<TreeNode2>>> createList) {
         int i = 0;
-        for (LinkedList<TreeNode> list : createList.apply(createTree(array))) {
+        for (LinkedList<TreeNode2> list : createList.apply(createTree(array))) {
             assertArrayEquals(expected[i],
                               list.stream().mapToInt(n -> n.data).toArray());
             i++;

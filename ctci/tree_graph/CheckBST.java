@@ -1,21 +1,19 @@
-package tree_graph;
-
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import tree_graph.TreeNode;
-import static tree_graph.TreeUtils.createTree;
+import common.TreeNode2;
+import static common.TreeUtils.createTree;
 
 /**
  * Cracking the Coding Interview(5ed) Problem 4.5:
  * Check if a binary tree is a binary search tree.
  */
 public class CheckBST {
-    public static boolean isBST(TreeNode root) {
+    public static boolean isBST(TreeNode2 root) {
         return isBST(root, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
-    private static boolean isBST(TreeNode root, int min, int max) {
+    private static boolean isBST(TreeNode2 root, int min, int max) {
         if (root == null) return true;
 
         int data = root.data;
@@ -24,11 +22,11 @@ public class CheckBST {
         return isBST(root.left, min, data) && isBST(root.right, data, max);
     }
 
-    public static boolean isBST2(TreeNode root) {
+    public static boolean isBST2(TreeNode2 root) {
         return isBST2(root, new int[] {Integer.MIN_VALUE});
     }
 
-    private static boolean isBST2(TreeNode root, int[] last) {
+    private static boolean isBST2(TreeNode2 root, int[] last) {
         if (root == null) return true;
 
         if (!isBST2(root.left, last)) return false;

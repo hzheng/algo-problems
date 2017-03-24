@@ -1,17 +1,17 @@
-package tree_graph;
+package common;
 
-public class TreeNode
+public class TreeNode2
 {
-    public TreeNode left;
-    public TreeNode right;
+    public TreeNode2 left;
+    public TreeNode2 right;
     public int data;
     // needed in some case
-    public TreeNode parent;
+    public TreeNode2 parent;
 
-    public TreeNode() {
+    public TreeNode2() {
     }
 
-    public TreeNode(int data) {
+    public TreeNode2(int data) {
         this.data = data;
     }
 

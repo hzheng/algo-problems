@@ -1,8 +1,8 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import tree_graph.TreeNode;
-import static tree_graph.TreeUtils.*;
+import common.TreeNode2;
+import static common.TreeUtils.*;
 
 /**
  * Cracking the Coding Interview(5ed) Problem 4.5:
@@ -11,12 +11,12 @@ import static tree_graph.TreeUtils.*;
  */
 public class CommonAncestor {
     // assume each node has link to its parent
-    public static TreeNode commonAncestorWithParentLink(
-        TreeNode n1, TreeNode n2) {
+    public static TreeNode2 commonAncestorWithParentLink(
+        TreeNode2 n1, TreeNode2 n2) {
         if (n1 == null || n2 == null) return null;
 
         int depth = 0;
-        TreeNode n = n1;
+        TreeNode2 n = n1;
         for (; n != n2 && n != null; n = n.parent) {
             depth++;
         }
@@ -42,15 +42,15 @@ public class CommonAncestor {
     }
 
     // assume each node doesn't have link to its parent
-    public static TreeNode commonAncestor(TreeNode root,
-                                          TreeNode n1, TreeNode n2) {
+    public static TreeNode2 commonAncestor(TreeNode2 root,
+                                          TreeNode2 n1, TreeNode2 n2) {
         if (!contains(root, n1) || !contains(root, n2)) return null;
 
         return commonAncestor_(root, n1, n2);
     }
 
-    private static TreeNode commonAncestor_(TreeNode root,
-                                            TreeNode n1, TreeNode n2) {
+    private static TreeNode2 commonAncestor_(TreeNode2 root,
+                                            TreeNode2 n1, TreeNode2 n2) {
         if (root == null) return null;
 
         if (n1 == root || n2 == root) return root;
@@ -63,37 +63,37 @@ public class CommonAncestor {
         return commonAncestor_(root, n1, n2);
     }
 
-    private static boolean contains(TreeNode root, TreeNode node) {
+    private static boolean contains(TreeNode2 root, TreeNode2 node) {
         if (root == null) return false;
         if (root == node) return true;
         return contains(root.left, node) || contains(root.right, node);
     }
 
-    public static TreeNode commonAncestor2(TreeNode root,
-                                           TreeNode n1, TreeNode n2) {
+    public static TreeNode2 commonAncestor2(TreeNode2 root,
+                                            TreeNode2 n1, TreeNode2 n2) {
         if (!contains(root, n1) || !contains(root, n2)) return null;
 
         return commonAncestor2_(root, n1, n2);
     }
 
-    private static TreeNode commonAncestor2_(TreeNode root,
-                                             TreeNode n1, TreeNode n2) {
+    private static TreeNode2 commonAncestor2_(TreeNode2 root,
+                                              TreeNode2 n1, TreeNode2 n2) {
         if (root == null) return null;
 
         if (n1 == root || n2 == root) return root;
 
-        TreeNode left = commonAncestor2_(root.left, n1, n2);
-        TreeNode right = commonAncestor2_(root.right, n1, n2);
+        TreeNode2 left = commonAncestor2_(root.left, n1, n2);
+        TreeNode2 right = commonAncestor2_(root.right, n1, n2);
         if (left != null && right != null) return root;
         return (left != null) ? left : right;
     }
 
     void test(Integer[] array, int[] n1, int[] n2, int[] expected) {
-        TreeNode tree = createTree(array, true);
+        TreeNode2 tree = createTree(array, true);
         print(tree);
         for (int i = 0; i < n1.length; i++) {
-            TreeNode p = find(tree, n1[i]);
-            TreeNode q = find(tree, n2[i]);
+            TreeNode2 p = find(tree, n1[i]);
+            TreeNode2 q = find(tree, n2[i]);
             assertEquals(expected[i], commonAncestorWithParentLink(p, q).data);
             assertEquals(expected[i], commonAncestor(tree, p, q).data);
             assertEquals(expected[i], commonAncestor2(tree, p, q).data);

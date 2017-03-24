@@ -6,7 +6,7 @@ import java.util.HashMap;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import linkedlist.LinkedListNode;
+import common.LinkedListNode;
 
 /**
  * Cracking the Coding Interview(5ed) Problem 2.1:

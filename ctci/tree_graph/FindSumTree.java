@@ -6,8 +6,8 @@ import java.util.List;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static tree_graph.TreeUtils.*;
-import tree_graph.TreeNode;
+import static common.TreeUtils.*;
+import common.TreeNode2;
 
 /**
  * Cracking the Coding Interview(5ed) Problem 4.9:
@@ -15,15 +15,15 @@ import tree_graph.TreeNode;
  */
 public class FindSumTree {
     // time complexity: O(N ^ 2), space complexity: O(log(N))
-    public static List<List<TreeNode> > findSum(TreeNode root, int sum) {
-        List<List<TreeNode> > results = new ArrayList<List<TreeNode> >();
-        LinkedList<TreeNode> path = new LinkedList<TreeNode>();
+    public static List<List<TreeNode2> > findSum(TreeNode2 root, int sum) {
+        List<List<TreeNode2> > results = new ArrayList<>();
+        LinkedList<TreeNode2> path = new LinkedList<>();
         findSum(results, path, root, sum);
         return results;
     }
 
-    private static void findSum(List<List<TreeNode> > results,
-                                LinkedList<TreeNode> path, TreeNode root, int sum) {
+    private static void findSum(List<List<TreeNode2> > results,
+                                LinkedList<TreeNode2> path, TreeNode2 root, int sum) {
         if (root == null) return;
 
         sumStart(results, path, root, sum);
@@ -31,12 +31,12 @@ public class FindSumTree {
         findSum(results, path, root.right, sum);
     }
 
-    private static void sumStart(List<List<TreeNode> > results,
-                                 LinkedList<TreeNode> path, TreeNode root, int sum) {
+    private static void sumStart(List<List<TreeNode2> > results,
+                                 LinkedList<TreeNode2> path, TreeNode2 root, int sum) {
         if (root == null) return;
 
         if (root.data == sum) {
-            List<TreeNode> nodes = new ArrayList<TreeNode>(path);
+            List<TreeNode2> nodes = new ArrayList<>(path);
             nodes.add(root);
             results.add(nodes);
         }
@@ -54,12 +54,12 @@ public class FindSumTree {
     // 1. it only prints path value instead of get path nodes
     // 2. using extra array to store path makes it easy to look backwards
     // 3. most of all, its search strategy is "ends at" instead of "starts from"
-    public static void findSum2(TreeNode node, int sum) {
+    public static void findSum2(TreeNode2 node, int sum) {
         int[] path = new int[depth(node)];
         findSum2(node, sum, path, 0);
     }
 
-    private static void findSum2(TreeNode node, int sum, int[] path, int level) {
+    private static void findSum2(TreeNode2 node, int sum, int[] path, int level) {
         if (node == null) return;
         /* Insert current node into path. */
         path[level] = node.data;
@@ -88,21 +88,21 @@ public class FindSumTree {
         System.out.println();
     }
 
-    private static int depth(TreeNode node) {
+    private static int depth(TreeNode2 node) {
         if (node == null) return 0;
         return 1 + Math.max(depth(node.left), depth(node.right));
     }
 
     // get idea from <tt>findSum2</tt>
-    public static List<List<TreeNode> > findSum3(TreeNode root, int sum) {
-        List<List<TreeNode> > results = new ArrayList<List<TreeNode> >();
-        TreeNode[] path = new TreeNode[depth(root)];
+    public static List<List<TreeNode2> > findSum3(TreeNode2 root, int sum) {
+        List<List<TreeNode2> > results = new ArrayList<>();
+        TreeNode2[] path = new TreeNode2[depth(root)];
         findSum3(results, path, root, sum, 0);
         return results;
     }
 
-    private static void findSum3(List<List<TreeNode> > results,
-                                 TreeNode[] path, TreeNode node,
+    private static void findSum3(List<List<TreeNode2> > results,
+                                 TreeNode2[] path, TreeNode2 node,
                                  int sum, int level) {
         if (node == null) return;
 
@@ -120,9 +120,9 @@ public class FindSumTree {
         path[level] = null;
     }
 
-    private static List<TreeNode> createPath(
-        TreeNode[] path, int start, int end) {
-        List<TreeNode> result = new ArrayList<TreeNode>();
+    private static List<TreeNode2> createPath(
+        TreeNode2[] path, int start, int end) {
+        List<TreeNode2> result = new ArrayList<>();
         for(int i = start; i <= end; i++) {
             result.add(path[i]);
         }
@@ -135,7 +135,7 @@ public class FindSumTree {
     }
 
     void test(Integer[] array, int sum, int[][] expectedPaths) {
-        TreeNode t = createTree(array);
+        TreeNode2 t = createTree(array);
         print(t);
         findSum2(t, sum);
 
@@ -153,11 +153,11 @@ public class FindSumTree {
     }
 
     private void test(Integer[] array, int sum, int[][] expectedPaths,
-                      Function<TreeNode, Integer, List<List<TreeNode>>> find) {
-        TreeNode t = createTree(array);
+                      Function<TreeNode2, Integer, List<List<TreeNode2>>> find) {
+        TreeNode2 t = createTree(array);
 
         List<int[]> pathList = new ArrayList<int[]>();
-        for (List<TreeNode> path : find.apply(t, sum)) {
+        for (List<TreeNode2> path : find.apply(t, sum)) {
             pathList.add(path.stream().mapToInt(n -> n.data).toArray());
         }
         // pathList.forEach(p -> System.out.println(Arrays.toString(p)));

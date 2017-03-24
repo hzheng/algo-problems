@@ -1,4 +1,4 @@
-import linkedlist.LinkedListNode;
+import common.LinkedListNode;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

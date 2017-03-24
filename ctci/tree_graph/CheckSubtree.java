@@ -6,8 +6,8 @@ import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import static tree_graph.TreeUtils.*;
-import tree_graph.TreeNode;
+import static common.TreeUtils.*;
+import common.TreeNode2;
 
 /**
  * Cracking the Coding Interview(5ed) Problem 4.8:
@@ -16,13 +16,13 @@ import tree_graph.TreeNode;
  */
 public class CheckSubtree {
     // time complexity: O(M * N), space complexity: O(log(M) + log(N))
-    public static boolean isSubtree(TreeNode t1, TreeNode t2) {
+    public static boolean isSubtree(TreeNode2 t1, TreeNode2 t2) {
         if (t1 == null || t2 == null) return false;
 
-        LinkedList<TreeNode> queue = new LinkedList<TreeNode>();
+        LinkedList<TreeNode2> queue = new LinkedList<>();
         queue.add(t1);
         while (!queue.isEmpty()) {
-            TreeNode node = queue.removeFirst();
+            TreeNode2 node = queue.removeFirst();
             if (match(node, t2)) return true;
 
             if (node.left != null) {
@@ -35,12 +35,12 @@ public class CheckSubtree {
         return false;
     }
 
-    public static boolean isSubtreeRecursive(TreeNode t1, TreeNode t2) {
+    public static boolean isSubtreeRecursive(TreeNode2 t1, TreeNode2 t2) {
         if (t2 == null) return true;
         return isSubtreeRecursive_(t1, t2);
     }
 
-    public static boolean isSubtreeRecursive_(TreeNode t1, TreeNode t2) {
+    public static boolean isSubtreeRecursive_(TreeNode2 t1, TreeNode2 t2) {
         if (t1 == null) return false;
 
         if ((t1.data == t2.data) && match(t1, t2)) return true;
@@ -49,7 +49,7 @@ public class CheckSubtree {
                || isSubtreeRecursive_(t1.right, t2);
     }
 
-    private static boolean match(TreeNode t1, TreeNode t2) {
+    private static boolean match(TreeNode2 t1, TreeNode2 t2) {
         if (t1 == null && t2 == null) return true;
         if (t1 == null || t2 == null) return false;
 
@@ -58,9 +58,9 @@ public class CheckSubtree {
     }
 
     void test(Integer[] n1, Integer[] n2, boolean expected) {
-        TreeNode t1 = createTree(n1);
+        TreeNode2 t1 = createTree(n1);
         print(t1);
-        TreeNode t2 = createTree(n2);
+        TreeNode2 t2 = createTree(n2);
         print(t2);
         isSubtree(t1, t2);
         assertEquals(expected, isSubtree(t1, t2));

@@ -1,4 +1,4 @@
-package tree_graph;
+package common;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,26 +6,24 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.Stack;
 
-// import tree_graph.TreeNode;
-
 public class TreeUtils {
-    public static TreeNode createTree(Integer[] dataArray) {
+    public static TreeNode2 createTree(Integer[] dataArray) {
         return createTree(dataArray, false);
     }
 
-    public static TreeNode createTree(Integer[] dataArray, boolean linkParent) {
+    public static TreeNode2 createTree(Integer[] dataArray, boolean linkParent) {
         if ((dataArray == null) || (dataArray.length == 0)) return null;
 
         int len = dataArray.length;
-        TreeNode root = new TreeNode(dataArray[0]);
-        LinkedList<TreeNode> queue = new LinkedList<TreeNode>();
+        TreeNode2 root = new TreeNode2(dataArray[0]);
+        LinkedList<TreeNode2> queue = new LinkedList<TreeNode2>();
         queue.add(root);
         for (int i = 1; i < len; i++) {
-            TreeNode node = queue.removeFirst();
+            TreeNode2 node = queue.removeFirst();
             // add left child
-            TreeNode child = null;
+            TreeNode2 child = null;
             if (node != null && dataArray[i] != null) {
-                child = node.left = new TreeNode(dataArray[i]);
+                child = node.left = new TreeNode2(dataArray[i]);
                 if (linkParent) child.parent = node;
             }
             queue.add(child);
@@ -35,7 +33,7 @@ public class TreeUtils {
             // add right child
             child = null;
             if (node != null && dataArray[i] != null) {
-                child = node.right = new TreeNode(dataArray[i]);
+                child = node.right = new TreeNode2(dataArray[i]);
                 if (linkParent) child.parent = node;
             }
             queue.add(child);
@@ -43,8 +41,8 @@ public class TreeUtils {
         return root;
     }
 
-    public static TreeNode findBST(TreeNode root, int n) {
-        for (TreeNode node = root; node != null; ) {
+    public static TreeNode2 findBST(TreeNode2 root, int n) {
+        for (TreeNode2 node = root; node != null; ) {
             if (node.data == n) return node;
 
             if (node.data < n) {
@@ -56,22 +54,22 @@ public class TreeUtils {
         return null;
     }
 
-    public static TreeNode find(TreeNode root, int n) {
+    public static TreeNode2 find(TreeNode2 root, int n) {
         if (root == null) return null;
         if (root.data == n) return root;
 
-        TreeNode node = find(root.left, n);
+        TreeNode2 node = find(root.left, n);
         return (node != null) ? node : find(root.right, n);
     }
 
-    public static List<TreeNode> bfs(TreeNode root, boolean hasParent) {
+    public static List<TreeNode2> bfs(TreeNode2 root, boolean hasParent) {
         if (root == null) return null;
 
-        List<TreeNode> list = new ArrayList<TreeNode>();
-        LinkedList<TreeNode> queue = new LinkedList<TreeNode>();
+        List<TreeNode2> list = new ArrayList<TreeNode2>();
+        LinkedList<TreeNode2> queue = new LinkedList<TreeNode2>();
         queue.add(root);
         while (!queue.isEmpty()) {
-            TreeNode node = queue.removeFirst();
+            TreeNode2 node = queue.removeFirst();
             list.add(node);
             if (node.left != null) {
                 queue.add(node.left);
@@ -89,14 +87,14 @@ public class TreeUtils {
         return list;
     }
 
-    public static List<TreeNode> dfs(TreeNode root) {
+    public static List<TreeNode2> dfs(TreeNode2 root) {
         if (root == null) return null;
 
-        Stack<TreeNode> stack = new Stack<TreeNode>();
+        Stack<TreeNode2> stack = new Stack<>();
         stack.push(root);
-        List<TreeNode> list = new ArrayList<TreeNode>();
+        List<TreeNode2> list = new ArrayList<>();
         while (!stack.empty()) {
-            TreeNode top = stack.pop();
+            TreeNode2 top = stack.pop();
             list.add(top);
             if (top.left != null) stack.push(top.left);
             if (top.right != null) stack.push(top.right);
@@ -104,14 +102,14 @@ public class TreeUtils {
         return list;
     }
 
-    public static List<TreeNode> dfsRecursive(TreeNode root) {
+    public static List<TreeNode2> dfsRecursive(TreeNode2 root) {
         if (root == null) return null;
-        List<TreeNode> list = new ArrayList<TreeNode>();
+        List<TreeNode2> list = new ArrayList<>();
         dfsRecursive(root, list);
         return list;
     }
 
-    private static void dfsRecursive(TreeNode root, List<TreeNode> list) {
+    private static void dfsRecursive(TreeNode2 root, List<TreeNode2> list) {
         if (root == null) return;
         dfsRecursive(root.left, list);
         list.add(root);
@@ -119,11 +117,11 @@ public class TreeUtils {
     }
 
     // https://stackoverflow.com/questions/4965335/how-to-print-binary-tree-diagram
-    public static void print(TreeNode root) {
+    public static void print(TreeNode2 root) {
         print(Collections.singletonList(root), 1, maxLevel(root));
     }
 
-    private static void print(List<TreeNode> nodes, int level, int maxLevel) {
+    private static void print(List<TreeNode2> nodes, int level, int maxLevel) {
         if (nodes.isEmpty() || isAllElementsNull(nodes))
             return;
 
@@ -134,8 +132,8 @@ public class TreeUtils {
 
         printWhitespaces(firstSpaces);
 
-        List<TreeNode> newNodes = new ArrayList<TreeNode>();
-        for (TreeNode node : nodes) {
+        List<TreeNode2> newNodes = new ArrayList<>();
+        for (TreeNode2 node : nodes) {
             if (node != null) {
                 System.out.print(node.data);
                 newNodes.add(node.left);
@@ -184,7 +182,7 @@ public class TreeUtils {
             System.out.print(" ");
     }
 
-    private static int maxLevel(TreeNode node) {
+    private static int maxLevel(TreeNode2 node) {
         if (node == null) return 0;
 
         return Math.max(maxLevel(node.left), maxLevel(node.right)) + 1;
@@ -198,22 +196,22 @@ public class TreeUtils {
         return true;
     }
 
-    private static TreeNode test1() {
-        TreeNode root = new TreeNode(2);
-        TreeNode n11 = new TreeNode(7);
-        TreeNode n12 = new TreeNode(5);
-        TreeNode n21 = new TreeNode(2);
-        TreeNode n22 = new TreeNode(6);
-        TreeNode n23 = new TreeNode(3);
-        TreeNode n24 = new TreeNode(6);
-        TreeNode n31 = new TreeNode(5);
-        TreeNode n32 = new TreeNode(8);
-        TreeNode n33 = new TreeNode(4);
-        TreeNode n34 = new TreeNode(5);
-        TreeNode n35 = new TreeNode(8);
-        TreeNode n36 = new TreeNode(4);
-        TreeNode n37 = new TreeNode(5);
-        TreeNode n38 = new TreeNode(8);
+    private static TreeNode2 test1() {
+        TreeNode2 root = new TreeNode2(2);
+        TreeNode2 n11 = new TreeNode2(7);
+        TreeNode2 n12 = new TreeNode2(5);
+        TreeNode2 n21 = new TreeNode2(2);
+        TreeNode2 n22 = new TreeNode2(6);
+        TreeNode2 n23 = new TreeNode2(3);
+        TreeNode2 n24 = new TreeNode2(6);
+        TreeNode2 n31 = new TreeNode2(5);
+        TreeNode2 n32 = new TreeNode2(8);
+        TreeNode2 n33 = new TreeNode2(4);
+        TreeNode2 n34 = new TreeNode2(5);
+        TreeNode2 n35 = new TreeNode2(8);
+        TreeNode2 n36 = new TreeNode2(4);
+        TreeNode2 n37 = new TreeNode2(5);
+        TreeNode2 n38 = new TreeNode2(8);
 
         root.left = n11;
         root.right = n12;
@@ -235,16 +233,16 @@ public class TreeUtils {
         return root;
     }
 
-    private static TreeNode test2() {
-        TreeNode root = new TreeNode(2);
-        TreeNode n11 = new TreeNode(7);
-        TreeNode n12 = new TreeNode(5);
-        TreeNode n21 = new TreeNode(2);
-        TreeNode n22 = new TreeNode(6);
-        TreeNode n23 = new TreeNode(9);
-        TreeNode n31 = new TreeNode(5);
-        TreeNode n32 = new TreeNode(8);
-        TreeNode n33 = new TreeNode(4);
+    private static TreeNode2 test2() {
+        TreeNode2 root = new TreeNode2(2);
+        TreeNode2 n11 = new TreeNode2(7);
+        TreeNode2 n12 = new TreeNode2(5);
+        TreeNode2 n21 = new TreeNode2(2);
+        TreeNode2 n22 = new TreeNode2(6);
+        TreeNode2 n23 = new TreeNode2(9);
+        TreeNode2 n31 = new TreeNode2(5);
+        TreeNode2 n32 = new TreeNode2(8);
+        TreeNode2 n33 = new TreeNode2(4);
 
         root.left = n11;
         root.right = n12;
@@ -267,7 +265,7 @@ public class TreeUtils {
 
         System.out.println("===test1'===");
         Integer[] nodes = new Integer[] {2, 7, 5, 2, 6, 3, 6, 5, 8, 4, 5, 8, 4, 5, 8};
-        TreeNode tree = createTree(nodes);
+        TreeNode2 tree = createTree(nodes);
         print(tree);
 
         System.out.println("===test2===");
