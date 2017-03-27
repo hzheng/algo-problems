@@ -62,6 +62,11 @@ public class CountSheep {
         test(999999, 9999990);
     }
 
+    private static Object getResult(int in) {
+        int res = count(in);
+        return (res >= 0 ? String.valueOf(res) : "INSOMNIA");
+    }
+
     public static void main(String[] args) {
         // if (true) { // test without input file
         if (false) {
@@ -71,10 +76,9 @@ public class CountSheep {
 
         Scanner in = new Scanner(System.in);
         int t = in.nextInt();
-        for (int i = 1; i <= t; ++i) {
-            int n = in.nextInt();
-            int res = count(n);
-            System.out.format("Case #%d: %s%n", i, (res >= 0) ? String.valueOf(res) : "INSOMNIA");
+        for (int i = 1; i <= t; i++) {
+            System.out.format("Case #%d: ", i);
+            System.out.println(getResult(in.nextInt()));
         }
     }
 }
