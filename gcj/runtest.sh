@@ -23,7 +23,7 @@ run_test() {
     echo testing $java_class on input: $input...
     output="${input%.*}".out
     expected="${input%.*}".expected
-    java $java_class < $input > $output
+    java -Dgcj.submit $java_class < $input > $output
 
     if ! test -f $expected; then
         echo "Done without comparison"

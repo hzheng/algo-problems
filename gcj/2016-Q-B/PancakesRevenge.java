@@ -121,8 +121,7 @@ public class PancakesRevenge {
     }
 
     public static void main(String[] args) {
-        // if (true) { // test without input file
-        if (false) {
+        if (System.getProperty("gcj.submit") == null) {
             org.junit.runner.JUnitCore.main("PancakesRevenge");
             return;
         }
