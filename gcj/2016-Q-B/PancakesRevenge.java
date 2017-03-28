@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.*;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -116,9 +117,7 @@ public class PancakesRevenge {
         // test("+-+-++-+--+--+++--++", 12);
     }
 
-    private static Object getResult(String in) {
-        return flip(in);
-    }
+    private static PrintStream out = System.out;
 
     public static void main(String[] args) {
         if (System.getProperty("gcj.submit") == null) {
@@ -129,8 +128,12 @@ public class PancakesRevenge {
         Scanner in = new Scanner(System.in);
         int t = in.nextInt();
         for (int i = 1; i <= t; i++) {
-            System.out.format("Case #%d: ", i);
-            System.out.println(getResult(in.next()));
+            out.format("Case #%d: ", i);
+            printResult(in.next());
         }
+    }
+
+    private static void printResult(String in) {
+        out.println(flip(in));
     }
 }

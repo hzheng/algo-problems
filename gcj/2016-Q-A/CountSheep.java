@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.*;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -62,10 +63,7 @@ public class CountSheep {
         test(999999, 9999990);
     }
 
-    private static Object getResult(int in) {
-        int res = count(in);
-        return (res >= 0 ? String.valueOf(res) : "INSOMNIA");
-    }
+    private static PrintStream out = System.out;
 
     public static void main(String[] args) {
         if (System.getProperty("gcj.submit") == null) {
@@ -76,8 +74,13 @@ public class CountSheep {
         Scanner in = new Scanner(System.in);
         int t = in.nextInt();
         for (int i = 1; i <= t; i++) {
-            System.out.format("Case #%d: ", i);
-            System.out.println(getResult(in.nextInt()));
+            out.format("Case #%d: ", i);
+            printResult(in.nextInt());
         }
+    }
+
+    private static void printResult(int n) {
+        int res = count(n);
+        out.println(res >= 0 ? String.valueOf(res) : "INSOMNIA");
     }
 }

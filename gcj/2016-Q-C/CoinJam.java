@@ -1,5 +1,6 @@
 import java.util.*;
 import java.math.*;
+import java.io.*;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -149,16 +150,7 @@ outer:
         test(16, 50);
     }
 
-    private static Object getResult(int n, int j) {
-        StringBuilder sb = new StringBuilder();
-        for (List<String> coins : coinJam2(n, j)) {
-            for (String coin : coins) {
-                sb.append(coin).append(" ");
-            }
-            sb.append("\n");
-        }
-        return sb;
-    }
+    private static PrintStream out = System.out;
 
     public static void main(String[] args) {
         if (System.getProperty("gcj.submit") == null) {
@@ -169,8 +161,15 @@ outer:
         Scanner in = new Scanner(System.in);
         int t = in.nextInt();
         for (int i = 1; i <= t; i++) {
-            System.out.format("Case #%d:%n", i);
-            System.out.println(getResult(in.nextInt(), in.nextInt()));
+            out.format("Case #%d:%n", i);
+            printResult(in.nextInt(), in.nextInt());
+        }
+    }
+
+    private static void printResult(int n, int j) {
+        for (List<String> coins : coinJam2(n, j)) {
+            coins.forEach(i -> out.print(i + " "));
+            out.println();
         }
     }
 }
