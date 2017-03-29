@@ -92,6 +92,7 @@ public class CrazyRows {
 
     }
 
+    private static Scanner in = new Scanner(System.in);
     private static PrintStream out = System.out;
 
     public static void main(String[] args) {
@@ -100,20 +101,18 @@ public class CrazyRows {
             return;
         }
 
-        Scanner in = new Scanner(System.in);
         int t = in.nextInt();
         for (int i = 1; i <= t; i++) {
             out.format("Case #%d: ", i);
-            int n = in.nextInt();
-            String[] matrix = new String[n];
-            for (int j = 0; j < n; j++) {
-                matrix[j] = in.next();
-            }
-            printResult(matrix);
+            printResult(in.nextInt());
         }
     }
 
-    private static void printResult(String[] matrix) {
+    private static void printResult(int n) {
+        String[] matrix = new String[n];
+        for (int i = 0; i < n; i++) {
+            matrix[i] = in.next();
+        }
         out.println(minSwap2(matrix));
     }
 }

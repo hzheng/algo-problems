@@ -96,6 +96,7 @@ public class Fractiles {
         test(3, 2, 3, new Long[] {2L, 9L});
     }
 
+    private static Scanner in = new Scanner(System.in);
     private static PrintStream out = System.out;
 
     public static void main(String[] args) {
@@ -104,7 +105,6 @@ public class Fractiles {
             return;
         }
 
-        Scanner in = new Scanner(System.in);
         int t = in.nextInt();
         for (int i = 1; i <= t; i++) {
             out.format("Case #%d: ", i);

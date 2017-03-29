@@ -117,6 +117,7 @@ public class PancakesRevenge {
         // test("+-+-++-+--+--+++--++", 12);
     }
 
+    private static Scanner in = new Scanner(System.in);
     private static PrintStream out = System.out;
 
     public static void main(String[] args) {
@@ -125,7 +126,6 @@ public class PancakesRevenge {
             return;
         }
 
-        Scanner in = new Scanner(System.in);
         int t = in.nextInt();
         for (int i = 1; i <= t; i++) {
             out.format("Case #%d: ", i);
