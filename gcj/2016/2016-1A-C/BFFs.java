@@ -86,14 +86,41 @@ public class BFFs {
         for (int p : pairs.keySet()) {
             int len = pairs.get(p);
             if (len >= 0) {
-                sum += len + pairs.put(friends[p] - 1, - 1) + 2;
+                sum += len + pairs.put(friends[p] - 1, -1) + 2;
             }
         }
         return Math.max(max, sum);
     }
 
+    public static int largetstCircle2(int[] friends) {
+        int n = friends.length;
+        int maxCircle = 0;
+        int totalPairGroupLen = 0;
+        int[] maxPairLens = new int[n];
+        for (int i = 0; i < n; i++) {
+            int[] path = new int[n];
+            int len = 0;
+            int cyclePos = i;
+            for (; path[cyclePos] == 0; cyclePos = friends[cyclePos] - 1) {
+                path[cyclePos] = ++len;
+            }
+            int circle = len - path[cyclePos] + 1;
+            if (circle > 2) {
+                maxCircle = Math.max(maxCircle, circle);
+            } else if (len > maxPairLens[cyclePos]) {
+                totalPairGroupLen += len - maxPairLens[cyclePos];
+                maxPairLens[cyclePos] = len;
+                if (maxPairLens[friends[cyclePos] - 1] == 0) {
+                    maxPairLens[friends[cyclePos] - 1] = 2;
+                }
+            }
+        }
+        return Math.max(maxCircle, totalPairGroupLen);
+    }
+
     void test(int[] friends, int expected) {
         assertEquals(expected, largetstCircle(friends));
+        assertEquals(expected, largetstCircle2(friends));
     }
 
     @Test
@@ -127,6 +154,6 @@ public class BFFs {
         for (int i = 0; i < n; i++) {
             friends[i] = in.nextInt();
         }
-        out.println(largetstCircle(friends));
+        out.println(largetstCircle2(friends));
     }
 }
