@@ -80,15 +80,45 @@ public class CrazyRows {
         nums[j] = tmp;
     }
 
+    // time complexity: O(N ^ 2), space complexity: O(N)
+    public static int minSwap3(String[] matrix) {
+        int n = matrix.length;
+        int[] nums = new int[n];
+        for (int i = 0; i < n; i++) {
+            nums[i] = matrix[i].lastIndexOf('1');
+        }
+        int[] designation = new int[n];
+        Arrays.fill(designation, -1);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (designation[j] < 0 && nums[j] <= i) {
+                    designation[j] = i;
+                    break;
+                }
+            }
+        }
+        int swaps = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (designation[i] > designation[j]) {
+                    swaps++;
+                }
+            }
+        }
+        return swaps;
+    }
+
     void test(String[] matrix, int expected) {
+        assertEquals(expected, minSwap(matrix));
         assertEquals(expected, minSwap2(matrix));
+        assertEquals(expected, minSwap3(matrix));
     }
 
     @Test
     public void test() {
-        test(new String[]{"10", "11"}, 0);
-        test(new String[]{"001", "100", "010"}, 2);
-        test(new String[]{"1110", "1100", "1100", "1000"}, 4);
+        test(new String[] {"10", "11"}, 0);
+        test(new String[] {"001", "100", "010"}, 2);
+        test(new String[] {"1110", "1100", "1100", "1000"}, 4);
 
     }
 
@@ -113,6 +143,6 @@ public class CrazyRows {
         for (int i = 0; i < n; i++) {
             matrix[i] = in.next();
         }
-        out.println(minSwap2(matrix));
+        out.println(minSwap3(matrix));
     }
 }

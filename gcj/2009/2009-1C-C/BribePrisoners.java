@@ -81,9 +81,39 @@ public class BribePrisoners {
         return dp[0][q];
     }
 
+    // Recursion + Dynamic Programming(Top-Down)
+    // time complexity: O(Q ^ 3), space complexity: O(Q ^ 2)
+    public static int bribePrisoners3(int p, int[] releases) {
+        return minCost(releases, 1, p, new HashMap<>());
+    }
+
+    private static int minCost(int[] releases, int start, int end, Map<Integer, Integer> dp) {
+        if (start >= end) return 0;
+
+        int key = start * 10000 + end; // p <= 10000
+        Integer cached = dp.get(key);
+        if (cached != null) return cached;
+
+        int min = 0;
+        for (int i = 1; i < releases.length - 1; i++) {
+            int prisoner = releases[i];
+            if (prisoner < start) continue;
+            if (prisoner > end) break;
+
+            int cost = (end - start) + minCost(releases, start, prisoner - 1, dp)
+                       + minCost(releases, prisoner + 1, end, dp);
+            if (min == 0 || min > cost) {
+                min = cost;
+            }
+        }
+        dp.put(key, min);
+        return min;
+    }
+
     void test(int p, int[] releases, int expected) {
         assertEquals(expected, bribePrisoners(p, releases));
         assertEquals(expected, bribePrisoners2(p, releases));
+        assertEquals(expected, bribePrisoners3(p, releases));
     }
 
     @Test
@@ -113,6 +143,6 @@ public class BribePrisoners {
         for (int j = 0; j < q; j++) {
             releases[j + 1] = in.nextInt();
         }
-        out.println(bribePrisoners(p, releases));
+        out.println(bribePrisoners2(p, releases));
     }
 }
