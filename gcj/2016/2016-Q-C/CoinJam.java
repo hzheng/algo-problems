@@ -44,8 +44,7 @@ public class CoinJam {
         int m = (n <= 16) ? n : n / 2;
         char[] buf = new char[m];
         buf[0] = buf[m - 1] = '1';
-outer:
-        for (int i = 0;; i++) {
+        outer : for (int i = 0;; i++) {
             for (int k = 1, mask = 1 << (m - 3); mask > 0; k++, mask >>= 1) {
                 buf[k] = (i & mask) == 0 ? '0' : '1';
             }
@@ -136,6 +135,45 @@ outer:
             }
         }
         return res;
+    }
+
+    public static List<List<String> > coinJam5(int n, int J) {
+        List<List<String> > res = new ArrayList<>();
+        for (int i = 0; i < n - 10; i++) {
+            for (int j = 0; j < n - 10 - i; j++) {
+                for (int k = 0; k < n - 10 - i - j; k++) {
+                    int l = n - 10 - i - j - k;
+                    List<String> coins = new ArrayList<>();
+                    res.add(coins);
+                    coins.add(format(n, i, j, k, l));
+                    coins.add("3 2 5 2 7 2 3 2 11");
+                    if (--J == 0) return res;
+                }
+            }
+        }
+        return res;
+    }
+
+    private static String format(int n, int i, int j, int k, int l) {
+        String template = String.format("11%%0%dd11%%0%dd11%%0%dd11%%0%dd11", i + 1, j + 1, k + 1, l + 1);
+        return String.format(template, 0, 0, 0, 0).replace("10", "1"); // remove extra 0's
+        // Or:
+        // String template = String.format("11%%%ds11%%%ds11%%%ds11%%%ds11", i + 1, j + 1, k + 1, l + 1);
+        // return String.format(template, "0", "0", "0", "0").replace(" ", "0").replace("10", "1");
+        //
+        // Python:
+        // return "11{}11{}11{}11{}11".format("0" * i, "0" * j, "0" * k, "0" * l));
+    }
+
+    private static String format2(int n, int i, int j, int k, int l) {
+        char[] buf = new char[n];
+        Arrays.fill(buf, '0');
+        buf[0] = buf[1] = '1';
+        buf[i + 2] = buf[i + 3] = '1';
+        buf[i + j + 4] = buf[i + j + 5] = '1';
+        buf[i + j + k + 6] = buf[i + j + k + 7] = '1';
+        buf[i + j + k + l + 8] = buf[i + j + k + l + 9] = '1';
+        return String.valueOf(buf);
     }
 
     void test(int n, int j) {

@@ -55,9 +55,14 @@ public class PancakesRevenge {
         return (s[n - 1] == '-') ? count + 1 : count;
     }
 
+    public static int flip2(String pancakes) {
+        int h = pancakes.split("-\\+", -1).length + pancakes.split("\\+-", -1).length - 1;
+        return pancakes.endsWith("-") ? h : h - 1;
+    }
+
     // BFS + Queue
     // Time Limit Exceeded on large test set
-    public static int flip2(String pancakes) {
+    public static int flip3(String pancakes) {
         int len = pancakes.length();
         if (len == 0) return 0;
 
@@ -96,6 +101,7 @@ public class PancakesRevenge {
     void test(String pancakes, int expected) {
         assertEquals(expected, flip(pancakes));
         assertEquals(expected, flip2(pancakes));
+        assertEquals(expected, flip3(pancakes));
     }
 
     @Test
@@ -134,6 +140,6 @@ public class PancakesRevenge {
     }
 
     private static void printResult(String in) {
-        out.println(flip(in));
+        out.println(flip2(in));
     }
 }

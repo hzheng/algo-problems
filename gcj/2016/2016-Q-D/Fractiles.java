@@ -70,8 +70,8 @@ public class Fractiles {
         List<Long> res = new ArrayList<>();
         for (int i = 0; i < k; i += complexity) {
             long num = 0;
-            for (int j = i; j < i + complexity; j++) {
-                num = num * k + Math.min(j, k - 1);
+            for (int j = 0; j < complexity; j++) {
+                num = num * k + Math.min(i + j, k - 1);
             }
             res.add(num + 1);
         }

@@ -35,9 +35,14 @@ public class CountSheep {
     public static int count(int n) {
         if (n == 0) return -1;
 
+        // digit 0: The tenth number is guaranteed to end in 0.
+        // digits 1-9: Consider the smallest power of 10 greater than N; call it P.
+        // The leftmost digit will take on every possible value from 1-9 as
+        // the number increases up to (or past) 9P. No digit can be skipped, because
+        // that would require the step between successive numbers to be larger than P.
         boolean[] flags = new boolean[10];
         int counted = 0;
-        for (int i = n;; i += n) { // TODO: prove the loop cannot be infinite
+        for (int i = n;; i += n) {
             for (int j = i; j > 0; j /= 10) {
                 int digit = j % 10;
                 if (!flags[digit]) {
