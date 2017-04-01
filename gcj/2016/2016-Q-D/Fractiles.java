@@ -96,24 +96,34 @@ public class Fractiles {
         test(3, 2, 3, new Long[] {2L, 9L});
     }
 
-    private static Scanner in = new Scanner(System.in);
-    private static PrintStream out = System.out;
-
     public static void main(String[] args) {
-        if (System.getProperty("gcj.submit") == null) {
-            org.junit.runner.JUnitCore.main("Fractiles");
+        Scanner in = new Scanner(System.in);
+        PrintStream out = System.out;
+        if (args.length == 0) {
+            String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+            out.format("Usage: java %s input_file [output_file]%n%n", clazz);
+            org.junit.runner.JUnitCore.main(clazz);
+            return;
+        }
+        try {
+            in = new Scanner(new File(args[0]));
+            if (args.length > 1) {
+                out = new PrintStream(args[1]);
+            }
+        } catch (Exception e) {
+            System.err.println(e);
             return;
         }
 
         int t = in.nextInt();
         for (int i = 1; i <= t; i++) {
             out.format("Case #%d: ", i);
-            printResult(in.nextInt(), in.nextInt(), in.nextInt());
+            printResult(in, out);
         }
     }
 
-    private static void printResult(int k, int c,  int s) {
-        List<Long> res = pickTitles2(k, c, s);
+    private static void printResult(Scanner in, PrintStream out) {
+        List<Long> res = pickTitles2(in.nextInt(), in.nextInt(), in.nextInt());
         if (res == null) {
             out.println("IMPOSSIBLE");
             return;

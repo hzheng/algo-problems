@@ -78,23 +78,34 @@ public class RankAndFile {
              new Integer[] {3, 4, 6});
     }
 
-    private static Scanner in = new Scanner(System.in);
-    private static PrintStream out = System.out;
-
     public static void main(String[] args) {
-        if (System.getProperty("gcj.submit") == null) {
-            org.junit.runner.JUnitCore.main("RankAndFile");
+        Scanner in = new Scanner(System.in);
+        PrintStream out = System.out;
+        if (args.length == 0) {
+            String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+            out.format("Usage: java %s input_file [output_file]%n%n", clazz);
+            org.junit.runner.JUnitCore.main(clazz);
+            return;
+        }
+        try {
+            in = new Scanner(new File(args[0]));
+            if (args.length > 1) {
+                out = new PrintStream(args[1]);
+            }
+        } catch (Exception e) {
+            System.err.println(e);
             return;
         }
 
         int t = in.nextInt();
         for (int i = 1; i <= t; i++) {
             out.format("Case #%d: ", i);
-            printResult(in.nextInt());
+            printResult(in, out);
         }
     }
 
-    private static void printResult(int n) {
+    private static void printResult(Scanner in, PrintStream out) {
+        int n = in.nextInt();
         int[][] lists = new int[2 * n - 1][n];
         for (int i = 0; i < 2 * n - 1; i++) {
             lists[i] = new int[n];

@@ -188,24 +188,34 @@ public class CoinJam {
         test(16, 50);
     }
 
-    private static Scanner in = new Scanner(System.in);
-    private static PrintStream out = System.out;
-
     public static void main(String[] args) {
-        if (System.getProperty("gcj.submit") == null) {
-            org.junit.runner.JUnitCore.main("CoinJam");
+        Scanner in = new Scanner(System.in);
+        PrintStream out = System.out;
+        if (args.length == 0) {
+            String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+            out.format("Usage: java %s input_file [output_file]%n%n", clazz);
+            org.junit.runner.JUnitCore.main(clazz);
+            return;
+        }
+        try {
+            in = new Scanner(new File(args[0]));
+            if (args.length > 1) {
+                out = new PrintStream(args[1]);
+            }
+        } catch (Exception e) {
+            System.err.println(e);
             return;
         }
 
         int t = in.nextInt();
         for (int i = 1; i <= t; i++) {
             out.format("Case #%d:%n", i);
-            printResult(in.nextInt(), in.nextInt());
+            printResult(in, out);
         }
     }
 
-    private static void printResult(int n, int j) {
-        for (List<String> coins : coinJam2(n, j)) {
+    private static void printResult(Scanner in, PrintStream out) {
+        for (List<String> coins : coinJam2(in.nextInt(), in.nextInt())) {
             coins.forEach(i -> out.print(i + " "));
             out.println();
         }

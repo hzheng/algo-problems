@@ -3,7 +3,9 @@
 # Test GCJ programs
 
 usage() {
-    echo "Usage: `basename $0` [java_file... [input_file...]]"
+    echo "Usage: `basename $0` [-o] [java_file... [input_file...]]"
+    echo "-h print this message"
+    echo "-o ouput to STDOUT"
     exit 1
 }
 
@@ -20,12 +22,17 @@ run_test() {
         exit 1
     fi
 
-    echo testing $java_class on input: $input...
-    output="${input%.*}".out
-    expected="${input%.*}".expected
-    java -Dgcj.submit $java_class < $input > $output
+    if [[ $stdout -eq 0 ]]; then
+        output="${input%.*}".out
+        expected="${input%.*}".expected
+    fi
+    echo -e "\nTesting $java_class on input: $input output: ${output-STDOUT}..."
+    java $java_class $input $output
+    #java -Dgcj.submit $java_class < $input > $output
 
-    if ! test -f $expected; then
+    if [[ -z "$expected" ]]; then
+        :
+    elif ! test -f $expected; then
         echo "Done without comparison"
     elif diff $output $expected &> /dev/null; then
         echo "PASS"
@@ -37,6 +44,13 @@ run_test() {
 
 if [ "$1" == '-h' ]; then
     usage
+fi
+
+stdout=0
+
+if [ "$1" == '-o' ]; then
+    stdout=1
+    shift
 fi
 
 java_srcs=()
