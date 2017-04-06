@@ -47,9 +47,14 @@ if [ "$1" == '-h' ]; then
 fi
 
 stdout=0
-
 if [ "$1" == '-o' ]; then
     stdout=1
+    shift
+fi
+
+time=0
+if [ "$1" == '-t' ]; then
+    time=1
     shift
 fi
 
@@ -80,6 +85,10 @@ for java_src in "${java_srcs[@]}"; do
     fi
     echo Done
     for input in $inputs; do
-        run_test $java_src "$input"
+        if [[ $time -eq 0 ]]; then
+            run_test $java_src "$input"
+        else
+            time run_test $java_src "$input"
+        fi
     done
 done

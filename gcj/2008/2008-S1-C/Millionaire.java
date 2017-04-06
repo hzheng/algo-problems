@@ -114,12 +114,10 @@ public class Millionaire {
         }
 
         int t = in.nextInt();
-        long t1 = System.nanoTime();
         for (int i = 1; i <= t; i++) {
             out.format("Case #%d: ", i);
             printResult(in, out);
         }
-        System.out.format("%.3f ms\n", (System.nanoTime() - t1) * 1E-6);
     }
 
     private static void printResult(Scanner in, PrintStream out) {
