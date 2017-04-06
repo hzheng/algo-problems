@@ -36,6 +36,7 @@ import static org.junit.Assert.*;
 // 1 ≤ the length of C and J ≤ 18.
 public class CloseMatch {
     // Greedy + Recursion + DFS + Backtracking
+    // time complexity: O(N ^ 2), space complexity: O(N)
     public static String closeMatch(String C, String J) {
         char[] cs1 = C.toCharArray();
         char[] cs2 = J.toCharArray();
