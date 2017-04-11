@@ -30,6 +30,7 @@ import static org.junit.Assert.*;
 // Large dataset
 // 2 ≤ length of S ≤ 1000.
 public class PancakeFlipper {
+    // time complexity: O(N ^ 2), space complexity: O(N)
     public static int flip(String S, int K) {
         List<Integer> row = new ArrayList<>(); // alternative -'s # and +'s #
         char[] chars = {'+', '-'};
@@ -44,12 +45,12 @@ public class PancakeFlipper {
         for (int i = 0, len = row.size(); i < len; i++) {
             int cur = row.get(i);
             res += cur / K;
-            if (++i >= len) return (cur % K) == 0 ? res : - 1;
+            if (++i >= len) return (cur % K) == 0 ? res : -1;
 
             if ((cur %= K) == 0) continue;
 
             int j = i;
-            for (; ; j++) {
+            for (;; j++) {
                 if (j == len) return -1;
                 if ((cur += row.get(j)) >= K) break;
             }
@@ -64,8 +65,67 @@ public class PancakeFlipper {
         return res;
     }
 
+    // time complexity: O(N ^ 2), space complexity: O(N)
+    public static int flip2(String S, int K) {
+        int res = 0;
+        StringBuilder sb = new StringBuilder(S);
+        for (int i = 0, n = S.length(); i < n; i++) {
+            if (sb.charAt(i) == '+') continue;
+
+            int happyPos = sb.indexOf("+", i + 1);
+            if (happyPos < 0) {
+                happyPos = n;
+            }
+            int blanks = happyPos - i;
+            res += blanks / K;
+            if ((blanks %= K) > 0) {
+                for (int j = happyPos; j < happyPos + K - blanks; j++) {
+                    if (j == n) return -1;
+                    sb.setCharAt(j, sb.charAt(j) == '+' ? '-' : '+');
+                }
+                res++;
+            }
+            i = happyPos - 1;
+        }
+        return res;
+    }
+
+    // time complexity: O(N ^ 2), space complexity: O(N)
+    public static int flip3(String S, int K) {
+        int res = 0;
+        char[] cs = S.toCharArray();
+        for (int i = 0, n = cs.length; i < n; i++) {
+            if (cs[i] == '+') continue;
+
+            for (int j = i + 1; j < i + K; cs[j++] ^= ('-' ^ '+')) {
+                if (j == n) return -1;
+            }
+            res++;
+        }
+        return res;
+    }
+
+    // time complexity: O(N), space complexity: O(N)
+    public static int flip4(String S, int K) {
+        int n = S.length();
+        int[] flips = new int[n];
+        int res = 0;
+        for (int i = 0; i < n; i++) {
+            if ((flips[i] % 2 == 0) ^ (S.charAt(i) == '-')) continue;
+
+            res++;
+            for (int j = i + 1; j < i + K; flips[j++]++) {
+                if (j >= n) return -1;
+            }
+        }
+        return res;
+    }
+
     void test(String s, int k, int expected) {
         assertEquals(expected, flip(s, k));
+        assertEquals(expected, flip2(s, k));
+        assertEquals(expected, flip3(s, k));
+        assertEquals(expected, flip4(s, k));
     }
 
     @Test
@@ -114,7 +174,7 @@ public class PancakeFlipper {
     }
 
     private static void printResult(Scanner in, PrintStream out) {
-        int res = flip(in.next(), in.nextInt());
+        int res = flip4(in.next(), in.nextInt());
         out.println(res >= 0 ? String.valueOf(res) : "IMPOSSIBLE");
     }
 }
