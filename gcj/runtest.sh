@@ -28,6 +28,7 @@ run_test() {
     fi
     echo -e "\nTesting $java_class on input: $input output: ${output-STDOUT}..."
     java $java_class $input $output
+    # java -Xss4m $java_class $input $output
     #java -Dgcj.submit $java_class < $input > $output
 
     if [[ -z "$expected" ]]; then
