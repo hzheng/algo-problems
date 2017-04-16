@@ -105,7 +105,7 @@ public class PancakeFlipper {
         return res;
     }
 
-    // time complexity: O(N), space complexity: O(N)
+    // time complexity: O(N ^ 2), space complexity: O(N)
     public static int flip4(String S, int K) {
         int n = S.length();
         int[] flips = new int[n];
@@ -121,11 +121,39 @@ public class PancakeFlipper {
         return res;
     }
 
+    // time complexity: O(N), space complexity: O(N)
+    public static int flip5(String S, int K) {
+        char[] s = S.toCharArray();
+        int n = s.length;
+        int[] flips = new int[n];
+        int res = 0;
+        int sum = 0;
+        for (int i = 0; i <= n - K; i++) {
+            if (((s[i] == '-' ? 1 : 0) + sum) % 2 != 0) {
+                res++;
+                flips[i] = 1;
+            }
+            sum += flips[i];
+            if (i - K + 1 >= 0) {
+                sum -= flips[i - K + 1];
+            }
+        }
+        for (int i = n - K + 1; i < n; i++) {
+            if (((s[i] == '-' ? 1 : 0) + sum) % 2 != 0) return -1;
+
+            if (i - K + 1 >= 0) {
+                sum -= flips[i - K + 1];
+            }
+        }
+        return res;
+    }
+
     void test(String s, int k, int expected) {
         assertEquals(expected, flip(s, k));
         assertEquals(expected, flip2(s, k));
         assertEquals(expected, flip3(s, k));
         assertEquals(expected, flip4(s, k));
+        assertEquals(expected, flip5(s, k));
     }
 
     @Test
@@ -147,7 +175,7 @@ public class PancakeFlipper {
         test("-+-+-", 4, -1);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Scanner in = new Scanner(System.in);
         PrintStream out = System.out;
         if (args.length == 0) {
@@ -156,16 +184,12 @@ public class PancakeFlipper {
             org.junit.runner.JUnitCore.main(clazz);
             return;
         }
-        try {
-            in = new Scanner(new File(args[0]));
-            if (args.length > 1) {
-                out = new PrintStream(args[1]);
-            }
-        } catch (Exception e) {
-            System.err.println(e);
-            return;
-        }
 
+        in = new Scanner(new File(args[0]));
+        if (args.length > 1) {
+            out = new PrintStream(args[1]);
+        }
+        
         int t = in.nextInt();
         for (int i = 1; i <= t; i++) {
             out.format("Case #%d: ", i);
@@ -174,7 +198,7 @@ public class PancakeFlipper {
     }
 
     private static void printResult(Scanner in, PrintStream out) {
-        int res = flip4(in.next(), in.nextInt());
+        int res = flip5(in.next(), in.nextInt());
         out.println(res >= 0 ? String.valueOf(res) : "IMPOSSIBLE");
     }
 }
