@@ -12,9 +12,9 @@ import static org.junit.Assert.*;
 // or more than two continuous 'L'.
 // Return whether the student could be rewarded according to his attendance record.
 public class AttendanceRecord {
-    // beats N/A(10 ms for 113 tests)
+    // beats N/A(9 ms for 113 tests)
     public boolean checkRecord(String s) {
-        for (int i = 0, absent = 0, late = 1; i < s.length(); i++) {
+        for (int i = 0, absent = 0, late = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             if (c == 'A') {
                 if (++absent > 1) return false;
@@ -35,14 +35,14 @@ public class AttendanceRecord {
         int absent = 0;
         for (char c : s.toCharArray()) {
             switch (c) {
-                case 'A':
+            case 'A':
                 if (++absent > 1) return false;
                 late = 0;
                 break;
-                case 'L':
+            case 'L':
                 if (++late > 2) return false;
                 break;
-                default:
+            default:
                 late = 0;
             }
         }
@@ -55,10 +55,22 @@ public class AttendanceRecord {
         return !s.matches(".*(LLL|A.*A).*");
     }
 
+    // beats N/A(9 ms for 113 tests)
+    public boolean checkRecord4(String s) {
+        int absent = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == 'A') {
+                if (++absent > 1) return false;
+            }
+        }
+        return s.indexOf("LLL") < 0;
+    }
+
     void test(String s, boolean expected) {
         assertEquals(expected, checkRecord(s));
         assertEquals(expected, checkRecord2(s));
         assertEquals(expected, checkRecord3(s));
+        assertEquals(expected, checkRecord4(s));
     }
 
     @Test
