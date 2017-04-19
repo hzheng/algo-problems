@@ -6,7 +6,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 // https://code.google.com/codejam/contest/5304486/dashboard#s=p2
-// Round 2017: Problem C - Play the Dragon
+// Round 1A 2017: Problem C - Play the Dragon
 //
 // You have Hd health points and an attack power of Ad, and the knight has Hk health points
 // and an attack power of Ak. If your health drops to 0 or below at any point; you lose; if

@@ -6,7 +6,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 // https://code.google.com/codejam/contest/4304486/dashboard#s=p1
-// 2016 1A: Problem B - Rank and File
+// Round 1A 2016: Problem B - Rank and File
 //
 // When Sergeant Argus's army assembles for drilling, they stand in the shape of an
 // N by N square grid, with exactly one soldier in each cell.

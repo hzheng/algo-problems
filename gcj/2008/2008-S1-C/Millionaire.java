@@ -6,7 +6,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 // https://code.google.com/codejam/contest/32005/dashboard#s=p2
-// Round 200x: Problem C - Millionaire
+// APAC Semifinal 2008: Problem C - Millionaire
 //
 // You have been invited to the popular TV show "Would you like to be a millionaire?".
 // Before the game starts, the host spins a wheel of fortune to determine P, the probability

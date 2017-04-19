@@ -6,7 +6,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 // https://code.google.com/codejam/contest/4304486/dashboard#s=p0
-// 2016 1A: Problem A - The Last Word
+// Round 1A 2016: Problem A - The Last Word
 //
 // On the game show The Last Word, the host begins a round by showing the contestant
 // a string S of uppercase English letters. The contestant has a whiteboard which is

@@ -6,7 +6,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 // https://code.google.com/codejam/contest/4304486/dashboard#s=p2
-// 2016 1A: Problem C - BFFs
+// Round 1A 2016: Problem C - BFFs
 //
 // You have N kids in your class, and each one has a different student ID number
 // from 1 through N. Every kid in your class has a single best friend forever (BFF),

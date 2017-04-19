@@ -6,7 +6,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 // https://code.google.com/codejam/contest/204113/dashboard#s=p0
-// Round 2 2009: Problem A - Crazy Rows
+// Round 2A 2009: Problem A - Crazy Rows
 //
 // You are given an N x N matrix with 0 and 1 values. You can swap any two adjacent rows of the matrix.
 // Your goal is to have all the 1 values in the matrix below or on the main diagonal.
