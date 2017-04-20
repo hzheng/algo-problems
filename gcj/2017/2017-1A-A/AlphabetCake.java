@@ -251,7 +251,7 @@ public class AlphabetCake {
         for (int i = 0; i < R; i++) {
             grid[i] = in.next().toCharArray();
         }
-        cut(grid);
+        cut4(grid);
         out.println();
         for (int i = 0; i < R; i++) {
             for (int j = 0; j < C; j++) {

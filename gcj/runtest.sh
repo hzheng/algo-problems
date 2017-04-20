@@ -26,21 +26,25 @@ run_test() {
         output="${input%.*}".out
         expected="${input%.*}".expected
     fi
-    echo -e "\nTesting $java_class on input: $input output: ${output-STDOUT}..."
+    echo -e "\nTesting $java_class... (IN: $input OUT: ${output-STDOUT})"
     java $java_class $input $output
     # java -Xss4m $java_class $input $output
     #java -Dgcj.submit $java_class < $input > $output
 
     if [[ -z "$expected" ]]; then
-        :
-    elif ! test -f $expected; then
-        echo "Done without comparison"
-    elif diff $output $expected &> /dev/null; then
-        echo "PASS"
-    else
-        echo "FAIL: $output does NOT match $expected"
-        exit
+        return
     fi
+    if ! test -f $expected; then
+        echo "Done without comparison"
+        return
+    fi
+    for exp_file in ${expected}*; do
+        if diff $output $exp_file &> /dev/null; then
+            echo "PASS! ($output == $exp_file)"
+            return
+        fi
+    done
+    echo "FAIL ($output != ${expected}*)"
 }
 
 if [ "$1" == '-h' ]; then
