@@ -34,17 +34,21 @@ run_test() {
     if [[ -z "$expected" ]]; then
         return
     fi
+    red='\033[0;31m'
+    yellow='\033[0;33m'
+    green='\033[0;32m'
+    color_off='\033[0m'
     if ! test -f $expected; then
-        echo "Done without comparison"
+        printf "${yellow}UNCHECKED${color_off}"
         return
     fi
     for exp_file in ${expected}*; do
         if diff $output $exp_file &> /dev/null; then
-            echo "PASS! ($output == $exp_file)"
+            printf "${green}PASS${color_off} ($output == $exp_file)"
             return
         fi
     done
-    echo "FAIL ($output != ${expected}*)"
+    printf "${red}FAIL${color_off} ($output != ${expected}*)"
 }
 
 if [ "$1" == '-h' ]; then
