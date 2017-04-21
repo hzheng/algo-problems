@@ -49,7 +49,7 @@ public class Ratatouille {
         int[] lastPkgStart = new int[N];
         int kits = 0;
         for (int weight : packages[0]) {
-            int minServe = (weight * 10 - 1)/ (11 * ingredients[0]) + 1;
+            int minServe = (weight * 10 - 1) / (11 * ingredients[0]) + 1;
             int maxServe = weight * 10 / (9 * ingredients[0]);
             serveLoop : for (int serve = minServe; serve <= maxServe; serve++) {
                 ingredientLoop : for (int i = 1; i < N; i++) {
@@ -72,8 +72,43 @@ public class Ratatouille {
         return kits;
     }
 
+    public static int maxKits2(int[] ingredients, int[][] packages) {
+        for (int[] pkg : packages) {
+            Arrays.sort(pkg);
+        }
+        int N = packages.length;
+        int P = packages[0].length;
+        int[] pkgStart = new int[N];
+        for (int kits = 0;; ) {
+            int maxLeft = 0;
+            int minRight = Integer.MAX_VALUE;
+            int minMaxIndex = 0;
+            for (int i = 0; i < N; i++) {
+                if (pkgStart[i] >= P) return kits;
+
+                int weight = packages[i][pkgStart[i]];
+                int minServe = (weight * 10 - 1) / (11 * ingredients[i]) + 1;
+                int maxServe = weight * 10 / (9 * ingredients[i]);
+                maxLeft = Math.max(maxLeft, minServe);
+                if (maxServe < minRight) {
+                    minMaxIndex = i;
+                    minRight = maxServe;
+                }
+            }
+            if (maxLeft > minRight) {
+                pkgStart[minMaxIndex]++;
+            } else { // has intersection
+                kits++;
+                for (int i = 0; i < N; i++) {
+                    pkgStart[i]++;
+                }
+            }
+        }
+    }
+
     void test(int[] ingredients, int[][] packages, int expected) {
         assertEquals(expected, maxKits(ingredients, packages));
+        assertEquals(expected, maxKits2(ingredients, packages));
     }
 
     @Test
@@ -120,6 +155,6 @@ public class Ratatouille {
                 packages[i][j] = in.nextInt();
             }
         }
-        out.println(maxKits(ingredients, packages));
+        out.println(maxKits2(ingredients, packages));
     }
 }
