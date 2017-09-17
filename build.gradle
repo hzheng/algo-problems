@@ -1,0 +1,13 @@
+apply plugin: 'java'
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['common', 'leetcode', 'gcj', 'poj', 'ctci', 'other']
+            exclude '**/tmp/**'
+        }
+        resources {
+            srcDirs = ['src/resources']
+        }
+    }
+}
