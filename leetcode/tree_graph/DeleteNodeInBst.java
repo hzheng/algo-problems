@@ -10,7 +10,7 @@ import common.TreeNode;
 //
 // Given a root node reference of a BST and a key, delete the node with the
 // given key in the BST. Return the root node (possibly updated) of the BST.
-public class DeleteNode {
+public class DeleteNodeInBst {
     // Recursion
     // beats 28.62%(8 ms for 84 tests)
     public TreeNode deleteNode(TreeNode root, int key) {
@@ -86,7 +86,7 @@ public class DeleteNode {
     }
 
     void test(String s, int key, String ... expected) {
-        DeleteNode d = new DeleteNode();
+        DeleteNodeInBst d = new DeleteNodeInBst();
         test(d::deleteNode, s, key, expected);
         test(d::deleteNode2, s, key, expected);
     }

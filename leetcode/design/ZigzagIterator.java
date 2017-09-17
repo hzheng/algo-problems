@@ -53,8 +53,8 @@ public class ZigzagIterator {
 
     // beats 53.27%(5ms for 125 tests)
     static class ZigzagIterator2 implements IZigzagIterator {
-        @SuppressWarnings("unchecked")
         private int total = 2; // could extend to any k
+        @SuppressWarnings("unchecked")
         private Iterator<Integer>[] itrs = new Iterator[total];
         private int[] indices = new int[total];
         private int nextIndex;
