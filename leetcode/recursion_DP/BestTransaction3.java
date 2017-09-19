@@ -1,4 +1,3 @@
-import java.util.*;
 import java.util.function.Function;
 
 import org.junit.Test;

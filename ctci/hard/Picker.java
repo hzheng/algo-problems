@@ -4,7 +4,6 @@ import java.util.stream.IntStream;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * Cracking the Coding Interview(5ed) Problem 18.3:

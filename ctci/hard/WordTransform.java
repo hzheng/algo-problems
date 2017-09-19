@@ -3,18 +3,15 @@ import java.util.Queue;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.TreeSet;
-import java.util.function.Function;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * Cracking the Coding Interview(5ed) Problem 18.10:

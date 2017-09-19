@@ -1,6 +1,3 @@
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 /**
  * Cracking the Coding Interview(5ed) Problem 5.8:
  * A monochrome screen is stored as a single array of bytes, allowing 8

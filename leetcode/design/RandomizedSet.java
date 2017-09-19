@@ -1,11 +1,8 @@
-import java.awt.geom.Arc2D;
 import java.util.*;
 import java.util.Random;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-
-import common.Interval;
 
 // LC380: https://leetcode.com/problems/insert-delete-getrandom-o1/
 //

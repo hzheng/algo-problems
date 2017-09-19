@@ -1,8 +1,4 @@
 import java.util.LinkedList;
-import java.util.Arrays;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * Cracking the Coding Interview(5ed) Problem 3.7:

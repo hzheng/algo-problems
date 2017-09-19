@@ -2,7 +2,6 @@ import java.util.*;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import java.util.function.Function;
 
 // LC305: https://leetcode.com/problems/number-of-islands-ii/
 //

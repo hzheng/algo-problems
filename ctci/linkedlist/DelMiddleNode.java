@@ -1,8 +1,5 @@
 import common.LinkedListNode;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 /**
  * Cracking the Coding Interview(5ed) Problem 2.3:
  * Delete a node in the middle of a singly linked list,

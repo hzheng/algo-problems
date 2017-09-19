@@ -1,7 +1,6 @@
 import java.util.LinkedList;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import common.Graph.Node;
 import static common.Graph.State.*;

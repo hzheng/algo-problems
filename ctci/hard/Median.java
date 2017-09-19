@@ -1,5 +1,4 @@
 import java.util.PriorityQueue;
-import java.util.Comparator;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

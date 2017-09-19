@@ -1,8 +1,5 @@
 import java.util.Stack;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 /**
  * Cracking the Coding Interview(5ed) Problem 3.2:
  * Design a stack which, in addition to push and pop, also has a function min

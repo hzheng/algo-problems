@@ -3,7 +3,6 @@ import java.math.*;
 import java.io.*;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 // https://code.google.com/codejam/contest/6254486/dashboard#s=p2
 // Qualification Round 2016: Problem C - Coin Jam

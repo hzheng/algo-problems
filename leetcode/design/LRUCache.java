@@ -1,6 +1,5 @@
 import java.util.*;
 
-import org.junit.Test;
 import static org.junit.Assert.*;
 
 // LC146: https://leetcode.com/problems/lru-cache/

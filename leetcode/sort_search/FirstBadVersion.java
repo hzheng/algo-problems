@@ -1,7 +1,6 @@
 import java.util.*;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 // LC278: https://leetcode.com/problems/first-bad-version/
 //

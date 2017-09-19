@@ -5,9 +5,6 @@ import java.util.HashMap;
 
 import java.awt.Point;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 /**
  * Cracking the Coding Interview(5ed) Problem 9.2:
  * A robot sits on the upper left corner of an X by Y grid. It can only move in

@@ -1,7 +1,6 @@
 package common;
 
-public class TreeNode2
-{
+public class TreeNode2 {
     public TreeNode2 left;
     public TreeNode2 right;
     public int data;

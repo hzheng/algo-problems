@@ -1,9 +1,5 @@
-import java.util.*;
-
 import org.junit.Test;
 import static org.junit.Assert.*;
-
-import common.ListNode;
 
 import common.ListNode;
 

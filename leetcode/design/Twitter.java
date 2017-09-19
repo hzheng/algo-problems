@@ -3,8 +3,6 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import common.Interval;
-
 // LC355: https://leetcode.com/problems/design-twitter/
 //
 // Design a simplified version of Twitter where users can post tweets,

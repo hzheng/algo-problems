@@ -1,6 +1,3 @@
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 /**
  * Cracking the Coding Interview(5ed) Problem 9.3:
  * A magic index in an array A[1...n-1] is defined to be an index such that

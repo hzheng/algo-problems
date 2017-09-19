@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.stream.*;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

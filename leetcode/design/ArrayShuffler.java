@@ -1,11 +1,6 @@
-import java.awt.geom.Arc2D;
-import java.util.*;
 import java.util.Random;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
-
-import common.Interval;
 
 // LC384: https://leetcode.com/problems/shuffle-an-array/
 //

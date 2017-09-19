@@ -1,5 +1,4 @@
 import java.util.*;
-import java.lang.reflect.Array;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
