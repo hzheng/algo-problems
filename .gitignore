@@ -16,3 +16,4 @@ classpath.index
 .vscode
 .gradle
 .project
+.settings
