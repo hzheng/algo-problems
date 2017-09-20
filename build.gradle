@@ -1,13 +1,54 @@
 apply plugin: 'java'
+apply plugin: 'eclipse'
+// apply plugin: 'base'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+  testCompile 'junit:junit:4.12'
+}
 
 sourceSets {
     main {
         java {
-            srcDirs = ['common', 'leetcode', 'gcj', 'poj', 'ctci', 'other']
-            exclude '**/tmp/**'
+            // srcDirs = ['common', 'leetcode', 'gcj', 'poj', 'ctci', 'other']
+            // exclude '**/tmp/**'
+            srcDir 'lib'
+            srcDir { 
+                file('leetcode').listFiles().findAll { it.isDirectory() && it.name != 'tmp' }
+            }
+            srcDir {
+                file('ctci').listFiles().findAll { it.isDirectory() && it.name != 'tmp' }
+            }
+            srcDir {
+                file('poj').listFiles().findAll { it.isDirectory() && it.name != 'tmp' }
+            }
+            srcDir {
+                file('other').listFiles().findAll { it.isDirectory() && it.name != 'tmp' }
+            }
+            def dirs = []
+            file('gcj').listFiles().findAll { it.isDirectory() && it.name != 'tmp'}.each { dirs << it.listFiles() }
+            srcDir dirs
         }
         resources {
             srcDirs = ['src/resources']
         }
     }
 }
+
+task cleanAll(dependsOn: clean, type: Delete) {
+    description 'Clean all generated files.'
+    delete 'bin'
+    fileTree(projectDir){ include '**/*.class' }.each{ delete it }
+
+    doLast {
+        println 'done with clean all'
+    }
+}
+
+cleanAll.dependsOn {
+    tasks.findAll { it.name.startsWith('clean') && it.name != 'cleanAll' }
+}
+
