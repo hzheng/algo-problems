@@ -78,7 +78,7 @@ public class Smallest {
 
     private void test(Function<int[], Integer, Integer> getRank,
                       String name, int[] a, int[] rank, int[] expected) {
-        long t1 = System.nanoTime();
+        // long t1 = System.nanoTime();
         for (int i = 0; i < rank.length; i++) {
             assertEquals(expected[i], (int)getRank.apply(a.clone(), rank[i]));
         }

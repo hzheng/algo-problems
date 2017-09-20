@@ -55,7 +55,7 @@ public class ArithmeticSlices {
     public int numberOfArithmeticSlices3(int[] A) {
         int[] dp = new int[A.length];
         int sum = 0;
-        for (int i = A.length - 1, count = 0; i > 1; i--) {
+        for (int i = A.length - 1; i > 1; i--) {
             if (A[i] + A[i - 2] == A[i - 1] * 2) {
                 dp[i - 1] = dp[i] + 1;
                 sum += dp[i - 1];

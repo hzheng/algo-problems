@@ -1,5 +1,3 @@
-import java.util.*;
-
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -120,8 +118,8 @@ public class SuperPow {
     public int superPow5(int a, int[] b) {
         if (b.length == 1 && b[0] == 0) return 1;
 
-        final int factor1 = 7; // one of 1337's prime factor
-        final int factor2 = 191; // mod / factor1
+        // final int factor1 = 7; // one of 1337's prime factor
+        // final int factor2 = 191; // mod / factor1
         // phi(Euler totient value): 1337 - 191 - 7 + 1
         // or phi(1337) = phi(191) * phi(7) = (191 - 1) * (7 - 1)
         final int phi = 1140;

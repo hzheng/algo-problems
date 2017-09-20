@@ -57,7 +57,7 @@ public class SparseMatrixMultiplication {
     public int[][] multiply2(int[][] A, int[][] B) {
         int r1 = A.length;
         int c1 = A[0].length;
-        int r2 = B.length;
+        // int r2 = B.length;
         int c2 = B[0].length;
         Map<Integer, Map<Integer, Integer> > nonzeros1 = new HashMap<>();
         for (int i = 0; i < r1; i++) {

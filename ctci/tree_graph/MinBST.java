@@ -23,7 +23,7 @@ public class MinBST {
     }
 
     void test(int[] n, int[] expected) {
-        TreeNode2 tree = createMinBST(n);
+        // TreeNode2 tree = createMinBST(n);
         // assertArrayEquals(expected, treeArray);
     }
 

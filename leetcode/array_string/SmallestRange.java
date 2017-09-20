@@ -54,7 +54,7 @@ public class SmallestRange {
     public int[] smallestRange(List<List<Integer> > nums) {
         int k = nums.size();
         int[] res = {Integer.MIN_VALUE / 2, Integer.MAX_VALUE / 2};
-        int minRange = Integer.MAX_VALUE;
+        // int minRange = Integer.MAX_VALUE;
         PriorityQueue<int[]> pq = new PriorityQueue<>(new Comparator<int[]>() {
             public int compare(int[] a, int[] b) {
                 return nums.get(a[0]).get(a[1]) - nums.get(b[0]).get(b[1]);

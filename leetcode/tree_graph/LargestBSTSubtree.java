@@ -29,7 +29,7 @@ public class LargestBSTSubtree {
     // time complexity: O(N)
     // beats 78.54%(7 ms for 73 tests)
     public int largestBSTSubtree(TreeNode root) {
-        Result res = new Result(0, 0, 0);
+        // Result res = new Result(0, 0, 0);
         int[] max = new int[1];
         postorder(root, max);
         return max[0];

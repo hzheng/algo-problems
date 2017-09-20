@@ -21,7 +21,6 @@ public class LicenseKeyFormatting {
         int groups = (int)Math.ceil((double)S.length() / K);
         int len = S.length() + groups - 1;
         char[] chars = new char[len];
-        StringBuilder sb = new StringBuilder();
         int i = 0;
         int j = 0;
         for (int k = S.length() % K; k > 0; k--) {

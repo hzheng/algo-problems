@@ -157,7 +157,6 @@ public class CircusTower {
 
     // time complexity: O(N ^ log(N)), space complexity: O(N)
     // https://en.wikipedia.org/wiki/Longest_increasing_subsequence
-    @SuppressWarnings("unchecked")
     public static List<Person> buildTower3(List<Person> people) {
         Collections.sort(people);
 
@@ -293,7 +292,7 @@ public class CircusTower {
             System.out.println("===testing " + N + " people===");
             List<Person> people = new ArrayList<Person>();
             for (int i = 0; i < N; ++i) {
-                int j = 10 + i;
+                // int j = 10 + i;
                 people.add(new Person(ran(150), ran(50)));
             }
             test(people);

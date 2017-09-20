@@ -20,7 +20,7 @@ public class WordLadder {
         int len = beginWord.length();
         if (endWord.length() != len) return 0;
 
-        Map<String, Integer> cache = new HashMap<>();
+        // Map<String, Integer> cache = new HashMap<>();
         return ladderLength(beginWord, endWord, len, wordList,
                             new HashSet<>(), new HashMap<>());
     }

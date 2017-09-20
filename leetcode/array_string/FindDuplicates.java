@@ -4,7 +4,6 @@ import java.util.function.Function;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
 
 // LC442: https://leetcode.com/problems/find-all-duplicates-in-an-array/
 //

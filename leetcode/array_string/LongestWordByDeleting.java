@@ -100,7 +100,6 @@ public class LongestWordByDeleting {
 
     private boolean isSubword(String word, int[][] lists) {
         int[] indices = new int[26];
-        int len = word.length();
         int prev = -1;
 outer:
         for (char c : word.toCharArray()) {

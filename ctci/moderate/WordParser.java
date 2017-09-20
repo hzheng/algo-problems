@@ -103,7 +103,7 @@ public class WordParser {
     }
 
     private static String concat(String words) {
-        char[] punctuation = {',', '"', '!', '.', '\'', '?', ','};
+        // char[] punctuation = {',', '"', '!', '.', '\'', '?', ','};
         return removePunctuations(words).replace(" ", "");
     }
 

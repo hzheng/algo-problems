@@ -5,8 +5,6 @@ import static org.junit.Assert.*;
 
 import common.ListNode;
 
-import common.ListNode;
-
 // LC382: https://leetcode.com/problems/linked-list-random-node/
 //
 // Given a singly linked list, return a random node's value from the linked

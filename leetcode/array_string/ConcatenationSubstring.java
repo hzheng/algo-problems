@@ -15,8 +15,8 @@ public class ConcatenationSubstring {
 
         List<Integer> res = new ArrayList<>();
         String word = words[0];
-        int wordLen = word.length();
-        int wordsLen = wordLen * words.length;
+        // int wordLen = word.length();
+        // int wordsLen = wordLen * words.length;
         WordSet wordSet = new WordSet(words);
 
         for (int i = 0; i < s.length(); ) {

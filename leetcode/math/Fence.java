@@ -178,7 +178,6 @@ public class Fence {
 
     Point[] toPoints(int[][] pts) {
         int m = pts.length;
-        int n = pts[0].length;
         Point[] points = new Point[m];
         for (int i = 0; i < m; i++) {
             points[i] = new Point(pts[i][0], pts[i][1]);

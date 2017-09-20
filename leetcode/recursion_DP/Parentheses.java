@@ -59,7 +59,7 @@ public class Parentheses {
 
     // rewrite <tt>parentheses2</tt> by bit operation
     public static List<String> parenthesesBit(int count) {
-        char[] str = new char[count * 2];
+        // char[] str = new char[count * 2];
         List<String> list = new ArrayList<>();
         long[] bits = new long[1];
         if (count < 32)

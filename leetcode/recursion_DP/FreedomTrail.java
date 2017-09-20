@@ -61,7 +61,7 @@ public class FreedomTrail {
 
     private int[][][] distanceTable(char[] ring, char[] key) {
         int rLen = ring.length;
-        int kLen = key.length;
+        // int kLen = key.length;
         int[][][] dist = new int[rLen][26][2];
         Set<Character> chars = new HashSet<>();
         for (char c : key) {

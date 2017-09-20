@@ -76,7 +76,6 @@ public class CountComponents {
         int count = 0;
         boolean[] visited = new boolean[n];
         for (int i = 0; i < n; i++) {
-            List<Integer> neighbors = adjacencyList[i];
             if (!visited[i]) {
                 dfs(i, adjacencyList, visited);
                 count++;

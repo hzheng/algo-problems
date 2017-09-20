@@ -217,10 +217,8 @@ public class PhoneDirectory {
     static class PhoneDirectory5 implements Directory {
         private Set<Integer> used = new HashSet<>();
         private Queue<Integer> available = new LinkedList<>();
-        private int max;
 
         public PhoneDirectory5(int maxNumbers) {
-            max = maxNumbers;
             for (int i = 0; i < maxNumbers; i++) { // better offer when needed
                 available.offer(i);
             }

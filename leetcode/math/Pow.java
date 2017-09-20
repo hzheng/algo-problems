@@ -30,7 +30,6 @@ public class Pow {
 
         double base = x;
         int exp = n;
-        double factor = 1;
         if (n == Integer.MIN_VALUE) {
             exp++; // avoid overflow
         }

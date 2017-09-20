@@ -1,5 +1,3 @@
-import java.util.*;
-
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -27,7 +25,7 @@ public class ValidWordAbbreviation {
             if (abbr.charAt(j) <= '0' || abbr.charAt(j) > '9') return false;
 
             int count = 0;
-            for (int power = 1; j < len2 && Character.isDigit(abbr.charAt(j)); j++) {
+            for (; j < len2 && Character.isDigit(abbr.charAt(j)); j++) {
                 count *= 10;
                 count += (abbr.charAt(j) - '0');
             }

@@ -62,7 +62,6 @@ public class ZeroOneMatrix {
     // DFS + Recursion
     // beats N/A(46 ms for 48 tests)
     public List<List<Integer> > updateMatrix2(List<List<Integer> > matrix) {
-        List<List<Integer> > res = new ArrayList<>();
         int m = matrix.size();
         if (m == 0) return Collections.emptyList();
 

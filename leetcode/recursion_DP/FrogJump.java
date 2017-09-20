@@ -28,7 +28,7 @@ public class FrogJump {
         landing[0][0] = true;
         landing[1][0] = (stones[1] == 1);
         for (int i = 2; i < n; i++) {
-            int stone = stones[i];
+            // int stone = stones[i];
             for (int j = 1; j < i; j++) {
                 int jump = stones[i] - stones[j];
                 boolean[] last = landing[j];

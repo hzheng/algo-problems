@@ -1,4 +1,3 @@
-import java.util.*;
 import java.util.regex.*;
 
 import org.junit.Test;

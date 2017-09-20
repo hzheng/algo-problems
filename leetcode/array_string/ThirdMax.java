@@ -23,7 +23,6 @@ public class ThirdMax {
 
     // beats 30.78%(7 ms for 26 tests)
     public int thirdMax2(int[] nums) {
-        int n = nums.length;
         int[] max = new int[3];
         int count = 0;
         for (int num : nums) {

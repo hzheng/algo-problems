@@ -1,5 +1,3 @@
-import java.util.*;
-
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -42,7 +40,6 @@ public class NumberComplement {
 
     public int findComplementWrong(int num) {
         String s = String.format("%32s", Integer.toBinaryString(num));
-        int len = s.length();
         char[] chars = new char[32];
         for (int i = 0; i < 32; i++) {
             chars[i] = (s.charAt(i) == '1') ? '0' : '1';

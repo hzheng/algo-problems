@@ -22,7 +22,7 @@ public class InsertInterval {
             return res;
         }
 
-        Interval interval = intervals.get(startPos);
+        // Interval interval = intervals.get(startPos);
         for (int i = 0; i < startPos; i++) {
             res.add(intervals.get(i));
         }

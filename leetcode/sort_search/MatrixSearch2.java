@@ -202,7 +202,7 @@ public class MatrixSearch2 {
 
     private void test(Function<int[][], Integer, Boolean> f, String name,
                       int[][] matrix, int x, boolean expected) {
-        long t1 = System.nanoTime();
+        // long t1 = System.nanoTime();
         assertEquals(expected, f.apply(matrix, x));
         // System.out.format("%s: %.3f ms\n", name, (System.nanoTime() - t1) * 1e-6);
     }

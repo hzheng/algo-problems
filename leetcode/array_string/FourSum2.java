@@ -38,7 +38,6 @@ public class FourSum2 {
         NavigableMap<Integer, Integer> map2 = new TreeMap<>();
         countSum(C, D, map2, false);
         int count = 0;
-        Integer[]  sums1 = map1.keySet().toArray(new Integer[0]);
         while (!map1.isEmpty()) {
             Map.Entry<Integer, Integer> ab = map1.pollFirstEntry();
             int sum1 = ab.getKey();

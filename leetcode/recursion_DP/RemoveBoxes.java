@@ -62,7 +62,7 @@ public class RemoveBoxes {
     // beats N/A(166 ms for 60 tests)
     public int removeBoxes2(int[] boxes) {
         int n = boxes.length;
-        int[][][] dp = new int[n][n][n];
+        // int[][][] dp = new int[n][n][n];
         return maxPoint(boxes, 0, n - 1, 0, new int[n][n][n]);
     }
 

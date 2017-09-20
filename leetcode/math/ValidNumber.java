@@ -122,7 +122,7 @@ public class ValidNumber {
             char c = s.charAt(n - 1);
             if (c != '.' && !Character.isDigit(c)) return false;
 
-            double i = Double.parseDouble(s);
+            // double i = Double.parseDouble(s);
             return true;
         }
         catch (NumberFormatException e) {
