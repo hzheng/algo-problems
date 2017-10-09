@@ -3,7 +3,7 @@ import static org.junit.Assert.*;
 
 import common.TreeNode;
 
-// LC687: https ://leetcode.com/problems/longest-univalue-path/description/
+// LC687: https://leetcode.com/problems/longest-univalue-path/description/
 //
 // Given a binary tree, find the length of the longest path where each node in
 // the path has the same value.This path may or may not pass through the root.
