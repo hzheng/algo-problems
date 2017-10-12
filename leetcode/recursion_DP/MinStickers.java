@@ -16,8 +16,8 @@ import static org.junit.Assert.*;
 // stickers consists of lowercase English words(without apostrophes).
 // target has length in the range [1, 15], and consists of lowercase letters.
 public class MinStickers {
-    // Recursion + DFS + Backtracking
-    // beats 2.13%(1054 ms for 100 tests)
+    // Recursion + DFS(+ Backtracking)
+    // beats 2.10%(976 ms for 100 tests)
     public int minStickers(String[] stickers, String target) {
         int[] tgt = new int[26];
         for (char c : target.toCharArray()) {
@@ -52,10 +52,9 @@ public class MinStickers {
         for (int i = 0; i < 26; i++) {
             if (tgt[i] > 0 && src[i] > 0) {
                 if (applied == null) {
-                    applied = new int[26];
+                    tgt = (applied = tgt.clone());
                 }
-                applied[i] = Math.min(tgt[i], src[i]);
-                tgt[i] -= applied[i];
+                tgt[i] -= Math.min(tgt[i], src[i]);
             }
         }
         return applied;
@@ -69,6 +68,7 @@ public class MinStickers {
         for (int i : tgt) {
             if (i != 0) {
                 finished = false;
+                break;
             }
         }
         if (finished) {
@@ -79,13 +79,9 @@ public class MinStickers {
 
         int[] applied = apply(srcs[start], tgt);
         if (applied != null) {
-            spell(srcs, tgt, start, chosen + 1, min);
-
-            for (int i = 0; i < 26; i++) { // backtracking
-                tgt[i] += applied[i];
-            }
+            spell(srcs, applied, start, chosen + 1, min); // clone to avoid undo
         }
-        spell(srcs, tgt, start + 1, chosen, min);
+        spell(srcs, tgt, start + 1, chosen, min); // simply skip the current src
     }
 
     // Dynamic Programming(Bottom-Up) + Bit Manipulation
