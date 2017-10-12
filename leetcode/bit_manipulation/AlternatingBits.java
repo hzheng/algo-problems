@@ -70,9 +70,19 @@ public class AlternatingBits {
         return Integer.toBinaryString(n).matches("(10)*1?");
     }
 
-    // beats 4.26%(2r ms for 204 tests)
+    // beats 4.26%(21 ms for 204 tests)
     public boolean hasAlternatingBits10(int n) {
         return Integer.toBinaryString(n ^ (n >> 1)).matches("1+");
+    }
+
+    // beats 33.58%(15 ms for 204 tests)
+    public boolean hasAlternatingBits11(int n) {
+        int i = n;
+        if ((i & 1) == 1) {
+            i >>= 1;
+        }
+        for (; i > 0 && ((i & 3) == 2); i >>= 2) {}
+        return i == 0;
     }
 
     void test(int n, boolean expected) {
@@ -86,6 +96,7 @@ public class AlternatingBits {
         assertEquals(expected, hasAlternatingBits8(n));
         assertEquals(expected, hasAlternatingBits9(n));
         assertEquals(expected, hasAlternatingBits10(n));
+        assertEquals(expected, hasAlternatingBits11(n));
     }
 
     @Test
