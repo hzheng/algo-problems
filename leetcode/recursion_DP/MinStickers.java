@@ -156,14 +156,123 @@ public class MinStickers {
         return res;
     }
 
+    // BFS + Queue + Set
+    // beats 32.74%(423 ms for 100 tests)
+    public int minStickers4(String[] stickers, String target) {
+        int n = stickers.length;
+        int[][] srcs = new int[n][26];
+        for (int i = 0; i < stickers.length; ++i) {
+            for (char c : stickers[i].toCharArray()) {
+                srcs[i][c - 'a']++;
+            }
+        }
+        int[] tgt = new int[27];
+        for (char c : target.toCharArray()) {
+            tgt[c - 'a']++;
+        }
+        String key = toKey(tgt);
+        if (key.isEmpty()) return 0;
+
+        Queue<int[]> queue = new LinkedList<>();
+        queue.offer(tgt);
+        Set<String> visited = new HashSet<>();
+        visited.add(key);
+        while (!queue.isEmpty()) {
+            int[] cur = queue.poll();
+            for (int[] src : srcs) {
+                int[] next = cur.clone();
+                for (int i = 0; i < 26; i++) {
+                    next[i] = Math.max(next[i] - src[i], 0);
+                }
+                next[26]++;
+                String nextKey = toKey(next);
+                if (nextKey.isEmpty()) return next[26];
+
+                if (visited.add(nextKey)) {
+                    queue.offer(next);
+                }
+            }
+        }
+        return -1;
+    }
+
+    private String toKey(int[] tgt) {
+        StringBuilder sb = new StringBuilder();
+        boolean empty = true;
+        for (int i = 0; i < 26; ++i) {
+            int n = tgt[i];
+            sb.append(n).append(" ");
+            empty &= (n == 0);
+        }
+        return empty ? "" : sb.toString();
+    }
+
+    // BFS + Queue + Set
+    // beats 12.74%(593 ms for 100 tests)
+    public int minStickers4_2(String[] stickers, String target) {
+        int n = stickers.length;
+        int[][] srcs = new int[n][26];
+        for (int i = 0; i < stickers.length; i++) {
+            for (char c : stickers[i].toCharArray()) {
+                srcs[i][c - 'a']++;
+            }
+        }
+        Integer[] tgt = new Integer[27];
+        Arrays.fill(tgt, 0);
+        for (char c : target.toCharArray()) {
+            tgt[c - 'a']++;
+        }
+        List<Integer> tgtList = Arrays.asList(tgt); // for sake of List "equals"
+        if (finished(tgtList)) return 0;
+
+        Queue<List<Integer> > queue = new LinkedList<>();
+        queue.offer(tgtList);
+        Set<List<Integer> > visited = new HashSet<>();
+        visited.add(tgtList);
+        while (!queue.isEmpty()) {
+            List<Integer> cur = queue.poll();
+            for (int[] src : srcs) {
+                List<Integer> next = null;
+                for (int i = 0; i < 26; i++) {
+                    int count = cur.get(i);
+                    if (count > 0 && src[i] > 0) {
+                        if (next == null) {
+                            next = new ArrayList<>(cur);
+                        }
+                        next.set(i, Math.max(count - src[i], 0));
+                    }
+                }
+                if (next == null) continue;
+
+                next.set(26, next.get(26) + 1);
+                if (finished(next)) return next.get(26);
+
+                if (visited.add(next)) {
+                    queue.offer(next);
+                }
+            }
+        }
+        return -1;
+    }
+
+    private boolean finished(List<Integer> tgt) {
+        for (int i = tgt.size() - 2; i >= 0; i--) {
+            if (tgt.get(i) > 0) return false;
+        }
+        return true;
+    }
+
     void test(String[] stickers, String target, int expected) {
         assertEquals(expected, minStickers(stickers, target));
         assertEquals(expected, minStickers2(stickers, target));
         assertEquals(expected, minStickers3(stickers, target));
+        assertEquals(expected, minStickers4(stickers, target));
+        assertEquals(expected, minStickers4_2(stickers, target));
     }
 
     @Test
     public void test() {
+        test(new String[] {"with", "example", "science"}, "", 0);
         test(new String[] {"with", "example", "science"}, "thehat", 3);
         test(new String[] {"notice", "possible"}, "basicbasic", -1);
         test(new String[] {
