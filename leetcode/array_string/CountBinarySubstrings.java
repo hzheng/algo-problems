@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 // are counted the number of times they occur.
 public class CountBinarySubstrings {
     // time complexity: O(N), space complexity: O(1)
-    // beats N/A%(31 ms for 90 tests)
+    // beats 59.06%(31 ms for 90 tests)
     public int countBinarySubstrings(String s) {
         for (int i = s.length() - 1, cur = 1, prev = 0, res = 0;; i--) {
             if (i == 0) return res + Math.min(cur, prev);
@@ -25,7 +25,7 @@ public class CountBinarySubstrings {
     }
 
     // time complexity: O(N), space complexity: O(1)
-    // beats N/A%(33 ms for 90 tests)
+    // beats 51.22%(33 ms for 90 tests)
     public int countBinarySubstrings2(String s) {
         int res = 0;
         for (int i = s.length() - 1, cur = 1, prev = 0; i > 0; i--) {
