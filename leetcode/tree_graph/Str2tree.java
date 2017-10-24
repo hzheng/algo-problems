@@ -12,7 +12,7 @@ import common.TreeNode;
 // You always start to construct the left child node of the parent first if it exists.
 public class Str2tree {
     // Recursion
-    // beats N/A(24 ms for 86 tests)
+    // beats 89.40%(24 ms for 86 tests)
     public TreeNode str2tree(String s) {
         int len = s.length();
         if (len == 0) return null;
@@ -20,7 +20,8 @@ public class Str2tree {
         int leftParen = s.indexOf('(');
         if (leftParen < 0) return new TreeNode(Integer.parseInt(s));
 
-        TreeNode root = new TreeNode(Integer.parseInt(s.substring(0, leftParen)));
+        TreeNode root =
+            new TreeNode(Integer.parseInt(s.substring(0, leftParen)));
         int rightParen = rightParenPos(s, leftParen + 2);
         root.left = str2tree(s.substring(leftParen + 1, rightParen));
         if (rightParen < len - 1) {
@@ -42,7 +43,7 @@ public class Str2tree {
     }
 
     // Recursion
-    // beats N/A(45 ms for 86 tests)
+    // beats 37.09%(45 ms for 86 tests)
     public TreeNode str2tree2(String s) {
         int len = s.length();
         if (len == 0) return null;
@@ -50,8 +51,10 @@ public class Str2tree {
         int leftParen = s.indexOf('(');
         if (leftParen < 0) return new TreeNode(Integer.parseInt(s));
 
-        TreeNode root = new TreeNode(Integer.parseInt(s.substring(0, leftParen)));
-        for (int i = leftParen + 1, rightParen = 0, parens = 1; i < s.length(); i++) {
+        TreeNode root =
+            new TreeNode(Integer.parseInt(s.substring(0, leftParen)));
+        for (int i = leftParen + 1, rightParen = 0, parens = 1; i < s.length();
+             i++) {
             char c = s.charAt(i);
             if (c == '(') {
                 parens++;
@@ -79,6 +82,8 @@ public class Str2tree {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("Str2tree");
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

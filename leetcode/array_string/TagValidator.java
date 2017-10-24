@@ -35,7 +35,7 @@ public class TagValidator {
     private static final int DATA_END_LEN = DATA_END.length();
 
     // Stack
-    // beats 0.00%(18 ms for 256 tests)
+    // beats 90.38%(18 ms for 256 tests)
     public boolean isValid(String code) {
         ArrayDeque<String> stack = new ArrayDeque<>();
         boolean hasTag = false;
@@ -49,7 +49,8 @@ public class TagValidator {
             if (next == '!') {
                 if (!hasTag) return false;
 
-                String dataStart = code.substring(i, Math.min(len, i + DATA_START_LEN));
+                String dataStart =
+                    code.substring(i, Math.min(len, i + DATA_START_LEN));
                 if (!dataStart.equals(DATA_START)) return false;
 
                 int dataEnd = code.indexOf(DATA_END, i + DATA_START_LEN);
@@ -90,25 +91,30 @@ public class TagValidator {
     }
 
     // Recursion
-    // beats 0.00%(18 ms for 256 tests)
+    // beats 90.38%(18 ms for 256 tests)
     public boolean isValid2(String code) {
         char[] cs = code.toCharArray();
         String tag = getTag(cs, 0, cs.length);
-        if (tag == null || tag.isEmpty() ||!code.endsWith("</" + tag + ">")) return false;
+        if (tag == null || tag.isEmpty()
+            || !code.endsWith("</" + tag + ">")) return false;
 
-        return finishContent(cs, tag.length() + 2, cs.length - tag.length() - 3, false) >= 0;
+        return finishContent(cs, tag.length() + 2,
+                             cs.length - tag.length() - 3, false) >= 0;
     }
 
     private String getTag(char[] code, int start, int end) {
         for (int i = start + 1; i < end && i <= start + 10; i++) {
-            if (code[i] == '>') return new String(code, start + 1, i - start - 1);
+            if (code[i] == '>') {
+                return new String(code, start + 1, i - start - 1);
+            }
             if (!Character.isUpperCase(code[i])) return "";
         }
         return "";
     }
 
     private int finishData(char[] code, int start, int end) {
-        if (end - start <= DATA_START_LEN || !DATA_START.equals(new String(code, start, DATA_START_LEN))) return -1;
+        if (end - start <= DATA_START_LEN || !DATA_START.equals(
+                new String(code, start, DATA_START_LEN))) return -1;
 
         start += DATA_START_LEN;
         while (start < end) {
@@ -139,11 +145,12 @@ public class TagValidator {
 
         int next = finishContent(code, start + tagLen + 2, end, true);
         if (next < 0 || next + tagLen + 3 > end) return -1;
-        if (!("</" + tag + ">").equals(new String(code, next + 1, tagLen + 3))) return -1;
+        if (!("</" + tag + ">").equals(
+                new String(code, next + 1, tagLen + 3))) return -1;
         return finishContent(code, next + tagLen + 3, end, match);
     }
 
-    // TODO: find better solution
+    // TODO: Regex
 
     void test(String code, boolean expected) {
         assertEquals(expected, isValid(code));
@@ -173,14 +180,22 @@ public class TagValidator {
         test("<![CDATA[wahaha]]]><![CDATA[]> wahaha]]>", false);
         test("<DIV>>>  ![cdata[]] <![CDATA[<div>]>]]>]]>>]</DIV>", true);
         test("<DIV>  div tag is not closed  <DIV>", false);
-        test("<DIV> closed tags with invalid tag name  <b>123</b> </DIV>", false);
-        test("<DIV>  unmatched start tag <B>  and unmatched end tag </C>  </DIV>", false);
-        test("<DIV> unmatched tags with invalid tag name  </1234567890> and <CDATA[[]]>  </DIV>", false);
-        test("<A><A>456</A>  <A> 123  !!  <![CDATA[]]>  123 </A>   <A>123</A></A>", true);
+        test("<DIV> closed tags with invalid tag name  <b>123</b> </DIV>",
+             false);
+        test(
+            "<DIV>  unmatched start tag <B>  and unmatched end tag </C>  </DIV>",
+            false);
+        test(
+            "<DIV> unmatched tags with invalid tag name  </1234567890> and <CDATA[[]]>  </DIV>",
+            false);
+        test(
+            "<A><A>456</A>  <A> 123  !!  <![CDATA[]]>  123 </A>   <A>123</A></A>",
+            true);
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

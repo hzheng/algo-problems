@@ -15,7 +15,8 @@ import static org.junit.Assert.*;
 public class Squirrel {
     // time complexity: O(N), space complexity: O(1)
     // beats 96.17%(13 ms for 122 tests)
-    public int minDistance(int height, int width, int[] tree, int[] squirrel, int[][] nuts) {
+    public int minDistance(int height, int width, int[] tree, int[] squirrel,
+                           int[][] nuts) {
         int steps = 0;
         int max = Integer.MIN_VALUE;
         for (int[] nut : nuts) {
@@ -30,17 +31,21 @@ public class Squirrel {
         return Math.abs(p[0] - q[0]) + Math.abs(p[1] - q[1]);
     }
 
-    void test(int height, int width, int[] tree, int[] squirrel, int[][] nuts, int expected) {
-        assertEquals(expected, minDistance(height, width, tree, squirrel, nuts));
+    void test(int height, int width, int[] tree, int[] squirrel, int[][] nuts,
+              int expected) {
+        assertEquals(expected,
+                     minDistance(height, width, tree, squirrel, nuts));
     }
 
     @Test
     public void test() {
-        test(5, 7, new int[] {2, 2}, new int[] {4, 4}, new int[][] {{3, 0}, {2, 5}}, 12);
+        test(5, 7, new int[] {2, 2}, new int[] {4, 4},
+             new int[][] {{3, 0}, {2, 5}}, 12);
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

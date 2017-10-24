@@ -57,12 +57,15 @@ public class MatrixReshape {
     @Test
     public void test() {
         test(new int[][] {{1, 2}, {3, 4}}, 1, 4, new int[][] {{1, 2, 3, 4}});
-        test(new int[][] {{1, 2}, {3, 4}}, 4, 1, new int[][] {{1}, {2}, {3}, {4}});
-        test(new int[][] {{1, 2}, {3, 4}, {5, 6}}, 2, 3, new int[][] {{1, 2, 3}, {4, 5, 6}});
+        test(new int[][] {{1, 2}, {3, 4}}, 4, 1,
+             new int[][] {{1}, {2}, {3}, {4}});
+        test(new int[][] {{1, 2}, {3, 4}, {5, 6}}, 2, 3,
+             new int[][] {{1, 2, 3}, {4, 5, 6}});
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

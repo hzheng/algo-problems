@@ -7,10 +7,11 @@ import static org.junit.Assert.*;
 //
 // Given an array of integers and an integer k, you need to find the number of
 // unique k-diff pairs in the array. Here a k-diff pair is defined as an integer
-// pair (i, j), where i and j are both numbers in the array and their absolute difference is k.
+// pair (i, j), where i and j are both numbers in the array and their absolute 
+// difference is k.
 public class KDiffPairs {
     // Sort + Set
-    // beats 0%(29 ms for 72 tests)
+    // beats 65.03%(29 ms for 72 tests)
     public int findPairs(int[] nums, int k) {
         if (k < 0) return 0;
 
@@ -40,7 +41,7 @@ public class KDiffPairs {
     }
 
     // Hash Table + Set
-    // beats 0%(28 ms for 72 tests)
+    // beats 71.36%(28 ms for 72 tests)
     public int findPairs2(int[] nums, int k) {
         if (k < 0) return 0;
 
@@ -70,7 +71,7 @@ public class KDiffPairs {
     }
 
     // Hash Table
-    // beats 0%(37 ms for 72 tests)
+    // beats 22.97%(37 ms for 72 tests)
     public int findPairs2_2(int[] nums, int k) {
         if (k < 0) return 0;
 
@@ -94,7 +95,7 @@ public class KDiffPairs {
     }
 
     // Sort + Two Pointers
-    // beats 100.00%(16 ms for 72 tests)
+    // beats 95.76%(16 ms for 72 tests)
     public int findPairs3(int[] nums, int k) {
         if (k < 0) return 0;
 
@@ -122,7 +123,7 @@ public class KDiffPairs {
     }
 
     // Sort + Two Pointers
-    // beats 0%(27 ms for 72 tests)
+    // beats 76.42%(27 ms for 72 tests)
     public int findPairs4(int[] nums, int k) {
         int count = 0;
         Arrays.sort(nums);
@@ -137,7 +138,7 @@ public class KDiffPairs {
     }
 
     // Two Sets
-    // beats 0%(43 ms for 72 tests)
+    // beats 14.19%(43 ms for 72 tests)
     public int findPairs5(int[] nums, int k) {
         if (k < 0) return 0;
 
@@ -156,7 +157,7 @@ public class KDiffPairs {
     }
 
     // Hash Table
-    // beats 0%(41 ms for 72 tests)
+    // beats 16.54%(41 ms for 72 tests)
     public int findPairs6(int[] nums, int k) {
         if (k < 0) return 0;
 
@@ -196,6 +197,8 @@ public class KDiffPairs {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("KDiffPairs");
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

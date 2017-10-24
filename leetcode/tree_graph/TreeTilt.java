@@ -13,7 +13,7 @@ import common.TreeNode;
 // Null node has tilt 0.
 // The tilt of the whole tree is defined as the sum of all nodes' tilt.
 public class TreeTilt {
-    // beats 0%(28 ms for 75 tests)
+    // beats 3.32%(28 ms for 75 tests)
     public int findTilt(TreeNode root) {
         if (root == null) return 0;
 
@@ -21,7 +21,8 @@ public class TreeTilt {
         sum(root, map);
         int res = 0;
         for (TreeNode node : map.keySet()) {
-            res += Math.abs(map.getOrDefault(node.left, 0) - map.getOrDefault(node.right, 0));
+            res += Math.abs(map.getOrDefault(node.left, 0)
+                            - map.getOrDefault(node.right, 0));
         }
         return res;
     }
@@ -36,7 +37,7 @@ public class TreeTilt {
         return sum;
     }
 
-    // beats 25.00%(8 ms for 75 tests)
+    // beats 50.83%%(8 ms for 75 tests)
     public int findTilt2(TreeNode root) {
         int[] tilt = new int[1];
         postOrder(root, tilt);
@@ -65,7 +66,8 @@ public class TreeTilt {
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

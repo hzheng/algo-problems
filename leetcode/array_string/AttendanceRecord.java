@@ -6,11 +6,11 @@ import static org.junit.Assert.*;
 // Given a string representing an attendance record for a student. The record only
 // contains the following three characters:
 // 'A' : Absent. 'L' : Late. 'P' : Present.
-// A student could be rewarded if his attendance record doesn't contain more than one 'A'
-// or more than two continuous 'L'.
-// Return whether the student could be rewarded according to his attendance record.
+// A student could be rewarded if his attendance record doesn't contain more 
+// than one 'A' or more than two continuous 'L'. Return whether the student 
+// could be rewarded according to his attendance record.
 public class AttendanceRecord {
-    // beats N/A(9 ms for 113 tests)
+    // beats 52.48%(9 ms for 113 tests)
     public boolean checkRecord(String s) {
         for (int i = 0, absent = 0, late = 0; i < s.length(); i++) {
             char c = s.charAt(i);
@@ -27,7 +27,7 @@ public class AttendanceRecord {
         return true;
     }
 
-    // beats N/A(10 ms for 113 tests)
+    // beats 30.64%(10 ms for 113 tests)
     public boolean checkRecord2(String s) {
         int late = 0;
         int absent = 0;
@@ -48,12 +48,12 @@ public class AttendanceRecord {
     }
 
     // Regexp
-    // beats N/A(17 ms for 113 tests)
+    // beats 6.15%(17 ms for 113 tests)
     public boolean checkRecord3(String s) {
         return !s.matches(".*(LLL|A.*A).*");
     }
 
-    // beats N/A(9 ms for 113 tests)
+    // beats 52.48%(9 ms for 113 tests)
     public boolean checkRecord4(String s) {
         int absent = 0;
         for (int i = 0; i < s.length(); i++) {
@@ -79,7 +79,8 @@ public class AttendanceRecord {
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

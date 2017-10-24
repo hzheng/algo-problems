@@ -5,14 +5,15 @@ import static org.junit.Assert.*;
 
 // LC546: https://leetcode.com/problems/remove-boxes/
 //
-// Given several boxes with different colors represented by different positive numbers.
-// You may experience several rounds to remove boxes until there is no box left.
-// Each time you can choose some continuous boxes with the same color (composed of k boxes, k >= 1),
-// remove them and get k*k points. Find the maximum points you can get.
+// Given several boxes with different colors represented by different positive 
+// numbers. You may experience several rounds to remove boxes until there is no 
+// box left. Each time you can choose some continuous boxes with the same color 
+// (composed of k boxes, k >= 1), remove them and get k*k points. Find the 
+// maximum points.
 public class RemoveBoxes {
     // Recursion + Dynamic Programming(Top-Down)
     // time complexity: O(N ^ 4), space complexity: O(N ^ 3)
-    // beats N/A(50 ms for 60 tests)
+    // beats 52.87%(50 ms for 60 tests)
     public int removeBoxes(int[] boxes) {
         int n = boxes.length;
         if (n == 0) return 0;
@@ -59,7 +60,7 @@ public class RemoveBoxes {
 
     // Recursion + Dynamic Programming(Top-Down)
     // time complexity: O(N ^ 4), space complexity: O(N ^ 3)
-    // beats N/A(166 ms for 60 tests)
+    // beats 17.62(166 ms for 60 tests)
     public int removeBoxes2(int[] boxes) {
         int n = boxes.length;
         // int[][][] dp = new int[n][n][n];
@@ -82,7 +83,7 @@ public class RemoveBoxes {
 
     // Dynamic Programming(Botttom-Up)
     // time complexity: O(N ^ 4), space complexity: O(N ^ 3)
-    // beats N/A(458 ms for 60 tests)
+    // beats 0.41%(458 ms for 60 tests)
     public int removeBoxes3(int[] boxes) {
         int n = boxes.length;
         int[][][] dp = new int[n][n][n + 1];
@@ -104,7 +105,7 @@ public class RemoveBoxes {
 
     // Dynamic Programming(Botttom-Up)
     // time complexity: O(N ^ 4), space complexity: O(N ^ 2)
-    // beats N/A(75 ms for 60 tests)
+    // beats 50.00%(75 ms for 60 tests)
     public int removeBoxes4(int[] boxes) {
         int n = boxes.length;
         int[][] scores = new int[n][n];
@@ -153,6 +154,8 @@ public class RemoveBoxes {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("RemoveBoxes");
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

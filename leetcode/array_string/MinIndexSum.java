@@ -44,8 +44,10 @@ public class MinIndexSum {
     // time complexity: O((L1 + L2) ^ 2 * S)
     public String[] findRestaurant2(String[] list1, String[] list2) {
         List<String> res = new ArrayList<>();
-        for (int sum = 0, n1 = list1.length, n2 = list2.length; sum < n1 + n2 - 1; sum++) {
-            for (int i = Math.max(0, sum - n2 + 1); i <= Math.min(n1 - 1, sum); i++) {
+        for (int sum = 0, n1 = list1.length, n2 = list2.length;
+             sum < n1 + n2 - 1; sum++) {
+            for (int i = Math.max(0, sum - n2 + 1); i <= Math.min(n1 - 1, sum);
+                 i++) {
                 if (list1[i].equals(list2[sum - i])) {
                     res.add(list1[i]);
                 }
@@ -77,16 +79,20 @@ public class MinIndexSum {
     @Test
     public void test() {
         test(new String[] {"Shogun", "Tapioca Express", "Burger King", "KFC"},
-             new String[] {"KFC", "Shogun", "Burger King"}, new String[] {"Shogun"});
+             new String[] {"KFC", "Shogun", "Burger King"}, 
+             new String[] {"Shogun"});
         test(new String[] {"Shogun", "Tapioca", "Burger King", "KFC"},
-             new String[] {"Tapioca", "Shogun", "Burger King"}, new String[] {"Tapioca", "Shogun"});
+             new String[] {"Tapioca", "Shogun", "Burger King"},
+             new String[] {"Tapioca", "Shogun"});
         test(new String[] {"Shogun", "Tapioca Express", "Burger King", "KFC"},
-             new String[] {"KNN", "KFC", "Burger King", "Tapioca Express", "Shogun"},
+             new String[] {"KNN", "KFC", "Burger King", "Tapioca Express",
+                           "Shogun"},
              new String[] {"Shogun", "KFC", "Burger King", "Tapioca Express"});
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

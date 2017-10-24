@@ -85,7 +85,9 @@ public class MinDistance {
         if (s1.charAt(n1 - 1) == s2.charAt(n2 - 1)) {
             return memo[n1][n2] = 1 + lcs(s1, s2, n1 - 1, n2 - 1, memo);
         }
-        return memo[n1][n2] = Math.max(lcs(s1, s2, n1, n2 - 1, memo), lcs(s1, s2, n1 - 1, n2, memo));
+        return memo[n1][n2] =
+            Math.max(lcs(s1, s2, n1, n2 - 1, memo),
+                     lcs(s1, s2, n1 - 1, n2, memo));
     }
 
     void test(String word1, String word2, int expected) {
@@ -101,7 +103,8 @@ public class MinDistance {
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

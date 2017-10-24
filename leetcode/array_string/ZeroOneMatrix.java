@@ -11,7 +11,7 @@ public class ZeroOneMatrix {
     static final int[][] MOVES = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
 
     // BFS + Queue
-    // beats N/A(58 ms for 48 tests)
+    // beats 12.59%(58 ms for 48 tests)
     public List<List<Integer> > updateMatrix(List<List<Integer> > matrix) {
         int m = matrix.size();
         if (m == 0) return Collections.emptyList();
@@ -60,7 +60,7 @@ public class ZeroOneMatrix {
     }
 
     // DFS + Recursion
-    // beats N/A(46 ms for 48 tests)
+    // beats 33.14%(46 ms for 48 tests)
     public List<List<Integer> > updateMatrix2(List<List<Integer> > matrix) {
         int m = matrix.size();
         if (m == 0) return Collections.emptyList();
@@ -112,7 +112,7 @@ public class ZeroOneMatrix {
         }
     }
 
-    // beats N/A(44 ms for 48 tests)
+    // beats 41.89%(44 ms for 48 tests)
     public List<List<Integer> > updateMatrix3(List<List<Integer> > matrix) {
         int m = matrix.size();
         if (m == 0) return Collections.emptyList();
@@ -144,7 +144,7 @@ public class ZeroOneMatrix {
         return convert(cells);
     }
 
-    // beats N/A(44 ms for 48 tests)
+    // beats 41.89%(44 ms for 48 tests)
     public List<List<Integer> > updateMatrix4(List<List<Integer> > matrix) {
         int m = matrix.size();
         int n = matrix.get(0).size();
@@ -217,6 +217,8 @@ public class ZeroOneMatrix {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("ZeroOneMatrix");
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

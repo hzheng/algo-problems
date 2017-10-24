@@ -5,8 +5,8 @@ import static org.junit.Assert.*;
 
 // LC562: https://leetcode.com/problems/longest-line-of-consecutive-one-in-matrix/
 //
-// Given a 01 matrix M, find the longest line of consecutive one in the matrix. The
-// line could be horizontal, vertical, diagonal or anti-diagonal.
+// Given a 01 matrix M, find the longest line of consecutive one in the matrix. 
+// The line could be horizontal, vertical, diagonal or anti-diagonal.
 public class LongestConsecutiveOne {
     // Brute Force
     // time complexity: O(M * N), space complexity: O(1)
@@ -36,7 +36,8 @@ public class LongestConsecutiveOne {
             }
         }
         for (int i = 0; i < m + n - 1; i++) { // diagonal
-            for (int j = Math.max(i - n + 1, 0), last = j - 1; j <= Math.min(i, m - 1); j++) {
+            for (int j = Math.max(i - n + 1, 0), last = j - 1;
+                 j <= Math.min(i, m - 1); j++) {
                 if (M[j][i - j] == 1) {
                     max = Math.max(max, j - last);
                 } else {
@@ -45,7 +46,8 @@ public class LongestConsecutiveOne {
             }
         }
         for (int i = 1 - n; i < m; i++) { // anti-diagonal
-            for (int j = Math.max(0, -i), last = j - 1; j <= Math.min(m - i, n) - 1; j++) {
+            for (int j = Math.max(0, -i), last = j - 1;
+                 j <= Math.min(m - i, n) - 1; j++) {
                 if (M[i + j][j] == 1) {
                     max = Math.max(max, j - last);
                 } else {
@@ -73,7 +75,8 @@ public class LongestConsecutiveOne {
                 dp[i][j][0] = j > 0 ? dp[i][j - 1][0] + 1 : 1; // horizontal
                 dp[i][j][1] = i > 0 ? dp[i - 1][j][1] + 1 : 1; // vertical
                 dp[i][j][2] = (i > 0 && j > 0) ? dp[i - 1][j - 1][2] + 1 : 1; // anti-diagonal
-                dp[i][j][3] = (i > 0 && j < n - 1) ? dp[i - 1][j + 1][3] + 1 : 1; // diagonal
+                dp[i][j][3] =
+                    (i > 0 && j < n - 1) ? dp[i - 1][j + 1][3] + 1 : 1; // diagonal
                 for (int count : dp[i][j]) {
                     max = Math.max(max, count);
                 }
@@ -131,7 +134,8 @@ public class LongestConsecutiveOne {
             for (int j = 0; j < n; j++) {
                 if (M[i][j] == 1) {
                     max = Math.max(max, Math.max(++row, ++col[j]));
-                    max = Math.max(max, Math.max(++diag[j + i], ++antiDiag[j - i + m]));
+                    max = Math.max(max, Math.max(++diag[j + i],
+                                                 ++antiDiag[j - i + m]));
                 } else {
                     row = col[j] = diag[j + i] = antiDiag[j - i + m] = 0;
                 }
@@ -163,7 +167,8 @@ public class LongestConsecutiveOne {
             int i = x + dir[0];
             int j = y + dir[1];
             int count = 1;
-            for (; isValid(M, i, j) && M[i][j] == 1; i += dir[0], j += dir[1], count++) {}
+            for (; isValid(M, i, j) && M[i][j] == 1;
+                 i += dir[0], j += dir[1], count++) {}
             max = Math.max(count, max);
         }
         return max;
@@ -191,7 +196,8 @@ public class LongestConsecutiveOne {
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

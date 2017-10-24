@@ -3,14 +3,15 @@ import static org.junit.Assert.*;
 
 // LC553: https://leetcode.com/problems/optimal-division/
 //
-// Given a list of positive integers, the adjacent integers will perform the float division.
-// You can add any number of parenthesis at any position to change the priority of operations.
-// Find out how to add parenthesis to get the maximum result, and return the corresponding
-// expression in string format. Your expression should NOT contain redundant parenthesis.
+// Given a list of positive integers, the adjacent integers will perform the 
+// float division. You can add any number of parenthesis at any position to 
+// change the priority of operations. Find out how to add parenthesis to get the
+// maximum result, and return the corresponding expression in string format.
+// Your expression should NOT contain redundant parenthesis.
 public class OptimalDivision {
     // Bit Manipulation
     // Unnecessarily complext, but can be generalized when numbers may be less than 1
-    // beats N/A(10 ms for 93 tests)
+    // beats 13.68%(10 ms for 93 tests)
     public String optimalDivision(int[] nums) {
         int n = nums.length;
         if (n == 1) return String.valueOf(nums[0]);
@@ -43,10 +44,11 @@ public class OptimalDivision {
             res += "/" + nums[i + 2];
             last = cur;
         }
-        return ((maxMask & 1) == 0) ? nums[0] + "/(" + res + ")" : nums[0] + "/" + res;
+        return ((maxMask & 1) == 0) ? nums[0] + "/(" + res + ")"
+               : nums[0] + "/" + res;
     }
 
-    // beats N/A(7 ms for 93 tests)
+    // beats 85.70%(7 ms for 93 tests)
     public String optimalDivision2(int[] nums) {
         int n = nums.length;
         if (n == 1) return String.valueOf(nums[0]);
@@ -59,7 +61,7 @@ public class OptimalDivision {
         return sb.append(")").toString();
     }
 
-    // beats N/A(8 ms for 93 tests)
+    // beats 36.89%(8 ms for 93 tests)
     public String optimalDivision3(int[] nums) {
         int n = nums.length;
         StringBuilder sb = new StringBuilder();
@@ -90,7 +92,8 @@ public class OptimalDivision {
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

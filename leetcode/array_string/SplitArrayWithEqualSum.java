@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 // should be equal.
 public class SplitArrayWithEqualSum {
     // time complexity: O(N ^ 3), space complexity: O(N)
-    // beats N/A(37 ms for 120 tests)
+    // beats 86.12%(37 ms for 120 tests)
     public boolean splitArray(int[] nums) {
         int n = nums.length;
         int[] sums = new int[n + 1];
@@ -37,7 +37,7 @@ public class SplitArrayWithEqualSum {
 
     // Set
     // time complexity: O(N ^ 2), space complexity: O(N)
-    // beats N/A(146 ms for 120 tests)
+    // beats 15.79%(148 ms for 120 tests)
     public boolean splitArray2(int[] nums) {
         int n = nums.length;
         int[] sums = new int[n + 1];
@@ -55,7 +55,8 @@ public class SplitArrayWithEqualSum {
             }
             for (int k = j + 2; k < n - 1; k++) {
                 int sum = sums[n] - sums[k + 1];
-                if (sum == sums[k] - sums[j + 1] && set.contains(sum)) return true;
+                if (sum == sums[k] - sums[j + 1]
+                    && set.contains(sum)) return true;
             }
         }
         return false;
@@ -73,7 +74,8 @@ public class SplitArrayWithEqualSum {
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

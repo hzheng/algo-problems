@@ -7,16 +7,16 @@ import static org.junit.Assert.*;
 //
 // Given a positive integer n, return the number of all possible attendance records
 // with length n. The answer may be very large, return it after mod 10 ^ 9 + 7.
-// A student attendance record is a string that only contains the following three characters:
-// 'A' : Absent. 'L' : Late. 'P' : Present.
-// A record is regarded as rewardable if it doesn't contain more than one 'A' or more
-// than two continuous 'L'.
+// A student attendance record is a string that only contains the following 
+// three characters: 'A' : Absent. 'L' : Late. 'P' : Present.
+// A record is regarded as rewardable if it doesn't contain more than one 'A' or
+// more than two continuous 'L'.
 public class AttendanceRecord2 {
     private static final int MOD = 1000000007;
 
     // Dynamic Programming
     // time complexity: O(N), space complexity: O(N)
-    // beats N/A(423 ms for 58 tests)
+    // beats 3.88%(423 ms for 58 tests)
     public int checkRecord(int n) {
         long[][][] dp = new long[n + 1][2][3]; // {total}{absent}{late}
         dp[1][0][0] = 1; // P
@@ -24,7 +24,8 @@ public class AttendanceRecord2 {
         dp[1][1][0] = 1; // A
         for (int j = 1; j < n; j++) {
             dp[j + 1][0][0] = (dp[j][0][0] + dp[j][0][1] + dp[j][0][2]) % MOD;
-            dp[j + 1][1][0] = (dp[j][1][0] + dp[j][1][1] + dp[j][1][2] + dp[j + 1][0][0]) % MOD;
+            dp[j + 1][1][0] =
+                (dp[j][1][0] + dp[j][1][1] + dp[j][1][2] + dp[j + 1][0][0]) % MOD;
             dp[j + 1][0][1] = dp[j][0][0];
             dp[j + 1][1][1] = dp[j][1][0];
             dp[j + 1][0][2] = dp[j][0][1];
@@ -41,7 +42,7 @@ public class AttendanceRecord2 {
 
     // Dynamic Programming
     // time complexity: O(N), space complexity: O(1)
-    // beats N/A(191 ms for 58 tests)
+    // beats 29.85%(191 ms for 58 tests)
     public int checkRecord2(int n) {
         int[][] prev = new int[2][3];
         int[][] next = new int[2][3];
@@ -78,7 +79,7 @@ public class AttendanceRecord2 {
 
     // Dynamic Programming
     // time complexity: O(N), space complexity: O(N)
-    // beats N/A(50 ms for 58 tests)
+    // beats 75.82%(50 ms for 58 tests)
     public int checkRecord3(int n) {
         long[] dp = new long[n <= 5 ? 6 : n + 1];
         dp[0] = 1;
@@ -99,7 +100,7 @@ public class AttendanceRecord2 {
     // State Machine + Dynamic Programming
     // https://leetcode.com/articles/student-attendance-record-ii/
     // time complexity: O(N), space complexity: O(1)
-    // beats N/A(29 ms for 58 tests)
+    // beats 93.73%(29 ms for 58 tests)
     public int checkRecord4(int n) {
         // axly: # of strings of length i containing x a's ​and ending with y l's
         long a0l0 = 1;
@@ -125,7 +126,7 @@ public class AttendanceRecord2 {
     // https://leetcode.com/articles/student-attendance-record-ii/
     // Simple version of <tt>checkRecord</tt> and <tt>checkRecord4</tt>
     // time complexity: O(N), space complexity: O(1)
-    // beats N/A(27 ms for 58 tests)
+    // beats 94.93%(27 ms for 58 tests)
     public int checkRecord5(int n) {
         long a0l0 = 1, a0l1 = 0, a0l2 = 0, a1l0 = 0, a1l1 = 0, a1l2 = 0;
         for (int i = 0; i <= n; i++) {
@@ -143,7 +144,7 @@ public class AttendanceRecord2 {
 
     // Dynamic Programming
     // time complexity: O(N), space complexity: O(N)
-    // beats N/A(359 ms for 58 tests)
+    // beats 15.23%(359 ms for 58 tests)
     public int checkRecord6(int n) {
         int[][][] dp = new int[n + 1][2][3];
         dp[0] = new int[][] {{1, 1, 1}, {1, 1, 1}};
@@ -167,7 +168,7 @@ public class AttendanceRecord2 {
     // Matrix
     // https://discuss.leetcode.com/topic/86526/improving-the-runtime-from-o-n-to-o-log-n
     // time complexity: O(log(N)), space complexity: O(1)
-    // beats N/A(14 ms for 58 tests)
+    // beats 96.72%(14 ms for 58 tests)
     public int checkRecord7(int n) {
         // f[i][0][0]   | 0 0 1 0 0 0 |   f[i-1][0][0]
         // f[i][0][1]   | 1 0 1 0 0 0 |   f[i-1][0][1]
@@ -243,7 +244,8 @@ public class AttendanceRecord2 {
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

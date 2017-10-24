@@ -11,8 +11,9 @@ import static org.junit.Assert.*;
 public class KillProcess {
     // Recursion + DFS
     // beats 50.00%(88 ms for 166 tests)
-    public List<Integer> killProcess(List<Integer> pid, List<Integer> ppid, int kill) {
-        Map<Integer, List<Integer>> map = new HashMap<>();
+    public List<Integer> killProcess(List<Integer> pid, List<Integer> ppid,
+                                     int kill) {
+        Map<Integer, List<Integer> > map = new HashMap<>();
         for (int i = 0, n = ppid.size(); i < n; i++) {
             int parentId = ppid.get(i);
             List<Integer> children = map.get(parentId);
@@ -26,7 +27,8 @@ public class KillProcess {
         return res;
     }
 
-    private void subprocesses(int parent, Map<Integer, List<Integer>> map, List<Integer> res) {
+    private void subprocesses(int parent, Map<Integer, List<Integer> > map,
+                              List<Integer> res) {
         res.add(parent);
         List<Integer> children = map.get(parent);
         if (children != null) {
@@ -38,8 +40,9 @@ public class KillProcess {
 
     // Stack + DFS
     // beats 56.25%(73 ms for 166 tests)
-    public List<Integer> killProcess2(List<Integer> pid, List<Integer> ppid, int kill) {
-        Map<Integer, List<Integer>> map = new HashMap<>();
+    public List<Integer> killProcess2(List<Integer> pid, List<Integer> ppid,
+                                      int kill) {
+        Map<Integer, List<Integer> > map = new HashMap<>();
         for (int i = 0, n = ppid.size(); i < n; i++) {
             int parentId = ppid.get(i);
             List<Integer> children = map.get(parentId);
@@ -64,8 +67,9 @@ public class KillProcess {
 
     // Queue + BFS
     // beats 31.25%(103 ms for 166 tests)
-    public List<Integer> killProcess3(List<Integer> pid, List<Integer> ppid, int kill) {
-        Map<Integer, List<Integer>> map = new HashMap<>();
+    public List<Integer> killProcess3(List<Integer> pid, List<Integer> ppid,
+                                      int kill) {
+        Map<Integer, List<Integer> > map = new HashMap<>();
         for (int i = 0, n = ppid.size(); i < n; i++) {
             int parentId = ppid.get(i);
             List<Integer> children = map.get(parentId);
@@ -92,18 +96,26 @@ public class KillProcess {
 
     void test(Integer[] pid, Integer[] ppid, int kill, Integer[] expected) {
         List<Integer> expectedList = Arrays.asList(expected);
-        assertEquals(expectedList, killProcess(Arrays.asList(pid), Arrays.asList(ppid), kill));
-        assertEquals(expectedList, killProcess2(Arrays.asList(pid), Arrays.asList(ppid), kill));
-        assertEquals(expectedList, killProcess3(Arrays.asList(pid), Arrays.asList(ppid), kill));
+        assertEquals(expectedList,
+                     killProcess(Arrays.asList(pid), Arrays.asList(ppid),
+                                 kill));
+        assertEquals(expectedList,
+                     killProcess2(Arrays.asList(pid), Arrays.asList(ppid),
+                                  kill));
+        assertEquals(expectedList,
+                     killProcess3(Arrays.asList(pid), Arrays.asList(ppid),
+                                  kill));
     }
 
     @Test
     public void test() {
-        test(new Integer[] {1, 3, 10, 5}, new Integer[] {3, 0, 5, 3}, 5, new Integer[] {5, 10});
+        test(new Integer[] {1, 3, 10, 5}, new Integer[] {3, 0, 5, 3}, 5,
+             new Integer[] {5, 10});
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

@@ -25,7 +25,8 @@ public class Fence {
             }
         }
         List<Point> hull = new ArrayList<>();
-        for (int a = leftmost, b = -1, n = points.length; b != leftmost; a = b) {
+        for (int a = leftmost, b = -1, n = points.length; b != leftmost;
+             a = b) {
             hull.add(points[a]);
             b = (a + 1) % n;
             List<Point> lines = new ArrayList<>();
@@ -61,7 +62,8 @@ public class Fence {
                 leftmost = i;
             }
         }
-        for (int a = leftmost, b = -1, n = points.length; b != leftmost; a = b) {
+        for (int a = leftmost, b = -1, n = points.length; b != leftmost;
+             a = b) {
             b = (a + 1) % n;
             for (int i = 0; i < n; i++) {
                 if (clockwise(points[a], points[i], points[b]) < 0) {
@@ -69,7 +71,9 @@ public class Fence {
                 }
             }
             for (int i = 0; i < n; i++) {
-                if (i != a && i != b && clockwise(points[a], points[i], points[b]) == 0 && inBetween(points[a], points[i], points[b])) {
+                if (i != a && i != b
+                    && clockwise(points[a], points[i], points[b]) == 0
+                    && inBetween(points[a], points[i], points[b])) {
                     hull.add(points[i]);
                 }
             }
@@ -98,11 +102,13 @@ public class Fence {
         Arrays.sort(points, new Comparator<Point>() { // by polar angle
             public int compare(Point p, Point q) {
                 double diff = clockwise(start, p, q);
-                return (diff == 0) ? distance(start, p) - distance(start, q) : (diff > 0 ? 1 : -1);
+                return (diff == 0) ? distance(start, p) - distance(start, q)
+                : (diff > 0 ? 1 : -1);
             }
         });
         int i = n - 1;
-        for (; i >= 0 && clockwise(start, points[n - 1], points[i]) == 0; i--) {}
+        for (; i >= 0 && clockwise(start, points[n - 1], points[i]) == 0;
+             i--) {}
         for (int low = i + 1, high = n - 1; low < high; low++, high--) { // reverse
             Point tmp = points[low];
             points[low] = points[high];
@@ -113,7 +119,8 @@ public class Fence {
         stack.push(points[1]);
         for (int j = 2; j < n; j++) {
             Point top = stack.pop();
-            for (; clockwise(stack.peek(), top, points[j]) > 0; top = stack.pop()) {}
+            for (; clockwise(stack.peek(), top, points[j]) > 0;
+                 top = stack.pop()) {}
             stack.push(top);
             stack.push(points[j]);
         }
@@ -145,14 +152,16 @@ public class Fence {
         });
         Stack<Point> hull = new Stack<>();
         for (Point point : points) { // lower hull
-            while (hull.size() >= 2 && clockwise(hull.get(hull.size() - 2), hull.peek(), point) > 0) {
+            while (hull.size() >= 2 && clockwise(hull.get(hull.size() - 2),
+                                                 hull.peek(), point) > 0) {
                 hull.pop();
             }
             hull.push(point);
         }
         hull.pop();
         for (int i = points.length - 1; i >= 0; i--) { // upper hull
-            while (hull.size() >= 2 && clockwise(hull.get(hull.size() - 2), hull.peek(), points[i]) > 0) {
+            while (hull.size() >= 2 && clockwise(hull.get(hull.size() - 2),
+                                                 hull.peek(), points[i]) > 0) {
                 hull.pop();
             }
             hull.push(points[i]);
@@ -168,7 +177,8 @@ public class Fence {
         test(pts, expected, f::outerTrees3);
     }
 
-    void test(int[][] pts, int[][] expected, Function<Point[], List<Point> > outerTrees) {
+    void test(int[][] pts, int[][] expected,
+              Function<Point[], List<Point> > outerTrees) {
         List<Point> expectedList = Arrays.asList(toPoints(expected));
         Collections.sort(expectedList);
         List<Point> res = outerTrees.apply(toPoints(pts));
@@ -189,15 +199,19 @@ public class Fence {
     public void test() {
         test(new int[][] {{1, 1}, {2, 2}, {2, 0}, {2, 4}, {3, 3}, {4, 2}},
              new int[][] {{1, 1}, {2, 0}, {4, 2}, {3, 3}, {2, 4}});
-        test(new int[][] {{1, 2}, {2, 2}, {4, 2}}, new int[][] {{1, 2}, {2, 2}, {4, 2}});
-        test(new int[][] {{3, 0}, {4, 0}, {5, 0}, {6, 1}, {7, 2}, {7, 3}, {7, 4}, {6, 5}, {5, 5},
-                          {4, 5}, {3, 5}, {2, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 1}, {4, 2}, {0, 3}},
-             new int[][] {{0, 3}, {1, 2}, {1, 4}, {2, 1}, {2, 5}, {3, 0}, {3, 5}, {4, 0}, {4, 5},
-                          {5, 0}, {5, 5}, {6, 1}, {6, 5}, {7, 2}, {7, 3}, {7, 4}});
+        test(new int[][] {{1, 2}, {2, 2}, {4, 2}},
+             new int[][] {{1, 2}, {2, 2}, {4, 2}});
+        test(new int[][] {{3, 0}, {4, 0}, {5, 0}, {6, 1}, {7, 2}, {7, 3},
+                          {7, 4}, {6, 5}, {5, 5}, {4, 5}, {3, 5}, {2, 5},
+                          {1, 4}, {1, 3}, {1, 2}, {2, 1}, {4, 2}, {0, 3}},
+             new int[][] {{0, 3}, {1, 2}, {1, 4}, {2, 1}, {2, 5}, {3, 0},
+                          {3, 5}, {4, 0}, {4, 5}, {5, 0}, {5, 5}, {6, 1},
+                          {6, 5}, {7, 2}, {7, 3}, {7, 4}});
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

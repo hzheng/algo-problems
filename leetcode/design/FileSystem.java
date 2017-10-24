@@ -146,7 +146,8 @@ public class FileSystem {
             for (int i = 1; i < paths.length - 1; i++) {
                 dir = dir.dirs.get(paths[i]);
             }
-            String fileContent = dir.files.getOrDefault(paths[paths.length - 1], "");
+            String fileContent = dir.files.getOrDefault(
+                paths[paths.length - 1], "");
             if (content == null) return fileContent;
 
             dir.files.put(paths[paths.length - 1],  fileContent += content);
@@ -216,7 +217,8 @@ public class FileSystem {
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

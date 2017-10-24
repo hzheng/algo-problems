@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 // n teams, you need to output their final contest matches in the form of a string.
 public class FindContestMatches {
     // Deque
-    // beats (10 ms for 12 tests)
+    // beats 37.50%(10 ms for 12 tests)
     public String findContestMatch(int n) {
         Deque<String> matches = new ArrayDeque<>();
         for (int i = 1; i <= n; i++) {
@@ -30,7 +30,7 @@ public class FindContestMatches {
     }
 
     // Array
-    // beats (7 ms for 12 tests)
+    // beats 91.93%(7 ms for 12 tests)
     public String findContestMatch2(int n) {
         String[] matches = new String[n];
         for (int i = 1; i <= n; i++) {
@@ -45,7 +45,7 @@ public class FindContestMatches {
     }
 
     // Recursion
-    // beats (10 ms for 12 tests)
+    // beats 37.50%(10 ms for 12 tests)
     public String findContestMatch3(int n) {
         List<String> matches = new ArrayList<>();
         for (int i = 1; i <= n; i++) {
@@ -78,6 +78,8 @@ public class FindContestMatches {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("FindContestMatches");
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

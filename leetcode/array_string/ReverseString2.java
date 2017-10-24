@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 //  but greater than or equal to k characters, then reverse the first k characters
 //  and left the other as original.
 public class ReverseString2 {
-    // beats N/A(8 ms for 60 tests)
+    // beats 32.93%(8 ms for 60 tests)
     public String reverseStr(String s, int k) {
         char[] cs = s.toCharArray();
         int n = cs.length;
@@ -37,6 +37,8 @@ public class ReverseString2 {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("ReverseString2");
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

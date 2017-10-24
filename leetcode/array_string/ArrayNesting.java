@@ -49,7 +49,7 @@ public class ArrayNesting {
             if (visited[i]) continue;
 
             int count = 1;
-            for (int start = nums[i]; ; count++) {
+            for (int start = nums[i];; count++) {
                 start = nums[start];
                 visited[start] = true;
                 if (start == nums[i]) break;
@@ -74,7 +74,8 @@ public class ArrayNesting {
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

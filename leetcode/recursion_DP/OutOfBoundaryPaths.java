@@ -64,7 +64,8 @@ public class OutOfBoundaryPaths {
                         int nx = x + dir[0];
                         int ny = y + dir[1];
                         if (nx >= 0 && nx < m && ny >= 0 && ny < n) {
-                            dp[nx][ny][k + 1] = (dp[nx][ny][k + 1] + dp[x][y][k]) % MOD;
+                            dp[nx][ny][k + 1] = (dp[nx][ny][k + 1]
+                                                 + dp[x][y][k]) % MOD;
                         } else {
                             count = (count + dp[x][y][k]) % MOD;
                         }
@@ -98,8 +99,11 @@ public class OutOfBoundaryPaths {
                     if (y == 0) {
                         count = (count + dp[x][y]) % MOD;
                     }
-                    buf[x][y] = (((x > 0 ? dp[x - 1][y] : 0) + (x < m - 1 ? dp[x + 1][y] : 0)) % MOD
-                                 + ((y > 0 ? dp[x][y - 1] : 0) + (y < n - 1 ? dp[x][y + 1] : 0)) % MOD) % MOD;
+                    buf[x][y] = (((x > 0 ? dp[x - 1][y] : 0)
+                                  + (x < m - 1 ? dp[x + 1][y] : 0)) % MOD
+                                 + ((y > 0 ? dp[x][y - 1] : 0)
+                                    + (y < n - 1 ? dp[x][y + 1] : 0)) % MOD)
+                                % MOD;
                 }
             }
             dp = buf;
@@ -115,10 +119,11 @@ public class OutOfBoundaryPaths {
         for (int k = 0; k < N; k++) {
             for (int x = 0; x < m; x++) {
                 for (int y = 0; y < n; y++) {
-                    dp[x][y][k + 1] = (int)(((long)(x == 0 ? 1 : dp[x - 1][y][k])
-                                         + (x == m - 1 ? 1 : dp[x + 1][y][k])
-                                         + (y == 0 ? 1 : dp[x][y - 1][k])
-                                         + (y == n - 1 ? 1 : dp[x][y + 1][k])) % MOD);
+                    dp[x][y][k + 1]
+                        = (int)(((long)(x == 0 ? 1 : dp[x - 1][y][k])
+                                 + (x == m - 1 ? 1 : dp[x + 1][y][k])
+                                 + (y == 0 ? 1 : dp[x][y - 1][k])
+                                 + (y == n - 1 ? 1 : dp[x][y + 1][k])) % MOD);
                 }
             }
         }
@@ -133,10 +138,11 @@ public class OutOfBoundaryPaths {
         for (int k = N; k > 0; k--) { // for (int k = 0; k < N; k++) {
             for (int x = 0; x < m; x++) {
                 for (int y = 0; y < n; y++) {
-                    dp[x][y][(k + 1) % 2] = (int)(((long)(x == 0 ? 1 : dp[x - 1][y][k % 2])
-                                         + (x == m - 1 ? 1 : dp[x + 1][y][k % 2])
-                                         + (y == 0 ? 1 : dp[x][y - 1][k % 2])
-                                         + (y == n - 1 ? 1 : dp[x][y + 1][k % 2])) % MOD);
+                    dp[x][y][(k + 1) % 2] =
+                        (int)(((long)(x == 0 ? 1 : dp[x - 1][y][k % 2])
+                               + (x == m - 1 ? 1 : dp[x + 1][y][k % 2])
+                               + (y == 0 ? 1 : dp[x][y - 1][k % 2])
+                               + (y == n - 1 ? 1 : dp[x][y + 1][k % 2])) % MOD);
                 }
             }
         }
@@ -150,7 +156,8 @@ public class OutOfBoundaryPaths {
         return findPaths(m, n, N, i, j, new int[m][n][N + 1]);
     }
 
-    private int findPaths(int m, int n, int move, int i, int j, int[][][] memo) {
+    private int findPaths(int m, int n, int move, int i, int j,
+                          int[][][] memo) {
         if (i == m || j == n || i < 0 || j < 0) return 1;
 
         if (move == 0) return 0;
@@ -159,7 +166,8 @@ public class OutOfBoundaryPaths {
         long count = findPaths(m, n, move - 1, i - 1, j, memo);
         count = (count + findPaths(m, n, move - 1, i + 1, j, memo)) % MOD;
         count = (count + findPaths(m, n, move - 1, i, j - 1, memo)) % MOD;
-        return memo[i][j][move] = (int)((count + findPaths(m, n, move - 1, i, j + 1, memo)) % MOD);
+        return memo[i][j][move] =
+            (int)((count + findPaths(m, n, move - 1, i, j + 1, memo)) % MOD);
     }
 
     void test(int m,  int n, int N, int i, int j, int expected) {
@@ -186,7 +194,8 @@ public class OutOfBoundaryPaths {
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

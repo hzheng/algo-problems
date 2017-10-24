@@ -19,7 +19,7 @@ import common.TreeNode;
 // The right-most node is also defined by the same way with left and right exchanged.
 public class BinaryTreeBoundary {
     // Recursion + Set
-    // beats N/A(17 ms for 117 tests)
+    // beats 4.34%(17 ms for 117 tests)
     public List<Integer> boundaryOfBinaryTree(TreeNode root) {
         List<Integer> res = new ArrayList<>();
         if (root == null) return res;
@@ -75,7 +75,7 @@ public class BinaryTreeBoundary {
     }
 
     // Recursion
-    // beats N/A(13 ms for 117 tests)
+    // beats 24.10%(13 ms for 117 tests)
     public List<Integer> boundaryOfBinaryTree2(TreeNode root) {
         List<Integer> res = new ArrayList<>();
         if (root == null) return res;
@@ -122,7 +122,7 @@ public class BinaryTreeBoundary {
     }
 
     // Recursion + Stack
-    // beats N/A(17 ms for 117 tests)
+    // beats 4.34%(17 ms for 117 tests)
     public List<Integer> boundaryOfBinaryTree3(TreeNode root) {
         List<Integer> res = new ArrayList<>();
         if (root == null) return res;
@@ -201,6 +201,8 @@ public class BinaryTreeBoundary {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("BinaryTreeBoundary");
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

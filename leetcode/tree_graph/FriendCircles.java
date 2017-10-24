@@ -6,14 +6,15 @@ import static org.junit.Assert.*;
 // LC547: https://leetcode.com/problems/friend-circles
 //
 // There are N students in a class. Some of them are friends, while some are not.
-// Their friendship is transitive in nature. And we defined a friend circle is a group
-// of students who are direct or indirect friends.
-// Given a N*N matrix M representing the friend relationship between students in the class.
-// If M[i][j] = 1, then the ith and jth students are direct friends with each other,
-// otherwise not. And you have to output the total number of friend circles among all the students.
+// Their friendship is transitive in nature. And we defined a friend circle is a
+// group of students who are direct or indirect friends.
+// Given a N*N matrix M representing the friend relationship between students in
+// the class. If M[i][j] = 1, then the ith and jth students are direct friends
+// with each other, otherwise not. And you have to output the total number of
+// friend circles among all the students.
 public class FriendCircles {
     // Union Find
-    // beats N/A(12 ms for 113 tests)
+    // beats 35.59%(14 ms for 113 tests)
     // time complexity: O(N ^ 2), space complexity: O(N)
     public int findCircleNum(int[][] M) {
         int n = M.length;
@@ -40,7 +41,7 @@ public class FriendCircles {
     }
 
     // Union Find
-    // beats N/A(28 ms for 113 tests)
+    // beats 7.62%(28 ms for 113 tests)
     // time complexity: O(N ^ 2), space complexity: O(N)
     public int findCircleNum_2(int[][] M) {
         int n = M.length;
@@ -74,7 +75,7 @@ public class FriendCircles {
 
     // Recursion + DFS + Hash Table
     // time complexity: O(N), space complexity: O(N)
-    // beats N/A(11 ms for 113 tests)
+    // beats 42.75%(13 ms for 113 tests)
     public int findCircleNum2(int[][] M) {
         int n = M.length;
         int count = 0;
@@ -100,7 +101,7 @@ public class FriendCircles {
 
     // Queue + BFS + Hash Table
     // time complexity: O(N), space complexity: O(N)
-    // beats N/A(19 ms for 113 tests)
+    // beats 19.85%(19 ms for 113 tests)
     public int findCircleNum3(int[][] M) {
         int count = 0;
         int n = M.length;
@@ -136,7 +137,8 @@ public class FriendCircles {
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

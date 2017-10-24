@@ -5,7 +5,8 @@ import common.TreeNode;
 
 // LC549: https://leetcode.com/problems/binary-tree-longest-consecutive-sequence-ii/
 //
-// Given a binary tree, you need to find the length of Longest Consecutive Path in Binary Tree.
+// Given a binary tree, you need to find the length of Longest Consecutive Path 
+// in Binary Tree.
 public class LongestConsecutiveInTree {
     // Recursion
     // beats 63.91%(14 ms for 159 tests)
@@ -38,7 +39,7 @@ public class LongestConsecutiveInTree {
     }
 
     // Recursion
-    // beats 97.81%(12 ms for 159 tests)
+    // beats 86.21%(12 ms for 159 tests)
     public int longestConsecutive2(TreeNode root) {
         if (root == null) return 0;
 
@@ -54,8 +55,7 @@ public class LongestConsecutiveInTree {
             longestConsecutive2(root.left, max);
             if (root.left.val + 1 == root.val) {
                 ascend = max[1];
-            }
-            if (root.left.val - 1 == root.val) {
+            } else if (root.left.val - 1 == root.val) {
                 descend = max[2];
             }
         }
@@ -63,8 +63,7 @@ public class LongestConsecutiveInTree {
             longestConsecutive2(root.right, max);
             if (root.right.val + 1 == root.val) {
                 ascend = Math.max(ascend, max[1]);
-            }
-            if (root.right.val - 1 == root.val) {
+            } else if (root.right.val - 1 == root.val) {
                 descend = Math.max(descend, max[2]);
             }
         }
@@ -89,7 +88,8 @@ public class LongestConsecutiveInTree {
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

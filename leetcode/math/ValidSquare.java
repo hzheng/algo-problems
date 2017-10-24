@@ -10,7 +10,8 @@ import static org.junit.Assert.*;
 public class ValidSquare {
     // beats 57.67%(19 ms for 244 tests)
     public boolean validSquare(int[] p1, int[] p2, int[] p3, int[] p4) {
-        return valid(p1, p2, p3, p4) && valid(p2, p1, p3, p4) && valid(p3, p1, p2, p4);
+        return valid(p1, p2, p3, p4) && valid(p2, p1, p3, p4)
+               && valid(p3, p1, p2, p4);
     }
 
     private boolean valid(int[] p1, int[] p2, int[] p3, int[] p4) {
@@ -28,7 +29,8 @@ public class ValidSquare {
         int[] lens = {distance(p1, p2), distance(p2, p3), distance(p3, p4),
                       distance(p4, p1), distance(p1, p3), distance(p2, p4)};
         Arrays.sort(lens);
-        return (lens[0] == lens[3]) && (lens[4] == lens[5]) && (lens[4] > lens[0]);
+        return (lens[0] == lens[3]) && (lens[4] == lens[5])
+               && (lens[4] > lens[0]);
     }
 
     // Sort
@@ -36,7 +38,8 @@ public class ValidSquare {
     public boolean validSquare3(int[] p1, int[] p2, int[] p3, int[] p4) {
         int[][] p = {p1, p2, p3, p4};
         Arrays.sort(p, (a, b) -> b[0] == a[0] ? a[1] - b[1] : a[0] - b[0]);
-        return distance(p[0], p[1]) != 0 && distance(p[0], p[1]) == distance(p[1], p[3])
+        return distance(p[0], p[1]) != 0
+               && distance(p[0], p[1]) == distance(p[1], p[3])
                && distance(p[1], p[3]) == distance(p[3], p[2])
                && distance(p[3], p[2]) == distance(p[2], p[0])
                && distance(p[0], p[3]) == distance(p[1], p[2]);
@@ -73,16 +76,23 @@ public class ValidSquare {
 
     @Test
     public void test() {
-        test(new int[] {0, 0}, new int[] {1, 1}, new int[] {0, 0}, new int[] {0, 0}, false);
-        test(new int[] {0, 0}, new int[] {1, 1}, new int[] {1, 0}, new int[] {0, 1}, true);
-        test(new int[] {0, 0}, new int[] {0, 0}, new int[] {0, 0}, new int[] {0, 0}, false);
-        test(new int[] {0, 0}, new int[] {1, 1}, new int[] {0, 0}, new int[] {1, 1}, false);
-        test(new int[] {0, 1}, new int[] {1, 2}, new int[] {0, 2}, new int[] {0, 0}, false);
-        test(new int[] {1, 1}, new int[] {0, 1}, new int[] {1, 2}, new int[] {0, 0}, false);
+        test(new int[] {0, 0}, new int[] {1, 1}, new int[] {0, 0},
+             new int[] {0, 0}, false);
+        test(new int[] {0, 0}, new int[] {1, 1}, new int[] {1, 0},
+             new int[] {0, 1}, true);
+        test(new int[] {0, 0}, new int[] {0, 0}, new int[] {0, 0},
+             new int[] {0, 0}, false);
+        test(new int[] {0, 0}, new int[] {1, 1}, new int[] {0, 0},
+             new int[] {1, 1}, false);
+        test(new int[] {0, 1}, new int[] {1, 2}, new int[] {0, 2},
+             new int[] {0, 0}, false);
+        test(new int[] {1, 1}, new int[] {0, 1}, new int[] {1, 2},
+             new int[] {0, 0}, false);
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

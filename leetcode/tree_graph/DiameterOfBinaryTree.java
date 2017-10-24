@@ -12,7 +12,7 @@ import common.TreeNode;
 // two nodes in a tree. This path may or may not pass through the root.
 public class DiameterOfBinaryTree {
     // DFS + Recursion
-    // beats N/A(10 ms for 106 tests)
+    // beats 34.78%(10 ms for 106 tests)
     public int diameterOfBinaryTree(TreeNode root) {
         int[] res = new int[1];
         depth(root, res);
@@ -29,7 +29,7 @@ public class DiameterOfBinaryTree {
     }
 
     // DFS + Recursion
-    // beats N/A(24 ms for 106 tests)
+    // beats 15.02%(24 ms for 106 tests)
     public int diameterOfBinaryTree2(TreeNode root) {
         if (root == null) return 0;
 
@@ -45,7 +45,7 @@ public class DiameterOfBinaryTree {
     }
 
     // DFS + Recursion + Hash Table
-    // beats N/A(15 ms for 106 tests)
+    // beats 22.45%(15 ms for 106 tests)
     public int diameterOfBinaryTree3(TreeNode root) {
         return diameter(root, new HashMap<>());
     }
@@ -85,6 +85,8 @@ public class DiameterOfBinaryTree {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("DiameterOfBinaryTree");
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

@@ -3,14 +3,15 @@ import static org.junit.Assert.*;
 
 // LC555: https://leetcode.com/problems/split-concatenated-strings/
 //
-// Given a list of strings, you could concatenate these strings together into a loop,
-// where for each string you could choose to reverse it or not. Among all the possible
-// loops, you need to find the lexicographically biggest string after cutting the loop,
-// which will make the looped string into a regular one.
-// Specifically, to find the lexicographically biggest string, you need to experience two phases:
-// Concatenate all the strings into a loop, where you can reverse some strings or not and connect
-// them in the same order as given. Cut and make one breakpoint in any place of the loop, which
-// will make the looped string into a regular one starting from the character at the cutpoint.
+// Given a list of strings, you could concatenate these strings together into a 
+// loop, where for each string you could choose to reverse it or not. Among all 
+// the possible loops, you need to find the lexicographically biggest string 
+// after cutting the loop, which will make the looped string into a regular one.
+// Specifically, to find the lexicographically biggest string, you need to 
+// experience two phases: Concatenate all the strings into a loop, where you can 
+// reverse some strings or not and connect them in the same order as given. Cut 
+// and make one breakpoint in any place of the loop, which will make the looped 
+// string into a regular one starting from the character at the cutpoint.
 // Find the lexicographically biggest one among all the possible regular strings.
 public class SplitLoopedString {
     // time complexity: O(N ^ 2) (N: total number of characters)
@@ -100,7 +101,8 @@ public class SplitLoopedString {
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

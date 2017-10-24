@@ -68,7 +68,8 @@ public class IntegersWithoutConsecutiveOnes {
     // Dynamic Programming
     // beats 50.66%(34 ms for 527 tests)
     public int findIntegers3(int num) {
-        StringBuilder sb = new StringBuilder(Integer.toBinaryString(num)).reverse();
+        StringBuilder sb =
+            new StringBuilder(Integer.toBinaryString(num)).reverse();
         int bits = sb.length();
         int[] dp = new int[bits + 1];
         dp[0] = 1;
@@ -123,7 +124,8 @@ public class IntegersWithoutConsecutiveOnes {
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

@@ -72,7 +72,8 @@ public class MaxVacationDays {
                 dp[i][k] = days[i][k] + dp[i][k + 1];
                 for (int j = 0; j < N; j++) {
                     if (flights[i][j] == 1) {
-                        dp[i][k] = Math.max(days[j][k] + dp[j][k + 1], dp[i][k]);
+                        dp[i][k] =
+                            Math.max(days[j][k] + dp[j][k + 1], dp[i][k]);
                     }
                 }
             }
@@ -113,7 +114,8 @@ public class MaxVacationDays {
         return dfs(flights, days, 0, 0, dp);
     }
 
-    private int dfs(int[][] flights, int[][] days, int city, int week, int[][] dp) {
+    private int dfs(int[][] flights, int[][] days, int city, int week,
+                    int[][] dp) {
         if (week == days[0].length) return 0;
 
         if (dp[city][week] != Integer.MIN_VALUE) return dp[city][week];
@@ -121,7 +123,8 @@ public class MaxVacationDays {
         int max = 0;
         for (int i = 0; i < flights.length; i++) {
             if (flights[city][i] == 1 || i == city) {
-                max = Math.max(max, days[i][week] + dfs(flights, days, i, week + 1, dp));
+                max = Math.max(max, days[i][week]
+                               + dfs(flights, days, i, week + 1, dp));
             }
         }
         return dp[city][week] = max;
@@ -136,15 +139,21 @@ public class MaxVacationDays {
 
     @Test
     public void test() {
-        test(new int[][] {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}, new int[][] {{1, 1, 1}, {7, 7, 7}, {7, 7, 7}}, 3);
-        test(new int[][] {{0, 0, 1, 0, 0}, {0, 0, 0, 1, 1}, {0, 0, 0, 0, 1}, {0, 1, 1, 0, 0}, {0, 1, 0, 1, 0}},
-             new int[][] {{3, 1, 6, 2, 2}, {1, 3, 5, 6, 5}, {3, 2, 5, 0, 0}, {2, 3, 5, 4, 3}, {3, 3, 1, 5, 4}}, 22);
-        test(new int[][] {{0, 1, 1}, {1, 0, 1}, {1, 1, 0}}, new int[][] {{1, 3, 1}, {6, 0, 3}, {3, 3, 3}}, 12);
-        test(new int[][] {{0, 1, 1}, {1, 0, 1}, {1, 1, 0}}, new int[][] {{7, 0, 0}, {0, 7, 0}, {0, 0, 7}}, 21);
+        test(new int[][] {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
+             new int[][] {{1, 1, 1}, {7, 7, 7}, {7, 7, 7}}, 3);
+        test(new int[][] {{0, 0, 1, 0, 0}, {0, 0, 0, 1, 1}, {0, 0, 0, 0, 1},
+                          {0, 1, 1, 0, 0}, {0, 1, 0, 1, 0}},
+             new int[][] {{3, 1, 6, 2, 2}, {1, 3, 5, 6, 5}, {3, 2, 5, 0, 0},
+                          {2, 3, 5, 4, 3}, {3, 3, 1, 5, 4}}, 22);
+        test(new int[][] {{0, 1, 1}, {1, 0, 1}, {1, 1, 0}},
+             new int[][] {{1, 3, 1}, {6, 0, 3}, {3, 3, 3}}, 12);
+        test(new int[][] {{0, 1, 1}, {1, 0, 1}, {1, 1, 0}},
+             new int[][] {{7, 0, 0}, {0, 7, 0}, {0, 0, 7}}, 21);
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

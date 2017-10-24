@@ -55,12 +55,13 @@ public class BrickWall {
 
     @Test
     public void test() {
-        test(new Integer[][] {{1, 2, 2, 1}, {3, 1, 2}, {1, 3, 2}, {2, 4}, {3, 1, 2},
-                              {1, 3, 1, 1}}, 2);
+        test(new Integer[][] {{1, 2, 2, 1}, {3, 1, 2}, {1, 3, 2},
+                              {2, 4}, {3, 1, 2}, {1, 3, 1, 1}}, 2);
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

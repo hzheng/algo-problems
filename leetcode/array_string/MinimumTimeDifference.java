@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 public class MinimumTimeDifference {
     // Sort
     // time complexity: O(N * log(N)), space complexity: O(N)
-    // beats N/A(50 ms for 112 tests)
+    // beats 31.02%(50 ms for 112 tests)
     public int findMinDifference(List<String> timePoints) {
         Collections.sort(timePoints);
         int min = Integer.MAX_VALUE;
@@ -32,7 +32,7 @@ public class MinimumTimeDifference {
 
     // Heap
     // time complexity: O(N * log(N)), space complexity: O(N)
-    // beats N/A(41 ms for 112 tests)
+    // beats 40.43%(41 ms for 112 tests)
     public int findMinDifference2(List<String> timePoints) {
         PriorityQueue<Integer> pq = new PriorityQueue<>();
         for (String time : timePoints) {
@@ -48,8 +48,9 @@ public class MinimumTimeDifference {
         return Math.min(min, convert("24:00") - cur + first);
     }
 
+    // Bucket
     // time complexity: O(N), space complexity: O(1)
-    // beats N/A(19 ms for 112 tests)
+    // beats 69.29%(19 ms for 112 tests)
     public int findMinDifference3(List<String> timePoints) {
         final int MAX = 24 * 60;
         boolean[] times = new boolean[MAX];
@@ -89,6 +90,8 @@ public class MinimumTimeDifference {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("MinimumTimeDifference");
+        String clazz =
+            new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
