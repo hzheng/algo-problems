@@ -56,15 +56,15 @@ public class StringCompression {
     }
 
     void test(char[] chars, String expected) {
-        StringCompression obj = new StringCompression();
-        test(chars, expected, obj::compress);
-        test(chars, expected, obj::compress2);
+        StringCompression s = new StringCompression();
+        test(chars, expected, s::compress);
+        test(chars, expected, s::compress2);
     }
 
     void test(char[] chars, String expected,
               Function<char[], Integer> compress) {
         char[] cs = chars.clone();
-        assertEquals(expected, new String(cs, 0, compress(cs)));
+        assertEquals(expected, new String(cs, 0, compress.apply(cs)));
     }
 
     @Test
