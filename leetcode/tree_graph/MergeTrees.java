@@ -59,9 +59,9 @@ public class MergeTrees {
 
     void test(String t1, String t2, String expected,
               Function<TreeNode, TreeNode, TreeNode> mergeTrees) {
-        assertEquals ("{" + expected + "}",
-                      mergeTrees.apply(TreeNode.of(t1),
-                                       TreeNode.of(t2)).toString());
+        assertEquals("{" + expected + "}",
+                     mergeTrees.apply(TreeNode.of(t1),
+                                      TreeNode.of(t2)).toString());
     }
 
     void test(String t1, String t2, String expected) {
