@@ -75,10 +75,50 @@ public class KInversePairs {
         return dp[n][k] = (invPairs(n, k - 1, dp) + v) % MOD;
     }
 
+    // 1-D Dynamic Programming
+    // time complexity: O(n * (n + k)), space complexity: O(n + k)
+    // beats 12.78%(156 ms for 80 tests)
+    public int kInversePairs4(int n, int k) {
+        long[] dp = new long[k + n + 2];
+        dp[0] = 1;
+        for (int i = 1; i <= n; i++) {
+            for (int j = 0; j < dp.length - 1; j++) {
+                dp[j + 1] += dp[j];
+                dp[j + 1] %= MOD;
+            }
+            for (int j = dp.length - 1 - i; j >= 0; j--) {
+                dp[j + i] -= dp[j];
+                if (dp[j + i] < 0) {
+                    dp[j + i] += MOD;
+                }
+            }
+        }
+        return (int)dp[k];
+    }
+
+    // 1-D Dynamic Programming
+    // time complexity: O(n * k), space complexity: O(k)
+    // beats 98.68%(22 ms for 80 tests)
+    public int kInversePairs5(int n, int k) {
+        int[] dp = new int[k + 1];
+        dp[0] = 1;
+        for (int i = 2; i <= n; i++) {
+            for (int j = 1; j <= k; j++) {
+                dp[j] = (dp[j] + dp[j - 1]) % MOD;
+            }
+            for (int j = k; j >= i; j--) {
+                dp[j] = (dp[j] - dp[j - i] + MOD) % MOD;
+            }
+        }
+        return dp[k];
+    }
+
     void test(int n, int k, int expected) {
         assertEquals(expected, kInversePairs(n, k));
         assertEquals(expected, kInversePairs2(n, k));
         assertEquals(expected, kInversePairs3(n, k));
+        assertEquals(expected, kInversePairs4(n, k));
+        assertEquals(expected, kInversePairs5(n, k));
     }
 
     @Test
