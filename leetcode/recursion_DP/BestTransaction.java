@@ -41,7 +41,7 @@ public class BestTransaction {
     }
 
     // Solution of Choice
-    // beats 85.40%(1 ms)
+    // beats 37.52%(2 ms for 200 tests)
     public int maxProfit3(int[] prices) {
         int min = Integer.MAX_VALUE;
         int profit = 0;
@@ -56,12 +56,28 @@ public class BestTransaction {
     }
 
     // Kadane's algorithm
-    // beats 10.50%(3 ms)
+    // beats 37.52%(2 ms for 200 tests)
     public int maxProfit4(int[] prices) {
         int max = 0; // global max
         for (int i = 1, localMax = 0; i < prices.length; i++) {
             localMax = Math.max(0, localMax + prices[i] - prices[i - 1]);
             max = Math.max(localMax, max);
+        }
+        return max;
+    }
+
+    // Dynamic Programming
+    // beats 80.02%(1 ms for 200 tests)
+    public int maxProfit5(int[] prices) {
+        int n = prices.length;
+        int[] minFromLeft = new int[n + 1];
+        minFromLeft[0] = Integer.MAX_VALUE;
+        for (int i = 0; i < n; i++) {
+            minFromLeft[i + 1] = Math.min(minFromLeft[i], prices[i]);
+        }
+        int max = 0;
+        for (int i = n - 1; i > 0; i--) {
+            max = Math.max(max, prices[i] - minFromLeft[i]);
         }
         return max;
     }
@@ -76,12 +92,15 @@ public class BestTransaction {
         test(b::maxProfit2, expected, prices);
         test(b::maxProfit3, expected, prices);
         test(b::maxProfit4, expected, prices);
+        test(b::maxProfit5, expected, prices);
     }
 
     @Test
     public void test1() {
         test(13, 20, 10, 9, 2, 8, 15);
         test(0, 20, 10, 9, 2);
+        test(0);
+        test(1, 1, 2);
     }
 
     public static void main(String[] args) {
