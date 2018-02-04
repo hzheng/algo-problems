@@ -1,11 +1,17 @@
-import java.util.*;
-
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 import common.TreeNode;
 
-// LC776:
+// LC776: https://leetcode.com/problems/split-bst/
+//
+// Given a Binary Search Tree (BST) with root node root, and a target value V,
+// split the tree into two subtrees where one subtree has nodes that are all 
+// smaller or equal to the target value, while the other subtree has all nodes 
+// that are greater than the target value. Additionally, most of the structure
+// of the original tree should remain.  Formally, for any child C with parent P 
+// in the original tree, if they are both in the same subtree after the split, 
+// then node C should still have the parent P.
 public class SplitBST {
     // Recursion
     // beats %(3 ms for 38 tests)
