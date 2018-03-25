@@ -1,3 +1,5 @@
+import java.util.*;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -89,6 +91,60 @@ public class SplitArraySameAverage {
         return false;
     }
 
+    // Meet in the Middle
+    // time complexity: O(2 ^ (N / 2)), space complexity: O(2 ^ (N / 2))
+    // FIXME: DOES NOT work due to double precision problem
+    // TODO: create a Fraction or Rational class to solve it
+    public boolean splitArraySameAverage3(int[] A) {
+        int n = A.length;
+        if (n == 1) return false;
+
+        int sum = 0;
+        for (int a : A) {
+            sum += a;
+        }
+        double[] B = new double[n];
+        double mean = ((double)sum) / n;
+        for (int i = 0; i < n; i++) {
+            B[i] = A[i] - mean;
+        }
+        // search zero subset sum
+        Set<Double> left = new HashSet<>();
+        left.add(B[0]);
+        for (int i = 1; i < n / 2; i++) {
+            for (double x : new HashSet<>(left)) {
+                left.add(x + B[i]);
+            }
+            left.add(B[i]);
+        }
+        if (left.contains(0d)) return true;
+
+        Set<Double> right = new HashSet<>();
+        right.add(B[n - 1]);
+        for (int i = n / 2; i < n - 1; i++) {
+            for (double x : new HashSet<>(right)) {
+                right.add(x + B[i]);
+            }
+            right.add(B[i]);
+        }
+        if (right.contains(0d)) return true;
+
+        double totalLeft = 0;
+        for (int i = n / 2 - 1; i >= 0; i--) {
+            totalLeft += B[i];
+        }
+        double totalRight = 0;
+        for (int i = n / 2; i < n; i++) {
+            totalRight += B[i];
+        }
+        for (double a : left) {
+            if (right.contains(-a) && (a != totalLeft || -a != totalRight)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     void test(int[] A, boolean expected) {
         assertEquals(expected, splitArraySameAverage(A));
         assertEquals(expected, splitArraySameAverage_2(A));
@@ -124,6 +180,9 @@ public class SplitArraySameAverage {
                         6572, 938, 6842, 678, 9837, 8256, 6886, 2204, 5262,
                         6643, 829, 745, 8755, 3549, 6627, 1633, 4290, 7},
              false);
+        test(new int[] {10000, 30, 30, 30, 30, 30, 0, 30, 30, 30, 30, 30, 30,
+                        30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30,
+                        30, 30, 30}, false);
     }
 
     public static void main(String[] args) {
