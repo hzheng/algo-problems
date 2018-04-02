@@ -94,17 +94,48 @@ public class SoupServings {
         return dp[n][n];
     }
 
+    // 1-D Dynamic Programming(Bottom-Up)
+    // beats %(8 ms for 41 tests)
+    public double soupServings3(int N) {
+        int n = (N + 24) / 25;
+        if (n > MAX) return 1;
+
+        double res = 0;
+        double[] dp = new double[n + 1];
+        dp[n] = 1;
+        for (int i = 0; i <= n / 2 + 1; i++) {
+            for (int j = 0; j <= n; j++) {
+                for (int k = 1; k <= 4; k++) {
+                    int b = 2 * n - 4 * (i + 1) - (j - k); // TODO: WHY?
+                    if (j <= k) {
+                        res += (b > 0) ? dp[j] : dp[j] / 2;
+                    } else if (b > 0) {
+                        dp[j - k] += dp[j] / 4;
+                    }
+                }
+                dp[j] = 0;
+            }
+        }
+        return res / 4;
+    }
+
     void test(int N, double expected) {
-        double delta = 1e-5;
+        double delta = 1e-6;
         assertEquals(expected, soupServings(N), delta);
         assertEquals(expected, soupServings_2(N), delta);
         assertEquals(expected, soupServings2(N), delta);
+        assertEquals(expected, soupServings3(N), delta);
     }
 
     @Test
     public void test() {
         test(50, .625);
-        test(3275, 0.99987);
+        test(100, .71875);
+        test(1000, 0.9765651);
+        test(1001, 0.9785660);
+        test(1500, 0.9928319);
+        test(3275, 0.9998684);
+        test(4275, 0.9999849);
         test(660295675, 1);
     }
 
