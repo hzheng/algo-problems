@@ -78,13 +78,14 @@ public class ParentingPartnering {
         if (size <= 1) return size + 1;
 
         Interval first = intervals.pollFirst();
-        Interval last = intervals.last();
+        // add a virtual last interval(wrapped first), whose end is negative
+        intervals.add(new Interval(TOTAL * 2 + first.start, -1, first.kind));
         @SuppressWarnings("unchecked")
         PriorityQueue<Integer>[] slices = new PriorityQueue[] {
             new PriorityQueue<>(), new PriorityQueue<>()
         };
         int res = 0;
-        for (Interval prev = first, cur; prev != last; prev = cur) {
+        for (Interval prev = first, cur; prev.end >= 0; prev = cur) {
             cur = intervals.pollFirst();
             if (prev.kind != cur.kind) {
                 res++;
@@ -92,12 +93,6 @@ public class ParentingPartnering {
                 slices[cur.kind].offer(cur.start - prev.end);
                 res += 2;
             }
-        }
-        if (first.kind != last.kind) {
-            res++;
-        } else {
-            slices[first.kind].offer(first.start + TOTAL * 2 - last.end);
-            res += 2; // even 0 interval is OK
         }
         for (int i = 0; i < 2; i++) {
             for (PriorityQueue<Integer> q = slices[i]; !q.isEmpty(); res -= 2) {
