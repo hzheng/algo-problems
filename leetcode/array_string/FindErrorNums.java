@@ -105,7 +105,6 @@ public class FindErrorNums {
         return new int[] {dup, miss};
     }
 
-    // Array Set
     // time complexity: O(N), space complexity: O(1)
     // beats 69.96%(11 ms for 49 tests)
     public int[] findErrorNums4(int[] nums) {
