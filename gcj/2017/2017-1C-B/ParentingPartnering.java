@@ -56,7 +56,7 @@ import static org.junit.Assert.*;
 // 0 ≤ AJ ≤ 100.
 // 1 ≤ AC + AJ ≤ 200.
 public class ParentingPartnering {
-    // Heap
+    // Heap + SortedSet
     // time complexity: O(N * log(N))
     public static int minExchange(int[][] acts1, int[][] acts2) {
         final int TOTAL = 12 * 60;
@@ -85,19 +85,16 @@ public class ParentingPartnering {
             new PriorityQueue<>(), new PriorityQueue<>()
         };
         int res = 0;
-        for (Interval prev = first, cur; prev.end >= 0; prev = cur) {
+        for (Interval prev = first, cur; prev.end >= 0; prev = cur, res++) {
             cur = intervals.pollFirst();
-            if (prev.kind != cur.kind) {
-                res++;
-            } else if (prev.end != cur.start) {
+            if (prev.kind == cur.kind) {
                 slices[cur.kind].offer(cur.start - prev.end);
-                res += 2;
+                res++;
             }
         }
         for (int i = 0; i < 2; i++) {
             for (PriorityQueue<Integer> q = slices[i]; !q.isEmpty(); res -= 2) {
-                unallocated[i] -= q.poll();
-                if (unallocated[i] < 0) break;
+                if ((unallocated[i] -= q.poll()) < 0) break;
             }
         }
         return res;
@@ -119,8 +116,54 @@ public class ParentingPartnering {
         }
     }
 
+    // Heap + SortedSet
+    // time complexity: O(N * log(N))
+    public static int minExchange2(int[][] acts1, int[][] acts2) {
+        final int TOTAL = 12 * 60;
+        int[] unallocated = {TOTAL, TOTAL};
+        NavigableSet<int[]> intervals = new TreeSet<>((a, b) -> a[0] - b[0]);
+        for (int[] interval : acts1) {
+            int start = interval[0];
+            int end = interval[1];
+            unallocated[0] -= (end - start);
+            intervals.add(new int[] {start, end});
+        }
+        for (int[] interval : acts2) {
+            int start = interval[0];
+            int end = interval[1];
+            unallocated[1] -= (end - start);
+            intervals.add(new int[] {start, -end});
+        }
+        int size = intervals.size();
+        if (size <= 1) return size + 1;
+
+        int[] first = intervals.pollFirst();
+        int[] last = new int[] {TOTAL * 2 + first[0],
+                                (TOTAL * 4) * (first[1] > 0 ? 1 : -1)};
+        intervals.add(last);
+        @SuppressWarnings("unchecked")
+        PriorityQueue<Integer>[] slices = new PriorityQueue[] {
+            new PriorityQueue<>(), new PriorityQueue<>()
+        };
+        int res = 0;
+        for (int[] prev = first, cur; prev[1] != last[1]; prev = cur, res++) {
+            cur = intervals.pollFirst();
+            if ((prev[1] > 0) ^ (cur[1] < 0)) {
+                slices[cur[1] > 0 ? 0 : 1].offer(cur[0] - Math.abs(prev[1]));
+                res++;
+            }
+        }
+        for (int i = 0; i < 2; i++) {
+            for (PriorityQueue<Integer> q = slices[i]; !q.isEmpty(); res -= 2) {
+                if ((unallocated[i] -= q.poll()) < 0) break;
+            }
+        }
+        return res;
+    }
+
     void test(int[][] acts1, int[][] acts2, int expected) {
         assertEquals(expected, minExchange(acts1, acts2));
+        assertEquals(expected, minExchange2(acts1, acts2));
     }
 
     @Test
@@ -169,6 +212,6 @@ public class ParentingPartnering {
         for (int i = 0; i < N2; i++) {
             acts2[i] = new int[] {in.nextInt(), in.nextInt()};
         }
-        out.printf("%d%n", minExchange(acts1, acts2));
+        out.printf("%d%n", minExchange2(acts1, acts2));
     }
 }
