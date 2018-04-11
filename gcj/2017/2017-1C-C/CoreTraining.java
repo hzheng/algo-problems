@@ -64,26 +64,12 @@ public class CoreTraining {
             mean += spend / count;
             U -= spend;
         }
-        if (U >= EPISON && (P[start - 1] += U) > 1) return 0; // ignore
+        if (start > 0 && (P[start - 1] += U) > 1) return 0; // ignore
 
         for (int i = start; i < end; i++) {
             P[i] = mean;
         }
-        double[][] dp = new double[N + 1][N + 1];
-        dp[0][0] = 1;
-        for (int i = 1; i <= N; i++) {
-            for (int j = 0; j <= i; j++) {
-                dp[i][j] = dp[i - 1][j] * (1 - P[i - 1]);
-                if (j > 0) {
-                    dp[i][j] += dp[i - 1][j - 1] * P[i - 1];
-                }
-            }
-        }
-        double res = 1;
-        for (int i = 0; i < K; i++) {
-            res -= dp[N][i];
-        }
-        return Math.min(Math.max(0, res), 1);
+        return calcProbability(P, K);
     }
 
     // Only good for small dataset 1
@@ -137,8 +123,69 @@ public class CoreTraining {
         return res;
     }
 
+    public static double maxProbability2(double[] P, int K, double U) {
+        Arrays.sort(P);
+        double res = 0;
+        int N = P.length;
+        outer : for (int start = 0; start < N; start++) {
+            double[] p = P.clone();
+            double curSum = 0;
+            for (int i = start, count = 1; ; count++, i++) {
+                curSum += p[i];
+                double target = (i == N - 1) ? 1 : p[i + 1];
+                if ((i < N - 1) && (count * target - curSum < U)) continue;
+
+                double mean = Math.min((curSum + U) / count, 1);
+                for (int j = start; j <= i; j++) {
+                    p[j] = mean;
+                }
+                double more = curSum + U - mean * count;
+                if (start > 0 && (p[start - 1] += more) > 1) continue outer;
+                break;
+            }
+            res = Math.max(res, calcProbability(p, K));
+        }
+        return res;
+    }
+
+    private static double calcProbability(double[] P, int K) {
+        // 1D Dynamic Programming
+        double[] dp = new double[K + 1];
+        dp[0] = 1; // at least i good
+        for (double p : P) {
+            for (int i = K - 1; i >= 0; i--) {
+                dp[i + 1] += p * dp[i];
+                dp[i] *= 1 - p;
+            }
+        }
+        return dp[K];
+
+        // 2D Dynamic Programming
+        // int N = P.length;
+        // double[][] dp = new double[N + 1][K + 1];
+        // dp[0][0] = 1; // first i cores has exactly j good
+        // for (int i = 0; i < N; i++) {
+        //     for (int j = K - 1; j >= 0; j--) {
+        //         dp[i + 1][j + 1] += dp[i][j] * P[i];
+        //         dp[i + 1][j] = dp[i][j] * (1 - P[i]);
+        //     }
+        // }
+        // double res = 1;
+        // for (int i = 0; i < K; i++) {
+        //     res -= dp[N][i];
+        // }
+
+        // or:
+        // double res = 0;
+        // for (int i = 0; i <= N; i++) {
+        //     res2 += dp[i][K];
+        // }
+        // return res;
+    }
+
     void test(double[] P, int K, double U, double expected) {
-        assertEquals(expected, maxProbability(P, K, U), 10E-6);
+        assertEquals(expected, maxProbability(P.clone(), K, U), 10E-6);
+        assertEquals(expected, maxProbability2(P.clone(), K, U), 10E-6);
     }
 
     @Test
