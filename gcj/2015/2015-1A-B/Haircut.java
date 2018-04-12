@@ -8,21 +8,21 @@ import static org.junit.Assert.*;
 // https://codejam.withgoogle.com/codejam/contest/4224486/dashboard#s=p1
 // Round 1A 2015: Problem B - Haircut
 //
-// You are waiting in a long line to get a haircut at a trendy barber shop. The 
-// shop has B barbers on duty, and they are numbered 1 through B. It always 
+// You are waiting in a long line to get a haircut at a trendy barber shop. The
+// shop has B barbers on duty, and they are numbered 1 through B. It always
 // takes the kth barber exactly Mk minutes to cut a customer's hair, and a
 // barber can only cut one customer's hair at a time. Once a barber finishes
 // cutting hair, he is immediately free to help another customer.
 // While the shop is open, the customer at the head of the queue always goes to
-// the lowest-numbered barber who is available. When no barber is available, 
+// the lowest-numbered barber who is available. When no barber is available,
 // that customer waits until at least one becomes available.
-// You are the Nth person in line, and the shop has just opened. Which barber 
+// You are the Nth person in line, and the shop has just opened. Which barber
 // will cut your hair?
 // Input
-// The first line of the input gives the number of test cases, T. T test cases 
-// follow; each consists of two lines. The first contains two space-separated 
-// integers B and N -- the number of barbers and your place in line. The 
-// customer at the head of the line is number 1, the next one is number 2, and 
+// The first line of the input gives the number of test cases, T. T test cases
+// follow; each consists of two lines. The first contains two space-separated
+// integers B and N -- the number of barbers and your place in line. The
+// customer at the head of the line is number 1, the next one is number 2, and
 // so on. The second line contains M1, M2, ..., MB.
 // Output
 // For each test case, output one line containing "Case #x: y", where x is the
@@ -39,12 +39,14 @@ import static org.junit.Assert.*;
 // 1 ≤ Mk ≤ 100000.
 public class Haircut {
     // Heap
+    // time complexity: O(B)
     public static int haircut(int[] minutes, int place) {
         final int N = minutes.length;
         if (place <= N) return place;
 
         place -= N;
-        PriorityQueue<long[]> pq = new PriorityQueue<>(new Comparator<long[]>() {
+        PriorityQueue<long[]> pq = new PriorityQueue<>(
+            new Comparator<long[]>() {
             public int compare(long[] a, long[] b) {
                 if (a[1] != b[1]) return Long.compare(a[1], b[1]);
                 return Long.compare(a[0], b[0]);
@@ -58,7 +60,7 @@ public class Haircut {
         long time = (long)(place / speed) - 1;
         for (int min : minutes) {
             place -= (int)(time / min);
-            pq.offer(new long[]{i++, (min - time % min)});
+            pq.offer(new long[] {i++, (min - time % min)});
         }
         while (true) {
             long[] cur = pq.poll();
@@ -69,8 +71,8 @@ public class Haircut {
         }
     }
 
+    // LCM + Heap
     // Only works for small dataset
-    // Heap
     public static int haircut0(int[] minutes, int place) {
         final int N = minutes.length;
         int lcm = 1;
@@ -93,13 +95,41 @@ public class Haircut {
         });
         int i = 0;
         for (int min : minutes) {
-            pq.offer(new int[]{i++, 0});
+            pq.offer(new int[] {i++, 0});
         }
         while (true) {
             int[] cur = pq.poll();
             if (--place == 0) return cur[0] + 1;
             cur[1] += minutes[cur[0]];
             pq.offer(cur);
+        }
+    }
+
+    // LCM
+    // Only works for small dataset
+    // time complexity: O(B * LCM(M1, M2, M3, …))
+    public static int haircut0_2(int[] minutes, int place) {
+        final int N = minutes.length;
+        int lcm = 1;
+        for (int min : minutes) {
+            lcm = min / gcd(min, lcm) * lcm;
+        }
+        int totalTimes = 0;
+        for (int i = 0; i < N; i++) {
+            totalTimes += lcm / minutes[i];
+        }
+        place %= totalTimes;
+        if (place == 0) {
+            place = totalTimes;
+        }
+        return naiveHaircut(minutes, place);
+    }
+
+    private static int naiveHaircut(int[] minutes, int place) {
+        for (int t = 0;; t++) {
+            for (int i = 0; i < minutes.length; i++) {
+                if ((t % minutes[i] == 0) && (--place == 0)) return i + 1;
+            }
         }
     }
 
@@ -115,9 +145,40 @@ public class Haircut {
         return ((b & 1) == 0) ? gcd(a, b >> 1) : gcd(a - b, b);
     }
 
+    // Binary Search
+    // time complexity: O(B * log(N * max(M)))
+    public static int haircut2(int[] minutes, int place) {
+        long high = 100000L * place;
+        for (long low = -1; low + 1 < high; ) {
+            long mid = (low + high) / 2;
+            if (countServed(minutes, mid) < place) {
+                low = mid;
+            } else {
+                high = mid;
+            }
+        }
+        long time = high;
+        place -= countServed(minutes, time - 1);
+        for (int i = 0; ; i++) {
+            if (time % minutes[i] == 0 && (--place == 0)) return i + 1;
+        }
+    }
+
+    private static long countServed(int[] minutes, long time) {
+        if (time < 0) return 0;
+
+        long count = 0;
+        for (int min : minutes) {
+            count += time / min + 1;
+        }
+        return count;
+    }
+
     void test(int[] minutes, int place, int expected) {
         assertEquals(expected, haircut0(minutes, place));
+        assertEquals(expected, haircut0_2(minutes, place));
         assertEquals(expected, haircut(minutes, place));
+        assertEquals(expected, haircut2(minutes, place));
     }
 
     @Test
@@ -126,6 +187,8 @@ public class Haircut {
         test(new int[] {10, 5}, 4, 1);
         test(new int[] {7, 7, 7}, 12, 3);
         test(new int[] {4, 2, 1}, 8, 1);
+        test(new int[] {25, 25, 25, 25, 25}, 1000000000, 5);
+        test(new int[] {25, 25, 25, 25, 25}, 1370000000, 5);
     }
 
     public static void main(String[] args) {
@@ -162,6 +225,6 @@ public class Haircut {
         for (int i = 0; i < B; i++) {
             M[i] = in.nextInt();
         }
-        out.println(haircut(M, N));
+        out.println(haircut2(M, N));
     }
 }
