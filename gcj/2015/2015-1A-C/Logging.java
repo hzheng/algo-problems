@@ -67,8 +67,8 @@ class Point implements Comparable<Point> {
 public class Logging {
     private static final double EPSILON = 1e-13;
 
-    // Sort + Two Pointers
-    // time complexity: O(N ^ 2 * log(N))
+    // Brute Force
+    // time complexity: O(N ^ 3)
     public static int[] log(int[][] trees) {
         int N = trees.length;
         int[] res = new int[N];
@@ -79,6 +79,46 @@ public class Logging {
     }
 
     private static int log(int[][] trees, int index) {
+        int N = trees.length;
+        int res = N - 1;
+        int[] o = trees[index];
+        for (int i = 0; i < N; i++) {
+            if (index == i) continue;
+
+            int[] p = trees[i];
+            int upper = 0;
+            int lower = 0;
+            for (int[] q : trees) {
+                long anticlockwise = crossProduct(p, q, o);
+                if (anticlockwise > 0) {
+                    upper++;
+                } else if (anticlockwise < 0) {
+                    lower++;
+                }
+            }
+            res = Math.min(res, Math.min(upper, lower));
+        }
+        return res;
+    }
+
+    private static long crossProduct(int[] p, int[] q, int[] o) {
+        return ((long)p[0] - o[0]) * (q[1] - o[1])
+               - ((long)p[1] - o[1]) * (q[0] - o[0]);
+    }
+
+
+    // Sort + Two Pointers
+    // time complexity: O(N ^ 2 * log(N))
+    public static int[] log2(int[][] trees) {
+        int N = trees.length;
+        int[] res = new int[N];
+        for (int i = N - 1; i >= 0; i--) {
+            res[i] = log2(trees, i);
+        }
+        return res;
+    }
+
+    private static int log2(int[][] trees, int index) {
         int N = trees.length;
         final int A = 2 * N - 2;
         double[] angles = new double[A];
@@ -103,6 +143,7 @@ public class Logging {
 
     void test(int[][] trees, int[] expected) {
         assertArrayEquals(expected, log(trees));
+        assertArrayEquals(expected, log2(trees));
     }
 
     @Test
@@ -148,7 +189,7 @@ public class Logging {
         for (int i = 0; i < N; i++) {
             trees[i] = new int[] {in.nextInt(), in.nextInt()};
         }
-        for (int i : log(trees)) {
+        for (int i : log2(trees)) {
             out.println(i);
         }
     }
