@@ -73,6 +73,30 @@ public class SenateEvacuation {
         }
     }
 
+    public static String evacuate2(int[] P) {
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> b[1] - a[1]);
+        int N = P.length;
+        for (int i = 0; i < N; i++) {
+            pq.offer(new int[] {i, P[i]});
+        }
+        StringBuilder res = new StringBuilder();
+        while (true) {
+            int size = pq.size();
+            if (size == 0) return res.toString();
+
+            if (res.length() > 0) {
+                res.append(" ");
+            }
+            for (int i = (size == 2) ? 2 : 1; i > 0; i--) {
+                int[] cur = pq.poll();
+                if (--cur[1] > 0) {
+                    pq.offer(cur);
+                }
+                res.append((char)(cur[0] + 'A'));
+            }
+        }
+    }
+
     void test(int[] P, String expected) {
         assertEquals(expected, evacuate(P));
     }
