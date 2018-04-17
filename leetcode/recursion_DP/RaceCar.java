@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 public class RaceCar {
     // Dynamic Programming(Bottom-Up)
     // time complexity: O(T * log(T)), space complexity: O(T)
-    // beats %(20 ms for 53 tests)
+    // beats %(15 ms for 53 tests)
     public int racecar(int target) {
         int[] dp = new int[target + 1];
         Arrays.fill(dp, Integer.MAX_VALUE);
@@ -27,12 +27,12 @@ public class RaceCar {
                 dp[i] = k;
                 continue;
             }
+            // A^k R
+            dp[i] = Math.min(dp[i], dp[(1 << k) - 1 - i] + k + 1);
             for (int j = 0; j < k - 1; j++) {
                 // A^(k−1) R A^j R
                 dp[i] = Math.min(dp[i],
                                  dp[i - (1 << (k - 1)) + (1 << j)] + k + j + 1);
-                // A^k R
-                dp[i] = Math.min(dp[i], dp[(1 << k) - 1 - i] + k + 1);
             }
         }
         return dp[target];
@@ -48,12 +48,12 @@ public class RaceCar {
     private int race(int tgt, int[] dp) {
         if (dp[tgt] > 0) return dp[tgt];
 
-        int n = (int)(Math.log(tgt) / Math.log(2)) + 1;
-        if (tgt == (1 << n) - 1) return dp[tgt] = n;
+        int k = (int)(Math.log(tgt) / Math.log(2)) + 1;
+        if (tgt == (1 << k) - 1) return dp[tgt] = k;
 
-        int res = race((1 << n) - 1 - tgt, dp) + n + 1;
-        for (int i = 0, m = 1 << (n - 1); i < n - 1; i++) {
-            res = Math.min(res, race(tgt - m + (1 << i), dp) + n + i + 1);
+        int res = race((1 << k) - 1 - tgt, dp) + k + 1;
+        for (int i = 0, m = 1 << (k - 1); i < k - 1; i++) {
+            res = Math.min(res, race(tgt - m + (1 << i), dp) + k + i + 1);
         }
         return dp[tgt] = res;
     }
