@@ -72,9 +72,20 @@ public class FashionPolice {
         return res;
     }
 
+    public static List<int[]> wear2(int J, int P, int S, int K) {
+        List<int[]> res = new ArrayList<>();
+        K = Math.min(S, K);
+        for (int j = 0; j < J; j++) {
+            for (int p = P * K - 1, s = j; p >= 0; p--, s++) {
+                res.add(new int[] {j + 1, p / K + 1, s % S + 1});
+            }
+        }
+        return res;
+    }
+
     void test(int J, int P, int S, int K, int[][] expected) {
         int i = 0;
-        for (int[] outfit : wear(J, P, S, K)) {
+        for (int[] outfit : wear2(J, P, S, K)) {
             assertArrayEquals(expected[i++], outfit);
         }
     }
@@ -120,7 +131,7 @@ public class FashionPolice {
         int P = in.nextInt();
         int S = in.nextInt();
         int K = in.nextInt();
-        List<int[]> outfits = wear(J, P, S, K);
+        List<int[]> outfits = wear2(J, P, S, K);
         out.println(outfits.size());
         for (int[] outfit : outfits) {
             out.println(outfit[0] + " " + outfit[1] + " " + outfit[2]);
