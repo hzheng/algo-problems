@@ -34,7 +34,7 @@ public class CounterCulture {
     public static long count(long N) {
         if (N <= 10) return N;
 
-        int res = 9;
+        int res = 9; // count all 1-digit numbers
         if (N % 10 == 0) { // avoid 0-ending to make reversal possible
             N--;
             res++;
@@ -53,24 +53,9 @@ public class CounterCulture {
         }
         // count from 10...0 to N
         StringBuilder reversed = new StringBuilder(s).reverse();
-        for (int i = (digits - 1) / 2; i > 0; i--) {
-            reversed.setCharAt(i, '0');
-        }
-        reversed.setCharAt(0, '1');
-        for (int i = 0, j = reversed.length() - 1; i < j; i++, j--) {
-            if (reversed.charAt(i) != reversed.charAt(j)) {
-                res++; // only swap when necessary
-                break;
-            }
-        }
-        res += Integer.valueOf(reversed.substring(digits / 2));
+        int rightHalf = Integer.valueOf(reversed.substring((digits + 1) / 2));
+        res += rightHalf + ((rightHalf == 1) ? 0 : 1); // swap when necessary
         return res + Integer.valueOf(s.substring(digits / 2));
-    }
-
-    private static long reverse(String s) {
-        StringBuilder sb = new StringBuilder(s);
-        sb.reverse();
-        return Long.valueOf(sb.toString());
     }
 
     void test(long N, long expected) {
