@@ -51,7 +51,8 @@ import static org.junit.Assert.*;
 // The total number of hikers in each test case will not exceed 500000.
 public class HikingDeer {
     // Heap + Stack + Sort
-    // large dataset: 15 sec
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    // large dataset: <15 sec
     public static int minEncounter(int[][] hikerGroups) {
         List<Hiker> hikers = new ArrayList<>();
         for (int[] group : hikerGroups) {
@@ -82,7 +83,7 @@ public class HikingDeer {
         }
         int minMeet = n - 1;
         for (int i = 1, surpassed = 0; i < n && surpassed < minMeet; i++) {
-            for (double time = hikers.get(i).finishTime; ; surpassed++) {
+            for (double time = hikers.get(i).finishTime;; surpassed++) {
                 Double t = stack.peek();
                 if (t == null) return Math.min(minMeet, surpassed);
                 if (t > time || surpassed >= minMeet) break;
@@ -95,49 +96,95 @@ public class HikingDeer {
     }
 
     // Heap + Sort
-    // large dataset: very long time
-    public static int minEncounter_1(int[][] hikerGroups) {
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    // large dataset: <4 sec
+    public static int minEncounter2(int[][] hikerGroups) {
         List<Hiker> hikers = new ArrayList<>();
         PriorityQueue<Hiker> pq = new PriorityQueue<>(
-            (a, b) -> Long.compare(a.time, b.time));
+            (a, b) -> Double.compare(a.toZero, b.toZero));
         for (int[] group : hikerGroups) {
             for (int i = 0; i < group[1]; i++) {
-                hikers.add(new Hiker(group[0], (long)group[2] + i));
+                Hiker hiker = new Hiker(group[0], (long)group[2] + i);
+                hikers.add(hiker);
+                hiker.toZero += hiker.time;
+                pq.offer(hiker);
             }
         }
         Collections.sort(hikers);
         int n = hikers.size();
         int minMeet = n - 1;
-        pq.offer(hikers.get(0));
-        outer : for (int i = 1, surpassed = 0; i < n; i++) {
-            Hiker hiker = hikers.get(i);
-            double finishTime = hiker.finishTime;
-            List<Hiker> tmp = new ArrayList<>();
-            while (!pq.isEmpty()) {
+        for (int i = 1, surpassed = 0; i < n && surpassed < minMeet; i++) {
+            for (Double time = hikers.get(i).finishTime;; surpassed++) {
                 Hiker cur = pq.peek();
-                int k = (int)((finishTime - cur.end) / cur.time);
-                if (k < 0) break;
+                if (cur == null) return Math.min(minMeet, surpassed);
+                if (cur.toZero > time || surpassed >= minMeet) break;
 
+                cur.toZero += cur.time;
                 pq.poll();
-                if (k == 0) {
-                    tmp.add(cur);
-                } else {
-                    cur.end += k * cur.time;
-                    pq.offer(cur);
-                    surpassed += k;
-                    if (surpassed >= minMeet) break outer;
-                }
+                pq.offer(cur);
             }
-            pq.addAll(tmp);
             minMeet = Math.min(minMeet, surpassed + n - 1 - i);
-            pq.offer(hiker);
+        }
+        return minMeet;
+    }
+
+    // Heap
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    // large dataset: <5 sec
+    public static int minEncounter3(int[][] hikerGroups) {
+        PriorityQueue<Hiker> pq = new PriorityQueue<>(new Comparator<Hiker>() {
+            public int compare(Hiker a, Hiker b) {
+                int diff = Double.compare(a.toZero, b.toZero);
+                return diff != 0 ? diff : (a.firstTime() ? 1 : -1);
+            }
+        });
+        for (int[] group : hikerGroups) {
+            for (int i = 0; i < group[1]; i++) {
+                pq.offer(new Hiker(group[0], (long)group[2] + i));
+            }
+        }
+        int n = pq.size();
+        int minMeet = n;
+        for (int i = n * 2, meet = n; i >= 0; i--) {
+            Hiker cur = pq.poll();
+            meet += cur.firstTime() ? -1 : 1;
+            minMeet = Math.min(minMeet, meet);
+            cur.toZero += cur.time;
+            pq.offer(cur);
+        }
+        return minMeet;
+    }
+
+    // Heap + Sort
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    // large dataset: <5 sec
+    public static int minEncounter3_2(int[][] hikerGroups) {
+        PriorityQueue<Hiker> pq = new PriorityQueue<>(new Comparator<Hiker>() {
+            public int compare(Hiker a, Hiker b) {
+                int diff = Long.compare(a.timePos, b.timePos);
+                return diff != 0 ? diff : (a.isFirstTime() ? 1 : -1);
+            }
+        });
+        for (int[] group : hikerGroups) {
+            for (int i = 0; i < group[1]; i++) {
+                pq.offer(new Hiker(group[0], (long)group[2] + i));
+            }
+        }
+        int n = pq.size();
+        int minMeet = n;
+        for (int i = n * 2, meet = n; i >= 0; i--) {
+            Hiker cur = pq.poll();
+            meet += cur.isFirstTime() ? -1 : 1;
+            minMeet = Math.min(minMeet, meet);
+            cur.timePos += cur.time * 360;
+            pq.offer(cur);
         }
         return minMeet;
     }
 
     // Sort + Binary Search
     // large dataset: 2 min
-    public static int minEncounter_2(int[][] hikerGroups) {
+    public static int minEncounter0(int[][] hikerGroups) {
         long shortestTime = Long.MAX_VALUE;
         int total = 0;
         for (int[] group : hikerGroups) {
@@ -203,12 +250,22 @@ public class HikingDeer {
     private static class Hiker implements Comparable<Hiker> {
         int pos;
         long time;
-        double end;
+        long timePos;
+        double toZero;
         double finishTime;
         Hiker(int pos, long time) {
             this.pos = pos;
             this.time = time;
-            finishTime = end = time / 360d * (360 - pos);
+            finishTime = toZero = time / 360d * (360 - pos);
+            timePos = time * (360L - pos);
+        }
+
+        boolean isFirstTime() {
+            return timePos == time * (360L - pos);
+        }
+
+        boolean firstTime() {
+            return toZero == finishTime;
         }
 
         boolean endAfter(long maxTime) {
@@ -234,6 +291,10 @@ public class HikingDeer {
 
     void test(int[][] hikerGroups, int expected) {
         assertEquals(expected, minEncounter(hikerGroups));
+        assertEquals(expected, minEncounter2(hikerGroups));
+        assertEquals(expected, minEncounter3(hikerGroups));
+        assertEquals(expected, minEncounter3_2(hikerGroups));
+        assertEquals(expected, minEncounter0(hikerGroups));
     }
 
     @Test
@@ -283,6 +344,6 @@ public class HikingDeer {
             hikerGroups[i] =
                 new int[] {in.nextInt(), in.nextInt(), in.nextInt()};
         }
-        out.println(minEncounter(hikerGroups));
+        out.println(minEncounter3_2(hikerGroups));
     }
 }
