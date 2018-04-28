@@ -30,16 +30,15 @@ import static org.junit.Assert.*;
 // Large dataset
 // 2 ≤ N ≤ 1000.
 public class FullBinaryTree {
-    // Hash Table + DFS + Recursion
+    // Hash Table + Dynamic Programming + DFS + Recursion
     // time complexity: O(N), space complexity: O(N)
     public static int deleteToFullBinaryTree(int[][] edges) {
-        int n = edges.length + 1;
-        if (n == 2) return 1;
+        if (edges.length == 1) return 1;
 
         List<Integer>[] graph = createGraph(edges);
         Map<Integer, Integer> dels = new HashMap<>();
         Map<Integer, Integer> childCounts = new HashMap<>();
-        int res = n;
+        int res = edges.length;
         int i = -1;
         outer : for (List<Integer> nei : graph) {
             if (++i == 0 || nei.size() == 1) continue;
@@ -116,15 +115,124 @@ public class FullBinaryTree {
         return count;
     }
 
+    // Dynamic Programming + DFS + Recursion
+    // time complexity: O(N), space complexity: O(N ^ 2)
+    public static int deleteToFullBinaryTree_2(int[][] edges) {
+        int n = edges.length + 1;
+        if (n == 2) return 1;
+
+        List<Integer>[] graph = createGraph(edges);
+        int[][] dels = new int[n + 1][n + 1];
+        for (int[] a : dels) {
+            Arrays.fill(a, Integer.MAX_VALUE);
+        }
+        int[][] childCounts = new int[n + 1][n + 1];
+        for (int[] a : childCounts) {
+            Arrays.fill(a, -1);
+        }
+        int res = edges.length;
+        int i = -1;
+        outer : for (List<Integer> nei : graph) {
+            if (++i == 0 || nei.size() == 1) continue;
+
+            res = Math.min(res, delete(i, 0, graph, dels, childCounts));
+        }
+        return res;
+    }
+
+    private static int delete(int cur, int parent, List<Integer>[] graph,
+                              int[][] dels, int[][] childCount) {
+        List<Integer> nei = graph[cur];
+        int size = nei.size();
+        if (size <= 1) return 0; // leaf
+
+        int res = dels[cur][parent];
+        if (res != Integer.MAX_VALUE) return res; // cached
+
+        int kids = countChild(cur, parent, graph, childCount);
+        if (size == 2 && parent > 0) return dels[cur][parent] = kids;
+
+        for (int i = 0; i < size; i++) {
+            int a = nei.get(i);
+            if (a == parent) continue;
+
+            for (int j = i + 1; j < size; j++) {
+                int b = nei.get(j);
+                if (b == parent) continue;
+                // choose 2 children and discard all others
+                int del = delete(a, cur, graph, dels, childCount)
+                          + delete(b, cur, graph, dels, childCount);
+                int delChild = kids - countChild(a, cur, graph, childCount)
+                               - countChild(b, cur, graph, childCount) - 2;
+                res = Math.min(res, del + delChild);
+            }
+        }
+        return dels[cur][parent] = res;
+    }
+
+    private static int countChild(int cur, int parent, List<Integer>[] graph,
+                                  int[][] childCount) {
+        int count = childCount[cur][parent];
+        if (count >= 0) return count;
+
+        count = 0;
+        for (int nei : graph[cur]) {
+            if (nei == parent) continue;
+
+            count += 1 + countChild(nei, cur, graph, childCount);
+        }
+        return childCount[cur][parent] = count;
+    }
+
+    // Dynamic Programming + DFS + Recursion
+    // time complexity: O(N), space complexity: O(N ^ 2)
+    public static int deleteToFullBinaryTree2(int[][] edges) {
+        List<Integer>[] graph = createGraph(edges);
+        int n = edges.length + 1;
+        int[][] dp = new int[n + 1][n + 1];
+        for (int[] a : dp) {
+            Arrays.fill(a, -1);
+        }
+        int max = 0;
+        for (int i = 1; i <= n; i++) {
+            max = Math.max(max, maxSubtree(i, 0, dp, graph));
+        }
+        return n - max;
+    }
+
+    private static int maxSubtree(int cur, int parent, int[][] dp,
+                                  List<Integer>[] graph) {
+        if (dp[cur][parent] >= 0) return dp[cur][parent];
+
+        int max1 = -1;
+        int max2 = -1;
+        for (int nei : graph[cur]) {
+            if (nei == parent) continue;
+
+            int v = maxSubtree(nei, cur, dp, graph);
+            if (v > max1) {
+                max2 = max1;
+                max1 = v;
+            } else if (v > max2) {
+                max2 = v;
+            }
+        }
+        return dp[cur][parent] = 1 + (max2 < 0 ? 0 : max1 + max2);
+    }
+
+    // TODO: top3 algorithm(linear complexity) as in
+    // https://code.google.com/codejam/contest/2984486/dashboard#s=a&a=1
+
     void test(int[][] edges, int expected) {
         assertEquals(expected, deleteToFullBinaryTree(edges));
+        assertEquals(expected, deleteToFullBinaryTree_2(edges));
+        assertEquals(expected, deleteToFullBinaryTree2(edges));
     }
 
     @Test
     public void test() {
         test(new int[][] {{1, 2}}, 1);
-        test(new int[][] {{4, 5}, {4, 2}, {1, 2}, {3, 1}, {6, 4}, {3, 7}},
-             2);
+        test(new int[][] {{4, 5}, {4, 2}, {1, 2}, {3, 1}, {6, 4}, {3, 7}}, 2);
         test(new int[][] {{2, 1}, {1, 3}}, 0);
         test(new int[][] {{1, 2}, {2, 3}, {3, 4}}, 1);
     }
@@ -163,6 +271,6 @@ public class FullBinaryTree {
         for (int i = 0; i < N - 1; i++) {
             edges[i] = new int[] {in.nextInt(), in.nextInt()};
         }
-        out.println(deleteToFullBinaryTree(edges));
+        out.println(deleteToFullBinaryTree2(edges));
     }
 }
