@@ -3,6 +3,8 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import common.DisjointSet;
+
 // LC827: https://leetcode.com/problems/making-a-large-island/
 //
 // In a 2D grid of 0s and 1s, we change at most one 0 to a 1.
@@ -125,9 +127,101 @@ public class MakeLargeIsland {
         return (res == 0) ? m * n : res;
     }
 
+    // Union Find + Set
+    // time complexity: O(M * N * N0), space complexity: O(M * N)
+    // beats %(575 ms for 63 tests)
+    public int largestIsland3(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        int res = count(grid, m, n);
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 0) {
+                    grid[i][j] = 1;
+                    res = Math.max(res, count(grid, m, n));
+                    grid[i][j] = 0;
+                }
+            }
+        }
+        return res;
+    }
+
+    private int count(int[][] grid, int m, int n) {
+        DisjointSet ds = new DisjointSet(m * n);
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (j + 1 < n && grid[i][j] + grid[i][j + 1] == 2) {
+                    ds.union(i * n + j, i * n + j + 1);
+                }
+                if (i + 1 < m && grid[i][j] + grid[i + 1][j] == 2) {
+                    ds.union(i * n + j, (i + 1) * n + j);
+                }
+            }
+        }
+        int res = 0;
+        for (int p : ds.getParent()) {
+            res = Math.max(res, -p);
+        }
+        return res;
+    }
+
+    // DFS + Recursion + Set
+    // time complexity: O(M * N), space complexity: O(M * N)
+    // beats %(22 ms for 63 tests)
+    public int largestIsland4(int[][] grid) {
+        int n = grid.length;
+        int[] area = new int[n * n + 2];
+        for (int x = 0, index = 2; x < n; x++) {
+            for (int y = 0; y < n; y++) {
+                if (grid[x][y] == 1) {
+                    area[index] = dfs(x, y, index++, grid);
+                }
+            }
+        }
+        int res = 0;
+        for (int a : area) {
+            res = Math.max(res, a);
+        }
+        for (int x = 0; x < n; x++) {
+            for (int y = 0; y < n; y++) {
+                if (grid[x][y] != 0) continue;
+
+                Set<Integer> visited = new HashSet<>();
+                int count = 1;
+                for (int[] move : MOVES) {
+                    int nx = x + move[0];
+                    int ny = y + move[1];
+                    if (nx >= 0 && nx < n && ny >= 0 && ny < n
+                        && grid[nx][ny] > 1 && visited.add(grid[nx][ny])) {
+                        count += area[grid[nx][ny]];
+                    }
+                }
+                res = Math.max(res, count);
+            }
+        }
+        return res;
+    }
+
+    private int dfs(int x, int y, int index, int[][] grid) {
+        int res = 1;
+        int n = grid.length;
+        grid[x][y] = index;
+        for (int[] move : MOVES) {
+            int nx = x + move[0];
+            int ny = y + move[1];
+            if (nx >= 0 && nx < n && ny >= 0 && ny < n && grid[nx][ny] == 1) {
+                grid[nx][ny] = index;
+                res += dfs(nx, ny, index, grid);
+            }
+        }
+        return res;
+    }
+
     void test(int[][] grid, int expected) {
         assertEquals(expected, largestIsland(grid));
         assertEquals(expected, largestIsland2(grid));
+        assertEquals(expected, largestIsland3(grid));
+        assertEquals(expected, largestIsland4(grid));
     }
 
     @Test
