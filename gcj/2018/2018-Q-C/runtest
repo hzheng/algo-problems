@@ -1,0 +1,1 @@
+javac GoGopher.java && python testing_tool.py java GoGopher
