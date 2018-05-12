@@ -29,7 +29,7 @@ sourceSets {
                 file('other').listFiles().findAll { it.isDirectory() && it.name != 'tmp' }
             }
             def dirs = []
-            file('gcj').listFiles().findAll { it.isDirectory() && it.name != 'tmp'}.each { dirs << it.listFiles() }
+            file('gcj').listFiles().findAll { it.isDirectory() && it.name.startsWith('2')}.each { dirs << it.listFiles() }
             srcDir dirs
         }
         resources {

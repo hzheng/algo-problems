@@ -27,7 +27,11 @@ run_test() {
         expected="${input%.*}".expected
     fi
     echo -e "\nTesting $java_class... (IN: $input OUT: ${output-STDOUT})"
-    java $java_class $input $output
+    if [ "$(basename $(dirname $PWD))" \< "2018" ]; then
+        java $java_class $input $output
+    else
+        java $java_class < $input > $output
+    fi
     # java -Xss4m $java_class $input $output
     #java -Dgcj.submit $java_class < $input > $output
 
