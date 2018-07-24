@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// LC864: https://leetcode.com/problems/random-pick-with-blacklist/
+// LC710: https://leetcode.com/problems/random-pick-with-blacklist/
 //
 // Given a blacklist B containing unique integers from [0, N), write a function
 // to return a uniform random integer from [0, N) which is NOT in B.
@@ -32,7 +32,7 @@ public class RandomPicKWithBlacklist {
                 map.put(b, --N);
             }
         }
-        
+
         public int pick() {
             int i = rand.nextInt(max);
             return map.getOrDefault(i, i);
