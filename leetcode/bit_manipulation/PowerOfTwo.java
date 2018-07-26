@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 // Given an integer, write a function to determine if it is a power of two.
 public class PowerOfTwo {
     // Solution of Choice
-    // beats 20.40%(2 ms)
+    // beats 100%(1 ms for 1108 tests)
     public boolean isPowerOfTwo(int n) {
         return n > 0 && (n & (n - 1)) == 0;
     }
@@ -26,10 +26,22 @@ public class PowerOfTwo {
         return n > 0 && ((1 << 30) % n == 0);
     }
 
+    // beats 21.02%(2 ms for 1108 tests)
+    public boolean isPowerOfTwo4(int n) {
+        return n > 0 && Integer.bitCount(n) == 1;
+    }
+
+    // beats 100%(1 ms for 1108 tests)
+    public boolean isPowerOfTwo5(int n) {
+        return n > 0 && (n == 1 || (n % 2 == 0 && isPowerOfTwo5(n / 2)));
+    }
+
     void test(int n, boolean expected) {
         assertEquals(expected, isPowerOfTwo(n));
         assertEquals(expected, isPowerOfTwo2(n));
         assertEquals(expected, isPowerOfTwo3(n));
+        assertEquals(expected, isPowerOfTwo4(n));
+        assertEquals(expected, isPowerOfTwo5(n));
     }
 
     @Test
@@ -41,6 +53,8 @@ public class PowerOfTwo {
         for (int i = 1; i < 10; i++) {
             test((1 << i) + 1, false);
         }
+        test(-1, false);
+        test(-2147483648, false);
     }
 
     public static void main(String[] args) {
