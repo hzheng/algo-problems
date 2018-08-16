@@ -78,6 +78,11 @@ public class TreeNode {
     }
 
     @Override
+    public int hashCode() {
+        return Arrays.hashCode(toArray());
+    }
+
+    @Override
     public boolean equals(Object other) {
         if (!(other instanceof TreeNode)) return false;
 
