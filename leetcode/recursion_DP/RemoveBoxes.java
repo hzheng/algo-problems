@@ -60,10 +60,9 @@ public class RemoveBoxes {
 
     // Recursion + Dynamic Programming(Top-Down)
     // time complexity: O(N ^ 4), space complexity: O(N ^ 3)
-    // beats 17.62(166 ms for 60 tests)
+    // beats 53.66％(34 ms for 60 tests)
     public int removeBoxes2(int[] boxes) {
         int n = boxes.length;
-        // int[][][] dp = new int[n][n][n];
         return maxPoint(boxes, 0, n - 1, 0, new int[n][n][n]);
     }
 
@@ -71,11 +70,14 @@ public class RemoveBoxes {
         if (start > end) return 0;
         if (dp[start][end][count] != 0) return dp[start][end][count];
 
+        // optimize a bit
+        for (; start + 1 <= end && boxes[start + 1] == boxes[start]; start++, count++) {}
+
         int res = maxPoint(boxes, start + 1, end, 0, dp) + (count + 1) * (count + 1);
         for (int i = start + 1; i <= end; i++) {
             if (boxes[start] == boxes[i]) {
                 res = Math.max(res, maxPoint(boxes, start + 1, i - 1, 0, dp)
-                               + maxPoint(boxes, i, end, count + 1, dp));
+                                    + maxPoint(boxes, i, end, count + 1, dp));
             }
         }
         return dp[start][end][count] = res;
@@ -83,13 +85,14 @@ public class RemoveBoxes {
 
     // Dynamic Programming(Botttom-Up)
     // time complexity: O(N ^ 4), space complexity: O(N ^ 3)
-    // beats 0.41%(458 ms for 60 tests)
+    // beats 21.46%(88 ms for 60 tests)
     public int removeBoxes3(int[] boxes) {
         int n = boxes.length;
-        int[][][] dp = new int[n][n][n + 1];
+        int[][][] dp = new int[n][n][n];
         for (int i = n - 1; i >= 0; i--) {
             for (int j = i; j < n; j++) {
-                for (int k = n - 1; k >= 0; k--) {
+                for (int k = 0; k <= i; k++) {
+                // or: for (int k = i; k >= 0; k--) {
                     int max = (i == j ? 0 : dp[i + 1][j][0]) + (k + 1) * (k + 1);
                     for (int m = i + 1; m <= j; m++) {
                         if (boxes[i] != boxes[m]) continue;
