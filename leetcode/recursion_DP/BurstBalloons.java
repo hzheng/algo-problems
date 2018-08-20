@@ -80,22 +80,23 @@ public class BurstBalloons {
         return burst(nums2, 0, n - 1, new int[n][n]);
     }
 
-    private int burst(int[] nums, int start, int end, int[][] cache) {
+    private int burst(int[] nums, int start, int end, int[][] dp) {
         if (start + 1 == end) return 0;
 
-        if (cache[start][end] > 0) return cache[start][end];
+        if (dp[start][end] > 0) return dp[start][end];
 
         int max = 0;
         for (int i = start + 1; i < end; ++i) {
             max = Math.max(max, nums[start] * nums[i] * nums[end]
-                           + burst(nums, start, i, cache) + burst(nums, i, end, cache));
+                           + burst(nums, start, i, dp) + burst(nums, i, end, dp));
         }
-        return cache[start][end] = max;
+        return dp[start][end] = max;
     }
 
     // Solution of Choice
     // Dynamic programming(Bottom-Up)
-    // beats 72.08%(12 ms for 70 tests)
+    // time complexity: O(N ^ 3), space complexity: O(N ^ 2)
+    // beats 88.28%(6 ms for 70 tests)
     public int maxCoins4(int[] nums) {
         int[] nums2 = new int[nums.length + 2];
         int n = 1;
@@ -105,17 +106,26 @@ public class BurstBalloons {
             }
         }
         nums2[0] = nums2[n++] = 1;
-        int[][] dp = new int[n][n];
-        for (int i = 2; i < n; i++) {
-            for (int left = 0; left < n - i; left++) {
-                int right = left + i;
-                for (int j = left + 1; j < right; j++) {
-                    dp[left][right] = Math.max(dp[left][right],
-                                               nums2[left] * nums2[j] * nums2[right]
-                                               + dp[left][j] + dp[j][right]);
+        int[][] dp = new int[n - 1][n];
+        for (int i = n - 3; i >= 0; i--) {
+            for (int j = i + 2; j < n; j++) {
+                for (int k = i + 1; k < j; k++) {
+                    dp[i][j] = Math.max(dp[i][j], dp[i][k] + dp[k][j]
+                                        + nums2[k] * nums2[i] * nums2[j]);
                 }
             }
         }
+        // or:
+        // for (int i = 2; i < n; i++) {
+        //     for (int left = 0; left < n - i; left++) {
+        //         int right = left + i;
+        //         for (int j = left + 1; j < right; j++) {
+        //             dp[left][right] = Math.max(dp[left][right],
+        //                                        nums2[left] * nums2[j] * nums2[right]
+        //                                        + dp[left][j] + dp[j][right]);
+        //         }
+        //     }
+        // }
         // or:
         // for (int j = 2; j < n; j++) {
         //     for (int i = j - 2; i >= 0; i--) { // must be in reverse order!
