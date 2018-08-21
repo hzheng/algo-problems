@@ -197,6 +197,15 @@ public class CoinChange {
             }
         }
         return dp[amount] > amount ? -1 : dp[amount];
+
+        // or: 
+        // for (int a = 1; a <= amount; a++) {
+        //     for (int coin : coins) {
+        //         if (coin <= a) {
+        //             dp[a] = Math.min(dp[a], dp[a - coin] + 1);
+        //         }
+        //     }
+        // }
     }
 
     // BFS + Queue
