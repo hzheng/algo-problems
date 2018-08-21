@@ -1,5 +1,3 @@
-import java.util.*;
-
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -28,13 +26,14 @@ public class FindLengthOfLCIS {
     @Test
     public void test() {
         test(new int[] {}, 0);
-        test(new int[] {1, 3, 5, 4, 7}, 3);
-        test(new int[] {2, 2, 2, 2}, 1);
-        test(new int[] {1, 2, 2, 1, 2, 3, 4, 4, 5, 6, 7, 8}, 5);
+        test(new int[] { 1, 3, 5, 4, 7 }, 3);
+        test(new int[] { 2, 2, 2, 2 }, 1);
+        test(new int[] { 1, 2, 2, 1, 2, 3, 4, 4, 5, 6, 7, 8 }, 5);
     }
 
     public static void main(String[] args) {
-        String clazz = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

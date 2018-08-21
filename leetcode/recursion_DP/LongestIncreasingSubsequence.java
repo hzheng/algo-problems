@@ -68,6 +68,7 @@ public class LongestIncreasingSubsequence {
         return seq.size();
     }
 
+    // time complexity: O(N ^ log(N)), space complexity: O(N)
     // beats 89.51%(1 ms)
     public int lengthOfLIS3(int[] nums) {
         int n = nums.length;
@@ -99,6 +100,7 @@ public class LongestIncreasingSubsequence {
     }
 
     // Solution of Choice
+    // time complexity: O(N ^ log(N)), space complexity: O(N)
     // beats 69.02%(3 ms)
     public int lengthOfLIS4(int[] nums) {
         int[] seq = new int[nums.length];
@@ -141,6 +143,8 @@ public class LongestIncreasingSubsequence {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("LongestIncreasingSubsequence");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
