@@ -89,7 +89,7 @@ public class BestTransaction3 {
 
     // Solution of Choice
     /// http://blog.csdn.net/linhuanmars/article/details/23236995
-    // can be generalized to k > 2
+    // can be generalized to k > 2 (generalized Kadane's algorithm)
     // beats 69.45%(2 ms)
     public int maxProfit4(int[] prices) {
         final int k = 2;
