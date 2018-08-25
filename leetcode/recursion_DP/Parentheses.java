@@ -12,35 +12,16 @@ import static org.junit.Assert.*;
 //
 // Print all valid combinations of n-pairs of parentheses.
 public class Parentheses {
-    // FIXME: wrong
-    public static List<String> parenthesesWrong(int count) {
-        List<String> list = new ArrayList<String>();
-        if (count == 1) {
-            list.add("()");
-            return list;
-        }
-
-        for (String parens : parenthesesWrong(count - 1)) {
-            list.add("(" + parens + ")");
-            list.add(parens + "()");
-            if (parens.charAt(1) == '('
-                || parens.charAt(parens.length() - 2) == ')') {
-                list.add("()" + parens);
-            }
-        }
-        return list;
-    }
-
     // Solution of Choice
     // Recursion/Backtracking
     // beats 54.04%(2 ms)
-    public static List<String> parentheses2(int n) {
+    public static List<String> parentheses(int n) {
         List<String> res = new ArrayList<>();
-        addParen2(res, n, n, new char[n * 2], 0);
+        addParen(res, n, n, new char[n * 2], 0);
         return res;
     }
 
-    private static void addParen2(List<String> res, int leftRem, int rightRem,
+    private static void addParen(List<String> res, int leftRem, int rightRem,
                                   char[] buf, int index) {
         if (rightRem == 0) { // all out of left and right parentheses
             res.add(String.valueOf(buf));
@@ -49,15 +30,15 @@ public class Parentheses {
 
         if (leftRem > 0) { // try a left paren, if there are some available
             buf[index] = '(';
-            addParen2(res, leftRem - 1, rightRem, buf, index + 1);
+            addParen(res, leftRem - 1, rightRem, buf, index + 1);
         }
         if (rightRem > leftRem) { // try a right paren, if there's a matching left
             buf[index] = ')';
-            addParen2(res, leftRem, rightRem - 1, buf, index + 1);
+            addParen(res, leftRem, rightRem - 1, buf, index + 1);
         }
     }
 
-    // rewrite <tt>parentheses2</tt> by bit operation
+    // rewrite <tt>parentheses</tt> by bit operation
     public static List<String> parenthesesBit(int count) {
         // char[] str = new char[count * 2];
         List<String> list = new ArrayList<>();
@@ -100,23 +81,6 @@ public class Parentheses {
         return new String(bitStr);
     }
 
-    // FIXME: wrong
-    public static List<String> generateParenthesisWrong(int n) {
-        if (n < 1) return Collections.emptyList();
-
-        if (n == 1) return Arrays.asList("()");
-
-        List<String> res = new ArrayList<>();
-        for (String p : generateParenthesisWrong(n - 1)) {
-            res.add("()" + p);
-            res.add("(" + p + ")");
-            if (p.charAt(1) != ')') {
-                res.add(p + "()");
-            }
-        }
-        return res;
-    }
-
     // Recursion/Backtracking
     // beats 28.68%(3 ms)
     public static List<String> generateParenthesis(int n) {
@@ -143,6 +107,44 @@ public class Parentheses {
         }
     }
 
+    // Recursion
+    // beats 11.04%(6 ms for 8 tests)
+    public static List<String> generateParenthesis2(int n) {
+        List<String> res = new ArrayList<>();
+        if (n == 0) {
+            res.add("");
+        } else {
+            for (int i = 0; i < n; i++) {
+                for (String left : generateParenthesis2(i)) {
+                    for (String right : generateParenthesis2(n - 1 - i)) {
+                        res.add("(" + left + ")" + right);
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    // Solution of Choice
+    // Iteration
+    // beats 83.19%(2 ms for 8 tests)
+    public static List<String> generateParenthesis3(int n) {
+        List<List<String>> lists = new ArrayList<>();
+        lists.add(Arrays.asList(""));
+        for (int i = 1; i <= n; i++) {
+            List<String> list = new ArrayList<>();
+            for (int j = 0; j < i; j++) {
+                for (String left : lists.get(j)) {
+                    for (String right : lists.get(i - 1 - j)) {
+                        list.add("(" + left + ")" + right);
+                    }
+                }
+            }
+            lists.add(list);
+        }
+        return lists.get(lists.size() - 1);
+    }
+
     void test(Function<Integer, List<String> > getParen, String name,
               int n, String ... expected) {
         Arrays.sort(expected);
@@ -152,9 +154,11 @@ public class Parentheses {
     }
 
     void test(int n, String ... expected) {
-        test(Parentheses::parentheses2, "parentheses2", n, expected);
+        test(Parentheses::parentheses, "parentheses", n, expected);
         test(Parentheses::parenthesesBit, "parenthesesBit", n, expected);
         test(Parentheses::generateParenthesis, "generateParenthesis", n, expected);
+        test(Parentheses::generateParenthesis2, "generateParenthesiss2", n, expected);
+        test(Parentheses::generateParenthesis3, "generateParenthesiss3", n, expected);
     }
 
     @Test
@@ -179,14 +183,14 @@ public class Parentheses {
     }
 
     private void test(int n) {
-        System.out.println("test printParentheses2");
-        List<String> parens2 = test(n, Parentheses::parentheses2);
+        System.out.println("test printParentheses");
+        List<String> parens = test(n, Parentheses::parentheses);
         System.out.println("test printParentheseBit");
         List<String> parensBit = test(n, Parentheses::parenthesesBit);
-        assertEquals(parens2, parensBit);
+        assertEquals(parens, parensBit);
         // System.out.println("test generateParenthesis");
         // List<String> parens = test(n, Parentheses::generateParenthesis);
-        // assertEquals(parens2, parens);
+        // assertEquals(parens, parens);
     }
 
     @Test
@@ -198,6 +202,8 @@ public class Parentheses {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("Parentheses");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
