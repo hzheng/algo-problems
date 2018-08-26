@@ -92,8 +92,14 @@ public class TreeNode {
 
     @Override
     public String toString() {
+        return toString(true);
+    }
+
+    public String toString(boolean includeBrackets) {
         StringBuilder sb = new StringBuilder();
-        sb.append("{");
+        if (includeBrackets) {
+            sb.append("{");
+        }
         Integer[] arr = toArray();
         for (Integer x : arr) {
             sb.append(x == null ? "#" : String.valueOf(x));
@@ -102,7 +108,9 @@ public class TreeNode {
         if (arr.length > 0) {
             sb.deleteCharAt(sb.length() - 1);
         }
-        sb.append("}");
+        if (includeBrackets) {
+            sb.append("}");
+        }
         return sb.toString();
     }
 }
