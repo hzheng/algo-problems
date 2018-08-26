@@ -1,8 +1,14 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// LC887: https://leetcode.com/problems/projection-area-of-3d-shapes/
+// LC883: https://leetcode.com/problems/projection-area-of-3d-shapes/
 //
+// On a N * N grid, we place some 1 * 1 * 1 cubes that are axis-aligned with the
+// x, y, and z axes. Each value v = grid[i][j] represents a tower of v cubes
+// placed on top of grid cell (i, j). Now we view the projection of these cubes 
+// onto the xy, yz, and zx planes. we are viewing the "shadow" when looking at
+// the cubes from the top, the front, and the side.
+// Return the total area of all three projections.
 public class ProjectionArea {
     // beats %(6 ms for 90 tests)
     public int projectionArea(int[][] grid) {
