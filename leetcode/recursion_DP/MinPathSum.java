@@ -6,17 +6,16 @@ import static org.junit.Assert.*;
 
 // LC064: https://leetcode.com/problems/minimum-path-sum/
 //
-// Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right which minimizes the sum of all numbers along its path.
+// Given a m x n grid filled with non-negative numbers, find a path from top 
+// left to bottom right which minimizes the sum of all numbers along its path.
 // Note: You can only move either down or right at any point in time.
 public class MinPathSum {
     // Dynamic Programming(2D array)
+    // time complexity: O(M * N), space complexity: O(M * N)
     // beats 32.27%(4 ms)
     public int minPathSum(int[][] grid) {
         int m = grid.length;
-        if (m == 0) return 0;
-
         int n = grid[0].length;
-        if (n == 0) return 0;
         // if (m == 1) {
         //     return Arrays.stream(grid[0]).reduce(0, Integer::sum);
         // }
@@ -24,43 +23,38 @@ public class MinPathSum {
         // if (n == 1) {
         //     return Arrays.stream(grid).map(a -> a[0]).reduce(0, Integer::sum);
         // }
-        int[][] min = new int[m][n];
-        min[0][0] = grid[0][0];
+        int[][] dp = new int[m][n];
+        dp[0][0] = grid[0][0];
         for (int i = 1; i < m; i++) {
-            min[i][0] = grid[i][0] + min[i - 1][0];
+            dp[i][0] = grid[i][0] + dp[i - 1][0];
         }
         for (int i = 1; i < n; i++) {
-            min[0][i] = grid[0][i] + min[0][i - 1];
+            dp[0][i] = grid[0][i] + dp[0][i - 1];
         }
         for (int i = 1; i < m; i++) {
             for (int j = 1; j < n; j++) {
-                min[i][j] = grid[i][j] + Math.min(min[i][j - 1], min[i - 1][j]);
+                dp[i][j] = grid[i][j] + Math.min(dp[i][j - 1], dp[i - 1][j]);
             }
         }
-        return min[m - 1][n - 1];
+        return dp[m - 1][n - 1];
     }
 
-    // Breadth first search
+    // BFS + Queue
     // beats 1.23%(29 ms)
     public int minPathSum2(int[][] grid) {
         int m = grid.length;
-        if (m == 0) return 0;
-
         int n = grid[0].length;
-        if (n == 0) return 0;
-
         int[][] mins = new int[m][n];
         mins[0][0] = grid[0][0] + 1; // make sure all values are positive
         Queue<int[]> queue = new ArrayDeque<>();
-        queue.add(new int[] {0, 0});
-        while (!queue.isEmpty()) {
+        for (queue.offer(new int[] {0, 0}); !queue.isEmpty(); ) {
             int[] pos = queue.poll();
             int x = pos[0];
             int y = pos[1];
             if (x + 1 < m) {
                 if (mins[x + 1][y] == 0) {
                     mins[x + 1][y] = mins[x][y] + grid[x + 1][y];
-                    queue.add(new int[] {x + 1, y});
+                    queue.offer(new int[] {x + 1, y});
                 } else {
                     mins[x + 1][y] = Math.min(mins[x + 1][y],
                                               mins[x][y] + grid[x + 1][y]);
@@ -69,7 +63,7 @@ public class MinPathSum {
             if (y + 1 < n) {
                 if (mins[x][y + 1] == 0) {
                     mins[x][y + 1] = mins[x][y] + grid[x][y + 1];
-                    queue.add(new int[] {x, y + 1});
+                    queue.offer(new int[] {x, y + 1});
                 } else {
                     mins[x][y + 1] = Math.min(mins[x][y + 1],
                                               mins[x][y] + grid[x][y + 1]);
@@ -111,11 +105,7 @@ public class MinPathSum {
     // beats 0.08%(151 ms)
     public int minPathSum3(int[][] grid) {
         int m = grid.length;
-        if (m == 0) return 0;
-
         int n = grid[0].length;
-        if (n == 0) return 0;
-
         PriorityQueue<Vertex> queue = new PriorityQueue<>((a, b) -> a.min - b.min);
         Map<Vertex, Vertex> visited = new HashMap<>();
         queue.add(new Vertex(0, 0, grid[0][0]));
@@ -145,31 +135,27 @@ public class MinPathSum {
         } else {
             next.min = v.min + grid[x][y];
             visited.put(next, next);
-            queue.add(next);
+            queue.offer(next);
         }
     }
 
     // Solution of Choice
     // Dynamic Programming(1D array, aka rolling array)
+    // time complexity: O(M * N), space complexity: O(N)
     // beats 84.58%(3 ms)
     public int minPathSum4(int[][] grid) {
         int m = grid.length;
-        if (m == 0) return 0;
-
         int n = grid[0].length;
-        if (n == 0) return 0;
-
-        int[] min = new int[n];
-        for (int i = 1; i < n; i++) {
-            min[i] = Integer.MAX_VALUE;
-        }
+        int[] dp = new int[n];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        dp[0] = 0;
         for (int i = 0; i < m; i++) {
-            min[0] += grid[i][0];
+            dp[0] += grid[i][0];
             for (int j = 1; j < n; j++) {
-                min[j] = grid[i][j] + Math.min(min[j - 1], min[j]);
+                dp[j] = grid[i][j] + Math.min(dp[j - 1], dp[j]);
             }
         }
-        return min[n - 1];
+        return dp[n - 1];
     }
 
     void test(Function<int[][], Integer> min, String name,
@@ -198,6 +184,8 @@ public class MinPathSum {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("MinPathSum");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
