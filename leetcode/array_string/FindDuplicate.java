@@ -14,7 +14,7 @@ import java.util.function.Function;
 public class FindDuplicate {
     // naive method
     // time complexity: O(N ^ 2)
-    // beats 3.80% (163 ms)
+    // beats 3.80%(163 ms)
     public int findDuplicate(int[] nums) {
         for (int i = 0; i < nums.length - 1; i++) {
             for (int j = i + 1; j < nums.length; j++) {
@@ -25,8 +25,8 @@ public class FindDuplicate {
     }
 
     // Bit Manipulation
-    // time complexity: O(N)
-    // beats 8.09% (19 ms)
+    // time complexity: O(N * Log(N)), space complexity: O(1)
+    // beats 8.09%(19 ms)
     public int findDuplicate2(int[] nums) {
         int[] bitCounts = new int[32];
         for (int n = 1; n < nums.length; n++) {
@@ -53,7 +53,7 @@ public class FindDuplicate {
     }
 
     // Bit Manipulation
-    // time complexity: O(N)
+    // time complexity: O(N * Log(N)), space complexity: O(1)
     // beats 8.75%(14 ms)
     public int findDuplicate3(int[] nums) {
         int duplicate = 0;
@@ -76,7 +76,7 @@ public class FindDuplicate {
     }
 
     // Bit Manipulation
-    // time complexity: O(N)
+    // time complexity: O(N * Log(N)), space complexity: O(1)
     // beats 8.22%(12 ms for 53 tests)
     public int findDuplicate3_2(int[] nums) {
         int duplicate = 0;
@@ -99,13 +99,12 @@ public class FindDuplicate {
     }
 
     // Binary Search
-    // time complexity: O(N * Log(N))
-    // Since N < 2 ^ 32, hence Log(N) < 32, it's actually faster than the above
-    // beats 46.53%(5 ms)
+    // time complexity: O(N * Log(N)), space complexity: O(1)
+    // beats 19.15%(5 ms for 53 tests)
     public int findDuplicate4(int[] nums) {
         int low = 1;
         int high = nums.length - 1;
-        while (low <= high) {
+        while (low < high) {
             int mid = (low + high) >>> 1;
             int count = 0;
             for (int n : nums) {
@@ -116,7 +115,7 @@ public class FindDuplicate {
             if (count <= mid) {
                 low = mid + 1;
             } else {
-                high = mid - 1;
+                high = mid;
             }
         }
         return low;
@@ -124,7 +123,7 @@ public class FindDuplicate {
 
     // Solution of Choice
     // Floyd's Algorithm
-    // time complexity: O(N))
+    // time complexity: O(N)), space complexity: O(1)
     // beats 64.42%(1 ms for 53 tests)
     public int findDuplicate5(int[] nums) {
         int slow = 0;
@@ -153,11 +152,14 @@ public class FindDuplicate {
 
     @Test
     public void test1() {
+        test(3, 1, 2, 3, 3);
         test(3, 2, 1, 4, 3, 5, 3);
         test(7, 2, 7, 1, 4, 5, 3, 9, 8, 7, 6);
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("FindDuplicate");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
