@@ -10,6 +10,7 @@ import common.TreeNode;
 //
 // Given a binary tree, return the inorder traversal of its nodes' values.
 public class TreeTraversal {
+    // Recursion
     // beats 60.33%(1 ms)
     public List<Integer> inorderTraversal(TreeNode root) {
         List<Integer> res = new ArrayList<>();
@@ -67,19 +68,20 @@ public class TreeTraversal {
         return res;
     }
 
+    // Stack
     // Solution of Choice
-    // beats 3.26%(2 ms)
+    // beats 56.06%(1 ms for 68 tests)
     public List<Integer> inorderTraversal4(TreeNode root) {
         Stack<TreeNode> stack = new Stack<>();
         List<Integer> res = new ArrayList<>();
-        for (TreeNode n = root; n != null || !stack.empty(); ) {
-            if (n != null) {
-                stack.push(n);
-                n = n.left;
+        for (TreeNode cur = root; cur != null || !stack.empty(); ) {
+            if (cur != null) {
+                stack.push(cur);
+                cur = cur.left;
             } else {
-                TreeNode top = stack.pop();
-                res.add(top.val);
-                n = top.right;
+                cur = stack.pop();
+                res.add(cur.val);
+                cur = cur.right;
             }
         }
         return res;
@@ -159,6 +161,8 @@ public class TreeTraversal {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("TreeTraversal");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
