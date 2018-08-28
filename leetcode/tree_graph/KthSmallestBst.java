@@ -32,29 +32,29 @@ public class KthSmallestBst {
         return 1 + count(node.left) + count(node.right);
     }
 
+    // Recursion + Hash Table
     // time complexity: O(N), space complexity: O(N)
-    // beats 7.61%(6 ms)
+    // beats 5.81%(6 ms for 91 tests)
     public int kthSmallest2(TreeNode root, int k) {
         return kthSmallest2(root, k, new HashMap<>());
     }
 
-    // Recursion + Hash Table
-    private int kthSmallest2(TreeNode root, int k, Map<TreeNode, Integer> cache) {
-        int count = count(root.left, cache);
+    private int kthSmallest2(TreeNode root, int k, Map<TreeNode, Integer> memo) {
+        int count = count(root.left, memo);
         if (count + 1 == k) return root.val;
 
-        if (count + 1 > k) return kthSmallest2(root.left, k, cache);
+        if (count + 1 > k) return kthSmallest2(root.left, k, memo);
 
-        return kthSmallest2(root.right, k - count - 1, cache);
+        return kthSmallest2(root.right, k - count - 1, memo);
     }
 
-    private int count(TreeNode node, Map<TreeNode, Integer> cache) {
+    private int count(TreeNode node, Map<TreeNode, Integer> memo) {
         if (node == null) return 0;
 
-        if (cache.containsKey(node)) return cache.get(node);
+        if (memo.containsKey(node)) return memo.get(node);
 
-        int res = 1 + count(node.left, cache) + count(node.right, cache);
-        cache.put(node, res);
+        int res = 1 + count(node.left, memo) + count(node.right, memo);
+        memo.put(node, res);
         return res;
     }
 
@@ -77,22 +77,37 @@ public class KthSmallestBst {
     }
 
     // Solution of Choice
+    // Recursion + Inorder Traversal
+    // time complexity: O(N), space complexity: O(N)
+    // beats 100.00%(0 ms for 91 tests)
+    public int kthSmallest3_2(TreeNode root, int k) {
+        return inorder(root, new int[]{k});
+    }
+
+    private int inorder(TreeNode root, int[] remain) {
+        if (root == null) return 0; // don't care return value
+
+        int res = inorder(root.left, remain);
+        if (remain[0] == 0) return res;
+
+        return (--remain[0] == 0) ? root.val : inorder(root.right, remain);
+    }
+
+    // Solution of Choice
     // Stack + Inorder Traversal
     // time complexity: O(N), space complexity: O(N)
-    // beats 25.43%(2 ms)
+    // beats 55.96%(1 ms for 91 tests)
     public int kthSmallest4(TreeNode root, int k) {
         Stack<TreeNode> stack = new Stack<>();
-        int count = k;
-        TreeNode n = root;
-        while (true) {
-            if (n != null) {
-                stack.push(n);
-                n = n.left;
+        for (TreeNode cur = root; ; ) {
+            if (cur != null) {
+                stack.push(cur);
+                cur = cur.left;
             } else {
-                n = stack.pop();
-                if (--count == 0) return n.val;
+                cur = stack.pop();
+                if (--k == 0) return cur.val;
 
-                n = n.right;
+                cur = cur.right;
             }
         }
     }
@@ -109,7 +124,8 @@ public class KthSmallestBst {
                 cur = cur.right;
                 continue;
             }
-            for (prev = cur.left; prev.right != null && prev.right != cur; prev = prev.right) {}
+            for (prev = cur.left; prev.right != null && prev.right != cur;
+                 prev = prev.right) {}
             if (prev.right == null) {
                 prev.right = cur;
                 cur = cur.left;
@@ -141,6 +157,7 @@ public class KthSmallestBst {
         test(smallest::kthSmallest, s, k, expected);
         test(smallest::kthSmallest2, s, k, expected);
         test(smallest::kthSmallest3, s, k, expected);
+        test(smallest::kthSmallest3_2, s, k, expected);
         test(smallest::kthSmallest4, s, k, expected);
         test(smallest::kthSmallest5, s, k, expected);
     }
@@ -149,12 +166,14 @@ public class KthSmallestBst {
     public void test1() {
         test("1", 1, 1);
         test("1,#,6,5", 2, 5);
-        test("1,#,6,5", 2, 5);
+        test("5,3,6,2,4,#,#,1", 3, 3);
         test("6,4,8,3,5,7,9,1", 2, 3);
         test("6,4,8,3,5,7,9,2,#,#,#,#,#,#,#,1", 1, 1);
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("KthSmallestBst");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
