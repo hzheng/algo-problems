@@ -178,6 +178,8 @@ public class KthLargest {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("KthLargest");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

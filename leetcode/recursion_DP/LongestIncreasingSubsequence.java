@@ -101,7 +101,7 @@ public class LongestIncreasingSubsequence {
 
     // Solution of Choice
     // time complexity: O(N ^ log(N)), space complexity: O(N)
-    // beats 69.02%(3 ms)
+    // beats 94.91%(1 ms for 24 tests)
     public int lengthOfLIS4(int[] nums) {
         int[] seq = new int[nums.length];
         int len = 0;
