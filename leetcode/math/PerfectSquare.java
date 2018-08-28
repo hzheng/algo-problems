@@ -18,7 +18,7 @@ public class PerfectSquare {
     }
 
     // Solution of Choice
-    // Newton method
+    // Newton method(can be also viewed as Binary Search)
     // https://en.wikipedia.org/wiki/Integer_square_root#Using_only_integer_division
     // time complexity: O(log(N))
     // beats 35.86%(0 ms for 67 tests)
@@ -76,6 +76,8 @@ public class PerfectSquare {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("PerfectSquare");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

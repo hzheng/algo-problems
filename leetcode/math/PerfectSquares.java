@@ -160,9 +160,8 @@ public class PerfectSquares {
                     int composite = k + j * j;
                     if (composite == n) return level;
                     if (composite > n) break;
-                    if (!visited.contains(composite)) {
+                    if (visited.add(composite)) {
                         queue.offer(composite);
-                        visited.add(composite);
                     }
                 }
             }
@@ -186,9 +185,8 @@ public class PerfectSquares {
                 for (int j : squares) {
                     if (cur == j) return level;
                     if (cur < j) break;
-                    if (!visited.contains(cur - j)) {
+                    if (visited.add(cur - j)) {
                         queue.offer(cur - j);
-                        visited.add(cur - j);
                     }
                 }
             }
@@ -235,7 +233,8 @@ public class PerfectSquares {
     }
 
     // Solution of Choice
-    // Lagrange's four-square theorem & Legendre's three-square theorem
+    // https://en.wikipedia.org/wiki/Lagrange%27s_four-square_theorem
+    // https://en.wikipedia.org/wiki/Legendre%27s_three-square_theorem
     // time complexity: O(N ^ (0.5)), space complexity: O(1)
     // beats 97.12%(2 ms)
     public int numSquares7(int n) {
@@ -264,7 +263,7 @@ public class PerfectSquares {
         return 3;
     }
 
-    boolean isSquare(int n) {
+    private boolean isSquare(int n) {
         int sqrt = (int)(Math.sqrt(n));
         return sqrt * sqrt == n;
     }
@@ -315,6 +314,8 @@ public class PerfectSquares {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("PerfectSquares");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
