@@ -65,21 +65,20 @@ public class MaxSlidingWindow {
         return res;
     }
 
+    // Solution of Choice
     // Deque
     // almost same as above except for saving max index instead of value
     // time complexity: O(N), space complexity: O(K)
-    // beats 42.32%(31 ms)
+    // beats 52.86%(14 ms for 18 tests)
     public int[] maxSlidingWindow3(int[] nums, int k) {
         int n = nums.length;
-        if (n == 0) return new int[0];
-
-        int[] res = new int[n - k + 1];
+        int[] res = new int[n == 0 ? 0 : n - k + 1];
         Deque<Integer> maxQ = new LinkedList<>();
         for (int i = 0; i < n; i++) {
             if (!maxQ.isEmpty() && maxQ.peekFirst() <= i - k) {
                 maxQ.pollFirst();
             }
-            while (!maxQ.isEmpty() && nums[maxQ.peekLast()] < nums[i]) {
+            while (!maxQ.isEmpty() && nums[maxQ.peekLast()] <= nums[i]) {
                 maxQ.pollLast();
             }
             maxQ.offerLast(i);
@@ -91,7 +90,7 @@ public class MaxSlidingWindow {
     }
 
     // Heap
-    // time complexity: O(N * log(K)), space complexity: O(K)
+    // time complexity: O(N * K), space complexity: O(K)
     // beats 19.56%(71 ms)
     public int[] maxSlidingWindow4(int[] nums, int k) {
         int n = nums.length;
@@ -179,6 +178,8 @@ public class MaxSlidingWindow {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("MaxSlidingWindow");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
