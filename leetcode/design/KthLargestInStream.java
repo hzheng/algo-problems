@@ -5,8 +5,10 @@ import java.lang.reflect.Constructor;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// LC895: https://leetcode.com/problems/maximum-frequency-stack/
+// LC703: https://leetcode.com/problems/kth-largest-element-in-a-stream/
 //
+// Design a class to find the kth largest element in a stream. Note that it is 
+// the kth largest element in the sorted order, not the kth distinct element.
 public class KthLargestInStream {
     // Heap
     // beats 26.50%(117 ms for 10 tests)
@@ -55,7 +57,7 @@ public class KthLargestInStream {
     }
 
     void test1(String className) throws Exception {
-        KthLargestInStream outerObj = new KthLargestInStream();
+        Object outerObj = new Object() {}.getClass().getEnclosingClass().newInstance();
         test(new String[] { className, "add", "add", "add", "add", "add" },
                 new Object[][] { new Object[] { outerObj, 3,
                                  new int[] { 4, 5, 8, 2 } },

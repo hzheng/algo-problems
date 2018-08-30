@@ -7,6 +7,12 @@ import static org.junit.Assert.*;
 
 // LC895: https://leetcode.com/problems/maximum-frequency-stack/
 //
+// Implement FreqStack, a class which simulates the operation of a stack-like 
+// data structure. FreqStack has two functions:
+// push(int x), which pushes an integer x onto the stack.
+// pop(), which removes and returns the most frequent element in the stack.
+// If there is a tie for most frequent element, the element closest to the top 
+// of the stack is removed and returned.
 public class FreqStack {
     // Deque + SortedSet + Hash Table
     // beats %(147 ms for 36 tests)
@@ -99,7 +105,7 @@ public class FreqStack {
             }
             bucket.get(freq).add(x);
         }
-    
+ 
         // time complexity: O(1)
         public int pop() {
             Stack<Integer> stack = bucket.get(bucket.size() - 1);
@@ -113,7 +119,7 @@ public class FreqStack {
     }
 
     void test1(String className) throws Exception {
-        final FreqStack outerObj = new FreqStack();
+        Object outerObj = new Object() {}.getClass().getEnclosingClass().newInstance();
         final Object[] VOID = new Object[]{};
         test(new String[] { className, "push", "push", "push", "push",
                                  "push", "push", "pop", "pop", "pop", "pop"},
