@@ -80,7 +80,7 @@ public class KthLargestInStream {
             if (arg.length == 0) {
                 res = clazz.getMethod(methods[i]).invoke(obj);
             } else {
-                res = clazz.getMethod(methods[i], int.class).invoke(obj, arg[0]);
+                res = clazz.getMethod(methods[i], int.class).invoke(obj, arg);
             }
             if (expected[i] != null) {
                 assertEquals(expected[i], res);

@@ -32,8 +32,8 @@ public class MyHashSet {
         }
     }
 
-    // Hash
-    // beats 31.630%(105 ms for 28 tests)
+    // Hash + List
+    // beats 29.47%(107 ms for 28 tests)
     class MyHashSet2 {
         private static final int BUCKETS = 10001;
         @SuppressWarnings("unchecked")
@@ -41,8 +41,13 @@ public class MyHashSet {
 
         public MyHashSet2() {}
 
+        private int getIndex(int key) {
+            // return Objects.hash(key) % BUCKETS;
+            return Integer.hashCode(key) % BUCKETS;
+        }
+
         public void add(int key) {
-            int index = Objects.hash(key) % BUCKETS;
+            int index = getIndex(key);
             List<Integer> list = lists[index];
             if (list == null) {
                 list = lists[index] = new ArrayList<>();
@@ -53,7 +58,7 @@ public class MyHashSet {
         }
         
         public void remove(int key) {
-            int index = Objects.hash(key) % BUCKETS;
+            int index = getIndex(key);
             List<Integer> list = lists[index];
             if (list != null) {
                 list.remove((Object)key);
@@ -61,7 +66,7 @@ public class MyHashSet {
         }
         
         public boolean contains(int key) {
-            int index = Objects.hash(key) % BUCKETS;
+            int index = getIndex(key);
             List<Integer> list = lists[index];
             return (list != null) && list.contains(key);
         }
