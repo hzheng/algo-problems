@@ -35,7 +35,7 @@ public class MincostToHireWorkers {
             pq.offer(-w[0]);
             sum += w[0];
             if (pq.size() > K) {
-                sum += pq.poll();
+                sum += pq.poll(); // possibly remove w[0], which is OK
             }
             if (pq.size() == K) {
                 res = Math.min(res, (double) w[1] / w[0] * sum);
@@ -79,6 +79,7 @@ public class MincostToHireWorkers {
 
     @Test
     public void test() {
+        test(new int[] { 1, 2, 1, 10 }, new int[] { 1, 3, 3, 20 }, 2, 4.5);
         test(new int[] { 10, 20, 5 }, new int[] { 70, 50, 30 }, 2, 105);
         test(new int[] { 3, 1, 10, 10, 1 }, new int[] { 4, 8, 2, 2, 7 }, 3,
              30.66667);

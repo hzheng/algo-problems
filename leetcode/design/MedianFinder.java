@@ -224,6 +224,8 @@ public class MedianFinder {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("MedianFinder");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
