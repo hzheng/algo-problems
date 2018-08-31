@@ -49,7 +49,7 @@ public class Permutation2 {
         nums[j] = tmp;
     }
 
-    // Backtracking
+    // Recursion + Backtracking + Set
     // beats 2.07%(140 ms)
     public List<List<Integer> > permuteUnique2(int[] nums) {
         Set<List<Integer> > res = new HashSet<>();
@@ -77,31 +77,32 @@ public class Permutation2 {
     }
 
     // Solution of Choice
-    // beats 97.22%(3 ms)
+    // Recursion + Backtracking
+    // beats 79.10%(4 ms for 30 tests)
     public List<List<Integer> > permuteUnique3(int[] nums) {
         List<List<Integer> > res = new ArrayList<>();
         Arrays.sort(nums);
-        permute3(res, new ArrayList<>(), nums, new boolean[nums.length]);
+        permute(res, new ArrayList<>(), nums, new boolean[nums.length]);
         return res;
     }
 
-    private void permute3(List<List<Integer> > res, List<Integer> cur,
-                          int[] nums, boolean[] isVisited) {
+    private void permute(List<List<Integer> > res, List<Integer> cur,
+                         int[] nums, boolean[] visited) {
         int n = nums.length;
         if (cur.size() == n) {
             res.add(new ArrayList<>(cur));
             return;
         }
+        for (int i = 0; i < n; i++) {
+            if (visited[i]) continue;
+            if (i > 0 && nums[i] == nums[i - 1] && !visited[i - 1]) continue;
 
-        for (int i = 0; i < nums.length; ++i) {
-            if (!isVisited[i]) {
-                isVisited[i] = true;
-                cur.add(nums[i]);
-                permute3(res, cur, nums, isVisited);
-                isVisited[i] = false;
-                cur.remove(cur.size() - 1);
-                for (; i < n - 1 && nums[i] == nums[i + 1]; ++i) {}
-            }
+            visited[i] = true;
+            cur.add(nums[i]);
+            permute(res, cur, nums, visited);
+            visited[i] = false;
+            cur.remove(cur.size() - 1);
+            // for (; i < n - 1 && nums[i] == nums[i + 1]; i++) {}
         }
     }
 
@@ -151,6 +152,8 @@ public class Permutation2 {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("Permutation2");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
