@@ -31,7 +31,8 @@ public class NextPermutation {
     }
 
     // Solution of Choice
-    // beats 64.50%(1 ms)
+    // time complexity: O(N), space complexity: O(1)
+    // beats 93.65%(11 ms for 265 tests)
     public void nextPermutation2(int[] nums) {
         int len = nums.length;
         int i = len - 1;
@@ -39,7 +40,7 @@ public class NextPermutation {
 
         if (i > 0) {
             int j = len - 1;
-            for ( ; j >= 0 && nums[j] <= nums[i - 1]; j--) {} // or binary search
+            for ( ; nums[j] <= nums[i - 1]; j--) {} // or binary search
             swap(nums, i - 1, j);
         }
         // reverse from i to the end
@@ -112,6 +113,8 @@ public class NextPermutation {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("NextPermutation");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

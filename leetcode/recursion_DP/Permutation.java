@@ -82,23 +82,23 @@ public class Permutation {
         return nextPerm;
     }
 
+    // Solution of Choice
     // Iteration
-    // beats 67.81%(3 ms)
+    // beats 79.05%(3 ms for 25 tests)
     public List<List<Integer> > permute3(int[] nums) {
         int n = nums.length;
-        List<List<Integer> > res = new ArrayList<>();
         int[] indices = new int[n];
         for (int i = 0; i < n; i++) {
             indices[i] = i;
         }
-        while (true) {
+        List<List<Integer> > res = new ArrayList<>();
+        do {
             List<Integer> perm = new ArrayList<>();
             for (int i : indices) {
                 perm.add(nums[i]);
             }
             res.add(perm);
-            if (!next(indices)) break;
-        }
+        } while (next(indices));
         return res;
     }
 
@@ -109,7 +109,7 @@ public class Permutation {
         if (i == 0) return false;
 
         int j = n - 1;
-        for (; indices[j] < indices[i - 1]; j--);
+        for (; indices[j] < indices[i - 1]; j--) {}
         swap(indices, i - 1, j);
         for (j = n - 1; j > i; i++, j--) {
             swap(indices, i, j);
@@ -131,19 +131,19 @@ public class Permutation {
         return res;
     }
 
-    private void permute4(List<List<Integer> > res, List<Integer> list, int[] nums) {
+    private void permute4(List<List<Integer> > res, List<Integer> cur, int[] nums) {
         int n = nums.length;
-        if (list.size() == n) {
-            res.add(new ArrayList<>(list));
+        if (cur.size() == n) {
+            res.add(new ArrayList<>(cur));
             return;
         }
 
         for (int i = 0; i < n; i++) {
-            if (list.contains(nums[i])) continue;
+            if (cur.contains(nums[i])) continue;
 
-            list.add(nums[i]);
-            permute4(res, list, nums);
-            list.remove(list.size() - 1);
+            cur.add(nums[i]);
+            permute4(res, cur, nums);
+            cur.remove(cur.size() - 1);
         }
     }
 
@@ -171,31 +171,30 @@ public class Permutation {
 
     // Solution of Choice
     // Backtracking
-    // https://siddontang.gitbooks.io/leetcode-solution/content/backtracking/permutation.html
-    // backtracking, similar to permute4, but add visited flags
-    // beats 67.81%(3 ms)
+    // similar to permute4, but add visited flags
+    // beats 100.00%(2 ms for 25 tests)
     public List<List<Integer> > permute6(int[] nums) {
         List<List<Integer> > res = new ArrayList<>();
-        permute6(res, new ArrayList<>(), nums, new boolean[nums.length]);
+        permute(nums, new ArrayList<>(), res, new boolean[nums.length]);
         return res;
     }
 
-    private void permute6(List<List<Integer> > res, List<Integer> cur,
-                          int[] nums, boolean[] isVisited) {
+    private void permute(int[] nums, List<Integer> cur, 
+                         List<List<Integer> > res, boolean[] visited) {
         int n = nums.length;
         if (cur.size() == n) {
             res.add(new ArrayList<>(cur));
             return;
         }
 
-        for (int i = 0; i < nums.length; ++i) {
-            if (!isVisited[i]) {
-                isVisited[i] = true;
-                cur.add(nums[i]);
-                permute6(res, cur, nums, isVisited);
-                isVisited[i] = false;
-                cur.remove(cur.size() - 1);
-            }
+        for (int i = 0; i < n; i++) {
+            if (visited[i]) continue;
+
+            visited[i] = true;
+            cur.add(nums[i]);
+            permute(nums, cur, res, visited);
+            visited[i] = false;
+            cur.remove(cur.size() - 1);
         }
     }
 
@@ -283,6 +282,8 @@ public class Permutation {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("Permutation");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
