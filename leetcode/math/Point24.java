@@ -176,16 +176,97 @@ public class Point24 {
         nums[j] = tmp;
     }
 
+    // Recursion
+    // beats 79.67%(14 ms for 70 tests)
+    public boolean judgePoint24_3(int[] nums) {
+        List<Double> list = new ArrayList<>();
+        for (int x : nums) {
+            list.add((double)x);
+        }
+        return judge(list);
+    }
+
+    private boolean judge(List<Double> nums) {
+        int n = nums.size();
+        if (n == 1) return Math.abs(nums.get(0) - TARGET) < EPSILON;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i == j) continue;
+
+                List<Double> nums2 = new ArrayList<>();
+                for (int k = 0; k < n; k++) {
+                    if (k != i && k != j) {
+                        nums2.add(nums.get(k));
+                    }
+                }
+                nums2.add(0.0); // filler
+                if (i < j) {
+                    nums2.set(nums2.size() - 1, nums.get(i) + nums.get(j));
+                    if (judge(nums2)) return true;
+
+                    nums2.set(nums2.size() - 1, nums.get(i) * nums.get(j));
+                    if (judge(nums2)) return true;
+                }
+                nums2.set(nums2.size() - 1, nums.get(i) - nums.get(j));
+                if (judge(nums2)) return true;
+
+                if (nums.get(j) != 0) {
+                    nums2.set(nums2.size() - 1, nums.get(i) / nums.get(j));
+                }
+                if (judge(nums2)) return true;
+            }
+        }
+        return false;
+    }
+
+    // Recursion
+    // beats 96.36%(5 ms for 70 tests)
+    public boolean judgePoint24_4(int[] nums) {
+        return check(new double[] {nums[0], nums[1], nums[2], nums[3]});
+    }
+    
+    private boolean check(double[] nums) {
+        int n = nums.length;
+        if (n == 1) return Math.abs(nums[0] - TARGET) < EPSILON;
+
+        double[] nums2 = new double[n - 1];
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                for (int k = 0, p = 1; k < n; k++) {
+                    if (k != i && k != j) {
+                        nums2[p++] = nums[k];
+                    }
+                }
+                for (double x : compute(nums[i], nums[j])) {
+                    nums2[0] = x;
+                    if (check(nums2)) return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    private double[] compute(double a, double b) {
+        return new double[] {a + b, a - b, b - a, a * b, a / b, b / a};
+    }
+
     void test(int[] nums, boolean expected) {
         assertEquals(expected, judgePoint24(nums));
         assertEquals(expected, judgePoint24_2(nums));
+        assertEquals(expected, judgePoint24_3(nums));
+        assertEquals(expected, judgePoint24_4(nums));
     }
 
     @Test
     public void test() {
         test(new int[] { 4, 1, 8, 7 }, true);
-        test(new int[] { 1, 2, 1, 2 }, false);
         test(new int[] { 8, 1, 6, 6 }, true);
+        test(new int[] { 2, 6, 1, 3 }, true);
+        test(new int[] { 2, 6, 1, 1 }, true);
+        test(new int[] { 3, 8, 3, 8 }, true);
+        test(new int[] { 1, 2, 1, 2 }, false);
+        test(new int[] { 1, 6, 1, 1 }, false);
     }
 
     public static void main(String[] args) {
