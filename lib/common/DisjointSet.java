@@ -3,19 +3,21 @@ package common;
 import java.util.Arrays;
 
 public class DisjointSet {
-    private int[] parent;
+    // positive id refers to parent
+    // negative id means root, and its absolute value is the component size
+    private int[] id;
+    private int count;
 
     public DisjointSet(int n) {
-        parent = new int[n];
-        Arrays.fill(parent, -1);
-    }
-
-    public int[] getParent() {
-        return parent;
+        id = new int[n];
+        count = n;
+        Arrays.fill(id, -1);
     }
 
     public int root(int x) {
-        return parent[x] < 0 ? x : (parent[x] = root(parent[x]));
+        // return parent[x] < 0 ? x : (parent[x] = root(parent[x]));
+        for (; id[x] >= 0; x = id[x]) {}
+        return x;
     }
 
     public boolean union(int x, int y) {
@@ -23,13 +25,14 @@ public class DisjointSet {
         y = root(y);
         if (x == y) return false;
 
-        if (parent[y] < parent[x]) {
+        if (id[y] < id[x]) {
             int tmp = x;
             x = y;
             y = tmp;
         }
-        parent[x] += parent[y];
-        parent[y] = x;
+        id[x] += id[y];
+        id[y] = x;
+        count--;
         return true;
     }
 
@@ -38,12 +41,13 @@ public class DisjointSet {
     }
 
     public int count() {
-        int res = 0;
-        for (int p : parent) {
-            if (p < 0) {
-                res++;
-            }
-        }
-        return res;
+        // int res = 0;
+        // for (int p : parent) {
+        //     if (p < 0) {
+        //         res++;
+        //     }
+        // }
+        // return res;
+        return count;
     }
 }
