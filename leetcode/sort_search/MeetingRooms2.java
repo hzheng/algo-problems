@@ -11,6 +11,7 @@ import common.Interval;
 // [[s1,e1],[s2,e2],...], find the minimum number of conference rooms required.
 public class MeetingRooms2 {
     // Greedy + Heap + Sort
+    // time complexity: O(N * log(N)), space complexity: O(N)
     // beats 50.15%(17 ms for 77 tests)
     public int minMeetingRooms(Interval[] intervals) {
         Arrays.sort(intervals, new Comparator<Interval>() {
@@ -22,7 +23,7 @@ public class MeetingRooms2 {
         pq.offer(Integer.MAX_VALUE);
         for (Interval interval : intervals) {
             if (interval.start >= pq.peek()) {
-                pq.poll();
+                pq.poll(); // merge or reuse a room
             }
             pq.offer(interval.end);
         }
@@ -30,6 +31,7 @@ public class MeetingRooms2 {
     }
 
     // Sort + Two Pointers
+    // time complexity: O(N * log(N)), space complexity: O(N)
     // beats 88.96%(4 ms for 77 tests)
     public int minMeetingRooms2(Interval[] intervals) {
         int n = intervals.length;
@@ -41,15 +43,72 @@ public class MeetingRooms2 {
         }
         Arrays.sort(starts);
         Arrays.sort(ends);
-        int rooms = 0;
+        int res = 0;
         for (int i = 0, j = 0; i < n; i++) {
             if (starts[i] < ends[j]) {
-                rooms++;
+                res++;
             } else {
                 j++;
             }
         }
-        return rooms;
+        return res;
+    }
+
+    // Sort + Two Pointers
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    // beats ?%(? ms for 77 tests)
+    public int minMeetingRooms3(Interval[] intervals) {
+        Arrays.sort(intervals, new Comparator<Interval>() {
+            public int compare(Interval a, Interval b) {
+                return a.end - b.end;
+            }
+        });
+        int res = 0;
+        for (int i = 0, j = 0; i < intervals.length; i++) {
+            if (intervals[i].start < intervals[j].end) {
+                res = Math.max(res, i - j + 1);
+            } else {
+                j++;
+            }
+        }
+        return res;
+    }
+
+    // time complexity: O(N + MAX_T), space complexity: O(MAX_T)
+    // beats ?%(? ms for 77 tests)
+    public int minMeetingRooms4(Interval[] intervals) {
+        int maxEnd = Integer.MIN_VALUE;
+        for (Interval i : intervals) {
+            maxEnd = Math.max(maxEnd, i.end);
+        }
+        int timeline[] = new int[maxEnd + 1]; // could shrink interval to save space
+        for (Interval i : intervals) {
+            timeline[i.start]++; // open one room
+            timeline[i.end]--; // close the room
+        }
+        int res = 0;
+        int openRooms = 0;
+        for (int openRoom : timeline) {
+            res = Math.max(res, openRooms += openRoom);
+        }
+        return res;
+    }
+
+    // SortedMap
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    // beats ?%(? ms for 77 tests)
+    public int minMeetingRooms5(Interval[] intervals) {
+        SortedMap<Integer, Integer> timeline = new TreeMap<>();
+        for (Interval i : intervals) {
+            timeline.put(i.start, timeline.getOrDefault(i.start, 0) + 1);
+            timeline.put(i.end, timeline.getOrDefault(i.end, 0) - 1);
+        }
+        int res = 0;
+        int openRooms = 0;
+        for (int openRoom : timeline.values()) {
+            res = Math.max(res, openRooms += openRoom);
+        }
+        return res;
     }
 
     void test(int[][] intervalArray, int expected) {
@@ -59,6 +118,9 @@ public class MeetingRooms2 {
         }
         assertEquals(expected, minMeetingRooms(intervals.clone()));
         assertEquals(expected, minMeetingRooms2(intervals));
+        assertEquals(expected, minMeetingRooms3(intervals));
+        assertEquals(expected, minMeetingRooms4(intervals));
+        assertEquals(expected, minMeetingRooms5(intervals));
     }
 
     @Test
