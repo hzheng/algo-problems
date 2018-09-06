@@ -45,6 +45,7 @@ public class EditDistance {
     }
 
     // Dynamic Programming(2D array)
+    // time complexity: O(N ^ 2), space complexity: O(N ^ 2)
     // beats 47.83%(15 ms)
     public int minDistance2(String word1, String word2) {
         int len1 = word1.length();
@@ -59,7 +60,6 @@ public class EditDistance {
         for (int i = 1; i <= len1; i++) {
             d[i][0] = Integer.MAX_VALUE;
         }
-
         boolean[] rowMatched = new boolean[len1 + 1];
         boolean[] colMatched = new boolean[len2 + 1];
         for (int i = 1; i <= len1; i++) {
@@ -89,37 +89,36 @@ public class EditDistance {
 
     // Dynamic Programming(2D array)
     // http://www.geeksforgeeks.org/dynamic-programming-set-5-edit-distance/
+    // time complexity: O(N ^ 2), space complexity: O(N ^ 2)
     // beats 56.78%(14 ms)
     public int minDistance3(String word1, String word2) {
         int len1 = word1.length();
         int len2 = word2.length();
-        int d[][] = new int[len1 + 1][len2 + 1];
-
+        int dp[][] = new int[len1 + 1][len2 + 1];
         for (int i = 0; i <= len1; i++) {
             for (int j = 0; j <= len2; j++) {
                 if (i == 0) {
-                    d[i][j] = j;
+                    dp[i][j] = j;
                 } else if (j == 0) {
-                    d[i][j] = i;
+                    dp[i][j] = i;
                 } else if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
-                    d[i][j] = d[i - 1][j - 1];
+                    dp[i][j] = dp[i - 1][j - 1];
                 } else {
-                    d[i][j] = 1 + min(d[i][j - 1], d[i - 1][j], d[i - 1][j - 1]);
+                    dp[i][j] = 1 + min(dp[i][j - 1], dp[i - 1][j], dp[i - 1][j - 1]);
                 }
             }
         }
-
-        return d[len1][len2];
+        return dp[len1][len2];
     }
 
     // Dynamic Programming(2D array)
     // https://en.wikipedia.org/wiki/Wagner%E2%80%93Fischer_algorithm
+    // time complexity: O(N ^ 2), space complexity: O(N ^ 2)
     // beats 31.71%(16 ms)
     public int minDistance4(String word1, String word2) {
         int len1 = word1.length();
         int len2 = word2.length();
         int dp[][] = new int[len1 + 1][len2 + 1];
-
         for (int i = 0; i <= len2; i++) {
             dp[0][i] = i;
         }
@@ -136,9 +135,8 @@ public class EditDistance {
         return dp[len1][len2];
     }
 
-    // Solution of Choice
     // Dynamic Programming(1D array)
-    // https://en.wikipedia.org/wiki/Levenshtein_distance
+    // time complexity: O(N ^ 2), space complexity: O(N)
     // beats 93.36%(10 ms)
     public int minDistance5(String word1, String word2) {
         int len1 = word1.length();
@@ -167,6 +165,33 @@ public class EditDistance {
         return dp[len1];
     }
 
+    // Solution of Choice
+    // Dynamic Programming(1D array)
+    // time complexity: O(N ^ 2), space complexity: O(N)
+    // beats 75.12%(7 ms for 1146 tests)
+    public int minDistance6(String word1, String word2) {
+        int len1 = word1.length();
+        int len2 = word2.length();
+        int[] dp = new int[len1 + 1];
+        for (int i = 1; i <= len1; i++) {
+            dp[i] = i;
+        }
+        for (int i = 1; i <= len2; i++) {
+            int prev = dp[0];
+            dp[0] = i;
+            for (int j = 1; j <= len1; j++) {
+                int tmp = dp[j];
+                if (word1.charAt(j - 1) == word2.charAt(i - 1)) {
+                    dp[j] = prev;
+                } else {
+                    dp[j] = min(dp[j], dp[j - 1], prev) + 1;
+                }
+                prev = tmp;
+            }
+        }
+        return dp[len1];
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -188,6 +213,7 @@ public class EditDistance {
         test(e::minDistance3, "minDistance3", word1, word2, expected);
         test(e::minDistance4, "minDistance4", word1, word2, expected);
         test(e::minDistance5, "minDistance5", word1, word2, expected);
+        test(e::minDistance6, "minDistance6", word1, word2, expected);
     }
 
     @Test
@@ -210,6 +236,8 @@ public class EditDistance {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("EditDistance");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
