@@ -89,7 +89,7 @@ public class Skyline {
     // Solution of Choice
     // Heap
     // https://briangordon.github.io/2014/08/the-skyline-problem.html
-    // time complexity: O(N * log(N)), space complexity: O(N)
+    // time complexity: O(N * log(N)?), space complexity: O(N)
     // beats 26.43%(290 ms)
     public List<int[]> getSkyline2(int[][] buildings) {
         List<int[]> heights = new ArrayList<>();
@@ -119,7 +119,8 @@ public class Skyline {
     }
 
     // SortedMap (whose remove operation is more efficient than PriorityQueue)
-    // beats 69.08%(119 ms)
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    // beats 65.57%(97 ms for 36 tests)
     public List<int[]> getSkyline3(int[][] buildings) {
         List<int[]> heights = new ArrayList<>();
         for(int[] building : buildings) {
@@ -128,7 +129,7 @@ public class Skyline {
         }
         Collections.sort(heights, (a, b) -> (a[0] != b[0])
                          ? a[0] - b[0] : a[1] - b[1]);
-        SortedMap<Integer, Integer> map = new TreeMap<>(Collections.reverseOrder());
+        SortedMap<Integer, Integer> map = new TreeMap<>();
         map.put(0, 1);
         int lastH = 0;
         List<int[]> res = new ArrayList<>();
@@ -144,7 +145,7 @@ public class Skyline {
                     map.put(h[1], cnt - 1);
                 }
             }
-            int curH = map.firstKey();
+            int curH = map.lastKey();
             if (lastH != curH) {
                 res.add(new int[] {h[0], curH});
                 lastH = curH;
@@ -212,41 +213,36 @@ public class Skyline {
 
     // Segment Tree
     // https://discuss.leetcode.com/topic/49110/java-segment-tree-solution-47-ms
-    // beats 83.54%(39 ms)
+    // beats 86.44%(26 ms for 36 tests)
     public List<int[]> getSkyline5(int[][] buildings) {
-        Set<Integer> endpoints = new HashSet<>();
+        Set<Integer> endpoints = new TreeSet<>(); // sort!
         for (int[] building : buildings) {
             endpoints.add(building[0]);
             endpoints.add(building[1]);
         }
-
-        List<Integer> pointList = new ArrayList<>(endpoints);
-        Collections.sort(pointList);
-
+        Integer[] points = endpoints.toArray(new Integer[0]);
         Map<Integer, Integer> map = new HashMap<>();
-        for (int i = 0; i < pointList.size(); i++) {
-            map.put(pointList.get(i), i);
+        for (int i = 0; i < points.length; i++) {
+            map.put(points[i], i);
         }
-
-        Node segments = Node.create(0, pointList.size() - 1);
+        Node segments = Node.create(0, points.length - 1);
         for (int[] building : buildings) {
             segments.add(map.get(building[0]), map.get(building[1]), building[2]);
         }
-
         List<int[]> res = new ArrayList<>();
-        getSkyline(segments, pointList, res);
-        if (pointList.size() > 0) {
-            res.add(new int[] {pointList.get(pointList.size() - 1), 0});
+        getSkyline(segments, points, res);
+        if (points.length > 0) {
+            res.add(new int[] {points[points.length - 1], 0});
         }
         return res;
     }
 
-    private void getSkyline(Node node, List<Integer> points, List<int[]> res) {
+    private void getSkyline(Node node, Integer[] points, List<int[]> res) {
         if (node == null) return;
 
         if (node.left == null
             && (res.size() == 0 || res.get(res.size() - 1)[1] != node.height)) {
-            res.add(new int[] {points.get(node.start), node.height});
+            res.add(new int[] {points[node.start], node.height});
         } else {
             getSkyline(node.left, points, res);
             getSkyline(node.right, points, res);
@@ -262,7 +258,7 @@ public class Skyline {
             this.end = end;
         }
 
-        static Node create(int start, int end){
+        public static Node create(int start, int end) {
             if (start > end) return null;
 
             Node node = new Node(start, end);
@@ -274,11 +270,11 @@ public class Skyline {
             return node;
         }
 
-        void add(int start, int end, int h) {
+        public void add(int start, int end, int h) {
             if (start >= this.end || end <= this.start || h < height) return;
 
             if (left == null) {
-                height = Math.max(height, h);
+                height = h;
             } else {
                 left.add(start, end, h);
                 right.add(start, end, h);
@@ -373,6 +369,8 @@ public class Skyline {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("Skyline");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
