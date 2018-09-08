@@ -42,7 +42,7 @@ public class KSmallestPairs {
     // Solution of Choice
     // Min Heap
     // time complexity: O(K * log(K)), space complexity: O(K)
-    // beats 77.24%(7 ms for 27 tests)
+    // beats 93.01%(4 ms for 27 tests)
     public List<int[]> kSmallestPairs2(int[] nums1, int[] nums2, int k) {
         PriorityQueue<int[]> pq = new PriorityQueue<>(new Comparator<int[]>() {
             public int compare(int[] a, int[] b) {
@@ -61,7 +61,8 @@ public class KSmallestPairs {
             int[] cur = pq.poll();
             res.add(new int[] {cur[0], cur[1]});
             if (++cur[2] < n2) {
-                pq.offer(new int[] {cur[0], nums2[cur[2]], cur[2]});
+                cur[1] = nums2[cur[2]];
+                pq.offer(cur);
             }
         }
         return res;
@@ -160,6 +161,8 @@ public class KSmallestPairs {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("KSmallestPairs");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
