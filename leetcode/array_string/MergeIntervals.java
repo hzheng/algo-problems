@@ -10,8 +10,9 @@ import common.Interval;
 
 // Given a collection of intervals, merge all overlapping intervals.
 public class MergeIntervals {
-    // beats 1.36%(66 ms)
+    // SortedMap
     // time complexity: O(N * log(N)) space complexity: O(N)
+    // beats 1.36%(66 ms)
     public List<Interval> merge(List<Interval> intervals) {
         SortedMap<Integer, Interval> map = new TreeMap<>();
         for (Interval i : intervals) {
@@ -40,8 +41,35 @@ public class MergeIntervals {
         return new ArrayList<>(map.values());
     }
 
-    // beats 86.52%(13 ms)
+    // SortedMap
     // time complexity: O(N * log(N)) space complexity: O(N)
+    // beats 59.57%(18 ms for 169 tests)
+    public List<Interval> merge_2(List<Interval> intervals) {
+        List<Interval> res = new ArrayList<>();
+        if (intervals.isEmpty()) return res;
+
+        NavigableMap<Integer, Integer> map = new TreeMap<>();
+        for (Interval i : intervals) {
+            map.put(i.start, 
+                    Math.max(i.end, map.getOrDefault(i.start, i.end)));
+        }
+        Map.Entry<Integer, Integer> first = map.pollFirstEntry();
+        Interval prev = new Interval(first.getKey(), first.getValue());
+        for (int s : map.keySet()) {
+            if (s > prev.end) {
+                res.add(prev);
+                prev = new Interval(s, map.get(s));
+            } else {
+                prev.end = Math.max(prev.end, map.get(s));
+            }
+        }
+        res.add(prev);
+        return res;
+    }
+
+    // Priority Queue
+    // time complexity: O(N * log(N)) space complexity: O(N)
+    // beats 86.52%(13 ms)
     public List<Interval> merge2(List<Interval> intervals) {
         List<Interval> res = new ArrayList<>();
         if (intervals.size() == 0) return res;
@@ -62,9 +90,10 @@ public class MergeIntervals {
         return res;
     }
 
+    // Sort
     // Solution of Choice
-    // beats 86.52%(13 ms)
     // time complexity: O(N * log(N)) space complexity: O(N)
+    // beats 86.52%(13 ms)
     public List<Interval> merge3(List<Interval> intervals) {
         int n = intervals.size();
         if (n < 2) return intervals;
@@ -86,8 +115,8 @@ public class MergeIntervals {
     }
 
     // http://www.geeksforgeeks.org/merging-intervals/
-    // beats 0.52%(125 ms)
     // time complexity: O(N * log(N)) space complexity: O(1)
+    // beats 0.52%(125 ms)
     public List<Interval> merge4(List<Interval> intervals) {
         // reverse sort
         Collections.sort(intervals, ((a, b) -> b.start - a.start));
@@ -110,8 +139,8 @@ public class MergeIntervals {
     }
 
     // Sort + Two Pointers
-    // beats 38.02%(16 ms)
     // time complexity: O(N * log(N)) space complexity: O(1)
+    // beats 38.02%(16 ms)
     public List<Interval> merge5(List<Interval> intervals) {
         int n = intervals.size();
         if (n < 2) return intervals;
@@ -133,6 +162,7 @@ public class MergeIntervals {
     void test(int[] expected, int ... intervals) {
         MergeIntervals m = new MergeIntervals();
         test(m::merge, "merge", expected, intervals);
+        test(m::merge_2, "merge_2", expected, intervals);
         test(m::merge2, "merge2", expected, intervals);
         test(m::merge3, "merge3", expected, intervals);
         test(m::merge4, "merge4", expected, intervals);
@@ -177,6 +207,8 @@ public class MergeIntervals {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("MergeIntervals");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
