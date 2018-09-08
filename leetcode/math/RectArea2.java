@@ -210,6 +210,47 @@ public class RectArea2 {
 
     // TODO: Binary Indexed Tree
 
+    // Recursion
+    // time complexity: O(N ^ 2)), space complexity: O(N)
+    // beats 95.11%(8 ms for 76 tests)
+    public int rectangleArea5(int[][] rectangles) {
+        long res = 0;
+        List<int[]> recList = new ArrayList<>();
+        for (int[] rec : rectangles) {
+            addRect(recList, rec, 0);
+        }
+        for (int[] rec : recList) {
+            res = (res + ((long)(rec[2] - rec[0]) * (rec[3] - rec[1]))) % MOD;
+        }
+        return (int) res % MOD;
+    }
+
+    public void addRect(List<int[]> rects, int[] rect, int index) {
+        if (index >= rects.size()) {
+            rects.add(rect);
+            return;
+        }
+        int[] r = rects.get(index++);
+        if (rect[2] <= r[0] || rect[3] <= r[1] || rect[0] >= r[2] || rect[1] >= r[3]) {
+            addRect(rects, rect, index);
+            return;
+        }
+        if (rect[0] < r[0]) {
+            addRect(rects, new int[]{rect[0], rect[1], r[0], rect[3]}, index);
+        }
+        if (rect[2] > r[2]) {
+            addRect(rects, new int[]{r[2], rect[1], rect[2], rect[3]}, index);
+        }
+        if (rect[1] < r[1]) {
+            addRect(rects, new int[]{Math.max(r[0], rect[0]), rect[1],
+                                     Math.min(r[2], rect[2]), r[1]}, index);
+        }
+        if (rect[3] > r[3]) {
+            addRect(rects, new int[]{Math.max(r[0], rect[0]), r[3],
+                                     Math.min(r[2], rect[2]), rect[3]}, index);
+        }
+    }
+
     void test(int[][] rectangles, int expected) {
         if (rectangles.length < 12) {
             assertEquals(expected, rectangleArea(rectangles));
@@ -217,6 +258,7 @@ public class RectArea2 {
         assertEquals(expected, rectangleArea2(rectangles));
         assertEquals(expected, rectangleArea3(rectangles));
         assertEquals(expected, rectangleArea4(rectangles));
+        assertEquals(expected, rectangleArea5(rectangles));
     }
 
     @Test
