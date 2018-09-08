@@ -63,6 +63,8 @@ public class RectArea {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("RectArea");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
