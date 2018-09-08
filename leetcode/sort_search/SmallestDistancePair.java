@@ -141,7 +141,6 @@ public class SmallestDistancePair {
         return low;
     }
 
-
     // Bucket Sort
     // https://leetcode.com/articles/find-k-th-smallest-pair-distance/ #2
     // time complexity: O(N ^ 2), space complexity: O(max(nums))
@@ -165,12 +164,36 @@ public class SmallestDistancePair {
         }
     }
 
+    // Heap
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    // Time Limit Exceeded
+    public int smallestDistancePair6(int[] nums, int k) {
+        Arrays.sort(nums);
+        PriorityQueue<int[]> pq = new PriorityQueue<>(new Comparator<int[]>() {
+            public int compare(int[] a, int[] b) {
+                return (nums[a[1]] - nums[a[0]]) - (nums[b[1]] - nums[b[0]]);
+            }
+        });
+        int n = nums.length;
+        for (int i = 1; i < n; i++) {
+            pq.offer(new int[]{i - 1, i});
+        }
+        for (int i = k - 1; i > 0; i--) {
+            int[] cur = pq.poll();
+            if (++cur[1] < n) {
+                pq.offer(cur);
+            }
+        }
+        return nums[pq.peek()[1]] - nums[pq.peek()[0]];
+    }
+
     void test(int[] nums, int k, int expected) {
         assertEquals(expected, smallestDistancePair(nums, k));
         assertEquals(expected, smallestDistancePair2(nums, k));
         assertEquals(expected, smallestDistancePair3(nums, k));
         assertEquals(expected, smallestDistancePair4(nums, k));
         assertEquals(expected, smallestDistancePair5(nums, k));
+        assertEquals(expected, smallestDistancePair6(nums, k));
     }
 
     @Test
