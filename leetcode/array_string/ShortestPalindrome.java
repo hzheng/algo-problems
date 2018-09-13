@@ -222,12 +222,15 @@ public class ShortestPalindrome {
         test("a", "a");
         test("ab", "bab");
         test("aacecaaa", "aaacecaaa");
+        test("abcbabcaba", "abacbabcbabcaba");
         test("cbbcbdacbbc", "cbbcadbcbbcbdacbbc");
         test("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("ShortestPalindrome");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
