@@ -111,9 +111,8 @@ public class Regex {
         return isMatch2(s, p.substring(2));
     }
 
-    // recursion
-    // http://www.jiuzhang.com/solutions/regular-expression-matching/
-    // beats 26.44%(143 ms)
+    // Recursion
+    // beats 7.52%(130 ms for 447 tests)
     public boolean isMatch3(String s, String p) {
         if (p.isEmpty()) return s.isEmpty();
 
@@ -130,6 +129,30 @@ public class Regex {
 
     private boolean matchFirst(String s, String p) {
         return !s.isEmpty() && (p.charAt(0) == '.' || p.charAt(0) == s.charAt(0));
+    }
+
+    // Recursion + Dynamic Programming(Top-Down)
+    // beats 58.51%(20 ms for 447 tests)
+    public boolean isMatch3_2(String s, String p) {
+        return isMatch(s, p, new HashMap<>());
+    }
+
+    private boolean isMatch(String s, String p, Map<String, Boolean> memo) {
+        if (p.isEmpty()) return s.isEmpty();
+
+        String key = s + "|" + p;
+        if (memo.containsKey(key)) return memo.get(key);
+
+        boolean res = false;
+        if (p.length() == 1 || p.charAt(1) != '*') {
+            res = matchFirst(s, p) && isMatch(s.substring(1), p.substring(1), memo);
+        } else if (!matchFirst(s, p)) {
+            res = isMatch(s, p.substring(2), memo);
+        } else {
+            res = isMatch(s.substring(1), p, memo) || isMatch(s, p.substring(2), memo);
+        }
+        memo.put(key, res);
+        return res;
     }
 
     // Dynamic Programming
@@ -228,6 +251,29 @@ public class Regex {
         return dp[n];
     }
 
+    // Solution of Choice
+    // Dynamic Programming
+    // time complexity: O(M * N), space complexity: O(M * N)
+    // beats 58.51%(20 ms for 447 tests)
+    public boolean isMatch7(String s, String p) {
+        int m = s.length();
+        int n = p.length();
+        boolean[][] dp = new boolean[m + 1][n + 1];
+        dp[m][n] = true;
+        for (int i = m; i >= 0; i--){
+            for (int j = n - 1; j >= 0; j--) {
+                boolean match = (i < m && (p.charAt(j) == s.charAt(i) 
+                                 || p.charAt(j) == '.'));
+                if (j + 1 < n && p.charAt(j + 1) == '*') {
+                    dp[i][j] = dp[i][j + 2] || match && dp[i + 1][j];
+                } else {
+                    dp[i][j] = match && dp[i + 1][j + 1];
+                }
+            }
+        }
+        return dp[0][0];
+    }
+
     // TODO: backtracking
 
     // TODO: state machine
@@ -236,9 +282,11 @@ public class Regex {
         assertEquals(expected, isMatch(s, p));
         assertEquals(expected, isMatch2(s, p));
         assertEquals(expected, isMatch3(s, p));
+        assertEquals(expected, isMatch3_2(s, p));
         assertEquals(expected, isMatch4(s, p));
         assertEquals(expected, isMatch5(s, p));
         assertEquals(expected, isMatch6(s, p));
+        assertEquals(expected, isMatch7(s, p));
     }
 
     @Test
@@ -269,6 +317,8 @@ public class Regex {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("Regex");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
