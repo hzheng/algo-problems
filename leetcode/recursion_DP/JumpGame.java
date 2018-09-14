@@ -100,6 +100,8 @@ public class JumpGame {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("JumpGame");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

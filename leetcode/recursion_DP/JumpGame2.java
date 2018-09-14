@@ -32,7 +32,6 @@ public class JumpGame2 {
         return jumps;
     }
 
-    // Solution of Choice
     // Greedy
     // beats 29.35%(10 ms)
     public int jump2(int[] nums) {
@@ -83,12 +82,13 @@ public class JumpGame2 {
         return dp[n - 1];
     }
 
+    // Solution of Choice
     // Greedy
+    // time complexity: O(N), space complexity: O(1)
     // beats 29.35%(10 ms)
     public int jump5(int[] nums) {
         int jumps = 0;
-        int max = 0;
-        for (int i = 0, lastMax = 0; i < nums.length - 1; i++) {
+        for (int i = 0, max = 0, lastMax = 0; i < nums.length - 1; i++) {
             max = Math.max(max, i + nums[i]);
             if (i == lastMax) {
                 jumps++;
@@ -140,6 +140,8 @@ public class JumpGame2 {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("JumpGame2");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
