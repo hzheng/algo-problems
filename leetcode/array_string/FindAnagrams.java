@@ -42,7 +42,7 @@ public class FindAnagrams {
     }
 
     // Hash Table + Two Pointers
-    // beats N/A(24 ms for 30 tests)
+    // beats 56.51(16 ms for 36 tests)
     public List<Integer> findAnagrams2(String s, String p) {
         List<Integer> res = new ArrayList<>();
         int[] count = new int[26];
@@ -63,6 +63,37 @@ public class FindAnagrams {
         return res;
     }
 
+    // Hash Table + Two Pointers
+    // beats 24.81(43 ms for 36 tests)
+    public List<Integer> findAnagrams3(String s, String p) {
+        List<Integer> res = new ArrayList<>();
+        int len = p.length();
+        Map<Character, Integer> count = new HashMap<>();
+        for (char c : p.toCharArray()) {
+            count.put(c, count.getOrDefault(c, 0) + 1);
+        }
+        for (int i = 0, j = 0, toMatch = len; j < s.length(); j++) {
+            char c = s.charAt(j);
+            int newCount = count.getOrDefault(c, 0) - 1;
+            count.put(c, newCount);
+            if (newCount >= 0) {
+                toMatch--;
+            }
+            if (toMatch == 0) {
+                res.add(i);
+            }
+            if (j - i == len - 1) {
+                c = s.charAt(i++);
+                newCount = count.get(c) + 1;
+                count.put(c, newCount);
+                if (newCount > 0) {
+                    toMatch++;
+                }
+            }
+        }
+        return res;
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
         public C apply(A a, B b);
@@ -78,6 +109,7 @@ public class FindAnagrams {
         FindAnagrams f = new FindAnagrams();
         test(f::findAnagrams, s, p, expected);
         test(f::findAnagrams2, s, p, expected);
+        test(f::findAnagrams3, s, p, expected);
     }
 
     @Test
@@ -89,6 +121,8 @@ public class FindAnagrams {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("FindAnagrams");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
