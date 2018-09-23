@@ -3,7 +3,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// LC084: Given n non-negative integers representing the histogram's bar height where the width of each bar is 1, find the area of largest rectangle in the histogram.
+// LC084: https://leetcode.com/problems/largest-rectangle-in-histogram/
 //
 // Given n non-negative integers representing the histogram's bar height where
 // the width of each bar is 1, find the area of largest rectangle.
@@ -127,7 +127,7 @@ public class LargestRect {
     // Solution of Choice
     // Stack
     // http://www.geeksforgeeks.org/largest-rectangle-under-histogram/
-    // time complexity: O(N)
+    // time complexity: O(N), space complexity: O(N)
     // beats 64.10%(23 ms)
     public int largestRectangleArea4(int[] heights) {
         Stack<Integer> stack = new Stack<>();
@@ -145,8 +145,9 @@ public class LargestRect {
         return maxArea;
     }
 
+    // Solution of Choice
     // Stack(array form)
-    // time complexity: O(N)
+    // time complexity: O(N), space complexity: O(N)
     // beats 94.33%(5 ms)
     public int largestRectangleArea5(int[] heights) {
         int n = heights.length;
@@ -183,6 +184,8 @@ public class LargestRect {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("LargestRect");
+        String clazz =
+            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
