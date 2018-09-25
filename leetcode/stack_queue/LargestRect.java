@@ -128,17 +128,18 @@ public class LargestRect {
     // Stack
     // http://www.geeksforgeeks.org/largest-rectangle-under-histogram/
     // time complexity: O(N), space complexity: O(N)
-    // beats 64.10%(23 ms)
+    // beats 72.85%(18 ms for 96 tests)
     public int largestRectangleArea4(int[] heights) {
         Stack<Integer> stack = new Stack<>();
         int maxArea = 0;
-        for (int i = 0; i <= heights.length; ) {
-            if (stack.empty()
-                || i < heights.length && heights[i] > heights[stack.peek()]) {
+        stack.push(-1);
+        for (int i = 0, n = heights.length; i <= n; ) {
+            int cur = (i < n) ? heights[i] : 0;
+            if (stack.size() == 1 || cur > heights[stack.peek()]) {
                 stack.push(i++);
             } else {
                 int last = stack.pop();
-                int width = stack.empty() ? i : (i - stack.peek() - 1);
+                int width = i - stack.peek() - 1; //stack.empty() ? i : (i - stack.peek() - 1);
                 maxArea = Math.max(maxArea, heights[last] * width);
             }
         }
