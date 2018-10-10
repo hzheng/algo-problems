@@ -14,6 +14,10 @@ public class DisjointSet {
         Arrays.fill(id, -1);
     }
 
+    public int[] getParent() {
+        return id;
+    }
+
     public int root(int x) {
         // return parent[x] < 0 ? x : (parent[x] = root(parent[x]));
         for (; id[x] >= 0; x = id[x]) {}
