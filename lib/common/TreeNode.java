@@ -15,6 +15,10 @@ public class TreeNode {
         val = x;
     }
 
+    public TreeNode (Integer[] vals) {
+        build(this, vals);
+    }
+
     public static TreeNode of(String s) {
         List<Integer> vals = new ArrayList<>();
         for (String v : s.split(",")) {
@@ -25,8 +29,12 @@ public class TreeNode {
 
     public static TreeNode of(Integer ... vals) {
         TreeNode root = new TreeNode(vals[0]);
+        return build(root, vals);
+    }
+
+    private static TreeNode build(TreeNode root, Integer ... vals) {
         Queue<TreeNode> queue = new LinkedList<>();
-        queue.add(root);
+        queue.offer(root);
         int len = vals.length;
         for (int i = 1; i < len && !queue.isEmpty(); i++) {
             TreeNode node = queue.poll();
