@@ -8,50 +8,64 @@ import static org.junit.Assert.*;
 // Given a string S, find the longest palindromic substring. Assume the maximum
 // length of S is 1000, and there exists 1 unique longest palindromic substring.
 public class LongestPalindromeSubstr {
+    // Dynamic Programming
     // time complexity: O(N ^ 2), space complexity: O(N ^ 2)
-    // Time Limit Exceeded
+    // beats 35.67%(72 ms for 103 tests)
     public String longestPalindrome(String s) {
         int len = s.length();
         if (len == 0) return "";
 
-        int[][] commons = new int[len][len];
+        int[][] dp = new int[len][len];
         int maxLen = 0;
         int maxIndex = 0;
         for (int i = 0; i < len; i++) {
             for (int j = 0; j < len; j++) {
-                if (s.charAt(i) == s.charAt(len - 1 - j)) {
-                    if (i == 0 || j == 0) {
-                        commons[i][j] = 1;
-                    } else {
-                        commons[i][j] = commons[i - 1][j - 1] + 1;
-                    }
-                    int curLen = commons[i][j];
-                    if (i + j - curLen + 2 == len) {
-                        if (curLen > maxLen) {
-                            maxLen = curLen;
-                            maxIndex = i;
-                        }
-                    }
+                if (s.charAt(i) != s.charAt(len - 1 - j)) continue;
+
+                if (i == 0 || j == 0) {
+                    dp[i][j] = 1;
+                } else {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                }
+                int curLen = dp[i][j];
+                if ((i + j - curLen + 2 == len) && (curLen > maxLen)) {
+                    maxLen = curLen;
+                    maxIndex = i;
                 }
             }
         }
         return s.substring(maxIndex - maxLen + 1, maxIndex + 1);
     }
 
-    // time complexity: O(N ^ 2), space complexity: O(1)
-    // beats 72.97%
-    public String longestPalindrome2(String s) {
-        int len = s.length();
-        if (len == 0) return "";
-
+    // Dynamic Programming
+    // time complexity: O(N ^ 2), space complexity: O(N ^ 2)
+    // beats 50.00%(45 ms for 103 tests)
+    public String longestPalindrome_2(String s) {
+        int n = s.length();
+        boolean[][] dp = new boolean[n][n];
         int maxLen = 0;
         int maxIndex = 0;
-        for (int i = 0; i < len; ) {
-            char c = s.charAt(i);
-            int j = i;
-            while (j < len && s.charAt(j) == c) {
-                j++;
+        for (int d = 0; d < n; d++) {
+            for (int i = 0, j = i + d; j < n; i++, j++) {
+                if (s.charAt(i) != s.charAt(j)) continue;
+
+                dp[i][j] = (j - i) < 2 || dp[i + 1][j - 1];
+                if (dp[i][j] && (j - i + 1 > maxLen)) {
+                    maxLen = j - i + 1;
+                    maxIndex = i;
+                }
             }
+        }
+        return s.substring(maxIndex, maxIndex + maxLen);
+    }
+
+    // time complexity: O(N ^ 2), space complexity: O(1)
+    // beats 77.15%(16 ms for 103 tests)
+    public String longestPalindrome2(String s) {
+        int maxLen = 0;
+        int maxIndex = 0;
+        for (int i = 0, j = 0, len = s.length(); i < len; i = j) {
+            for (char c = s.charAt(i); j < len && s.charAt(j) == c; j++) {}
             if (j == len) {
                 if (j - i > maxLen) {
                     maxLen = j - i;
@@ -69,20 +83,16 @@ public class LongestPalindromeSubstr {
                     break;
                 }
             }
-            i = j;
         }
         return s.substring(maxIndex - maxLen, maxIndex);
     }
 
-    // https://leetcode.com/articles/longest-palindromic-substring/
     // time complexity: O(N ^ 2), space complexity: O(1)
+    // beats 94.26%(11 ms for 103 tests)
     public String longestPalindrome3(String s) {
-        int l = s.length();
-        if (l == 0) return "";
-
         int start = 0;
-        int end = 0;
-        for (int i = 0; i < l; i++) {
+        int end = -1;
+        for (int i = 0, n = s.length(); i < n; i++) {
             int len1 = expandAroundCenter(s, i, i);
             int len2 = expandAroundCenter(s, i, i + 1);
             int len = Math.max(len1, len2);
@@ -95,8 +105,7 @@ public class LongestPalindromeSubstr {
     }
 
     private int expandAroundCenter(String s, int left, int right) {
-        while (left >= 0 && right < s.length()
-               && s.charAt(left) == s.charAt(right)) {
+        while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
             left--;
             right++;
         }
@@ -104,17 +113,18 @@ public class LongestPalindromeSubstr {
     }
 
     // Solution of Choice
+    // Manacher's Algorithm
     // from https://en.wikipedia.org/wiki/Longest_palindromic_substring
-    // time complexity: O(N), space complexity: O(N ^ 2)
-    // beats 96.88%
+    // time complexity: O(N), space complexity: O(N)
+    // beats 99.58%(9 ms for 103 tests)
     public String longestPalindrome4(String s) {
-        if (s == null || s.length() == 0) return "";
+        if (s.length() == 0) return "";
 
         char[] s2 = addBoundaries(s.toCharArray());
         int[] p = new int[s2.length]; // max palindrome at i
         int center = 0; // center of the max palindrome currently known
         int rBound = 0; // right-most boundary of the palindrome at 'center'
-        int m = 0, n = 0;   // The walking indices to compare 2 elements
+        int m = 0, n = 0; // The walking indices to compare 2 elements
         for (int i = 1; i < s2.length; i++) {
             if (i > rBound) { // reset
                 p[i] = 0;
@@ -124,7 +134,7 @@ public class LongestPalindromeSubstr {
                 int j = center * 2 - i; // mirror of i
                 if (p[j] < (rBound - i)) {
                     p[i] = p[j];
-                    m = -1;     // bypass the while loop below
+                    m = -1; // bypass the while loop below
                 } else {
                     p[i] = rBound - i;
                     n = rBound + 1;
@@ -148,8 +158,7 @@ public class LongestPalindromeSubstr {
                 center = i;
             }
         }
-        return removeBoundaries(Arrays.copyOfRange(
-                                    s2, center - len, center + len + 1));
+        return removeBoundaries(Arrays.copyOfRange(s2, center - len, center + len + 1));
     }
 
     private char[] addBoundaries(char[] cs) {
@@ -164,7 +173,7 @@ public class LongestPalindromeSubstr {
     }
 
     private String removeBoundaries(char[] cs) {
-        if (cs == null || cs.length < 3) return "";
+        if (cs.length < 3) return "";
 
         char[] cs2 = new char[(cs.length - 1) / 2];
         for (int i = 0; i < cs2.length; i++) {
@@ -173,11 +182,39 @@ public class LongestPalindromeSubstr {
         return String.valueOf(cs2);
     }
 
+    // time complexity: O(N ^ 2), space complexity: O(1)
+    // beats 79.72%(15 ms for 103 tests)
+    public String longestPalindrome5(String s) {
+        int maxLen = 0;
+        int maxIndex = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (isPalindrome(s, i - maxLen - 1, i)) {
+                maxIndex = i - maxLen - 1;
+                maxLen += 2;
+            } else if (isPalindrome(s, i - maxLen, i)) {
+                maxIndex = i - (maxLen++);
+            }
+        }
+        return s.substring(maxIndex, maxIndex + maxLen);
+    }
+
+    private boolean isPalindrome(String s, int begin, int end) {
+        if (begin < 0) return false;
+        while (begin < end) {
+            if (s.charAt(begin++) != s.charAt(end--)) return false;
+        }
+        return true;
+    }
+
+    // TODO: convert to LCS problem and use suffix tree
+
     void test(String s, String expected) {
         assertEquals(expected, longestPalindrome(s));
+        assertEquals(expected, longestPalindrome_2(s));
         assertEquals(expected, longestPalindrome2(s));
         assertEquals(expected, longestPalindrome3(s));
         assertEquals(expected, longestPalindrome4(s));
+        assertEquals(expected, longestPalindrome5(s));
     }
 
     @Test
@@ -187,6 +224,7 @@ public class LongestPalindromeSubstr {
         // test("ab", "a"); // no unique palindrom, answers vary
         test("aab", "aa");
         test("abb", "bb");
+        test("abcba", "abcba");
         test("aaaaaaaaaa", "aaaaaaaaaa");
         test("cabad", "aba");
         test("bbbacdddde", "dddd");
@@ -195,6 +233,7 @@ public class LongestPalindromeSubstr {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("LongestPalindromeSubstr");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
