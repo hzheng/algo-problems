@@ -69,7 +69,7 @@ public class SumNode {
         return dummyHead.next;
     }
 
-    void test(int[] n1, int[] n2, int ... expected) {
+    void test(int[] n1, int[] n2, int... expected) {
         ListNode l1 = ListNode.of(n1);
         ListNode l2 = ListNode.of(n2);
         assertArrayEquals(expected, addTwoNumbers(l1, l2).toArray());
@@ -84,6 +84,7 @@ public class SumNode {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("SumNode");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

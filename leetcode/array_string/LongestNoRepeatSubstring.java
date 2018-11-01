@@ -48,39 +48,55 @@ public class LongestNoRepeatSubstring {
         return Math.max(strLen - start, maxLen);
     }
 
-    // Two Pointers
+    // Hash Table
+    // time complexity: O(N), space complexity: O(N)
+    // beats 79.92%(31 ms for 987 tests)
+    public int lengthOfLongestSubstring2_2(String s) {
+        Map<Character, Integer> map = new HashMap<>();
+        int res = 0;
+        for (int i = 0, n = s.length(), first = -1; i < n; i++) {
+            char c = s.charAt(i);
+            Integer prev = map.get(c);
+            if (prev == null || prev <= first) {
+                res = Math.max(res, i - first);
+            } else {
+                first = prev;
+            }
+            map.put(c, i);
+        }
+        return res;
+    }
+
+    // Two Pointers + Set
     // https://leetcode.com/articles/longest-substring-without-repeating-characters/
+    // time complexity: O(N), space complexity: O(N)
+    // beats 65.01%(34 ms for 987 tests)
     public int lengthOfLongestSubstring3(String s) {
         int n = s.length();
         Set<Character> set = new HashSet<>();
         int res = 0;
-        for (int i = 0, j = 0; i < n && j < n; ) {
-            // try to extend the range [i, j]
-            if (!set.contains(s.charAt(j))) {
-                set.add(s.charAt(j++));
-                res = Math.max(res, j - i);
-            }
-            else {
+        for (int i = 0, j = 0; i < n && j < n;) {
+            if (set.add(s.charAt(j))) {
+                res = Math.max(res, ++j - i);
+            } else {
                 set.remove(s.charAt(i++));
             }
         }
         return res;
     }
 
-    // Two Pointers
-    // https://leetcode.com/articles/longest-substring-without-repeating-characters/
+    // Two Pointers + Hash Table
+    // time complexity: O(N), space complexity: O(N)
+    // beats 89.73%(29 ms for 987 tests)
     public int lengthOfLongestSubstring4(String s) {
         int n = s.length();
         int res = 0;
-        Map<Character, Integer> map = new HashMap<>(); // current index of character
-        // try to extend the range [i, j]
-        for (int i = 0, j = 0; j < n; j++) {
+        Map<Character, Integer> map = new HashMap<>();
+        for (int i = -1, j = 0; j < n; j++) {
             char c = s.charAt(j);
-            if (map.containsKey(c)) {
-                i = Math.max(map.get(c), i);
-            }
-            res = Math.max(res, j - i + 1);
-            map.put(c, j + 1);
+            i = Math.max(map.getOrDefault(c, -1), i);
+            res = Math.max(res, j - i);
+            map.put(c, j);
         }
         return res;
     }
@@ -88,13 +104,12 @@ public class LongestNoRepeatSubstring {
     // Solution of Choice
     // Two Pointers
     // https://leetcode.com/articles/longest-substring-without-repeating-characters/
-    // beats 98.52%(4 ms)
+    // time complexity: O(N), space complexity: O(N)
+    // beats 99.99%(21 ms for 987 tests)
     public int lengthOfLongestSubstring5(String s) {
-        int n = s.length();
         int res = 0;
-        int[] index = new int[128]; // current index of character
-        // try to extend the range [i, j]
-        for (int i = 0, j = 0; j < n; j++) {
+        int[] index = new int[128];
+        for (int i = 0, j = 0, n = s.length(); j < n; j++) {
             char c = s.charAt(j);
             i = Math.max(i, index[c]);
             res = Math.max(res, j - i + 1);
@@ -106,6 +121,7 @@ public class LongestNoRepeatSubstring {
     void test(String s, int expected) {
         assertEquals(expected, lengthOfLongestSubstring(s));
         assertEquals(expected, lengthOfLongestSubstring2(s));
+        assertEquals(expected, lengthOfLongestSubstring2_2(s));
         assertEquals(expected, lengthOfLongestSubstring3(s));
         assertEquals(expected, lengthOfLongestSubstring4(s));
         assertEquals(expected, lengthOfLongestSubstring5(s));
@@ -120,6 +136,7 @@ public class LongestNoRepeatSubstring {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("LongestNoRepeatSubstring");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
