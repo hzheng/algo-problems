@@ -15,30 +15,44 @@ public class TwoSum {
         for (int i = 0; i < nums.length; i++) {
             int cur = nums[i];
             if (complements.containsKey(cur)) {
-                return new int[] { complements.get(cur), i };
+                return new int[] {complements.get(cur), i};
             }
             complements.put(target - cur, i);
         }
         return null;
     }
 
-    // Solution of Choice
-    // https://leetcode.com/articles/two-sum/
     public int[] twoSum2(int[] nums, int target) {
         Map<Integer, Integer> map = new HashMap<>();
         for (int i = 0; i < nums.length; i++) {
             int complement = target - nums[i];
             if (map.containsKey(complement)) {
-                return new int[] { map.get(complement), i };
+                return new int[] {map.get(complement), i};
             }
             map.put(nums[i], i);
         }
         throw new IllegalArgumentException("No two sum solution");
     }
 
-    void test(int[] nums, int target, int ... expected) {
+    // Solution of Choice
+    // Hash Table
+    // time complexity: O(N), space complexity: O(N)
+    // beats 99.34%(4 ms for 29 tests)
+    public int[] twoSum3(int[] nums, int target) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0;; i++) {
+            int num = nums[i];
+            Integer index = map.get(target - num);
+            if (index != null) return new int[] {index, i};
+
+            map.put(num, i);
+        }
+    }
+
+    void test(int[] nums, int target, int... expected) {
         assertArrayEquals(expected, twoSum(nums, target));
         assertArrayEquals(expected, twoSum2(nums, target));
+        assertArrayEquals(expected, twoSum3(nums, target));
     }
 
     @Test
@@ -47,6 +61,7 @@ public class TwoSum {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("TwoSum");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
