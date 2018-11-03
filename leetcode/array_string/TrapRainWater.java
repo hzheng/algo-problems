@@ -93,16 +93,16 @@ public class TrapRainWater {
         return water;
     }
 
+    // Solution of Choice
     // Two Pointers(1-pass)
-    // https://discuss.leetcode.com/topic/18731/7-lines-c-c
     // time complexity: O(N), space complexity: O(1)
-    // beats 33.23%(2 ms)
+    // beats 100.00%(9 ms for 315 tests)
     public int trap4(int[] height) {
         int water = 0;
-        for (int l = 0, r = height.length - 1, level = 0; l < r; ) {
-            int lower = height[height[l] < height[r] ? l++ : r--];
-            level = Math.max(level, lower);
-            water += level - lower;
+        for (int l = 0, r = height.length - 1, level = 0; l < r;) {
+            int newLevel = height[height[l] < height[r] ? l++ : r--];
+            level = Math.max(level, newLevel);
+            water += level - newLevel;
         }
         return water;
     }
@@ -110,10 +110,10 @@ public class TrapRainWater {
     // Solution of Choice
     // Two Pointers(1-pass)
     // time complexity: O(N), space complexity: O(1)
-    // beats 33.23%(2 ms)
+    // beats 50.10%(14 ms for 315 tests)
     public int trap5(int[] height) {
         int water = 0;
-        for (int l = 0, r = height.length - 1, maxL = 0, maxR = 0; l < r; ) {
+        for (int l = 0, r = height.length - 1, maxL = 0, maxR = 0; l < r;) {
             maxL = Math.max(maxL, height[l]);
             maxR = Math.max(maxR, height[r]);
             water += (maxL < maxR) ? (maxL - height[l++]) : (maxR - height[r--]);
@@ -121,14 +121,15 @@ public class TrapRainWater {
         return water;
     }
 
+    // Solution of Choice
     // Stack
     // time complexity: O(N), space complexity: O(N)
     // Largest Rectangle in Histogram???
-    // beats 21.98%(7 ms)
+    // beats 40.26%(16 ms for 315 tests)
     public int trap6(int[] height) {
         Stack<Integer> leftPos = new Stack<>();
         int water = 0;
-        for (int i = 0; i < height.length; ) {
+        for (int i = 0; i < height.length;) {
             if (leftPos.isEmpty() || height[i] <= height[leftPos.peek()]) {
                 leftPos.push(i++);
             } else {
@@ -136,24 +137,50 @@ public class TrapRainWater {
                 if (!leftPos.isEmpty()) {
                     int left = leftPos.peek();
                     int depth = Math.min(height[left], height[i]) - height[base];
-                water += depth * (i - left - 1);
+                    water += depth * (i - left - 1);
                 }
             }
         }
         return water;
     }
 
-    void test(int expected, int ... height) {
+    // Stack
+    // time complexity: O(N), space complexity: O(N)
+    // beats 17.82%(20 ms for 315 tests)
+    public int trap7(int[] height) {
+        int res = 0;
+        Stack<int[]> stack = new Stack<>();
+        int i = 0;
+        outer: for (int h : height) {
+            i++;
+            if (!stack.isEmpty() && h > stack.peek()[1]) {
+                for (int[] prev = stack.pop(); !stack.isEmpty(); prev = stack.pop()) {
+                    int[] prev2 = stack.peek();
+                    res += (i - prev[0]) * (Math.min(prev2[1], h) - prev[1]);
+                    if (h <= prev2[1]) {
+                        stack.push(new int[] {prev[0], h});
+                        continue outer;
+                    }
+                }
+            }
+            stack.push(new int[] {i, h});
+        }
+        return res;
+    }
+
+    void test(int expected, int... height) {
         assertEquals(expected, trap(height));
         assertEquals(expected, trap2(height));
         assertEquals(expected, trap3(height));
         assertEquals(expected, trap4(height));
         assertEquals(expected, trap5(height));
         assertEquals(expected, trap6(height));
+        assertEquals(expected, trap7(height));
     }
 
     @Test
     public void test1() {
+        test(9, 4, 2, 0, 3, 2, 5);
         test(6, 0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1);
         test(6, 0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2);
         test(5, 0, 1, 0, 2, 1, 0, 1, 3, 2, 1);
@@ -168,6 +195,7 @@ public class TrapRainWater {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("TrapRainWater");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
