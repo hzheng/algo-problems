@@ -13,31 +13,28 @@ import common.ListNode;
 public class MergeSortedKLists {
     // Solution of Choice
     // Heap
-    // beats 9.05%(21 ms)
     // time complexity: O(N * log(K))
+    // beats 81.84%(11 ms for 131 tests)
     public ListNode mergeKLists(ListNode[] lists) {
-        if (lists == null || lists.length == 0) return null;
-
+        int k = lists.length;
         // PriorityQueue<ListNode> headHeap
-        //     = new PriorityQueue<>(lists.length, (a, b)-> a.val - b.val);
-        PriorityQueue<ListNode> headHeap
-            = new PriorityQueue<>(lists.length,
-                                  new Comparator<ListNode>() {
+        // = new PriorityQueue<>(lists.length, (a, b)-> a.val - b.val);
+        PriorityQueue<ListNode> pq = new PriorityQueue<>(k + 1, new Comparator<ListNode>() {
             public int compare(ListNode a, ListNode b) {
                 return a.val - b.val;
             }
         });
         for (ListNode node : lists) {
             if (node != null) {
-                headHeap.offer(node);
+                pq.offer(node);
             }
         }
         ListNode dummy = new ListNode(0);
-        for (ListNode cur = dummy; !headHeap.isEmpty(); cur = cur.next) {
-            ListNode max = headHeap.poll();
-            cur.next = max;
-            if (max.next != null) {
-                headHeap.offer(max.next);
+        for (ListNode cur = dummy; !pq.isEmpty(); cur = cur.next) {
+            ListNode min = pq.poll();
+            cur.next = min;
+            if (min.next != null) {
+                pq.offer(min.next);
             }
         }
         return dummy.next;
@@ -91,19 +88,18 @@ public class MergeSortedKLists {
         return listSet.get(0);
     }
 
-    // Divide & Conquer/Recursion
-    // beats 7.95%(22 ms)
+    // Divide & Conquer + Recursion
+    // time complexity: O(N * log(K))
+    // beats 99.98%(7 ms for 131 tests)
     public ListNode mergeKLists4(ListNode[] lists) {
-        if (lists == null || lists.length == 0) return null;
-
-        return partion(lists, 0, lists.length - 1);
+        return (lists.length == 0) ? null : partion(lists, 0, lists.length - 1);
     }
 
-    private ListNode partion(ListNode[] lists, int low, int high) {
-        if (low == high) return lists[low];
+    private ListNode partion(ListNode[] lists, int start, int end) {
+        if (start == end) return lists[start];
 
-        int mid = (low + high) >>> 1;
-        return merge(partion(lists, low, mid), partion(lists, mid + 1, high));
+        int mid = (start + end) >>> 1;
+        return merge(partion(lists, start, mid), partion(lists, mid + 1, end));
     }
 
     private ListNode merge(ListNode l1, ListNode l2) {
@@ -119,10 +115,8 @@ public class MergeSortedKLists {
         }
     }
 
-    void test(Function<ListNode[], ListNode> merge,
-              int[] expected, int[] ... listArray) {
-        ListNode[] lists = Stream.of(listArray)
-                           .map(l->ListNode.of(l)).toArray(ListNode[]::new);
+    void test(Function<ListNode[], ListNode> merge, int[] expected, int[]... listArray) {
+        ListNode[] lists = Stream.of(listArray).map(l -> ListNode.of(l)).toArray(ListNode[]::new);
         ListNode res = merge.apply(lists);
         if (expected.length == 0) {
             assertNull(res);
@@ -131,7 +125,7 @@ public class MergeSortedKLists {
         }
     }
 
-    void test(int[] expected, int[] ... listArray) {
+    void test(int[] expected, int[]... listArray) {
         MergeSortedKLists l = new MergeSortedKLists();
         test(l::mergeKLists, expected, listArray);
         test(l::mergeKLists2, expected, listArray);
@@ -145,17 +139,16 @@ public class MergeSortedKLists {
         test(new int[] {}, new int[] {});
         test(new int[] {}, new int[] {}, new int[] {});
         test(new int[] {1}, new int[] {}, new int[] {1});
-        test(new int[] {1, 2, 3, 4, 5, 6},
-             new int[] {1, 3, 5}, new int[] {2, 4, 6});
+        test(new int[] {1, 2, 3, 4, 5, 6}, new int[] {1, 3, 5}, new int[] {2, 4, 6});
         test(new int[] {2, 3, 4, 6}, new int[] {3}, new int[] {2, 4, 6});
         test(new int[] {2, 4, 6}, new int[] {}, new int[] {2, 4, 6});
         test(new int[] {2, 10}, new int[] {}, new int[] {2, 10});
-        test(new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
-             new int[] {1, 3, 5}, new int[] {2, 4, 6},
+        test(new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, new int[] {1, 3, 5}, new int[] {2, 4, 6},
              new int[] {8, 10}, new int[] {0, 7, 9});
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("MergeSortedKLists");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
