@@ -8,16 +8,16 @@ import common.ListNode;
 // Merge two sorted linked lists and return it as a new list.
 public class MergeSortedLists {
     // Solution of Choice
-    // beats 11.81%(1 ms)
+    // beats 100.00%(6 ms for 208 tests)
     public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
         ListNode dummy = new ListNode(0);
-        for (ListNode cur = dummy; l1 != null || l2 != null; cur = cur.next) {
-            if (l1 == null || (l2 != null && l1.val > l2.val)) {
-                cur.next = l2;
-                l2 = l2.next;
+        for (ListNode cur = dummy, p = l1, q = l2; p != null || q != null; cur = cur.next) {
+            if (p == null || (q != null && p.val > q.val)) {
+                cur.next = q;
+                q = q.next;
             } else {
-                cur.next = l1;
-                l1 = l1.next;
+                cur.next = p;
+                p = p.next;
             }
         }
         return dummy.next;
@@ -25,7 +25,7 @@ public class MergeSortedLists {
 
     // Recursion
     // beats 7.09%(15 ms)
-    public ListNode mergeTwoLists2(ListNode l1, ListNode l2){
+    public ListNode mergeTwoLists2(ListNode l1, ListNode l2) {
         if (l1 == null) return l2;
 
         if (l2 == null) return l1;
@@ -39,8 +39,7 @@ public class MergeSortedLists {
         }
     }
 
-    void test(Function<ListNode, ListNode, ListNode> merge,
-              int[] n1, int[] n2, int[] expected) {
+    void test(Function<ListNode, ListNode, ListNode> merge, int[] n1, int[] n2, int[] expected) {
         ListNode l1 = ListNode.of(n1);
         ListNode l2 = ListNode.of(n2);
         ListNode l = merge.apply(l1, l2);
@@ -60,14 +59,14 @@ public class MergeSortedLists {
 
     @Test
     public void test1() {
-        test(new int[] {1, 3, 5}, new int[] {2, 4, 6},
-             new int[] {1, 2, 3, 4, 5, 6});
+        test(new int[] {1, 3, 5}, new int[] {2, 4, 6}, new int[] {1, 2, 3, 4, 5, 6});
         test(new int[] {3}, new int[] {2, 4, 6}, new int[] {2, 3, 4, 6});
         test(new int[] {}, new int[] {2, 4, 6}, new int[] {2, 4, 6});
         test(new int[] {2, 10}, new int[] {}, new int[] {2, 10});
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("MergeSortedLists");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
