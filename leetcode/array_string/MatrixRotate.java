@@ -41,11 +41,12 @@ public class MatrixRotate {
 
     // Solution of Choice
     // http://www.programcreek.com/2013/01/leetcode-rotate-image-java/
-    // beats 7.67%(1 ms)
+    // time complexity: O(n^2), space complexity: O(1)
+    // beats 100.00%(1 ms for 21 tests)
     public void rotate2(int[][] matrix) {
         int n = matrix.length;
         int rows = n / 2;
-        int cols = (n + 1) / 2; //(int)Math.ceil(n / 2.);
+        int cols = (n + 1) / 2; // (int)Math.ceil(n / 2.);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 int temp = matrix[i][j];
@@ -57,6 +58,7 @@ public class MatrixRotate {
         }
     }
 
+    // time complexity: O(n^2), space complexity: O(1)
     // beats 7.67%(1 ms)
     public void rotate3(int[][] matrix) {
         // rotate along to diagonal
@@ -74,8 +76,8 @@ public class MatrixRotate {
         }
     }
 
-    // https://discuss.leetcode.com/topic/9744/ac-java-in-place-solution-with-explanation-easy-to-understand
-    // beats 7.67%(1 ms)
+    // time complexity: O(n^2), space complexity: O(1)
+    // beats 44.01%(2 ms for 21 tests)
     public void rotate4(int[][] matrix) {
         // transpose
         int n = matrix.length;
@@ -92,11 +94,11 @@ public class MatrixRotate {
         }
     }
 
-    // https://discuss.leetcode.com/topic/6796/a-common-method-to-rotate-the-image
     // first reverse up to down, then swap the symmetry
-    // 1 2 3     7 8 9     7 4 1
-    // 4 5 6  => 4 5 6  => 8 5 2
-    // 7 8 9     1 2 3     9 6 3
+    // 1 2 3    7 8 9    7 4 1
+    // 4 5 6 => 4 5 6 => 8 5 2
+    // 7 8 9    1 2 3    9 6 3
+    // time complexity: O(n^2), space complexity: O(1)
     // beats 7.67%(1 ms)
     public void rotate5(int[][] matrix) {
         int n = matrix.length;
@@ -105,7 +107,7 @@ public class MatrixRotate {
                 swap(matrix, i, j, n - 1 - i, j);
             }
         }
-        for (int i = 0; i < n; ++i) {
+        for (int i = 0; i < n; i++) {
             for (int j = i + 1; j < n; ++j) {
                 swap(matrix, i, j, j, i);
             }
@@ -158,19 +160,18 @@ public class MatrixRotate {
     @Test
     public void test2() {
         /*
-           1 2        3 1
-           3 4  ->    4 2
+         * 1 2    3 1
+         * 3 4 -> 4 2
          */
-        test(new int[][] {{1, 2}, {3, 4}},
-             new int[][] {{3, 1}, {4, 2}});
+        test(new int[][] {{1, 2}, {3, 4}}, new int[][] {{3, 1}, {4, 2}});
     }
 
     @Test
     public void test3() {
         /*
-           1 2 3       7 4 1
-           4 5 6 ->    8 5 2
-           7 8 9       9 6 3
+         * 1 2 3    7 4 1
+         * 4 5 6 -> 8 5 2
+         * 7 8 9    9 6 3
          */
         test(new int[][] {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
              new int[][] {{7, 4, 1}, {8, 5, 2}, {9, 6, 3}});
@@ -179,63 +180,50 @@ public class MatrixRotate {
     @Test
     public void test4() {
         /*
-           1   2    3    4          13  9  5 1
-           5   6    7    8    ->    14 10  6 2
-           9   10  11   12          15 11  7 3
-           13   14  15   16          16 12  8 4
+         *  1  2  3  4      13  9 5 1
+         *  5  6  7  8   -> 14 10 6 2
+         *  9 10 11 12      15 11 7 3
+         * 13 14 15 16      16 12 8 4
          */
-        test(new int[][] {{1, 2, 3, 4}, {5, 6, 7, 8},
-                          {9, 10, 11, 12}, {13, 14, 15, 16}},
-             new int[][] {{13, 9, 5, 1}, {14, 10, 6, 2},
-                          {15, 11, 7, 3}, {16, 12, 8, 4}});
+        test(new int[][] {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}},
+             new int[][] {{13, 9, 5, 1}, {14, 10, 6, 2}, {15, 11, 7, 3}, {16, 12, 8, 4}});
     }
 
     @Test
     public void test5() {
         /*
-           11 12 13 14 15      51 41 31 21 11
-           21 22 23 24 25      52 42 32 22 12
-           31 32 33 34 35  ->  53 43 33 23 13
-           41 42 43 44 45      54 44 34 24 14
-           51 52 53 54 55      55 45 35 25 15
+         * 11 12 13 14 15    51 41 31 21 11
+         * 21 22 23 24 25    52 42 32 22 12
+         * 31 32 33 34 35 -> 53 43 33 23 13
+         * 41 42 43 44 45    54 44 34 24 14
+         * 51 52 53 54 55    55 45 35 25 15
          */
-        test(new int[][] {{11, 12, 13, 14, 15},
-                          {21, 22, 23, 24, 25},
-                          {31, 32, 33, 34, 35},
-                          {41, 42, 43, 44, 45},
-                          {51, 52, 53, 54, 55}},
-             new int[][] {{51, 41, 31, 21, 11},
-                          {52, 42, 32, 22, 12},
-                          {53, 43, 33, 23, 13},
-                          {54, 44, 34, 24, 14},
-                          {55, 45, 35, 25, 15}});
+        test(new int[][] {{11, 12, 13, 14, 15}, {21, 22, 23, 24, 25}, {31, 32, 33, 34, 35},
+                          {41, 42, 43, 44, 45}, {51, 52, 53, 54, 55}},
+             new int[][] {{51, 41, 31, 21, 11}, {52, 42, 32, 22, 12}, {53, 43, 33, 23, 13},
+                          {54, 44, 34, 24, 14}, {55, 45, 35, 25, 15}});
     }
 
     @Test
     public void test6() {
         /*
-           11 12 13 14 15 16     61 51 41 31 21 11
-           21 22 23 24 25 26     62 52 42 32 22 12
-           31 32 33 34 35 36     63 53 43 33 23 13
-           41 42 43 44 45 46 ->  64 54 44 34 24 14
-           51 52 53 54 55 56     65 55 45 35 25 15
-           61 62 63 64 65 66     66 56 46 36 26 16
+         * 11 12 13 14 15 16    61 51 41 31 21 11
+         * 21 22 23 24 25 26    62 52 42 32 22 12
+         * 31 32 33 34 35 36    63 53 43 33 23 13
+         * 41 42 43 44 45 46 -> 64 54 44 34 24 14
+         * 51 52 53 54 55 56    65 55 45 35 25 15
+         * 61 62 63 64 65 66    66 56 46 36 26 16
          */
-        test(new int[][] {{11, 12, 13, 14, 15, 16},
-                          {21, 22, 23, 24, 25, 26},
-                          {31, 32, 33, 34, 35, 36},
-                          {41, 42, 43, 44, 45, 46},
-                          {51, 52, 53, 54, 55, 56},
-                          {61, 62, 63, 64, 65, 66}},
-             new int[][] {{61, 51, 41, 31, 21, 11},
-                          {62, 52, 42, 32, 22, 12},
-                          {63, 53, 43, 33, 23, 13},
-                          {64, 54, 44, 34, 24, 14},
-                          {65, 55, 45, 35, 25, 15},
-                          {66, 56, 46, 36, 26, 16}});
+        test(new int[][] {{11, 12, 13, 14, 15, 16}, {21, 22, 23, 24, 25, 26},
+                          {31, 32, 33, 34, 35, 36}, {41, 42, 43, 44, 45, 46},
+                          {51, 52, 53, 54, 55, 56}, {61, 62, 63, 64, 65, 66}},
+             new int[][] {{61, 51, 41, 31, 21, 11}, {62, 52, 42, 32, 22, 12},
+                          {63, 53, 43, 33, 23, 13}, {64, 54, 44, 34, 24, 14},
+                          {65, 55, 45, 35, 25, 15}, {66, 56, 46, 36, 26, 16}});
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("MatrixRotate");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
