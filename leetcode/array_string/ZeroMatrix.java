@@ -112,7 +112,7 @@ public class ZeroMatrix {
         }
     }
 
-    // ? find a nonexist number is O(1) space?
+    // TODO: find a nonexist number(used for flag) in O(1) space and O(M*N) time
 
     @FunctionalInterface
     interface Function<A> {
