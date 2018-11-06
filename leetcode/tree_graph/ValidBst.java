@@ -35,30 +35,25 @@ public class ValidBst {
 
     // Solution of Choice
     // Divide & Conquer(Recursion)
-    // beats 31.71%(1 ms)
+    // beats 100.00%(0 ms for 75 tests)
     public boolean isValidBST2(TreeNode root) {
-        // return isValidBST2(root, null, null);
-        // return isValidBST2(root, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-        return isValidBST2(root, Long.MIN_VALUE, Long.MAX_VALUE);
+        return isValid(root, Long.MIN_VALUE, Long.MAX_VALUE);
     }
 
-    private boolean isValidBST2(TreeNode root, long min, long max) {
+    private boolean isValid(TreeNode root, long min, long max) {
         if (root == null) return true;
 
-        if (root.val <= min || root.val >= max) return false;
-
-        return isValidBST2(root.left, min, root.val)
-               && isValidBST2(root.right, root.val, max);
+        return root.val > min && root.val < max && isValid(root.left, min, root.val)
+               && isValid(root.right, root.val, max);
     }
 
-    // Queue
-    // http://www.programcreek.com/2012/12/leetcode-validate-binary-search-tree-java/
+    // Queue + BFS
     // beats 6.33%(5 ms)
     public boolean isValidBST3(TreeNode root) {
         if (root == null) return true;
 
         Queue<BoundedNode> queue = new LinkedList<>();
-        queue.add(new BoundedNode(root, Long.MIN_VALUE, Long.MAX_VALUE));
+        queue.offer(new BoundedNode(root, Long.MIN_VALUE, Long.MAX_VALUE));
         while (!queue.isEmpty()) {
             BoundedNode n = queue.poll();
             if (n.node.val <= n.min || n.node.val >= n.max) return false;
@@ -77,6 +72,7 @@ public class ValidBst {
         TreeNode node;
         long min;
         long max;
+
         BoundedNode(TreeNode node, long min, long max) {
             this.node = node;
             this.min = min;
@@ -84,27 +80,28 @@ public class ValidBst {
         }
     }
 
-    // Stack
+    // Stack(Inorder traverse)
     // beats 6.33%(5 ms)
+    // beats 31.46%(2 ms for 75 tests)
     public boolean isValidBST4(TreeNode root) {
         Stack<TreeNode> stack = new Stack<>();
         TreeNode last = null;
-        for (TreeNode n = root; n != null || !stack.empty(); ) {
-            if (n != null) {
-                stack.push(n);
-                n = n.left;
+        for (TreeNode cur = root; cur != null || !stack.empty();) {
+            if (cur != null) {
+                stack.push(cur);
+                cur = cur.left;
             } else {
-                TreeNode top = stack.pop();
-                if (last != null && last.val >= top.val) return false;
+                cur = stack.pop();
+                if (last != null && last.val >= cur.val) return false;
 
-                last = top;
-                n = top.right;
+                last = cur;
+                cur = cur.right;
             }
         }
         return true;
     }
 
-    // Divide & Conquer(Recursion)
+    // Divide & Conquer/Recursion
     // beats 23.49%(3 ms)
     public boolean isValidBST5(TreeNode root) {
         return validate(root, new TreeNode[1]);
@@ -113,8 +110,7 @@ public class ValidBst {
     private boolean validate(TreeNode node, TreeNode[] prev) {
         if (node == null) return true;
 
-        if (!validate(node.left, prev)
-            || (prev[0] != null && prev[0].val >= node.val)) {
+        if (!validate(node.left, prev) || (prev[0] != null && prev[0].val >= node.val)) {
             return false;
         }
 
@@ -122,8 +118,7 @@ public class ValidBst {
         return validate(node.right, prev);
     }
 
-    void test(Function<TreeNode, Boolean> valid, String name,
-              String s, boolean expected) {
+    void test(Function<TreeNode, Boolean> valid, String name, String s, boolean expected) {
         long t1 = System.nanoTime();
         assertEquals(expected, valid.apply(TreeNode.of(s)));
         System.out.format("%s: %.3f ms\n", name, (System.nanoTime() - t1) * 1e-6);
@@ -155,6 +150,7 @@ public class ValidBst {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("ValidBst");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
