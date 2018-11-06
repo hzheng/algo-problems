@@ -33,7 +33,7 @@ public class ZeroMatrix {
         }
     }
 
-    // time complexity: O(M*N), space complexity: O(1)
+    // time complexity: O(M * N), space complexity: O(1)
     // beats 26.88%(2 ms)
     public void setZeroes2(int[][] matrix) {
         int m = matrix.length;
@@ -84,8 +84,8 @@ public class ZeroMatrix {
     }
 
     // Solution of Choice
-    // https://discuss.leetcode.com/topic/5056/any-shorter-o-1-space-solution
-    // beats 16.34%(3 ms)
+    // time complexity: O(M * N), space complexity: O(1)
+    // beats 99.97%(1 ms for 159 tests)
     public void setZeroes3(int[][] matrix) {
         int rows = matrix.length;
         int cols = matrix[0].length;
@@ -100,7 +100,6 @@ public class ZeroMatrix {
                 }
             }
         }
-
         for (int i = rows - 1; i >= 0; i--) { // bottom-up
             for (int j = cols - 1; j > 0; j--) {
                 if (matrix[i][0] == 0 || matrix[0][j] == 0) {
@@ -113,13 +112,16 @@ public class ZeroMatrix {
         }
     }
 
+    // ? find a nonexist number is O(1) space?
+
     @FunctionalInterface
     interface Function<A> {
         public void apply(A a);
     }
 
     void test(Function<int[][]> zeroMatrix, final int[][] matrix, int[][] expected) {
-        int[][] clonedMatrix = Arrays.stream(matrix).map(e -> e.clone()).toArray(__ -> matrix.clone());
+        int[][] clonedMatrix = Arrays.stream(matrix).map(e -> e.clone())
+                                     .toArray(__ -> matrix.clone());
         zeroMatrix.apply(clonedMatrix);
         assertArrayEquals(expected, clonedMatrix);
     }
@@ -141,25 +143,31 @@ public class ZeroMatrix {
     @Test
     public void test2() {
         /*
-           1 2 3       1 0 3
-           3 0 5 ->    0 0 0
+         * 1 2 3    1 0 3
+         * 3 0 5 -> 0 0 0
          */
-        test(new int[][] {{1, 2, 3}, {3, 0, 5}},
-             new int[][] {{1, 0, 3}, {0, 0, 0}});
+        test(new int[][] {{1, 2, 3}, {3, 0, 5}}, new int[][] {{1, 0, 3}, {0, 0, 0}});
     }
 
     @Test
     public void test3() {
         /*
-           1 2 3 0       0 0 0 0
-           3 0 5 7 ->    0 0 0 0
-           3 1 5 6 ->    3 0 5 0
+         * 1 2 3 0    0 0 0 0
+         * 3 0 5 7 -> 0 0 0 0
+         * 3 1 5 6 -> 3 0 5 0
          */
         test(new int[][] {{1, 2, 3, 0}, {3, 0, 5, 7}, {3, 1, 5, 6}},
              new int[][] {{0, 0, 0, 0}, {0, 0, 0, 0}, {3, 0, 5, 0}});
+
+        test(new int[][] {{1, 1, 1}, {1, 0, 1}, {1, 1, 1}},
+             new int[][] {{1, 0, 1}, {0, 0, 0}, {1, 0, 1}});
+
+        test(new int[][] {{0, 1, 2, 0}, {3, 4, 5, 2}, {1, 3, 1, 5}},
+             new int[][] {{0, 0, 0, 0}, {0, 4, 5, 0}, {0, 3, 1, 0}});
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("ZeroMatrix");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
