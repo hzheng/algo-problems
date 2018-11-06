@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 // of bits in the code, print the sequence of gray code. A gray code sequence
 // must begin with 0.
 public class GrayCode {
-    // Backtracking
+    // Recursion
     // beats 3.34%(12 ms)
     public List<Integer> grayCode(int n) {
         List<Integer> res = new ArrayList<>(1 << n);
@@ -19,43 +19,54 @@ public class GrayCode {
         return res;
     }
 
-    private boolean grayCode(int n, List<Integer> res) {
+    private void grayCode(int n, List<Integer> res) {
         int count = res.size();
-        if (count == (1 << n)) return true;
+        if (count == (1 << n)) return;
 
         int last = res.get(count - 1);
         for (int i = 0; i < n; i++) {
             int next = last ^ (1 << i); // flip
             if (!res.contains(next)) {
                 res.add(next);
-                return grayCode(n, res);
-                // if (grayCode(n, res)) return true; // always succeed
-                // res.remove(count); // unreachable
+                grayCode(n, res);
+                return;
             }
         }
-        return false;
     }
 
     // Recursion
-    // beats 20.61%(2 ms)
+    // beats 73.51%(1 ms for 12 tests)
     public List<Integer> grayCode2(int n) {
-        List<Integer> res = new ArrayList<>(1 << n);
-        if (n == 0) {
-            res.add(0);
-            return res;
-        }
+        if (n == 0) return Arrays.asList(0);
 
+        List<Integer> res = new ArrayList<>(1 << n);
         List<Integer> last = grayCode2(n - 1);
         res.addAll(last);
-        for(int i = last.size() - 1, mask = 1 << (n - 1); i >= 0; i--) {
+        for (int i = last.size() - 1, mask = 1 << (n - 1); i >= 0; i--) {
             res.add(last.get(i) | mask);
+        }
+        return res;
+    }
+
+    // Recursion
+    // beats 16.20%(3 ms for 12 tests)
+    public List<Integer> grayCode2_2(int n) {
+        if (n == 0) return Arrays.asList(0);
+
+        List<Integer> res = new ArrayList<>();
+        List<Integer> last = grayCode2_2(n - 1);
+        for (int x : last) {
+            res.add(x * 2);
+        }
+        for (int i = last.size() - 1; i >= 0; i--) {
+            res.add(last.get(i) * 2 + 1);
         }
         return res;
     }
 
     // Solution of Choice
     // Iteration
-    // beats 52.83%(1 ms)
+    // beats 100.00%(0 ms for 12 tests)
     public List<Integer> grayCode3(int n) {
         List<Integer> res = new ArrayList<>(1 << n);
         res.add(0);
@@ -70,7 +81,7 @@ public class GrayCode {
     // Solution of Choice
     // Bit Manipulation
     // https://en.wikipedia.org/wiki/Gray_code
-    // beats 52.83%(1 ms)
+    // beats 100.00%(0 ms for 12 tests)
     public List<Integer> grayCode4(int n) {
         int size = 1 << n;
         List<Integer> res = new ArrayList<>(size);
@@ -80,8 +91,7 @@ public class GrayCode {
         return res;
     }
 
-    // Backtracking
-    // https://discuss.leetcode.com/topic/31750/backtracking-c-solution
+    // Recursion
     // beats 52.83%(1 ms)
     public List<Integer> grayCode5(int n) {
         List<Integer> res = new ArrayList<>(1 << n);
@@ -100,9 +110,10 @@ public class GrayCode {
         grayCode5(n - 1, num, res);
     }
 
-    void test(int n, Integer ... expected) {
+    void test(int n, Integer... expected) {
         assertArrayEquals(expected, grayCode(n).toArray(new Integer[0]));
         assertArrayEquals(expected, grayCode2(n).toArray(new Integer[0]));
+        // assertArrayEquals(expected, grayCode2_2(n).toArray(new Integer[0]));
         assertArrayEquals(expected, grayCode3(n).toArray(new Integer[0]));
         assertArrayEquals(expected, grayCode4(n).toArray(new Integer[0]));
         assertArrayEquals(expected, grayCode5(n).toArray(new Integer[0]));
@@ -117,6 +128,7 @@ public class GrayCode {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("GrayCode");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
