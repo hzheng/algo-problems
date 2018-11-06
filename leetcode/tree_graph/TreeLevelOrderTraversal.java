@@ -10,11 +10,10 @@ import common.TreeNode;
 //
 // Given a binary tree, return the level order traversal of its nodes' values.
 public class TreeLevelOrderTraversal {
-    // Solution of Choice
-    // BFS/Queue
+    // BFS + Queue
     // beats 36.62%(2 ms)
-    public List<List<Integer> > levelOrder(TreeNode root) {
-        List<List<Integer> > res = new ArrayList<>();
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
         if (root == null) return res;
 
         Queue<TreeNode> queue = new LinkedList<>();
@@ -41,24 +40,24 @@ public class TreeLevelOrderTraversal {
         }
     }
 
-    // BFS/Queue
-    // beats 36.62%(2 ms)
-    public List<List<Integer> > levelOrder2(TreeNode root) {
-        List<List<Integer> > res = new ArrayList<>();
+    // Solution of Choice
+    // BFS + Queue
+    // beats 89.75%(1 ms for 34 tests)
+    public List<List<Integer>> levelOrder2(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
         if (root == null) return res;
 
         Queue<TreeNode> queue = new LinkedList<>();
-        queue.offer(root);
-        while (!queue.isEmpty()) {
+        for (queue.offer(root); !queue.isEmpty();) {
             List<Integer> level = new ArrayList<>();
             for (int i = queue.size(); i > 0; i--) {
-                TreeNode head = queue.poll();
-                level.add(head.val);
-                if (head.left != null) {
-                    queue.offer(head.left);
+                TreeNode cur = queue.poll();
+                level.add(cur.val);
+                if (cur.left != null) {
+                    queue.offer(cur.left);
                 }
-                if (head.right != null) {
-                    queue.offer(head.right);
+                if (cur.right != null) {
+                    queue.offer(cur.right);
                 }
             }
             res.add(level);
@@ -67,10 +66,10 @@ public class TreeLevelOrderTraversal {
     }
 
     // Solution of Choice
-    // DFS/Recursion
-    // beats 88.51%(1 ms)
-    public List<List<Integer> > levelOrder3(TreeNode root) {
-        List<List<Integer> > res = new ArrayList<>();
+    // DFS + Recursion
+    // beats 89.75%(1 ms for 34 tests)
+    public List<List<Integer>> levelOrder3(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
         levelOrder3(root, 0, res);
         return res;
     }
@@ -88,15 +87,15 @@ public class TreeLevelOrderTraversal {
 
     // Recursion
     // beats 5.51%(4 ms)
-    public List<List<Integer> > levelOrder4(TreeNode root) {
-        List<List<Integer> > res = new ArrayList<>();
+    public List<List<Integer>> levelOrder4(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
         if (root != null) {
             levelOrder4(Arrays.asList(root), res);
         }
         return res;
     }
 
-    private void levelOrder4(List<TreeNode> level, List<List<Integer> > res) {
+    private void levelOrder4(List<TreeNode> level, List<List<Integer>> res) {
         List<Integer> levelVal = new LinkedList<>();
         List<TreeNode> nextLevel = new LinkedList<>();
         for (TreeNode node : level) {
@@ -114,15 +113,14 @@ public class TreeLevelOrderTraversal {
         }
     }
 
-    void test(Function<TreeNode, List<List<Integer>>> traversal,
-              String s, int[] ... expected) {
+    void test(Function<TreeNode, List<List<Integer>>> traversal, String s, int[]... expected) {
         TreeNode root = TreeNode.of(s);
-        Integer[][] res = traversal.apply(root).stream().map(
-            l -> l.toArray(new Integer[0])).toArray(Integer[][]::new);
+        Integer[][] res = traversal.apply(root).stream().map(l -> l.toArray(new Integer[0]))
+                                   .toArray(Integer[][]::new);
         assertArrayEquals(expected, res);
     }
 
-    void test(String s, int[] ... expected) {
+    void test(String s, int[]... expected) {
         TreeLevelOrderTraversal t = new TreeLevelOrderTraversal();
         test(t::levelOrder, s, expected);
         test(t::levelOrder2, s, expected);
@@ -137,6 +135,7 @@ public class TreeLevelOrderTraversal {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("TreeLevelOrderTraversal");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
