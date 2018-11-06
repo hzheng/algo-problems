@@ -11,8 +11,8 @@ import static org.junit.Assert.*;
 public class Subset {
     // Backtracking + Binary Search
     // beats 8.05%(3 ms)
-    public List<List<Integer> > subsets(int[] nums) {
-        List<List<Integer> > res = new ArrayList<>();
+    public List<List<Integer>> subsets(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
         Arrays.sort(nums);
         for (int i = 0; i <= nums.length; i++) {
             subsets(nums, res, i, new ArrayList<Integer>());
@@ -20,8 +20,7 @@ public class Subset {
         return res;
     }
 
-    private void subsets(int[] nums, List<List<Integer> > res, int total,
-                         List<Integer> cur) {
+    private void subsets(int[] nums, List<List<Integer>> res, int total, List<Integer> cur) {
         int count = cur.size();
         if (count == total) {
             res.add(new ArrayList<Integer>(cur));
@@ -30,8 +29,7 @@ public class Subset {
 
         int nextIndex = 0;
         if (count > 0) {
-            nextIndex = Arrays.binarySearch(
-                nums, count - 1, nums.length, cur.get(count - 1)) + 1;
+            nextIndex = Arrays.binarySearch(nums, count - 1, nums.length, cur.get(count - 1)) + 1;
         }
 
         for (int i = nextIndex; i < nums.length; i++) {
@@ -42,16 +40,15 @@ public class Subset {
     }
 
     // Solution of Choice
-    // Backtracking
-    // beats 26.55%(2 ms)
-    public List<List<Integer> > subsets2(int[] nums) {
-        List<List<Integer> > res = new ArrayList<>();
+    // Recursion + DFS + Backtracking
+    // beats 100.00%(1 ms for 10 tests)
+    public List<List<Integer>> subsets2(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
         subsets2(nums, 0, new ArrayList<>(), res);
         return res;
     }
 
-    private void subsets2(int[] nums, int start, List<Integer> buf,
-                          List<List<Integer>> res) {
+    private void subsets2(int[] nums, int start, List<Integer> buf, List<List<Integer>> res) {
         res.add(new ArrayList<>(buf));
         for (int i = start, count = buf.size(); i < nums.length; i++) {
             buf.add(nums[i]);
@@ -61,10 +58,30 @@ public class Subset {
     }
 
     // Solution of Choice
+    // Recursion + DFS + Backtracking
+    // beats 100.00%(1 ms for 10 tests)
+    public List<List<Integer>> subsets2_2(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
+        subsets(nums, 0, new ArrayList<>(), res);
+        return res;
+    }
+
+    private void subsets(int[] nums, int cur, List<Integer> buf, List<List<Integer>> res) {
+        if (cur == nums.length) {
+            res.add(new ArrayList<>(buf));
+            return;
+        }
+        subsets(nums, cur + 1, buf, res); // skip
+        buf.add(nums[cur]); // choose
+        subsets(nums, cur + 1, buf, res);
+        buf.remove(buf.size() - 1); // backtrack
+    }
+
+    // Solution of Choice
     // Bit Manipulation
-    // beats 91.45%(1 ms)
-    public List<List<Integer> > subsets3(int[] nums) {
-        List<List<Integer> > res = new ArrayList<>();
+    // beats 43.74%(2 ms for 10 tests)
+    public List<List<Integer>> subsets3(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
         for (int n = nums.length, i = ((1 << n) - 1); i >= 0; i--) {
             List<Integer> subset = new ArrayList<>();
             for (int j = 0; j < n; j++) {
@@ -74,9 +91,9 @@ public class Subset {
             }
             // or: beats 26.55%(2 ms)
             // for (int j = i, index = 0; j > 0; j >>= 1, index++) {
-            //     if ((j & 1) > 0) {
-            //         subset.add(nums[index]);
-            //     }
+            // if ((j & 1) > 0) {
+            // subset.add(nums[index]);
+            // }
             // }
             res.add(subset);
         }
@@ -86,18 +103,18 @@ public class Subset {
     // Recursion
     // From Cracking the Coding Interview
     // beats 26.55%(2 ms)
-    public List<List<Integer> > subsets4(int[] nums) {
+    public List<List<Integer>> subsets4(int[] nums) {
         return subsets4(nums, 0);
     }
 
-    private List<List<Integer> > subsets4(int[] nums, int index) {
+    private List<List<Integer>> subsets4(int[] nums, int index) {
         if (nums.length == index) { // Base case - add empty set
             return new ArrayList<>(Arrays.asList(new ArrayList<>()));
         }
 
         List<List<Integer>> allSubsets = subsets4(nums, index + 1);
         int item = nums[index];
-        List<List<Integer> > moreSubsets = new ArrayList<>();
+        List<List<Integer>> moreSubsets = new ArrayList<>();
         for (List<Integer> subset : allSubsets) {
             List<Integer> cloned = new ArrayList<>(subset);
             cloned.add(item);
@@ -109,9 +126,9 @@ public class Subset {
 
     // Solution of Choice
     // Iteration version of last method
-    // beats 26.55%(2 ms)
-    public List<List<Integer> > subsets5(int[] nums) {
-        List<List<Integer> > res = new ArrayList<>(Arrays.asList(new ArrayList<>()));
+    // beats 100.00%(1 ms for 10 tests)
+    public List<List<Integer>> subsets5(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>(Arrays.asList(new ArrayList<>()));
         for (int i : nums) {
             List<List<Integer>> more = new ArrayList<>(); // avoid ConcurrentModificationException
             for (List<Integer> set : res) {
@@ -124,12 +141,12 @@ public class Subset {
         return res;
     }
 
-    void test(Function<int[], List<List<Integer>>> subsets,
-              String name, int[] nums, Integer[][] expected) {
+    void test(Function<int[], List<List<Integer>>> subsets, String name, int[] nums,
+              Integer[][] expected) {
         nums = nums.clone();
-        List<List<Integer> > res = subsets.apply(nums);
-        Integer[][] resArray = res.stream().map(
-            a -> a.toArray(new Integer[0])).toArray(Integer[][]::new);
+        List<List<Integer>> res = subsets.apply(nums);
+        Integer[][] resArray = res.stream().map(a -> a.toArray(new Integer[0]))
+                                  .toArray(Integer[][]::new);
         sort(resArray);
         sort(expected);
         assertArrayEquals(expected, resArray);
@@ -141,7 +158,7 @@ public class Subset {
             Arrays.sort(b);
             int len = Math.min(a.length, b.length);
             int i = 0;
-            for (; i < len && (a[i] == b[i]); i++);
+            for (; i < len && (a[i] == b[i]); i++) {}
             if (i == len) return a.length - b.length;
             return a[i] - b[i];
         });
@@ -152,6 +169,7 @@ public class Subset {
         Subset s = new Subset();
         test(s::subsets, "subsets", nums, expected);
         test(s::subsets2, "subsets2", nums, expected);
+        test(s::subsets2_2, "subsets2_2", nums, expected);
         test(s::subsets3, "subsets3", nums, expected);
         test(s::subsets4, "subsets4", nums, expected);
         test(s::subsets5, "subsets5", nums, expected);
@@ -159,15 +177,14 @@ public class Subset {
 
     @Test
     public void test1() {
-        test(new int[] {1, 2, 3}, new Integer[][] {
-            {}, {1}, {2}, {3}, {1, 2}, {1, 3}, {2, 3}, {1, 2, 3}
-        });
-        test(new int[] {4, 2, 3}, new Integer[][] {
-            {}, {4}, {2}, {3}, {4, 2}, {4, 3}, {2, 3}, {4, 2, 3}
-        });
+        test(new int[] {1, 2, 3},
+             new Integer[][] {{}, {1}, {2}, {3}, {1, 2}, {1, 3}, {2, 3}, {1, 2, 3}});
+        test(new int[] {4, 2, 3},
+             new Integer[][] {{}, {4}, {2}, {3}, {4, 2}, {4, 3}, {2, 3}, {4, 2, 3}});
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("Subset");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
