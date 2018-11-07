@@ -25,7 +25,8 @@ public class BestTransaction2 {
     }
 
     // Solution of Choice
-    // beats 86.18%(1 ms)
+    // time complexity: O(N), space complexity: O(1)
+    // beats 99.60%(1 ms for 201 tests)
     public int maxProfit2(int[] prices) {
         int profit = 0;
         for (int i = 1; i < prices.length; i++) {
@@ -37,27 +38,25 @@ public class BestTransaction2 {
     // beats 99.96%(1 ms for 201 tests)
     public int maxProfit3(int[] prices) {
         int n = prices.length;
-        if (n == 0) return 0;
-
         int res = 0;
-        for (int i = 1, min = prices[0]; i < n; ) {
+        for (int i = 1, min = prices[0]; i < n;) {
             for (; i < n && prices[i] <= prices[i - 1]; i++) {
-                min = prices[i]; 
+                min = prices[i];
             }
             int max = min;
             for (; i < n && prices[i] >= prices[i - 1]; i++) {
-                max = prices[i]; 
+                max = prices[i];
             }
             res += max - min;
         }
         return res;
     }
 
-    void test(Function<int[], Integer> maxProfit, int expected, int ... prices) {
+    void test(Function<int[], Integer> maxProfit, int expected, int... prices) {
         assertEquals(expected, (int)maxProfit.apply(prices));
     }
 
-    void test(int expected, int ... prices) {
+    void test(int expected, int... prices) {
         BestTransaction2 b = new BestTransaction2();
         test(b::maxProfit, expected, prices);
         test(b::maxProfit2, expected, prices);
@@ -72,8 +71,7 @@ public class BestTransaction2 {
     }
 
     public static void main(String[] args) {
-        String clazz =
-            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }
