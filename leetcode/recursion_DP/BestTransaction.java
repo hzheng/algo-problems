@@ -29,6 +29,7 @@ public class BestTransaction {
         return profit;
     }
 
+    // time complexity: O(N), space complexity: O(1)
     // beats 85.40%(1 ms)
     public int maxProfit2(int[] prices) {
         int min = Integer.MAX_VALUE;
@@ -41,7 +42,8 @@ public class BestTransaction {
     }
 
     // Solution of Choice
-    // beats 37.52%(2 ms for 200 tests)
+    // time complexity: O(N), space complexity: O(1)
+    // beats 99.91%(1 ms for 200 tests)
     public int maxProfit3(int[] prices) {
         int min = Integer.MAX_VALUE;
         int profit = 0;
@@ -56,7 +58,8 @@ public class BestTransaction {
     }
 
     // Kadane's algorithm
-    // beats 37.52%(2 ms for 200 tests)
+    // time complexity: O(N), space complexity: O(1)
+    // beats 99.91%(1 ms for 200 tests)
     public int maxProfit4(int[] prices) {
         int max = 0; // global max
         for (int i = 1, localMax = 0; i < prices.length; i++) {
@@ -67,6 +70,7 @@ public class BestTransaction {
     }
 
     // Dynamic Programming
+    // time complexity: O(N), space complexity: O(N)
     // beats 80.02%(1 ms for 200 tests)
     public int maxProfit5(int[] prices) {
         int n = prices.length;
@@ -82,11 +86,11 @@ public class BestTransaction {
         return max;
     }
 
-    void test(Function<int[], Integer> maxProfit, int expected, int ... prices) {
+    void test(Function<int[], Integer> maxProfit, int expected, int... prices) {
         assertEquals(expected, (int)maxProfit.apply(prices));
     }
 
-    void test(int expected, int ... prices) {
+    void test(int expected, int... prices) {
         BestTransaction b = new BestTransaction();
         test(b::maxProfit, expected, prices);
         test(b::maxProfit2, expected, prices);
@@ -104,6 +108,7 @@ public class BestTransaction {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("BestTransaction");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
