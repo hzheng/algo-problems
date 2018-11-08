@@ -24,16 +24,15 @@ public class WordLadder2 {
 
     // BFS + Queue + Set
     // Time Limit Exceeded
-    public List<List<String> > findLadders(String beginWord, String endWord,
-                                           Set<String> wordList) {
-        List<List<String> > res = new ArrayList<>();
+    public List<List<String>> findLadders(String beginWord, String endWord, Set<String> wordList) {
+        List<List<String>> res = new ArrayList<>();
         if (beginWord.equals(endWord)) {
             res.add(Arrays.asList(beginWord, endWord));
             return res;
         }
 
         Queue<WordPath> queue = new LinkedList<>();
-        Map<String, Set<String> > cache = new HashMap<>();
+        Map<String, Set<String>> cache = new HashMap<>();
         queue.add(new WordPath(beginWord, new ArrayList<>()));
         wordList.add(endWord);
         int maxLevel = Integer.MAX_VALUE;
@@ -86,24 +85,22 @@ public class WordLadder2 {
         return words;
     }
 
-    // BFS + Queue + Set
+    // BFS + Queue + Hashtable + Set
     // beats 23.63%(372 ms)
-    public List<List<String> > findLadders2(String beginWord, String endWord,
-                                            Set<String> wordList) {
-        List<List<String> > res = new ArrayList<>();
+    public List<List<String>> findLadders2(String beginWord, String endWord, Set<String> wordList) {
+        List<List<String>> res = new ArrayList<>();
         if (beginWord.equals(endWord)) {
             res.add(Arrays.asList(beginWord, endWord));
             return res;
         }
 
         Queue<WordNode> queue = new LinkedList<>();
-        queue.add(new WordNode(beginWord, null));
+        queue.offer(new WordNode(beginWord, null));
         wordList.add(endWord);
-        int maxLevel = Integer.MAX_VALUE;
-        boolean found = false;
         Set<String> visited = new HashSet<>();
-        Map<String, Set<String> > cache = new HashMap<>();
-        while (!queue.isEmpty()) {
+        Map<String, Set<String>> cache = new HashMap<>();
+        boolean found = false;
+        for (int maxLevel = Integer.MAX_VALUE; !queue.isEmpty();) {
             WordNode node = queue.poll();
             String word = node.word;
             visited.add(word);
@@ -129,7 +126,7 @@ public class WordLadder2 {
                     break;
                 }
                 if (!found && !visited.contains(w)) {
-                    queue.add(new WordNode(w, node));
+                    queue.offer(new WordNode(w, node));
                 }
             }
         }
@@ -150,9 +147,8 @@ public class WordLadder2 {
 
     // Time Limit Exceeded
     // DFS + BFS
-    public List<List<String> > findLadders3(String beginWord, String endWord,
-                                            Set<String> wordList) {
-        List<List<String> > res = new ArrayList<>();
+    public List<List<String>> findLadders3(String beginWord, String endWord, Set<String> wordList) {
+        List<List<String>> res = new ArrayList<>();
         wordList.add(endWord);
         for (int i = 0; res.size() == 0 && i < wordList.size(); i++) {
             List<String> path = new ArrayList<>();
@@ -163,8 +159,8 @@ public class WordLadder2 {
     }
 
     private void depthSearch(String beginWord, String endWord, Set<String> dict,
-                             Map<String, Set<String> > cache, List<String> path,
-                             int len, List<List<String> > res) {
+                             Map<String, Set<String>> cache, List<String> path, int len,
+                             List<List<String>> res) {
         if (len == 0) {
             if (beginWord.equals(endWord)) {
                 res.add(new ArrayList<>(path));
@@ -190,10 +186,9 @@ public class WordLadder2 {
 
     // Time Limit Exceeded
     // DFS + BFS
-    public List<List<String> > findLadders4(String beginWord, String endWord,
-                                            Set<String> wordList) {
+    public List<List<String>> findLadders4(String beginWord, String endWord, Set<String> wordList) {
         int level = ladderLength(beginWord, endWord, wordList) - 1;
-        List<List<String> > res = new ArrayList<>();
+        List<List<String>> res = new ArrayList<>();
         if (level < 0) return res;
 
         wordList.add(endWord);
@@ -242,25 +237,23 @@ public class WordLadder2 {
     }
 
     // Solution of Choice
-    // Two-end BFS + Backtracking + Hashtable
+    // Two-end BFS + Recursion + Backtracking + Hashtable + Set
     // https://discuss.leetcode.com/topic/17975/super-fast-java-solution-two-end-bfs
     // beats 92.88%(42 ms)
-    public List<List<String> > findLadders5(String beginWord, String endWord,
-                                            Set<String> wordList) {
+    public List<List<String>> findLadders5(String beginWord, String endWord, Set<String> wordList) {
         Set<String> set1 = new HashSet<>();
         set1.add(beginWord);
         Set<String> set2 = new HashSet<>();
         set2.add(endWord);
-        Map<String, List<String> > map = new HashMap<>();
+        Map<String, List<String>> map = new HashMap<>();
         findPath(set1, set2, wordList, map, false);
-        List<List<String> > res = new ArrayList<>();
-        findLadders5(beginWord, endWord, map,
-                     new ArrayList<>(Arrays.asList(beginWord)), res);
+        List<List<String>> res = new ArrayList<>();
+        findLadders5(beginWord, endWord, map, new ArrayList<>(Arrays.asList(beginWord)), res);
         return res;
     }
 
     private boolean findPath(Set<String> set1, Set<String> set2, Set<String> dict,
-                             Map<String, List<String> > map, boolean direction) {
+                             Map<String, List<String>> map, boolean direction) {
         if (set1.size() > set2.size()) return findPath(set2, set1, dict, map, !direction);
 
         if (set1.isEmpty()) return false;
@@ -294,9 +287,8 @@ public class WordLadder2 {
         return done || findPath(set2, nextSet, dict, map, !direction);
     }
 
-    private void findLadders5(String start, String end,
-                              Map<String, List<String> > map,
-                              List<String> path, List<List<String> > res) {
+    private void findLadders5(String start, String end, Map<String, List<String>> map,
+                              List<String> path, List<List<String>> res) {
         if (start.equals(end)) {
             res.add(new ArrayList<>(path));
             return;
@@ -314,18 +306,16 @@ public class WordLadder2 {
         public D apply(A a, B b, C c);
     }
 
-    void test(Function<String, String, Set<String>, List<List<String>>> find,
-              String name, String begin, String end, String[][] expected,
-              String ... words) throws Exception {
+    void test(Function<String, String, Set<String>, List<List<String>>> find, String name,
+              String begin, String end, String[][] expected, String... words) throws Exception {
         Set<String> wordList;
         if (words.length == 0) {
-            wordList = new HashSet<>(
-                Files.readAllLines(Paths.get("/usr/share/dict/words")));
+            wordList = new HashSet<>(Files.readAllLines(Paths.get("/usr/share/dict/words")));
         } else {
             wordList = new HashSet<>(Arrays.asList(words));
         }
         long t1 = System.nanoTime();
-        List<List<String> > res = find.apply(begin, end, wordList);
+        List<List<String>> res = find.apply(begin, end, wordList);
         res.sort((p, q) -> {
             for (int i = 0; i < p.size(); i++) {
                 int diff = p.get(i).compareTo(q.get(i));
@@ -341,13 +331,11 @@ public class WordLadder2 {
             return 0;
         });
         assertArrayEquals(expected,
-                          res.stream().map(a -> a.toArray(new String[0]))
-                          .toArray(String[][]::new));
+                          res.stream().map(a -> a.toArray(new String[0])).toArray(String[][]::new));
         System.out.format("%s: %.3f ms\n", name, (System.nanoTime() - t1) * 1e-6);
     }
 
-    public void test(String begin, String end, String[][] expected,
-                     String ... words) {
+    public void test(String begin, String end, String[][] expected, String... words) {
         WordLadder2 w = new WordLadder2();
         try {
             test(w::findLadders, "findLadders", begin, end, expected, words);
@@ -362,55 +350,55 @@ public class WordLadder2 {
 
     @Test
     public void test1() {
-        test("talk", "tail", new String[][] {},
-             "talk", "tons","fall","tail","gale","hall","negs");
-        test("red", "tax", new String[][] {{"red", "rex", "tex", "tax"},
-                                           {"red", "ted", "tad", "tax"},
-                                           {"red", "ted", "tex", "tax"}},
+        test("talk", "tail", new String[][] {}, "talk", "tons", "fall", "tail", "gale", "hall",
+             "negs");
+        test("red", "tax",
+             new String[][] {{"red", "rex", "tex", "tax"}, {"red", "ted", "tad", "tax"},
+                             {"red", "ted", "tex", "tax"}},
              "ted", "tex", "red", "tax", "tad", "den", "rex", "pee");
         test("a", "c", new String[][] {{"a", "c"}}, "a", "b", "c");
-        test("hit", "cog", new String[][] {{"hit", "hot", "dot", "dog", "cog"},
-                                           {"hit", "hot", "lot", "log", "cog"}},
+        test("hit", "cog",
+             new String[][] {{"hit", "hot", "dot", "dog", "cog"},
+                             {"hit", "hot", "lot", "log", "cog"}},
              "hot", "dot", "dog", "lot", "log");
-        test("qa", "sq", new String[][] {
-            {"qa","ba","be","se","sq"}, {"qa","ba","bi","si","sq"},
-            {"qa","ba","br","sr","sq"}, {"qa","ca","cm","sm","sq"},
-            {"qa","ca","co","so","sq"}, {"qa","la","ln","sn","sq"},
-            {"qa","la","lt","st","sq"}, {"qa","ma","mb","sb","sq"},
-            {"qa","pa","ph","sh","sq"}, {"qa","ta","tc","sc","sq"},
-            {"qa","fa","fe","se","sq"}, {"qa","ga","ge","se","sq"},
-            {"qa","ha","he","se","sq"}, {"qa","la","le","se","sq"},
-            {"qa","ma","me","se","sq"}, {"qa","na","ne","se","sq"},
-            {"qa","ra","re","se","sq"}, {"qa","ya","ye","se","sq"},
-            {"qa","ca","ci","si","sq"}, {"qa","ha","hi","si","sq"},
-            {"qa","la","li","si","sq"}, {"qa","ma","mi","si","sq"},
-            {"qa","na","ni","si","sq"}, {"qa","pa","pi","si","sq"},
-            {"qa","ta","ti","si","sq"}, {"qa","ca","cr","sr","sq"},
-            {"qa","fa","fr","sr","sq"}, {"qa","la","lr","sr","sq"},
-            {"qa","ma","mr","sr","sq"}, {"qa","fa","fm","sm","sq"},
-            {"qa","pa","pm","sm","sq"}, {"qa","ta","tm","sm","sq"},
-            {"qa","ga","go","so","sq"}, {"qa","ha","ho","so","sq"},
-            {"qa","la","lo","so","sq"}, {"qa","ma","mo","so","sq"},
-            {"qa","na","no","so","sq"}, {"qa","pa","po","so","sq"},
-            {"qa","ta","to","so","sq"}, {"qa","ya","yo","so","sq"},
-            {"qa","ma","mn","sn","sq"}, {"qa","ra","rn","sn","sq"},
-            {"qa","ma","mt","st","sq"}, {"qa","pa","pt","st","sq"},
-            {"qa","na","nb","sb","sq"}, {"qa","pa","pb","sb","sq"},
-            {"qa","ra","rb","sb","sq"}, {"qa","ta","tb","sb","sq"},
-            {"qa","ya","yb","sb","sq"}, {"qa","ra","rh","sh","sq"},
-            {"qa","ta","th","sh","sq"}},
-            "si", "go", "se", "cm", "so", "ph", "mt", "db", "mb", "sb", "kr",
-            "ln", "tm", "le", "av", "sm", "ar", "ci", "ca", "br", "ti", "ba",
-            "to", "ra", "fa", "yo", "ow", "sn", "ya", "cr", "po", "fe", "ho",
-            "ma", "re", "or", "rn", "au", "ur", "rh", "sr", "tc", "lt", "lo",
-            "as", "fr", "nb", "yb", "if", "pb", "ge", "th", "pm", "rb", "sh",
-            "co", "ga", "li", "ha", "hz", "no", "bi", "di", "hi", "qa", "pi",
-            "os", "uh", "wm", "an", "me", "mo", "na", "la", "st", "er", "sc",
-            "ne", "mn", "mi", "am", "ex", "pt", "io", "be", "fm", "ta", "tb",
-            "ni", "mr", "pa", "he", "lr", "sq", "ye");
+        test("qa", "sq",
+             new String[][] {{"qa", "ba", "be", "se", "sq"}, {"qa", "ba", "bi", "si", "sq"},
+                             {"qa", "ba", "br", "sr", "sq"}, {"qa", "ca", "cm", "sm", "sq"},
+                             {"qa", "ca", "co", "so", "sq"}, {"qa", "la", "ln", "sn", "sq"},
+                             {"qa", "la", "lt", "st", "sq"}, {"qa", "ma", "mb", "sb", "sq"},
+                             {"qa", "pa", "ph", "sh", "sq"}, {"qa", "ta", "tc", "sc", "sq"},
+                             {"qa", "fa", "fe", "se", "sq"}, {"qa", "ga", "ge", "se", "sq"},
+                             {"qa", "ha", "he", "se", "sq"}, {"qa", "la", "le", "se", "sq"},
+                             {"qa", "ma", "me", "se", "sq"}, {"qa", "na", "ne", "se", "sq"},
+                             {"qa", "ra", "re", "se", "sq"}, {"qa", "ya", "ye", "se", "sq"},
+                             {"qa", "ca", "ci", "si", "sq"}, {"qa", "ha", "hi", "si", "sq"},
+                             {"qa", "la", "li", "si", "sq"}, {"qa", "ma", "mi", "si", "sq"},
+                             {"qa", "na", "ni", "si", "sq"}, {"qa", "pa", "pi", "si", "sq"},
+                             {"qa", "ta", "ti", "si", "sq"}, {"qa", "ca", "cr", "sr", "sq"},
+                             {"qa", "fa", "fr", "sr", "sq"}, {"qa", "la", "lr", "sr", "sq"},
+                             {"qa", "ma", "mr", "sr", "sq"}, {"qa", "fa", "fm", "sm", "sq"},
+                             {"qa", "pa", "pm", "sm", "sq"}, {"qa", "ta", "tm", "sm", "sq"},
+                             {"qa", "ga", "go", "so", "sq"}, {"qa", "ha", "ho", "so", "sq"},
+                             {"qa", "la", "lo", "so", "sq"}, {"qa", "ma", "mo", "so", "sq"},
+                             {"qa", "na", "no", "so", "sq"}, {"qa", "pa", "po", "so", "sq"},
+                             {"qa", "ta", "to", "so", "sq"}, {"qa", "ya", "yo", "so", "sq"},
+                             {"qa", "ma", "mn", "sn", "sq"}, {"qa", "ra", "rn", "sn", "sq"},
+                             {"qa", "ma", "mt", "st", "sq"}, {"qa", "pa", "pt", "st", "sq"},
+                             {"qa", "na", "nb", "sb", "sq"}, {"qa", "pa", "pb", "sb", "sq"},
+                             {"qa", "ra", "rb", "sb", "sq"}, {"qa", "ta", "tb", "sb", "sq"},
+                             {"qa", "ya", "yb", "sb", "sq"}, {"qa", "ra", "rh", "sh", "sq"},
+                             {"qa", "ta", "th", "sh", "sq"}},
+             "si", "go", "se", "cm", "so", "ph", "mt", "db", "mb", "sb", "kr", "ln", "tm", "le",
+             "av", "sm", "ar", "ci", "ca", "br", "ti", "ba", "to", "ra", "fa", "yo", "ow", "sn",
+             "ya", "cr", "po", "fe", "ho", "ma", "re", "or", "rn", "au", "ur", "rh", "sr", "tc",
+             "lt", "lo", "as", "fr", "nb", "yb", "if", "pb", "ge", "th", "pm", "rb", "sh", "co",
+             "ga", "li", "ha", "hz", "no", "bi", "di", "hi", "qa", "pi", "os", "uh", "wm", "an",
+             "me", "mo", "na", "la", "st", "er", "sc", "ne", "mn", "mi", "am", "ex", "pt", "io",
+             "be", "fm", "ta", "tb", "ni", "mr", "pa", "he", "lr", "sq", "ye");
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("WordLadder2");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
