@@ -15,14 +15,12 @@ import java.nio.file.Paths;
 public class WordLadder {
     // DFS + Memoization
     // Time Limit Exceeded
-    public int ladderLength(String beginWord, String endWord,
-                            Set<String> wordList) {
+    public int ladderLength(String beginWord, String endWord, Set<String> wordList) {
         int len = beginWord.length();
         if (endWord.length() != len) return 0;
 
         // Map<String, Integer> cache = new HashMap<>();
-        return ladderLength(beginWord, endWord, len, wordList,
-                            new HashSet<>(), new HashMap<>());
+        return ladderLength(beginWord, endWord, len, wordList, new HashSet<>(), new HashMap<>());
     }
 
     private int ladderLength(String w1, String w2, int len, Set<String> wordList,
@@ -48,8 +46,7 @@ public class WordLadder {
                     break;
                 }
                 if (wordList.contains(nextStr)) {
-                    int nextCount = ladderLength(nextStr, w2, len,
-                                                 wordList, visited, cache);
+                    int nextCount = ladderLength(nextStr, w2, len, wordList, visited, cache);
                     if (nextCount > 0 && nextCount < count) {
                         count = nextCount;
                     }
@@ -69,8 +66,7 @@ public class WordLadder {
     // BFS + Queue + Set
     // BFS is better that DFS since it guarantees the optimal result
     // beats 38.27%(128 ms)
-    public int ladderLength2(String beginWord, String endWord,
-                             Set<String> wordList) {
+    public int ladderLength2(String beginWord, String endWord, Set<String> wordList) {
         if (beginWord.equals(endWord)) return 1;
 
         Queue<String> queue = new LinkedList<>();
@@ -91,9 +87,8 @@ public class WordLadder {
             for (String w : oneEditSets(word, wordList)) {
                 if (w.equals(endWord)) return level;
 
-                if (!visited.contains(w)) {
-                    queue.add(w);
-                    visited.add(w);
+                if (visited.add(w)) {
+                    queue.offer(w);
                     nextCount++;
                 }
             }
@@ -122,8 +117,7 @@ public class WordLadder {
 
     // BFS + Queue + Set
     // beats 42.23%(123 ms)
-    public int ladderLength3(String beginWord, String endWord,
-                             Set<String> wordList) {
+    public int ladderLength3(String beginWord, String endWord, Set<String> wordList) {
         if (beginWord.equals(endWord)) return 1;
 
         wordList.add(beginWord);
@@ -136,11 +130,10 @@ public class WordLadder {
             for (int i = queue.size(); i > 0; i--) {
                 String word = queue.poll();
                 for (String nextWord : getNextWords(word, wordList)) {
-                    if (visited.contains(nextWord)) continue;
+                    if (!visited.add(nextWord)) continue;
 
                     if (nextWord.equals(endWord)) return level;
 
-                    visited.add(nextWord);
                     queue.offer(nextWord);
                 }
             }
@@ -168,10 +161,11 @@ public class WordLadder {
 
     // Solution of Choice
     // BFS + Queue
-    // beats 82.48%(84 ms)
+    // beats 80.86%(67 ms for 39 tests)
+    // (leetcode changed wordList to type List<String>)
     public int ladderLength4(String beginWord, String endWord, Set<String> wordList) {
         Queue<String> queue = new LinkedList<>();
-        queue.add(beginWord);
+        queue.offer(beginWord);
         wordList.add(endWord);
         for (int level = 1; !queue.isEmpty(); level++) {
             for (int i = queue.size(); i > 0; i--) {
@@ -179,16 +173,15 @@ public class WordLadder {
                 if (cur.equals(endWord)) return level;
 
                 char[] word = cur.toCharArray();
-                for (int j = cur.length() - 1; j >= 0; j--) {
+                for (int j = word.length - 1; j >= 0; j--) {
                     char oldChar = cur.charAt(j);
                     for (char c = 'a'; c < 'z'; c++) {
                         if (c == oldChar) continue;
 
                         word[j] = c;
                         String newWord = new String(word);
-                        if (wordList.contains(newWord)) {
+                        if (wordList.remove(newWord)) {
                             queue.offer(newWord);
-                            wordList.remove(newWord);
                         }
                     }
                     word[j] = oldChar;
@@ -201,8 +194,10 @@ public class WordLadder {
     // Solution of Choice
     // Two-end BFS + Set
     // https://discuss.leetcode.com/topic/29303/two-end-bfs-in-java-31ms
-    // beats 85.62%(45 ms)
+    // beats 90.08%(39 ms for 39 tests)
+    // (leetcode changed wordList to type List<String>)
     public int ladderLength5(String beginWord, String endWord, Set<String> wordList) {
+        // if (!wordList.contains(endWord)) return 0; // new requirement
         if (beginWord.equals(endWord)) return 1;
 
         Set<String> visited = new HashSet<>();
@@ -216,7 +211,6 @@ public class WordLadder {
                 beginSet = endSet;
                 endSet = tmp;
             }
-
             Set<String> nextSet = new HashSet<>();
             for (String word : beginSet) {
                 char[] cs = word.toCharArray();
@@ -227,9 +221,8 @@ public class WordLadder {
                         String target = String.valueOf(cs);
                         if (endSet.contains(target)) return distance;
 
-                        if (!visited.contains(target) && wordList.contains(target)) {
+                        if (visited.add(target) && wordList.contains(target)) {
                             nextSet.add(target);
-                            visited.add(target);
                         }
                         cs[i] = old;
                     }
@@ -245,13 +238,11 @@ public class WordLadder {
         public D apply(A a, B b, C c);
     }
 
-    void test(Function<String, String, Set<String>, Integer> ladderLength,
-              String name, String begin, String end, int expected, String ... words)
-    throws Exception {
+    void test(Function<String, String, Set<String>, Integer> ladderLength, String name,
+              String begin, String end, int expected, String... words) throws Exception {
         Set<String> wordList;
         if (words.length == 0) {
-            wordList = new HashSet<>(
-                Files.readAllLines(Paths.get("/usr/share/dict/words")));
+            wordList = new HashSet<>(Files.readAllLines(Paths.get("/usr/share/dict/words")));
         } else {
             wordList = new HashSet<>(Arrays.asList(words));
         }
@@ -260,7 +251,7 @@ public class WordLadder {
         System.out.format("%s: %.3f ms\n", name, (System.nanoTime() - t1) * 1e-6);
     }
 
-    public void test(String begin, String end, int expected, String ... words) {
+    public void test(String begin, String end, int expected, String... words) {
         WordLadder w = new WordLadder();
         try {
             test(w::ladderLength, "ladderLength", begin, end, expected, words);
@@ -278,51 +269,44 @@ public class WordLadder {
         test("hit", "hit", 1, "dot", "dog", "lot", "log");
         test("nape", "mild", 6);
         test("hit", "cog", 0, "dot", "dog", "lot", "log");
+        // should be 0 according to the new LeetCode requirement
         test("hit", "cog", 5, "hot", "dot", "dog", "lot", "log");
         test("hit", "cog", 4);
-        test("nape", "mild", 6, "dose", "ends", "dine", "jars", "prow", "soap",
-             "guns", "hops", "cray", "hove", "ella", "hour", "lens", "jive",
-             "wiry", "earl", "mara", "part", "flue", "putt", "rory", "bull",
-             "york", "ruts", "lily", "vamp", "bask", "peer", "boat", "dens",
-             "lyre", "jets", "wide", "rile", "boos", "down", "path", "onyx",
-             "mows", "toke", "soto", "dork", "nape", "mans", "loin", "jots",
-             "male", "sits", "minn", "sale", "pets", "hugo", "woke", "suds",
-             "rugs",  "vole", "warp", "mite", "pews", "lips", "pals", "nigh",
-             "sulk", "vice", "clod", "iowa", "gibe", "shad", "carl", "huns",
-             "coot", "sera", "mils", "rose", "orly", "ford", "void", "time",
-             "eloy", "risk", "veep", "reps", "dolt", "hens", "tray", "melt",
-             "rung", "rich", "saga", "lust", "yews", "rode", "many", "cods",
-             "rape", "last", "tile", "nosy", "take", "nope", "toni", "bank",
-             "jock", "jody", "diss", "nips", "bake", "lima", "wore", "kins",
-             "cult", "hart", "wuss", "tale", "sing", "lake", "bogy", "wigs",
-             "kari", "magi", "bass", "pent", "tost", "fops", "bags", "duns",
-             "will", "tart", "drug", "gale", "mold", "disk", "spay", "hows",
-             "naps", "puss", "gina", "kara", "zorn", "boll", "cams", "boas",
-             "rave", "sets", "lego", "hays", "judy", "chap", "live", "bahs", "ohio",
-             "nibs", "cuts", "pups", "data", "kate", "rump", "hews", "mary", "stow",
-             "fang", "bolt", "rues", "mesh", "mice", "rise", "rant", "dune", "jell",
-             "laws", "jove", "bode", "sung", "nils", "vila", "mode", "hued", "cell",
-             "fies", "swat", "wags", "nate", "wist", "honk", "goth", "told", "oise",
-             "wail", "tels", "sore", "hunk", "mate", "luke", "tore", "bond", "bast",
-             "vows", "ripe", "fond", "benz", "firs", "zeds", "wary", "baas", "wins",
-             "pair", "tags", "cost", "woes", "buns", "lend", "bops", "code", "eddy",
-             "siva", "oops", "toed", "bale", "hutu", "jolt", "rife", "darn", "tape",
-             "bold", "cope", "cake", "wisp", "vats", "wave", "hems", "bill", "cord",
-             "pert", "type", "kroc", "ucla", "albs", "yoko", "silt", "pock", "drub",
-             "puny", "fads", "mull", "pray", "mole", "talc", "east", "slay", "jamb",
-             "mill", "dung", "jack", "lynx", "nome", "leos", "lade", "sana", "tike",
-             "cali", "toge", "pled", "mile", "mass", "leon", "sloe", "lube", "kans",
-             "cory", "burs", "race", "toss", "mild", "tops", "maze", "city", "sadr",
-             "bays", "poet", "volt", "laze", "gold", "zuni", "shea", "gags", "fist",
-             "ping", "pope", "cora", "yaks", "cosy", "foci", "plan", "colo", "hume",
-             "yowl", "craw", "pied", "toga", "lobs", "love", "lode", "duds", "bled",
-             "juts", "gabs", "fink", "rock", "pant", "wipe", "pele", "suez", "nina",
-             "ring", "okra", "warm", "lyle", "gape", "bead", "lead", "jane", "oink",
-             "ware", "zibo", "inns", "mope", "hang", "made", "fobs", "gamy", "fort",
-             "peak", "gill", "dino", "dina", "tier");
+        test("nape", "mild", 6, "dose", "ends", "dine", "jars", "prow", "soap", "guns", "hops",
+             "cray", "hove", "ella", "hour", "lens", "jive", "wiry", "earl", "mara", "part", "flue",
+             "putt", "rory", "bull", "york", "ruts", "lily", "vamp", "bask", "peer", "boat", "dens",
+             "lyre", "jets", "wide", "rile", "boos", "down", "path", "onyx", "mows", "toke", "soto",
+             "dork", "nape", "mans", "loin", "jots", "male", "sits", "minn", "sale", "pets", "hugo",
+             "woke", "suds", "rugs", "vole", "warp", "mite", "pews", "lips", "pals", "nigh", "sulk",
+             "vice", "clod", "iowa", "gibe", "shad", "carl", "huns", "coot", "sera", "mils", "rose",
+             "orly", "ford", "void", "time", "eloy", "risk", "veep", "reps", "dolt", "hens", "tray",
+             "melt", "rung", "rich", "saga", "lust", "yews", "rode", "many", "cods", "rape", "last",
+             "tile", "nosy", "take", "nope", "toni", "bank", "jock", "jody", "diss", "nips", "bake",
+             "lima", "wore", "kins", "cult", "hart", "wuss", "tale", "sing", "lake", "bogy", "wigs",
+             "kari", "magi", "bass", "pent", "tost", "fops", "bags", "duns", "will", "tart", "drug",
+             "gale", "mold", "disk", "spay", "hows", "naps", "puss", "gina", "kara", "zorn", "boll",
+             "cams", "boas", "rave", "sets", "lego", "hays", "judy", "chap", "live", "bahs", "ohio",
+             "nibs", "cuts", "pups", "data", "kate", "rump", "hews", "mary", "stow", "fang", "bolt",
+             "rues", "mesh", "mice", "rise", "rant", "dune", "jell", "laws", "jove", "bode", "sung",
+             "nils", "vila", "mode", "hued", "cell", "fies", "swat", "wags", "nate", "wist", "honk",
+             "goth", "told", "oise", "wail", "tels", "sore", "hunk", "mate", "luke", "tore", "bond",
+             "bast", "vows", "ripe", "fond", "benz", "firs", "zeds", "wary", "baas", "wins", "pair",
+             "tags", "cost", "woes", "buns", "lend", "bops", "code", "eddy", "siva", "oops", "toed",
+             "bale", "hutu", "jolt", "rife", "darn", "tape", "bold", "cope", "cake", "wisp", "vats",
+             "wave", "hems", "bill", "cord", "pert", "type", "kroc", "ucla", "albs", "yoko", "silt",
+             "pock", "drub", "puny", "fads", "mull", "pray", "mole", "talc", "east", "slay", "jamb",
+             "mill", "dung", "jack", "lynx", "nome", "leos", "lade", "sana", "tike", "cali", "toge",
+             "pled", "mile", "mass", "leon", "sloe", "lube", "kans", "cory", "burs", "race", "toss",
+             "mild", "tops", "maze", "city", "sadr", "bays", "poet", "volt", "laze", "gold", "zuni",
+             "shea", "gags", "fist", "ping", "pope", "cora", "yaks", "cosy", "foci", "plan", "colo",
+             "hume", "yowl", "craw", "pied", "toga", "lobs", "love", "lode", "duds", "bled", "juts",
+             "gabs", "fink", "rock", "pant", "wipe", "pele", "suez", "nina", "ring", "okra", "warm",
+             "lyle", "gape", "bead", "lead", "jane", "oink", "ware", "zibo", "inns", "mope", "hang",
+             "made", "fobs", "gamy", "fort", "peak", "gill", "dino", "dina", "tier");
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("WordLadder");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
