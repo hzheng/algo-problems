@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 public class SingleNumber {
     // Solution of Choice
     // Bit Manipulation
-    // beats 32.35%(1 ms)
+    // beats 70.72%(1 ms for 16 tests)
     public int singleNumber(int[] nums) {
         int xor = 0;
         for (int num : nums) {
@@ -19,7 +19,7 @@ public class SingleNumber {
         return xor;
     }
 
-    void test(int expected, int ... nums) {
+    void test(int expected, int... nums) {
         assertEquals(expected, singleNumber(nums));
     }
 
@@ -30,6 +30,7 @@ public class SingleNumber {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("SingleNumber");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

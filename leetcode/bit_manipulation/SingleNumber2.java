@@ -8,11 +8,11 @@ import static org.junit.Assert.*;
 // Your algorithm should have a linear runtime complexity. Could you implement
 // it without using extra memory?
 public class SingleNumber2 {
-    // beats 50.74%(5 ms)
+    // time complexity: O(N), space complexity: O(1)
+    // beats 57.79%(2 ms for 11 tests)
     public int singleNumber(int[] nums) {
         int res = 0;
-        int mask = 1;
-        for (int i = 0; i < 32; i++) {
+        for (int i = 0, mask = 1; i < 32; i++, mask <<= 1) {
             int sum = 0;
             for (int num : nums) {
                 if ((num & mask) != 0) { // don't use > 0(could be negative)
@@ -22,31 +22,29 @@ public class SingleNumber2 {
             if (sum % 3 != 0) {
                 res |= mask;
             }
-            mask <<= 1;
         }
         return res;
     }
 
+    // time complexity: O(N), space complexity: O(1)
+    // beats 57.79%(2 ms for 11 tests)
     public int singleNumber2(int[] nums) {
         int res = 0;
-        for (int i = 0; i < 32; i++) {
+        for (int i = 0, n = nums.length; i < 32; i++) {
             int sum = 0;
-            for (int j = 0; j < nums.length; j++) {
-                if (((nums[j] >> i) & 1) == 1) {
-                    sum++;
-                }
+            for (int j = 0; j < n; j++) {
+                sum += ((nums[j] >> i) & 1);
             }
-            sum %= 3;
-            if (sum != 0) {
-                res |= sum << i;
-            }
+            res |= (sum % 3) << i;
         }
         return res;
     }
 
+    // Solution of Choice
     // https://traceformula.blogspot.com/2015/08/single-number-ii-how-to-come-up-with.html
     // this works even the exceptional number occurs any times other than one
-    // beats 87.51%(1 ms)
+    // time complexity: O(N), space complexity: O(1)
+    // beats 100.00%(0 ms for 11 tests)
     public int singleNumber3(int[] nums) {
         int a = 0;
         int b = 0;
@@ -59,6 +57,8 @@ public class SingleNumber2 {
 
     // Solution of Choice
     // https://discuss.leetcode.com/topic/2031/challenge-me-thx
+    // time complexity: O(N), space complexity: O(1)
+    // beats 100.00%(0 ms for 11 tests)
     public int singleNumber4(int[] nums) {
         int ones = 0; // holds XOR of all the elements which have appeared once
         int twos = 0; // holds XOR of all the elements which have appeared twice
@@ -90,6 +90,7 @@ public class SingleNumber2 {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("SingleNumber2");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
