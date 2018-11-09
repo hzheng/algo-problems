@@ -90,6 +90,7 @@ public class PascalTriangle2 {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("PascalTriangle2");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

@@ -14,56 +14,42 @@ import common.RandomListNode;
 public class CopyRandomList {
     // Solution of Choice
     // Hashtable
-    // space complexity: O(N)
-    // beats 44.16%(5 ms)
+    // time complexity: O(N), space complexity: O(N)
+    // beats 63.15%(3 ms for 12 tests)
     public RandomListNode copyRandomList(RandomListNode head) {
         Map<RandomListNode, RandomListNode> map = new HashMap<>();
         RandomListNode dummy = new RandomListNode(0);
-        for (RandomListNode n = head, last = dummy; n != null; n = n.next, last = last.next) {
-            RandomListNode cloned = new RandomListNode(n.label);
-            map.put(n, cloned);
-            last.next = cloned;
+        for (RandomListNode cur = head, copy = dummy; cur != null; cur = cur.next) {
+            copy = copy.next = new RandomListNode(cur.label);
+            map.put(cur, copy);
         }
-        for (RandomListNode n = head; n != null; n = n.next) {
-            if (n.random != null) {
-                map.get(n).random = map.get(n.random);
-            }
+        for (RandomListNode cur = head; cur != null; cur = cur.next) {
+            map.get(cur).random = map.get(cur.random);
         }
         return dummy.next;
     }
 
     // Hashtable
     // one pass(or loop)
-    // space complexity: O(N)
-    // beats 14.06%(8 ms)
+    // time complexity: O(N), space complexity: O(N)
+    // beats 63.15%(3 ms for 12 tests)
     public RandomListNode copyRandomList2(RandomListNode head) {
         Map<RandomListNode, RandomListNode> map = new HashMap<>();
         RandomListNode dummy = new RandomListNode(0);
-        RandomListNode last = dummy;
-        RandomListNode cloned;
-        for (RandomListNode n = head; n != null; n = n.next, last = last.next) {
-            if (map.containsKey(n)) {
-                cloned = map.get(n);
-            } else {
-                cloned = new RandomListNode(n.label);
-                map.put(n, cloned);
+        for (RandomListNode cur = head, copy = dummy; cur != null; cur = cur.next) {
+            copy = copy.next = new RandomListNode(cur.label);
+            if (cur.random != null && !map.containsKey(cur.random)) {
+                map.put(cur.random, new RandomListNode(cur.random.label));
             }
-            last.next = cloned;
-            if (n.random != null) {
-                if (map.containsKey(n.random)) {
-                    cloned.random = map.get(n.random);
-                } else {
-                    cloned.random = new RandomListNode(n.random.label);
-                    map.put(n.random, cloned.random);
-                }
-            }
+            copy.random = map.get(cur.random);
         }
         return dummy.next;
     }
 
     // Solution of Choice
+    // time complexity: O(N), space complexity: O(1)
     // Extra space complexity: O(1) (con: temporarily modify input)
-    // beats 66.29%(2 ms)
+    // beats 99.76%(1 ms for 12 tests)
     public RandomListNode copyRandomList3(RandomListNode head) {
         if (head == null) return null;
 
@@ -92,10 +78,9 @@ public class CopyRandomList {
     }
 
     // Hashtable
-    // beats 9.10%(9 ms)
+    // time complexity: O(N), space complexity: O(N)
+    // beats 38.40%(4 ms for 12 tests)
     public RandomListNode copyRandomList4(RandomListNode head) {
-        if (head == null) return null;
-
         Map<RandomListNode, RandomListNode> map = new HashMap<>();
         for (RandomListNode cur = head; cur != null; cur = cur.next) {
             map.put(cur, new RandomListNode(cur.label));
@@ -108,7 +93,8 @@ public class CopyRandomList {
     }
 
     // Recursion
-    // beats 9.10%(9 ms)
+    // time complexity: O(N), space complexity: O(N)
+    // beats 38.40%(4 ms for 12 tests)
     public RandomListNode copyRandomList5(RandomListNode head) {
         return copyRandomList5(head, new HashMap<>());
     }
@@ -126,7 +112,7 @@ public class CopyRandomList {
         return cloned;
     }
 
-    void test(Function<RandomListNode, RandomListNode> copy, int [] nums) {
+    void test(Function<RandomListNode, RandomListNode> copy, int[] nums) {
         nums = nums.clone();
         int[] res = copy.apply(RandomListNode.of(nums)).toArray();
         assertArrayEquals(nums, res);
@@ -148,6 +134,7 @@ public class CopyRandomList {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("CopyRandomList");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
