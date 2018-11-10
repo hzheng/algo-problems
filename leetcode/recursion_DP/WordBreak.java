@@ -14,8 +14,7 @@ public class WordBreak {
 
         for (int i = 1; i < s.length(); i++) {
             String segment = s.substring(0, i);
-            if (wordDict.contains(segment)
-                && wordBreak(s.substring(i), wordDict)) {
+            if (wordDict.contains(segment) && wordBreak(s.substring(i), wordDict)) {
                 return true;
             }
         }
@@ -34,7 +33,7 @@ public class WordBreak {
                 // dp[j] |= dp[i] && wordDict.contains(s.substring(i, j)); // slower
                 if (!dp[j] && dp[i] && wordDict.contains(s.substring(i, j))) {
                     dp[j] = true;
-                };
+                }
             }
         }
         return dp[len];
@@ -52,20 +51,19 @@ public class WordBreak {
                 if (dp[j] && wordDict.contains(s.substring(j, i + 1))) {
                     dp[i + 1] = true;
                     break;
-                };
+                }
             }
         }
         return dp[len];
     }
 
-    // DFS + Dynamic Programming(Top-down)
+    // DFS + Recursion + Dynamic Programming(Top-down)
     // beats 4.85%(21 ms)
     public boolean wordBreak4(String s, Set<String> wordDict) {
         return wordBreak4(s, 0, wordDict, new HashSet<>());
     }
 
-    private boolean wordBreak4(String s, int start, Set<String> wordDict,
-                               Set<Integer> visited) {
+    private boolean wordBreak4(String s, int start, Set<String> wordDict, Set<Integer> visited) {
         int len = s.length();
         if (start >= len) return true;
 
@@ -86,11 +84,10 @@ public class WordBreak {
         Queue<Integer> queue = new LinkedList<>();
         Set<Integer> visited = new HashSet<>();
         queue.offer(0);
-        for (int len = s.length(); !queue.isEmpty(); ) {
+        for (int len = s.length(); !queue.isEmpty();) {
             int start = queue.poll();
-            if (visited.contains(start)) continue;
+            if (!visited.add(start)) continue;
 
-            visited.add(start);
             for (int i = start + 1; i <= len; i++) {
                 if (wordDict.contains(s.substring(start, i))) {
                     if (i == len) return true;
@@ -107,13 +104,13 @@ public class WordBreak {
         public C apply(A a, B b);
     }
 
-    void test(Function<String, Set<String>, Boolean> wordBreak, String name,
-              String s, boolean expected, String ... dict) {
+    void test(Function<String, Set<String>, Boolean> wordBreak, String name, String s,
+              boolean expected, String... dict) {
         Set<String> wordDict = new HashSet<>(Arrays.asList(dict));
         assertEquals(expected, wordBreak.apply(s, wordDict));
     }
 
-    void test(String s, boolean expected, String ... dict) {
+    void test(String s, boolean expected, String... dict) {
         WordBreak w = new WordBreak();
         test(w::wordBreak, "wordBreak", s, expected, dict);
         test(w::wordBreak2, "wordBreak2", s, expected, dict);
@@ -129,6 +126,7 @@ public class WordBreak {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("WordBreak");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
