@@ -26,28 +26,27 @@ public class LinkedListCycle {
 
     // Solution of Choice
     // time complexity: O(N), space complexity: O(1)
-    // beats 12.02%(1 ms)
+    // beats 100.00%(0 ms for 16 tests)
     public boolean hasCycle2(ListNode head) {
         if (head == null) return false;
 
-        for (ListNode slow = head, fast = head.next;
-             slow != fast; slow = slow.next, fast = fast.next.next) {
+        for (ListNode slow = head, fast = head.next; slow != fast;
+             slow = slow.next, fast = fast.next.next) {
             if (fast == null || fast.next == null) return false;
         }
         return true;
     }
 
-    // Hashtable
+    // Set
     // time complexity: O(N), space complexity: O(N)
-    // beats 2.72%(11 ms)
+    // beats 13.69%(11 ms for 16 tests)
     public boolean hasCycle3(ListNode head) {
         Set<ListNode> visited = new HashSet<>();
-        for (ListNode n = head; n != null; n = n.next) {
-            if (visited.contains(n)) return true;
+        for (ListNode cur = head;; cur = cur.next) {
+            if (cur == null) return false;
 
-            visited.add(n);
+            if (!visited.add(cur)) return true;
         }
-        return false;
     }
 
     void test(int[] n, boolean expected) {
@@ -64,6 +63,7 @@ public class LinkedListCycle {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("LinkedListCycle");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
