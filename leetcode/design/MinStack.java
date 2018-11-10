@@ -61,7 +61,7 @@ public class MinStack {
     }
 
     // Two Stacks
-    // beats 27.97%(131 ms)
+    // beats 99.38%(61 ms for 12 tests)
     class MinStack2 {
         private Stack<Integer> stack = new Stack<>();
         private Stack<Integer> minStack = new Stack<>();
@@ -93,8 +93,39 @@ public class MinStack {
         }
     }
 
+    // Two Stacks
+    // beats 27.97%(131 ms)
+    // beats 99.91%(59 ms for 12 tests)
+    class MinStack2_2 {
+        private Stack<Integer> stack = new Stack<>();
+        private Stack<Integer> minStack = new Stack<>();
+
+        public MinStack2_2() {
+            stack.push(Integer.MAX_VALUE);
+            minStack.push(Integer.MAX_VALUE);
+        }
+
+        public void push(int x) {
+            minStack.push(Math.min(x, minStack.peek()));
+            stack.push(x);
+        }
+
+        public void pop() {
+            stack.pop();
+            minStack.pop();
+        }
+
+        public int top() {
+            return stack.peek();
+        }
+
+        public int getMin() {
+            return minStack.peek();
+        }
+    }
+
     // Linked List
-    // beats 73.88%(120 ms)
+    // beats 87.86%(66 ms for 12 tests)
     class MinStack3 {
         class Node {
             int val;
@@ -107,19 +138,15 @@ public class MinStack {
             }
         }
 
-        private Node top;
+        private Node top = new Node(0, Integer.MAX_VALUE);
 
         public MinStack3() {
         }
 
         public void push(int x) {
-            if (top == null) {
-                top = new Node(x, x);
-            } else {
-                Node n = new Node(x, Math.min(x, top.min));
-                n.next = top;
-                top = n;
-            }
+            Node cur = new Node(x, Math.min(x, top.min));
+            cur.next = top;
+            top = cur;
         }
 
         public void pop() {
@@ -139,7 +166,7 @@ public class MinStack {
 
     // Solution of Choice
     // One Stack
-    // beats 26.64%(131 ms for 18 tests)
+    // beats 48.53%(74 ms for 12 tests)
     class MinStack4 {
         private Stack<Integer> stack = new Stack<>();
         private int min = Integer.MAX_VALUE;
@@ -226,6 +253,7 @@ public class MinStack {
         try {
             test1("MinStack1");
             test1("MinStack2");
+            test1("MinStack2_2");
             test1("MinStack3");
             test1("MinStack4");
         } catch (Exception e) {
