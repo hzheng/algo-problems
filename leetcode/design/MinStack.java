@@ -94,7 +94,6 @@ public class MinStack {
     }
 
     // Two Stacks
-    // beats 27.97%(131 ms)
     // beats 99.91%(59 ms for 12 tests)
     class MinStack2_2 {
         private Stack<Integer> stack = new Stack<>();

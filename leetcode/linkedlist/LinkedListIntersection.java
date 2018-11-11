@@ -11,7 +11,7 @@ public class LinkedListIntersection {
     // hashtable works, but space complexity is not O(1)
 
     // Solution of Choice
-    // beats 37.12%(2 ms for 42 tests)
+    // beats 100.00%(1 ms for 42 tests)
     public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
         int lenA = length(headA);
         int lenB = length(headB);
@@ -29,13 +29,38 @@ public class LinkedListIntersection {
         return length;
     }
 
+    // beats 100.00%(1 ms for 42 tests)
+    public ListNode getIntersectionNode_2(ListNode headA, ListNode headB) {
+        if (headA == null || headB == null) return null;
+
+        int lenA = 0;
+        ListNode tailA = null;
+        for (ListNode cur = headA;; cur = cur.next, lenA++) {
+            if (cur.next == null) {
+                tailA = cur;
+                break;
+            }
+        }
+        int lenB = 0;
+        for (ListNode cur = headB;; cur = cur.next, lenB++) {
+            if (cur == null) return null;
+            if (cur == tailA) break;
+        }
+        ListNode p1 = headA;
+        ListNode p2 = headB;
+        for (; lenA > lenB; p1 = p1.next, lenA--) {}
+        for (; lenA < lenB; p2 = p2.next, lenB--) {}
+        for (; p1 != p2; p1 = p1.next, p2 = p2.next) {}
+        return p1;
+    }
+
     // Fast/Slow Pointers
-    // beats 12.51%(3 ms)
+    // beats 100.00%(1 ms for 42 tests)
     public ListNode getIntersectionNode2(ListNode headA, ListNode headB) {
         if (headA == null || headB == null) return null;
 
         ListNode tail = headA;
-        for (; tail.next != null; tail = tail.next);
+        for (; tail.next != null; tail = tail.next) {}
         tail.next = headB;
         ListNode intersection = cycleStart(headA);
         tail.next = null;
@@ -51,17 +76,12 @@ public class LinkedListIntersection {
             slow = slow.next;
             fast = fast.next.next;
         } while (slow != fast);
-
-        slow = head;
-        while (slow != fast) {
-            slow = slow.next;
-            fast = fast.next;
-        }
+        for (slow = head; slow != fast; slow = slow.next, fast = fast.next) {}
         return slow;
     }
 
     // Two Pointers
-    // beats 9.84%(4 ms)
+    // beats 38.27%(2 ms for 42 tests)
     public ListNode getIntersectionNode3(ListNode headA, ListNode headB) {
         if (headA == null || headB == null) return null;
 
@@ -87,10 +107,10 @@ public class LinkedListIntersection {
 
     // Solution of Choice
     // Two Pointers
-    // beats 37.12%(2 ms)
+    // beats 100.00%(1 ms for 42 tests)
     public ListNode getIntersectionNode4(ListNode headA, ListNode headB) {
-        ListNode p1 = headA, p2 = headB;
-        while (p1 != p2) {
+        ListNode p1 = headA;
+        for (ListNode p2 = headB; p1 != p2;) {
             p1 = (p1 == null) ? headB : p1.next;
             p2 = (p2 == null) ? headA : p2.next;
         }
@@ -102,10 +122,9 @@ public class LinkedListIntersection {
         public C apply(A a, B b);
     }
 
-    void test(Function<ListNode, ListNode, ListNode> intersect, int[] nums1,
-              int[] nums2, int ... expected) {
-        ListNode res = intersect.apply(ListNode.byVals(nums1),
-                                       ListNode.byVals(nums2));
+    void test(Function<ListNode, ListNode, ListNode> intersect, int[] nums1, int[] nums2,
+              int... expected) {
+        ListNode res = intersect.apply(ListNode.byVals(nums1), ListNode.byVals(nums2));
         if (expected.length == 0) {
             assertNull(res);
         } else {
@@ -113,9 +132,10 @@ public class LinkedListIntersection {
         }
     }
 
-    void test(int[] nums1, int[] nums2, int ... expected) {
+    void test(int[] nums1, int[] nums2, int... expected) {
         LinkedListIntersection l = new LinkedListIntersection();
         test(l::getIntersectionNode, nums1, nums2, expected);
+        test(l::getIntersectionNode_2, nums1, nums2, expected);
         test(l::getIntersectionNode2, nums1, nums2, expected);
         test(l::getIntersectionNode3, nums1, nums2, expected);
         test(l::getIntersectionNode4, nums1, nums2, expected);
@@ -126,15 +146,13 @@ public class LinkedListIntersection {
         test(new int[] {1}, new int[0]);
         test(new int[] {1}, new int[] {2});
         test(new int[] {3}, new int[] {2, 3}, 3);
-        test(new int[] {1, 2, 3, 4, 5, 6},
-             new int[] {9, 8, 4, 5, 6}, 4, 5, 6);
-        test(new int[] {1, 2, 3, 4, 5, 6},
-             new int[] {12, 11, 10, 9, 8, 4, 5, 6}, 4, 5, 6);
-        test(new int[] {12, 11, 10, 9, 8, 4, 5, 6},
-             new int[] {1, 2, 3, 4, 5, 6}, 4, 5, 6);
+        test(new int[] {1, 2, 3, 4, 5, 6}, new int[] {9, 8, 4, 5, 6}, 4, 5, 6);
+        test(new int[] {1, 2, 3, 4, 5, 6}, new int[] {12, 11, 10, 9, 8, 4, 5, 6}, 4, 5, 6);
+        test(new int[] {12, 11, 10, 9, 8, 4, 5, 6}, new int[] {1, 2, 3, 4, 5, 6}, 4, 5, 6);
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("LinkedListIntersection");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
