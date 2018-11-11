@@ -11,9 +11,10 @@ import static org.junit.Assert.*;
 public class TwoSum2 {
     // Solution of Choice
     // Two Pointers
-    // beats 24.59%(2 ms for 15 tests)
+    // time complexity: O(N), space complexity: O(1)
+    // beats 100.00%(0 ms for 17 tests)
     public int[] twoSum(int[] numbers, int target) {
-        for (int i = 0, j = numbers.length - 1; i < j; ) {
+        for (int i = 0, j = numbers.length - 1; i < j;) {
             int sum = numbers[i] + numbers[j];
             if (sum < target) {
                 i++;
@@ -25,17 +26,16 @@ public class TwoSum2 {
     }
 
     // Binary Search
-    // beats 21.28%(3 ms for 15 tests)
+    // time complexity: O(N * log(N)), space complexity: O(1)
+    // beats 24.72%(3 ms for 17 tests)
     public int[] twoSum2(int[] numbers, int target) {
-        int n = numbers.length;
-        for (int i = 0; i < n; i++) {
+        for (int i = 0, n = numbers.length;; i++) {
             int j = Arrays.binarySearch(numbers, i + 1, n, target - numbers[i]);
             if (j >= 0) return new int[] {i + 1, j + 1};
         }
-        return null;
     }
 
-    void test(int[] nums, int target, int ... expected) {
+    void test(int[] nums, int target, int... expected) {
         assertArrayEquals(expected, twoSum(nums, target));
         assertArrayEquals(expected, twoSum2(nums, target));
     }
@@ -46,6 +46,7 @@ public class TwoSum2 {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("TwoSum2");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
