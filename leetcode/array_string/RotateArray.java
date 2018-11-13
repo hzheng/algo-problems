@@ -5,12 +5,10 @@ import static org.junit.Assert.*;
 //
 // Rotate an array of n elements to the right by k steps.
 public class RotateArray {
-    // beats 13.50%(1 ms)
     // time complexity: O(N), space complexity: O(K)
+    // beats 52.53%(1 ms for 34 tests)
     public void rotate(int[] nums, int k) {
         int n = nums.length;
-        if (n == 0) return;
-
         k %= n;
         int[] buffer = new int[k];
         for (int i = n - k; i < n; i++) {
@@ -24,12 +22,10 @@ public class RotateArray {
         }
     }
 
-    // beats 13.50%(1 ms)
     // time complexity: O(N), space complexity: O(K)
+    // beats 52.53%(1 ms for 34 tests)
     public void rotate2(int[] nums, int k) {
         int n = nums.length;
-        if (n == 0) return;
-
         k %= n;
         if (k <= n / 2) {
             int[] buffer = new int[k];
@@ -57,13 +53,9 @@ public class RotateArray {
     }
 
     // time complexity: O(N * K), space complexity: O(1)
-    // Time Limit Exceeded
+    // beats 5.89%(140 ms for 34 tests)
     public void rotate3(int[] nums, int k) {
-        int n = nums.length;
-        if (n == 0) return;
-
-        k %= n;
-        for (int i = 0; i < k; i++) {
+        for (int n = nums.length, i = k % n; i > 0; i--) {
             int last = nums[n - 1];
             for (int j = n - 1; j > 0; j--) {
                 nums[j] = nums[j - 1];
@@ -74,7 +66,7 @@ public class RotateArray {
 
     // Solution of Choice
     // time complexity: O(N), space complexity: O(1)
-    // beats 3.29%(3 ms)
+    // beats 100.00%(0 ms for 34 tests)
     public void rotate4(int[] nums, int k) {
         int n = nums.length;
         k %= n;
@@ -95,15 +87,14 @@ public class RotateArray {
     // beats 12.84%(1 ms for 33 tests)
     public void rotate5(int[] nums, int k) {
         int n = nums.length;
-        int cur = nums[0];
-        for (int i = 0, next = k % n; i < n; i++, next = (next + k) % n) {
-           int tmp = cur;
-           cur = nums[next];
-           nums[next] = tmp;
-           if (k * (i + 1) % n == 0) {
-               next = ++next % n;
-               cur = nums[next];
-           }
+        for (int i = 0, cur = nums[0], next = k % n; i < n; i++, next = (next + k) % n) {
+            int tmp = cur;
+            cur = nums[next];
+            nums[next] = tmp;
+            if (k * (i + 1) % n == 0) {
+                next = ++next % n;
+                cur = nums[next];
+            }
         }
     }
 
@@ -114,7 +105,7 @@ public class RotateArray {
         k %= n;
         for (int i = 0, startIndex = 0; i < n; i++) {
             int startNum = nums[startIndex];
-            for (int j = startIndex, prev; ; i++, j = prev) {
+            for (int j = startIndex, prev;; i++, j = prev) {
                 prev = (j - k + n) % n;
                 if (prev == startIndex) {
                     nums[j] = startNum;
@@ -127,11 +118,11 @@ public class RotateArray {
     }
 
     // Solution of Choice
-    // beats 12.84%(1 ms for 33 tests)
+    // time complexity: O(N), space complexity: O(1)
+    // beats 100.00%(0 ms for 34 tests)
     public void rotate7(int[] nums, int k) {
         int n = nums.length;
-        int curNum = nums[0];
-        for (int i = 0, start = 0, next = k; i < n; i++, next += k) {
+        for (int i = 0, start = 0, curNum = nums[0], next = k; i < n; i++, next += k) {
             int nextNum = nums[next %= n];
             nums[next] = curNum;
             if (next == start) {
@@ -145,11 +136,11 @@ public class RotateArray {
 
     // Solution of Choice
     // https://leetcode.com/articles/rotate-array/#approach-3-using-cyclic-replacements-accepted
-    // beats 12.84%(1 ms for 33 tests)
+    // time complexity: O(N), space complexity: O(1)
+    // beats 100.00%(0 ms for 34 tests)
     public void rotate8(int[] nums, int k) {
-        int n = nums.length;
-        for (int start = 0, count = 0; count < n; start++, count++) {
-            for (int curNum = nums[start], next = start + k; ; count++, next += k) {
+        for (int start = 0, count = 0, n = nums.length; count < n; start++, count++) {
+            for (int curNum = nums[start], next = start + k;; count++, next += k) {
                 int tmp = nums[next %= n];
                 nums[next] = curNum;
                 curNum = tmp;
@@ -159,7 +150,8 @@ public class RotateArray {
     }
 
     // https://leetcode.com/articles/rotate-array/#approach-2-using-extra-array-accepted
-    // beats 12.84%(1 ms for 33 tests)
+    // time complexity: O(N), space complexity: O(N)
+    // beats 100.00%(0 ms for 34 tests)
     public void rotate9(int[] nums, int k) {
         int[] a = new int[nums.length];
         for (int i = 0; i < nums.length; i++) {
@@ -196,15 +188,16 @@ public class RotateArray {
 
     @Test
     public void test1() {
-        test(3, new int[]{1, 2, 3, 4, 5, 6, 7}, 5, 6, 7, 1, 2, 3, 4);
-        test(6, new int[]{1, 2, 3, 4, 5, 6, 7}, 2, 3, 4, 5, 6, 7, 1);
-        test(0, new int[]{1, 2, 3, 4, 5, 6, 7}, 1, 2, 3, 4, 5, 6, 7);
-        test(2, new int[]{1, 2}, 1, 2);
-        test(3, new int[]{1, 2}, 2, 1);
-        test(4, new int[]{1, 2, 3, 4, 5, 6}, 3, 4, 5, 6, 1, 2);
+        test(3, new int[] {1, 2, 3, 4, 5, 6, 7}, 5, 6, 7, 1, 2, 3, 4);
+        test(6, new int[] {1, 2, 3, 4, 5, 6, 7}, 2, 3, 4, 5, 6, 7, 1);
+        test(0, new int[] {1, 2, 3, 4, 5, 6, 7}, 1, 2, 3, 4, 5, 6, 7);
+        test(2, new int[] {1, 2}, 1, 2);
+        test(3, new int[] {1, 2}, 2, 1);
+        test(4, new int[] {1, 2, 3, 4, 5, 6}, 3, 4, 5, 6, 1, 2);
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("RotateArray");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
