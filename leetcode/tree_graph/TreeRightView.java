@@ -44,7 +44,7 @@ public class TreeRightView {
 
         Queue<TreeNode> queue = new LinkedList<>();
         queue.offer(root);
-        for (int curCount = 1, nextCount = 0; !queue.isEmpty(); ) {
+        for (int curCount = 1, nextCount = 0; !queue.isEmpty();) {
             TreeNode node = queue.poll();
             if (node.left != null) {
                 queue.offer(node.left);
@@ -71,7 +71,7 @@ public class TreeRightView {
 
         Queue<TreeNode> queue = new LinkedList<>();
         queue.offer(root);
-        for (TreeNode lastNode = null; !queue.isEmpty(); ) {
+        for (TreeNode lastNode = null; !queue.isEmpty();) {
             TreeNode node = queue.poll();
             if (node == null) { // finished one level
                 res.add(lastNode.val);
@@ -94,14 +94,13 @@ public class TreeRightView {
 
     // Solution of Choice
     // BFS + Queue
-    // beats 31.93%(2 ms for 210 tests)
+    // beats 28.06%(2 ms for 211 tests)
     public List<Integer> rightSideView4(TreeNode root) {
         List<Integer> res = new ArrayList<>();
         if (root == null) return res;
 
         Queue<TreeNode> queue = new LinkedList<>();
-        queue.offer(root);
-        while (!queue.isEmpty()) {
+        for (queue.offer(root); !queue.isEmpty();) {
             TreeNode node = null;
             for (int i = queue.size(); i > 0; i--) {
                 node = queue.poll();
@@ -123,7 +122,7 @@ public class TreeRightView {
         List<Integer> res = new ArrayList<>();
         Map<Integer, Integer> values = new HashMap<>();
         dfs(values, root, 1);
-        //for (int depth = 1; values.containsKey(depth); depth++) {
+        // for (int depth = 1; values.containsKey(depth); depth++) {
         for (int depth = 1, maxDepth = values.size(); depth <= maxDepth; depth++) {
             res.add(values.get(depth));
         }
@@ -140,7 +139,7 @@ public class TreeRightView {
 
     // Solution of Choice
     // DFS + Recursion
-    // beats 77.68%(1 ms for 210 tests)
+    // beats 82.20%(1 ms for 211 tests)
     public List<Integer> rightSideView6(TreeNode root) {
         List<Integer> res = new ArrayList<>();
         rightView(root, 0, res);
@@ -157,13 +156,12 @@ public class TreeRightView {
         rightView(node.left, level + 1, res);
     }
 
-    void test(Function<TreeNode, List<Integer> > rightSideView,
-              String s, Integer ... expected) {
+    void test(Function<TreeNode, List<Integer>> rightSideView, String s, Integer... expected) {
         List<Integer> res = rightSideView.apply(TreeNode.of(s));
         assertArrayEquals(expected, res.toArray(new Integer[0]));
     }
 
-    void test(String s, Integer ... expected) {
+    void test(String s, Integer... expected) {
         TreeRightView t = new TreeRightView();
         test(t::rightSideView, s, expected);
         test(t::rightSideView2, s, expected);
@@ -182,6 +180,7 @@ public class TreeRightView {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("TreeRightView");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
