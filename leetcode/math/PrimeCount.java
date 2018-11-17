@@ -28,7 +28,7 @@ public class PrimeCount {
     }
 
     // time complexity: O((N ^ 1.5) / log(N)), space complexity: O(N / log(N))
-    // beats 2.96%(310 ms)
+    // beats 8.72%(240 ms for 20 tests)
     public int countPrimes2(int n) {
         List<Integer> primes = new LinkedList<>();
         int count = 0;
@@ -51,7 +51,7 @@ public class PrimeCount {
     }
 
     // time complexity: O((N ^ 1.5) / log(N)), space complexity: O(N / log(N))
-    // beats 2.96%(304 ms)
+    // beats 9.93%(191 ms for 20 tests)
     public int countPrimes3(int n) {
         if (n < 3) return 0;
 
@@ -66,7 +66,7 @@ public class PrimeCount {
         return count;
     }
 
-    // sieve method(very slow due to set operations)
+    // Set + sieve method(very slow due to set operations)
     // time complexity: ?, space complexity: O(N)
     // Time Limit Exceeded
     public int countPrimes4(int n) {
@@ -89,7 +89,7 @@ public class PrimeCount {
 
     // sieve method
     // time complexity: O(N * log(log(N))), space complexity: O(N)
-    // beats 94.51%(21 ms for 20 tests)
+    // beats 97.09%(12 ms for 20 tests)
     public int countPrimes5(int n) {
         boolean[] isComposite = new boolean[n];
         int count = n - 1;
@@ -109,7 +109,7 @@ public class PrimeCount {
     // Solution of Choice
     // sieve method
     // time complexity: O(N * log(log(N))), space complexity: O(N)
-    // beats 98.29%(13 ms for 20 tests)
+    // beats 99.52%(8 ms for 20 tests)
     public int countPrimes6(int n) {
         if (n < 3) return 0;
 
@@ -130,7 +130,7 @@ public class PrimeCount {
 
     // sieve method
     // time complexity: O(N), space complexity: O(N)
-    // beats 71.80%(28 ms for 20 tests)
+    // beats 73.81%(16 ms for 20 tests)
     public int countPrimes7(int n) {
         boolean[] isComposite = new boolean[n];
         int count = 0;
@@ -138,39 +138,40 @@ public class PrimeCount {
             if (isComposite[i]) continue;
 
             count++;
-            for (int j = i; j < n; j += i) {
+            for (int j = i * 2; j < n; j += i) {
                 isComposite[j] = true;
             }
-       }
-       return count;
-   }
-
-    // sieve method
-    // time complexity: O(N), space complexity: O(N)
-    // beats 81.53%(26 ms for 20 tests)
-   public int countPrimes8(int n) {
-        boolean[] isComposite = new boolean[n];
-        int count = 0;
-        for (int i = 2; i < n; i++) {
-            if (isComposite[i]) continue;
-
-            count++;
-            for (int j = 2; i * j < n; j++) {
-                isComposite[i * j] = true;
-            }
-       }
-       return count;
+        }
+        return count;
     }
 
     // sieve method
     // time complexity: O(N), space complexity: O(N)
-    // beats 14.37%(56 ms)
+    // beats 59.53%(18 ms for 20 tests)
+    public int countPrimes8(int n) {
+        boolean[] isComposite = new boolean[n];
+        int count = 0;
+        for (int i = 2, max = (int)Math.sqrt(n); i < n; i++) {
+            if (isComposite[i]) continue;
+
+            count++;
+            if (i > max) continue;
+
+            for (int j = i * i; j < n; j += i) {
+                isComposite[j] = true;
+            }
+        }
+        return count;
+    }
+
+    // sieve method
+    // time complexity: O(N), space complexity: O(N)
+    // beats 38.09%(25 ms for 20 tests)
     // TODO: improvement
     public int countPrimes9(int n) {
         boolean[] isComposite = new boolean[n];
         int[] primes = new int[n]; // can be smaller
-        int primeCount = 0;
-        for (int i = 2; i < n; i++) {
+        for (int i = 2, primeCount = 0; i < n; i++) {
             if (!isComposite[i]) {
                 primes[primeCount++] = i;
             }
@@ -193,13 +194,11 @@ public class PrimeCount {
         return count;
     }
 
-    void test(Function<Integer, Integer> countPrimes, String name,
-              int n, int expected) {
+    void test(Function<Integer, Integer> countPrimes, String name, int n, int expected) {
         long t1 = System.nanoTime();
         assertEquals(expected, (int)countPrimes.apply(n));
         if (n > 1000) {
-            System.out.format("%s: %.3f ms\n", name,
-                              (System.nanoTime() - t1) * 1e-6);
+            System.out.format("%s: %.3f ms\n", name, (System.nanoTime() - t1) * 1e-6);
         }
     }
 
@@ -238,6 +237,7 @@ public class PrimeCount {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("PrimeCount");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
