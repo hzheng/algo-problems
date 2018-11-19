@@ -221,12 +221,50 @@ public class ShortestSuperstring {
         return buf.toString();
     }
 
+    // Dynamic Programming(Bottom-Up)
+    // time complexity: O(N ^ 2 * (2 ^ N + W), space complexity: O(N * 2 ^ N)
+    // beats %(499 ms for 72 tests)
+    public String shortestSuperstring5(String[] A) {
+        int n = A.length;
+        String[][] dp = new String[1 << n][n];
+        for (int i = 0; i < n; i++) {
+            dp[1 << i][i] = A[i];
+        }
+        for (int set = 1; set < 1 << n; set++) {
+            for (int i = 0; i < n; i++) {
+                if (set << ~i >= 0) continue;
+
+                for (int j = 0; j < n; j++) {
+                    if (set << ~j >= 0 || j == i) continue;
+
+                    for (int l = A[i].length(); l >= 0; l--) {
+                        if (dp[set ^ 1 << i][j].endsWith(A[i].substring(0, l))) {
+                            String cand = dp[set ^ 1 << i][j] + A[i].substring(l);
+                            if (dp[set][i] == null || dp[set][i].length() > cand.length()) {
+                                dp[set][i] = cand;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        String res = dp[dp.length - 1][0];
+        for (int i = 1; i < n; i++) {
+            if (dp[dp.length - 1][i].length() < res.length()) {
+                res = dp[dp.length - 1][i];
+            }
+        }
+        return res;
+    }
+
     void test(String[] A, String... expected) {
         ShortestSuperstring s = new ShortestSuperstring();
         test(A, s::shortestSuperstring, expected);
         test(A, s::shortestSuperstring2, expected);
         test(A, s::shortestSuperstring3, expected);
         test(A, s::shortestSuperstring4, expected);
+        test(A, s::shortestSuperstring5, expected);
     }
 
     void test(String[] A, Function<String[], String> fun, String... expected) {
