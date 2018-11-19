@@ -1,4 +1,7 @@
 import java.util.*;
+import java.util.stream.Stream;
+
+import java.util.function.Function;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -70,7 +73,7 @@ public class ShortestSuperstring {
             int max = -1;
             maxIndex = -1;
             for (int j = 0; j < n; j++) {
-                int subset = set & ~(1 << (n - 1 - j));
+                int subset = set & ~(1 << j);
                 if (subset == set) continue;
 
                 int cur = dp[subset][j] + overlap(A, j, prev, overlaps);
@@ -80,7 +83,7 @@ public class ShortestSuperstring {
                 }
             }
             stack.push(maxIndex);
-            set &= ~(1 << (n - 1 - maxIndex));
+            set &= ~(1 << maxIndex);
         }
         String res = A[stack.pop()];
         while (!stack.isEmpty()) {
@@ -95,7 +98,7 @@ public class ShortestSuperstring {
 
         int res = 0;
         for (int i = 0, n = A.length; i < n; i++) {
-            int mask = subset & ~(1 << (n - 1 - i));
+            int mask = subset & ~(1 << i);
             if (mask != subset) {
                 res = Math.max(res, maxOverlap(A, mask, i, dp, overlaps)
                                     + overlap(A, i, last, overlaps));
@@ -104,11 +107,9 @@ public class ShortestSuperstring {
         return dp[subset][last] = res;
     }
 
-    private int overlap(String str1, String str2) {
-        int len1 = str1.length();
-        int len2 = str2.length();
-        for (int len = Math.min(len1, len2), i = len; i > 0; i--) {
-            if (str1.endsWith(str2.substring(0, i))) return i;
+    private int overlap(String s1, String s2) {
+        for (int len = Math.min(s1.length(), s2.length()), i = len; i > 0; i--) {
+            if (s1.endsWith(s2.substring(0, i))) return i;
         }
         return 0;
     }
@@ -134,10 +135,10 @@ public class ShortestSuperstring {
         }
         for (int set = 0; set < dp.length; set++) {
             for (int i = 0; i < n; i++) {
-                if (((set >> (n - 1 - i)) & 1) != 0) continue;
+                if (((set >> i) & 1) != 0) continue;
 
                 for (int j = 0; j < n; j++) {
-                    int subset = set & ~(1 << (n - 1 - j));
+                    int subset = set & ~(1 << j);
                     if (subset == set) continue;
 
                     dp[set][i] = Math.max(dp[set][i], dp[subset][j] + overlap(A, j, i, overlaps));
@@ -147,15 +148,96 @@ public class ShortestSuperstring {
         return buildString(A, dp, overlaps);
     }
 
-    void test(String[] A, String expected) {
-        assertEquals(expected, shortestSuperstring(A));
-        assertEquals(expected, shortestSuperstring2(A));
-        assertEquals(expected, shortestSuperstring3(A));
+    // https://leetcode.com/problems/find-the-shortest-superstring/solution/
+    // Dynamic Programming(Bottom-Up)
+    // time complexity: O(N ^ 2 * (2 ^ N + W), space complexity: O(N * 2 ^ N)
+    // beats %(37 ms for 72 tests)
+    public String shortestSuperstring4(String[] A) {
+        int n = A.length;
+        int[][] overlaps = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i == j) continue;
+
+                int len = Math.min(A[i].length(), A[j].length());
+                for (int k = len; k >= 0; k--) {
+                    if (A[i].endsWith(A[j].substring(0, k))) {
+                        overlaps[i][j] = k;
+                        break;
+                    }
+                }
+            }
+        }
+        int[][] dp = new int[1 << n][n];
+        int[][] parent = new int[1 << n][n];
+        for (int set = 0; set < (1 << n); set++) {
+            Arrays.fill(parent[set], -1);
+            for (int i = 0; i < n; i++) {
+                if (((set >> i) & 1) == 0) continue;
+
+                int subset = set ^ (1 << i);
+                if (subset == 0) continue;
+
+                for (int j = 0; j < n; j++) {
+                    if (((subset >> j) & 1) == 0) continue;
+
+                    int val = dp[subset][j] + overlaps[j][i];
+                    if (val > dp[set][i]) {
+                        dp[set][i] = val;
+                        parent[set][i] = j;
+                    }
+                }
+            }
+        }
+        int[] perm = new int[n];
+        boolean[] visited = new boolean[n];
+        int p = 0; // the last element of perm
+        for (int i = 0; i < n; i++) {
+            if (dp[(1 << n) - 1][i] > dp[(1 << n) - 1][p]) {
+                p = i;
+            }
+        }
+        int index = 0;
+        for (int mask = (1 << n) - 1, p2; p != -1; mask ^= 1 << p, p = p2) {
+            perm[index++] = p;
+            visited[p] = true;
+            p2 = parent[mask][p];
+        }
+        for (int i = 0; i < index / 2; i++) { // reverse
+            int tmp = perm[i];
+            perm[i] = perm[index - 1 - i];
+            perm[index - 1 - i] = tmp;
+        }
+        for (int i = 0; i < n; i++) {
+            if (!visited[i]) {
+                perm[index++] = i;
+            }
+        }
+        StringBuilder buf = new StringBuilder(A[perm[0]]);
+        for (int i = 1; i < n; i++) {
+            int overlap = overlaps[perm[i - 1]][perm[i]];
+            buf.append(A[perm[i]].substring(overlap));
+        }
+        return buf.toString();
+    }
+
+    void test(String[] A, String... expected) {
+        ShortestSuperstring s = new ShortestSuperstring();
+        test(A, s::shortestSuperstring, expected);
+        test(A, s::shortestSuperstring2, expected);
+        test(A, s::shortestSuperstring3, expected);
+        test(A, s::shortestSuperstring4, expected);
+    }
+
+    void test(String[] A, Function<String[], String> fun, String... expected) {
+        String res = fun.apply(A);
+        assertTrue(Stream.of(expected).anyMatch(x -> x.equals(res)));
     }
 
     @Test
     public void test() {
-        // test(new String[] {"alex", "loves", "leetcode"}, "alexlovesleetcode");
+        test(new String[] {"alex", "loves", "leetcode"}, "alexlovesleetcode", "leetcodealexloves",
+             "leetcodelovesalex");
         test(new String[] {"ift", "efd", "dnete", "tef", "fdn"}, "iftefdnete");
         test(new String[] {"catg", "ctaagt", "gcta", "ttca", "atgcatc"}, "gctaagttcatgcatc");
         test(new String[] {"wmiy", "yarn", "rnnwc", "arnnw", "wcj"}, "wmiyarnnwcj");
