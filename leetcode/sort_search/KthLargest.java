@@ -61,7 +61,7 @@ public class KthLargest {
         int len = end - start + 1;
         int pivot = nums[findPivot(nums, start, end, len / 2 + 1)];
         int i = start;
-        for (int j = end; i < j; ) {
+        for (int j = end; i < j;) {
             for (; i < j && nums[i] < pivot; i++) {}
             for (; i < j && nums[j] > pivot; j--) {}
             if (i < j) {
@@ -91,7 +91,7 @@ public class KthLargest {
         return findPivot(nums, start, start + len / 5, len / 10 + 1);
     }
 
-    // Divide & Conquer(QuickSelect)
+    // Recursion + Divide & Conquer(QuickSelect)
     // https://en.wikipedia.org/wiki/Quickselect
     // average time complexity: O(N), space complexity: O(N)
     // beats 36.91%(41 ms for 31 tests)
@@ -102,7 +102,7 @@ public class KthLargest {
 
     private int quickSelect(int[] nums, int low, int high, int k) {
         int i = low;
-        for (int j = high, pivot = nums[high]; i < j; ) {
+        for (int j = high, pivot = nums[high]; i < j;) {
             if (nums[i++] > pivot) {
                 swap(nums, --i, --j);
             }
@@ -112,7 +112,7 @@ public class KthLargest {
         if (smallCount == k) return i;
 
         return (smallCount > k) ? quickSelect(nums, low, i - 1, k)
-               : quickSelect(nums, i + 1, high, k - smallCount);
+                                : quickSelect(nums, i + 1, high, k - smallCount);
     }
 
     // Solution of Choice
@@ -123,7 +123,7 @@ public class KthLargest {
     public int findKthLargest5(int[] nums, int k) {
         shuffle(nums);
         int index = nums.length - k;
-        for (int start = 0, end = nums.length - 1; ; ) {
+        for (int start = 0, end = nums.length - 1;;) {
             int pivot = partition(nums, start, end);
             if (pivot < index) {
                 start = pivot + 1;
@@ -135,7 +135,7 @@ public class KthLargest {
 
     private int partition(int[] nums, int start, int end) {
         int i = start;
-        for (int j = end, pivot = nums[end]; i < j; ) {
+        for (int j = end, pivot = nums[end]; i < j;) {
             if (nums[i++] > pivot) {
                 swap(nums, --i, --j);
             }
@@ -178,8 +178,7 @@ public class KthLargest {
     }
 
     public static void main(String[] args) {
-        String clazz =
-            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }

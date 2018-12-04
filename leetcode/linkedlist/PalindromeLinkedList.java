@@ -76,11 +76,32 @@ public class PalindromeLinkedList {
         return true;
     }
 
+    // Stack
+    // time complexity: O(N), space complexity: O(N)
+    // beats 29.22%(3 ms for 26 tests)
+    public boolean isPalindrome3_2(ListNode head) {
+        ListNode mid = head;
+        Stack<Integer> stack = new Stack<>();
+        for (ListNode p = head; p != null; p = p.next) {
+            stack.push(mid.val);
+            p = p.next;
+            mid = mid.next;
+            if (p == null) {
+                stack.pop();
+                break;
+            }
+        }
+        for (ListNode p = mid; p != null; p = p.next) {
+            if (stack.pop() != p.val) return false;
+        }
+        return true;
+    }
+
     // Recursion
     // time complexity: O(N), space complexity: O(N)
     // 12.51%(6 ms)
     public boolean isPalindrome4(ListNode head) {
-        return isPalindrome(new ListNode[]{head}, head);
+        return isPalindrome(new ListNode[] {head}, head);
     }
 
     private boolean isPalindrome(ListNode[] first, ListNode last) {
@@ -98,6 +119,7 @@ public class PalindromeLinkedList {
         assertEquals(expected, isPalindrome(list));
         assertEquals(expected, isPalindrome2(list));
         assertEquals(expected, isPalindrome3(list));
+        assertEquals(expected, isPalindrome3_2(list));
         assertEquals(expected, isPalindrome4(list));
     }
 
@@ -113,12 +135,13 @@ public class PalindromeLinkedList {
         test(new int[] {1, 2, 3, 4, 1}, false);
         test(new int[] {1, 2, 3, 2, 1}, true);
         test(new int[] {1, 2, 3, 3, 2, 1}, true);
-        test(new int[] {-16557, -8725, -29125, 28873, -21702, 15483, -28441,
-                        -17845, -4317, -10914, -10914, -4317, -17845, -28441,
-                        15483, -21702, 28873, -29125, -8725, -16557}, true);
+        test(new int[] {-16557, -8725, -29125, 28873, -21702, 15483, -28441, -17845, -4317, -10914,
+                        -10914, -4317, -17845, -28441, 15483, -21702, 28873, -29125, -8725, -16557},
+             true);
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("PalindromeLinkedList");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
