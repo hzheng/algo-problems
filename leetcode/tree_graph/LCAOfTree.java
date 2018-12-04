@@ -9,7 +9,8 @@ import common.TreeNode;
 //
 // Given a binary tree, find the lowest common ancestor of two nodes.
 public class LCAOfTree {
-    // beats 18.09%(16 ms)
+    // Stack
+    // beats 55.04%(8 ms for 31 tests)
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
         Stack<TreeNode> stack = new Stack<>();
         TreeNode cur = root;
@@ -39,15 +40,40 @@ public class LCAOfTree {
     }
 
     // Solution of Choice
-    // recursion
-    // https://discuss.leetcode.com/topic/18561/4-lines-c-java-python-ruby/51
-    // beats 99.14%(11 ms)
+    // Recursion
+    // beats 99.87%(6 ms for 31 tests)
     public TreeNode lowestCommonAncestor2(TreeNode root, TreeNode p, TreeNode q) {
         if (root == null || root == p || root == q) return root;
 
         TreeNode left = lowestCommonAncestor2(root.left, p, q);
         TreeNode right = lowestCommonAncestor2(root.right, p, q);
         return (left == null) ? right : ((right == null) ? left : root);
+    }
+
+    // Stack + Hash Table
+    // beats 9.26%(22 ms for 31 tests)
+    public TreeNode lowestCommonAncestor3(TreeNode root, TreeNode p, TreeNode q) {
+        Stack<TreeNode> stack = new Stack<>();
+        Map<TreeNode, TreeNode> parent = new HashMap<>();
+        parent.put(root, null);
+        stack.push(root);
+        while (!parent.containsKey(p) || !parent.containsKey(q)) {
+            TreeNode node = stack.pop();
+            if (node.left != null) {
+                parent.put(node.left, node);
+                stack.push(node.left);
+            }
+            if (node.right != null) {
+                parent.put(node.right, node);
+                stack.push(node.right);
+            }
+        }
+        Set<TreeNode> ancestors = new HashSet<>();
+        for (; p != null; p = parent.get(p)) {
+            ancestors.add(p);
+        }
+        for (; !ancestors.contains(q); q = parent.get(q)) {}
+        return q;
     }
 
     @FunctionalInterface
@@ -63,8 +89,8 @@ public class LCAOfTree {
         return (res != null) ? res : find(root.right, x);
     }
 
-    void test(Function<TreeNode, TreeNode, TreeNode, TreeNode> lca,
-              String s, int p, int q, int expected) {
+    void test(Function<TreeNode, TreeNode, TreeNode, TreeNode> lca, String s, int p, int q,
+              int expected) {
         TreeNode root = TreeNode.of(s);
         assertEquals(expected, lca.apply(root, find(root, p), find(root, q)).val);
     }
@@ -73,10 +99,12 @@ public class LCAOfTree {
         LCAOfTree l = new LCAOfTree();
         test(l::lowestCommonAncestor, s, p, q, expected);
         test(l::lowestCommonAncestor2, s, p, q, expected);
+        test(l::lowestCommonAncestor3, s, p, q, expected);
     }
 
     @Test
     public void test1() {
+        test("3,5,1,6,2,0,8,#,#,7,4", 5, 1, 3);
         test("37,-34,-48,#,-100,-100,48,#,#,#,#,-54,#,-71,-22,#,#,#,8", -71, 48, 48);
         test("9,-1,-4,10,3,#,#,#,5", 3, 5, -1);
         test("1,#,2,#,3", 1, 3, 1);
@@ -97,6 +125,7 @@ public class LCAOfTree {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("LCAOfTree");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

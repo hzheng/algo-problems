@@ -20,18 +20,17 @@ public class LCAOfBST {
     }
 
     // Solution of Choice
-    // beats 44.22%(10 ms)
+    // beats 88.57%(5 ms for 27 tests)
     // non-recursion
     public TreeNode lowestCommonAncestor2(TreeNode root, TreeNode p, TreeNode q) {
         int min = Math.min(p.val, q.val);
         int max = Math.max(p.val, q.val);
-        TreeNode n = root;
-        while (true) {
-            if (n.val < min) {
-                n = n.right;
-            } else if (n.val > max) {
-                n = n.left;
-            } else return n;
+        for (TreeNode cur = root; ;) {
+            if (cur.val < min) {
+                cur = cur.right;
+            } else if (cur.val > max) {
+                cur = cur.left;
+            } else return cur;
         }
     }
 
@@ -48,8 +47,8 @@ public class LCAOfBST {
         return (res != null) ? res : find(root.right, x);
     }
 
-    void test(Function<TreeNode, TreeNode, TreeNode, TreeNode> lca,
-              String s, int p, int q, int expected) {
+    void test(Function<TreeNode, TreeNode, TreeNode, TreeNode> lca, String s, int p, int q,
+              int expected) {
         TreeNode root = TreeNode.of(s);
         assertEquals(expected, lca.apply(root, find(root, p), find(root, q)).val);
     }
@@ -67,6 +66,7 @@ public class LCAOfBST {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("LCAOfBST");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
