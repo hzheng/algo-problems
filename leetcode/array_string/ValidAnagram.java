@@ -8,7 +8,8 @@ import static org.junit.Assert.*;
 // Given two strings s and t, determine if t is an anagram of s.
 // You may assume the string contains only lowercase alphabets.
 public class ValidAnagram {
-    // Solution of Choice
+    // Count
+    // time complexity: O(N), space complexity: O(1)
     // beats 91.83%(4 ms)
     public boolean isAnagram(String s, String t) {
         int[] counts = new int[26];
@@ -24,6 +25,8 @@ public class ValidAnagram {
         return true;
     }
 
+    // Sort
+    // time complexity: O(N * log(N)), space complexity: O(N)
     // beats 81.93%(6 ms)
     public boolean isAnagram2(String s, String t) {
         char[] cs1 = s.toCharArray();
@@ -39,7 +42,8 @@ public class ValidAnagram {
         return true;
     }
 
-    // from leetcode
+    // Count
+    // time complexity: O(N), space complexity: O(1)
     // beats 64.12%(7 ms)
     public boolean isAnagram3(String s, String t) {
         if (s.length() != t.length()) return false;
@@ -55,8 +59,10 @@ public class ValidAnagram {
         return true;
     }
 
-    // from leetcode
-    // beats 49.70%(8 ms)
+    // Solution of Choice
+    // Count
+    // time complexity: O(N), space complexity: O(1)
+    // beats 49.11%(8 ms for 34 tests)
     public boolean isAnagram4(String s, String t) {
         if (s.length() != t.length()) return false;
 
@@ -65,8 +71,7 @@ public class ValidAnagram {
             counts[s.charAt(i) - 'a']++;
         }
         for (int i = 0; i < t.length(); i++) {
-            counts[t.charAt(i) - 'a']--;
-            if (counts[t.charAt(i) - 'a'] < 0) return false;
+            if (--counts[t.charAt(i) - 'a'] < 0) return false;
         }
         return true;
     }
@@ -86,6 +91,7 @@ public class ValidAnagram {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("ValidAnagram");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

@@ -139,9 +139,11 @@ public class MatrixSearch2 {
     }
 
     // time complexity: O(M + N)
-    // beats 54.45%(13 ms)
+    // beats 21.86%(12 ms for 129 tests)
     public boolean searchMatrix3(int[][] matrix, int target) {
         int m = matrix.length;
+        if (m == 0) return false;
+
         int n = matrix[0].length;
         for (int i = m - 1, j = 0; i >= 0 && j < n; ) {
             if (target == matrix[i][j]) return true;
@@ -241,6 +243,7 @@ public class MatrixSearch2 {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("MatrixSearch2");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

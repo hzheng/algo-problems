@@ -71,7 +71,7 @@ public class ProductofArrayExceptSelf {
     }
 
     // time complexity: O(N), space complexity: O(1)
-    // beats 47.45%(2 ms)
+    // beats 39.04%(2 ms for 17 tests)
     public int[] productExceptSelf3(int[] nums) {
         int n = nums.length;
         int[] res = new int[n];
@@ -85,6 +85,7 @@ public class ProductofArrayExceptSelf {
         return res;
     }
 
+    // time complexity: O(N), space complexity: O(1)
     // beats 47.45%(2 ms)
     public int[] productExceptSelf4(int[] nums) {
         int n = nums.length;
@@ -118,20 +119,20 @@ public class ProductofArrayExceptSelf {
 
     // Solution of Choice
     // time complexity: O(N), space complexity: O(1)
-    // beats 10.73%(3 ms for 17 tests)
+    // beats 39.04%(2 ms for 17 tests)
     public int[] productExceptSelf6(int[] nums) {
         int n = nums.length;
         int[] res = new int[n];
         Arrays.fill(res, 1);
-        for (int i = 0, j = n - 1, leftProduct = 1, rightProduct = 1;
-             i < n; leftProduct *= nums[i++], rightProduct *= nums[j--]) {
+        for (int i = 0, j = n - 1, leftProduct = 1, rightProduct = 1; i < n;
+             leftProduct *= nums[i++], rightProduct *= nums[j--]) {
             res[i] *= leftProduct;
             res[j] *= rightProduct;
         }
         return res;
     }
 
-    void test(int[] nums, int ... expected) {
+    void test(int[] nums, int... expected) {
         assertArrayEquals(expected, productExceptSelf(nums));
         assertArrayEquals(expected, productExceptSelf2(nums));
         assertArrayEquals(expected, productExceptSelf3(nums));
@@ -148,6 +149,7 @@ public class ProductofArrayExceptSelf {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("ProductofArrayExceptSelf");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
