@@ -79,7 +79,7 @@ public class CountTriplets {
     // https://en.wikipedia.org/wiki/Fast_Walsh%E2%80%93Hadamard_transform
     // time complexity: O(32 * 2 ^ 16 + N), space complexity: O(2 ^ 16)
     // 34 ms(98.02%), 21.2 MB(100.00%) for 25 tests
-    public int countTriplets5(int[] A) {
+    public int countTriplets4(int[] A) {
         int n = 1 << 16;
         int[] dp = new int[n];
         for (int a : A) {
@@ -115,7 +115,7 @@ public class CountTriplets {
     // Fast Walsh–Hadamard transform
     // time complexity: O(32 * 2 ^ 16 + N), space complexity: O(2 ^ 16)
     // 57 ms(90.23%), 21.2 MB(100.00%) for 25 tests
-    public int countTriplets4(int[] A) {
+    public int countTriplets5(int[] A) {
         int n = 1 << 16;
         int[] dp = new int[n];
         for (int a : A) {
@@ -139,12 +139,30 @@ public class CountTriplets {
         }
     }
 
+    // Bit Manipulation
+    // time complexity: O(N * 2 ^ 16), space complexity: O(1)
+    // 88 ms(86.60%), 25.8 MB(100.00%) for 25 tests
+    public int countTriplets6(int[] A) {
+        int res = 0;
+        for (int i = (1 << 16) - 1; i >= 0; i--) {
+            int count = 0;
+            for (int a : A) {
+                if ((a & i) == i) {
+                    count++;
+                }
+            }
+            res += ((Integer.bitCount(i) & 1) == 0 ? 1 : -1) * count * count * count;
+        }
+        return res;
+    }
+
     void test(int[] A, int expected) {
         assertEquals(expected, countTriplets(A));
         assertEquals(expected, countTriplets2(A));
         assertEquals(expected, countTriplets3(A));
         assertEquals(expected, countTriplets4(A));
         assertEquals(expected, countTriplets5(A));
+        assertEquals(expected, countTriplets6(A));
     }
 
     @Test
