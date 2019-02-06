@@ -112,6 +112,7 @@ public class CountTriplets {
         }
     }
 
+    // Principle of Inclusion and Exclusion
     // Fast Walsh–Hadamard transform
     // time complexity: O(32 * 2 ^ 16 + N), space complexity: O(2 ^ 16)
     // 57 ms(90.23%), 21.2 MB(100.00%) for 25 tests
@@ -122,9 +123,12 @@ public class CountTriplets {
             dp[a]++;
         }
         fwht(dp, 1);
+        // int res = 0;
         for (int i = 0; i < n; i++) {
             dp[i] *= dp[i] * dp[i];
+            // or: res += dp[i] * (Integer.bitCount(i) % 2 == 0? 1 : -1);
         }
+        // or: return res;
         fwht(dp, -1);
         return dp[0];
     }
@@ -139,7 +143,7 @@ public class CountTriplets {
         }
     }
 
-    // Bit Manipulation
+    // Principle of Inclusion and Exclusion
     // time complexity: O(N * 2 ^ 16), space complexity: O(1)
     // 88 ms(86.60%), 25.8 MB(100.00%) for 25 tests
     public int countTriplets6(int[] A) {
