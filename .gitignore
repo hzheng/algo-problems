@@ -3,6 +3,7 @@ tmp
 .tags
 
 *.class
+*.out
 
 out
 bin
