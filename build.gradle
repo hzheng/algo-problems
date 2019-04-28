@@ -20,10 +20,13 @@ sourceSets {
                 file('leetcode').listFiles().findAll { it.isDirectory() && it.name != 'tmp' }
             }
             srcDir {
-                file('ctci').listFiles().findAll { it.isDirectory() && it.name != 'tmp' }
+                file('poj').listFiles().findAll { it.isDirectory() && it.name != 'tmp' }
             }
             srcDir {
-                file('poj').listFiles().findAll { it.isDirectory() && it.name != 'tmp' }
+                file('usaco').listFiles().findAll { it.isDirectory() && it.name != 'tmp' }
+            }
+            srcDir {
+                file('ctci').listFiles().findAll { it.isDirectory() && it.name != 'tmp' }
             }
             srcDir {
                 file('other').listFiles().findAll { it.isDirectory() && it.name != 'tmp' }
