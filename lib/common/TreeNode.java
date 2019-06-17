@@ -20,6 +20,9 @@ public class TreeNode {
     }
 
     public static TreeNode of(String s) {
+        if (s == null) {
+            return null;
+        }
         List<Integer> vals = new ArrayList<>();
         for (String v : s.split(",")) {
             vals.add(v.equals("#") ? null : Integer.parseInt(v));
