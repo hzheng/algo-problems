@@ -205,8 +205,7 @@ public class RemoveDuplicateLetters {
         return minLastPos;
     }
 
-    // Solution of Choice
-    // Hash Table
+    // Monotonic Stack
     // https://discuss.leetcode.com/topic/32172/c-simple-solution-easy-understanding/
     // beats 95.04%(4 ms for 286 tests)
     public String removeDuplicateLetters6(String s) {
@@ -234,6 +233,34 @@ public class RemoveDuplicateLetters {
         return sb.substring(1);
     }
 
+    // Solution of Choice
+    // Monotonic Stack
+    // beats 74.24%(3 ms for 286 tests)
+    public String removeDuplicateLetters7(String s) {
+        int[] last = new int[26];
+        for (int i = 0; i < s.length(); i++) {
+            last[s.charAt(i) - 'a'] = i;
+        }
+        Stack<Integer> stack = new Stack<>();
+        boolean[] chosen = new boolean[26];
+        for (int i = 0; i < s.length(); i++) {
+            int c = s.charAt(i) - 'a';
+            if (chosen[c]) {
+                continue;
+            }
+            while (!stack.isEmpty() && stack.peek() > c && i < last[stack.peek()]) {
+                chosen[stack.pop()] = false;
+            }
+            stack.push(c);
+            chosen[c] = true;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i : stack) {
+            sb.append((char)('a' + i));
+        }
+        return sb.toString();
+    }
+
     void test(Function<String, String> remove, String name,
               String s, String expected) {
         long t1 = System.nanoTime();
@@ -253,6 +280,7 @@ public class RemoveDuplicateLetters {
         test(r::removeDuplicateLetters4, "removeDuplicateLetters4", s, expected);
         test(r::removeDuplicateLetters5, "removeDuplicateLetters5", s, expected);
         test(r::removeDuplicateLetters6, "removeDuplicateLetters6", s, expected);
+        test(r::removeDuplicateLetters7, "removeDuplicateLetters7", s, expected);
     }
 
     @Test
@@ -267,6 +295,7 @@ public class RemoveDuplicateLetters {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("RemoveDuplicateLetters");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
