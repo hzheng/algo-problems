@@ -3,6 +3,7 @@ import java.util.*;
 import java.util.function.Function;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 // LC131: https://leetcode.com/problems/palindrome-partitioning/
@@ -11,7 +12,7 @@ import static org.junit.Assert.*;
 // palindrome. Return all possible palindrome partitioning of s.
 public class PalindromePartition {
     // beats 21.86%(9 ms)
-    public List<List<String> > partition(String s) {
+    public List<List<String>> partition(String s) {
         int len = s.length();
         char[] chars = s.toCharArray();
         Boolean[][] table = new Boolean[len][len];
@@ -24,9 +25,9 @@ public class PalindromePartition {
         return partition(chars, 0, len - 1, table);
     }
 
-    private List<List<String> > partition(char[] chars, int start, int end,
-                                          Boolean[][] table) {
-        List<List<String> > partitions = new LinkedList<>();
+    private List<List<String>> partition(char[] chars, int start, int end,
+                                         Boolean[][] table) {
+        List<List<String>> partitions = new LinkedList<>();
         if (start >= end) {
             List<String> list = new LinkedList<>();
             if (start == end) {
@@ -42,7 +43,7 @@ public class PalindromePartition {
                 for (List<String> list : partition(chars, i + 1, end, table)) {
                     list.add(0, first);
                     partitions.add(list);
-                };
+                }
             }
         }
         return partitions;
@@ -50,7 +51,7 @@ public class PalindromePartition {
 
     // Backtracking
     // beats 59.09%(7 ms)
-    public List<List<String> > partition2(String s) {
+    public List<List<String>> partition2(String s) {
         int len = s.length();
         char[] chars = s.toCharArray();
         Boolean[][] table = new Boolean[len][len];
@@ -61,13 +62,13 @@ public class PalindromePartition {
             }
         }
 
-        List<List<String> > res = new ArrayList<>();
+        List<List<String>> res = new ArrayList<>();
         partition2(s, 0, len, new ArrayList<>(), res, table);
         return res;
     }
 
     private void partition2(String s, int start, int end, List<String> partition,
-                            List<List<String> > res, Boolean[][] table) {
+                            List<List<String>> res, Boolean[][] table) {
         if (start == end) {
             res.add(new ArrayList<>(partition));
             return;
@@ -98,7 +99,7 @@ public class PalindromePartition {
 
     // Backtracking
     // beats 68.05%(6 ms)
-    public List<List<String> > partition3(String s) {
+    public List<List<String>> partition3(String s) {
         List<List<String>> res = new ArrayList<>();
         partition3(s, 0, new ArrayList<>(), res);
         return res;
@@ -132,30 +133,30 @@ public class PalindromePartition {
     public List<List<String>> partition4(String s) {
         int len = s.length();
         @SuppressWarnings("unchecked")
-		List<List<String>>[] res = new List[len + 1];
-		res[0] = new ArrayList<>();
-		res[0].add(new ArrayList<>());
-		boolean[][] dp = new boolean[len][len];
+        List<List<String>>[] res = new List[len + 1];
+        res[0] = new ArrayList<>();
+        res[0].add(new ArrayList<>());
+        boolean[][] dp = new boolean[len][len];
         char[] cs = s.toCharArray();
-		for (int i = 0; i < len; i++) {
-			res[i + 1] = new ArrayList<>();
-			for (int j = 0; j <= i; j++) {
-				if (cs[j] == cs[i] && (i - j <= 1 || dp[j + 1][i - 1])) {
-					dp[j][i] = true;
-					String substr = s.substring(j, i + 1);
-					for (List<String> list : res[j]) {
-						List<String> cloned = new ArrayList<>(list);
-						cloned.add(substr);
-						res[i + 1].add(cloned);
-					}
-				}
-			}
-		}
-		return res[len];
-	}
+        for (int i = 0; i < len; i++) {
+            res[i + 1] = new ArrayList<>();
+            for (int j = 0; j <= i; j++) {
+                if (cs[j] == cs[i] && (i - j <= 1 || dp[j + 1][i - 1])) {
+                    dp[j][i] = true;
+                    String substr = s.substring(j, i + 1);
+                    for (List<String> list : res[j]) {
+                        List<String> cloned = new ArrayList<>(list);
+                        cloned.add(substr);
+                        res[i + 1].add(cloned);
+                    }
+                }
+            }
+        }
+        return res[len];
+    }
 
-// LC132: https://leetcode.com/problems/palindrome-partitioning-ii/
-// Return the minimum cuts needed for a palindrome partitioning of s.
+    // LC132: https://leetcode.com/problems/palindrome-partitioning-ii/
+    // Return the minimum cuts needed for a palindrome partitioning of s.
 
     // Time Limit Exceeded
     public int minCut(String s) {
@@ -196,7 +197,7 @@ public class PalindromePartition {
                 } else {
                     m = minCut(chars, i + 1, end, table, cache);
                 }
-                min =  Math.min(min, m);
+                min = Math.min(min, m);
             }
         }
         cache.put(key, ++min);
@@ -329,7 +330,7 @@ public class PalindromePartition {
     }
 
     // Solution of Choice
-    // BFS
+    // BFS + Queue
     // beats 97.34%(10 ms)
     public int minCut6(String s) {
         int len = s.length();
@@ -355,7 +356,7 @@ public class PalindromePartition {
         Arrays.sort(lists, (a, b) -> {
             int len = Math.min(a.length, b.length);
             int i = 0;
-            for (; i < len && (a[i].equals(b[i])); i++);
+            for (; i < len && (a[i].equals(b[i])); i++) {}
             return (i == len) ? (a.length - b.length) : a[i].compareTo(b[i]);
         });
         return lists;
@@ -363,10 +364,9 @@ public class PalindromePartition {
 
     void test(Function<String, List<List<String>>> partition,
               String s, String[][] expected) {
-        List<List<String> > res = partition.apply(s);
-        // System.out.println(res);
+        List<List<String>> res = partition.apply(s);
         String[][] resArray = res.stream().map(
-            a -> a.toArray(new String[0])).toArray(String[][]::new);
+                a -> a.toArray(new String[0])).toArray(String[][]::new);
         resArray = sort(resArray);
         expected = sort(expected);
         assertArrayEquals(expected, resArray);
@@ -382,11 +382,11 @@ public class PalindromePartition {
 
     @Test
     public void test1() {
-        test("aab", new String[][] {{"a", "a", "b"}, {"aa", "b"}});
-        test("aababa", new String[][] {
-            {"a", "a", "b", "a", "b", "a"}, {"a", "a", "b", "aba"},
-            {"a", "a", "bab", "a"}, {"a", "aba", "b", "a"}, {"a", "ababa"},
-            {"aa", "b", "a", "b", "a"}, {"aa", "b", "aba"}, {"aa", "bab", "a"}
+        test("aab", new String[][]{{"a", "a", "b"}, {"aa", "b"}});
+        test("aababa", new String[][]{
+                {"a", "a", "b", "a", "b", "a"}, {"a", "a", "b", "aba"},
+                {"a", "a", "bab", "a"}, {"a", "aba", "b", "a"}, {"a", "ababa"},
+                {"aa", "b", "a", "b", "a"}, {"aa", "b", "aba"}, {"aa", "bab", "a"}
         });
     }
 
@@ -443,6 +443,7 @@ public class PalindromePartition {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("PalindromePartition");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

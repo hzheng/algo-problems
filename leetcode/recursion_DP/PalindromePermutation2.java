@@ -1,6 +1,7 @@
 import java.util.*;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 // LC267: https://leetcode.com/problems/palindrome-permutation-ii/
@@ -23,7 +24,6 @@ public class PalindromePermutation2 {
                 oddChar = (char)i;
             }
         }
-        List<String> res = new ArrayList<>();
         int len = s.length();
         char[] word = new char[len / 2];
         for (int i = 0, k = 0; i < count.length; i++) {
@@ -33,6 +33,7 @@ public class PalindromePermutation2 {
         }
         char[] buf = new char[len];
         buf[len / 2] = oddChar;
+        List<String> res = new ArrayList<>();
         dfs(word, 0, new boolean[len / 2], buf, res);
         return res;
     }
@@ -107,13 +108,14 @@ public class PalindromePermutation2 {
 
     @Test
     public void test() {
-        test("abc", new String[] {});
-        test("aabb", new String[] {"abba", "baab"});
+        test("abc", new String[]{});
+        test("aabb", new String[]{"abba", "baab"});
         test("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-             new String[] {"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"});
+             new String[]{"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"});
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("PalindromePermutation2");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
