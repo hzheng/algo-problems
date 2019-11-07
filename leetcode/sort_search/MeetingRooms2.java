@@ -58,11 +58,7 @@ public class MeetingRooms2 {
     // time complexity: O(N * log(N)), space complexity: O(N)
     // beats ?%(? ms for 77 tests)
     public int minMeetingRooms3(Interval[] intervals) {
-        Arrays.sort(intervals, new Comparator<Interval>() {
-            public int compare(Interval a, Interval b) {
-                return a.end - b.end;
-            }
-        });
+        Arrays.sort(intervals, Comparator.comparingInt(a -> a.end));
         int res = 0;
         for (int i = 0, j = 0; i < intervals.length; i++) {
             if (intervals[i].start < intervals[j].end) {
@@ -133,6 +129,7 @@ public class MeetingRooms2 {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("MeetingRooms2");
+        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
