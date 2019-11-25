@@ -111,12 +111,12 @@ public class NumWays {
 
     @Test
     public void test() {
-        //        test(2, 2, 2);
-        //        test(3, 2, 4);
-        //        test(2, 4, 2);
-        //        test(5, 8, 21);
-        //        test(12, 10, 15511);
-        //        test(16, 13, 853467);
+        test(2, 2, 2);
+        test(3, 2, 4);
+        test(2, 4, 2);
+        test(5, 8, 21);
+        test(12, 10, 15511);
+        test(16, 13, 853467);
         test(17, 5, 2226219);
         test(27, 7, 127784505);
     }

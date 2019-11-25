@@ -1,7 +1,9 @@
 import java.util.*;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
+
 import java.util.function.Function;
 
 // LC200: https://leetcode.com/problems/number-of-islands/
@@ -12,6 +14,7 @@ import java.util.function.Function;
 // the grid are all surrounded by water.
 public class IslandNumber {
     private static final char LAND = '1';
+    private static final char WATER = '0';
     private static final char MARK = ' ';
     private static final int[][] MOVES = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
 
@@ -21,7 +24,7 @@ public class IslandNumber {
     // beats 25.69%(8 ms for 47 tests)
     public int numIslands(char[][] grid) {
         int nRow = grid.length;
-        if (nRow == 0) return 0;
+        if (nRow == 0) { return 0; }
 
         int nCol = grid[0].length;
         int islands = 0;
@@ -46,7 +49,7 @@ public class IslandNumber {
 
     private void markIsland(char[][] grid, int nRow, int nCol, int startX, int startY) {
         Queue<int[]> island = new LinkedList<>();
-        island.offer(new int[] {startX, startY});
+        island.offer(new int[]{startX, startY});
         grid[startX][startY] = MARK;
         while (!island.isEmpty()) {
             int[] pos = island.poll();
@@ -54,7 +57,7 @@ public class IslandNumber {
                 int x = pos[0] + dir[0];
                 int y = pos[1] + dir[1];
                 if (x >= 0 && y >= 0 && x < nRow && y < nCol && grid[x][y] == LAND) {
-                    island.offer(new int[] {x, y});
+                    island.offer(new int[]{x, y});
                     grid[x][y] = MARK;
                 }
             }
@@ -66,7 +69,7 @@ public class IslandNumber {
     // beats 33.18%(7 ms for 47 tests)
     public int numIslands2(char[][] grid) {
         int nRow = grid.length;
-        if (nRow == 0) return 0;
+        if (nRow == 0) { return 0; }
 
         int nCol = grid[0].length;
         int islands = 0;
@@ -100,7 +103,7 @@ public class IslandNumber {
         int islands = 0;
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
-                if (grid[i][j] == '1') {
+                if (grid[i][j] == LAND) {
                     islands++;
                     dfs(grid, i, j);
                 }
@@ -110,9 +113,11 @@ public class IslandNumber {
     }
 
     private void dfs(char[][] grid, int i, int j) {
-        if (i < 0 || j < 0 || i >= grid.length || j >= grid[i].length || grid[i][j] == '0') return;
+        if (i < 0 || j < 0 || i >= grid.length || j >= grid[i].length || grid[i][j] == WATER) {
+            return;
+        }
 
-        grid[i][j] = '0';
+        grid[i][j] = WATER;
         dfs(grid, i + 1, j);
         dfs(grid, i - 1, j);
         dfs(grid, i, j + 1);
@@ -124,14 +129,14 @@ public class IslandNumber {
     // beats 33.18%(7 ms for 47 tests)
     public int numIslands3(char[][] grid) {
         int nRow = grid.length;
-        if (nRow == 0) return 0;
+        if (nRow == 0) { return 0; }
 
         int nCol = grid[0].length;
         int[] root = new int[nRow * nCol];
         int islands = 0;
         for (int i = 0; i < nRow; i++) {
             for (int j = 0; j < nCol; j++) {
-                if (grid[i][j] == '1') {
+                if (grid[i][j] == LAND) {
                     root[i * nCol + j] = i * nCol + j;
                     islands++;
                 }
@@ -139,12 +144,12 @@ public class IslandNumber {
         }
         for (int i = 0; i < nRow; i++) {
             for (int j = 0; j < nCol; j++) {
-                if (grid[i][j] != '1') continue;
+                if (grid[i][j] != LAND) { continue; }
 
                 for (int[] move : MOVES) {
                     int x = i + move[0];
                     int y = j + move[1];
-                    if (x >= 0 && x < nRow && y >= 0 && y < nCol && grid[x][y] == '1') {
+                    if (x >= 0 && x < nRow && y >= 0 && y < nCol && grid[x][y] == LAND) {
                         int root1 = getRoot(root, i * nCol + j);
                         int root2 = getRoot(root, x * nCol + y);
                         if (root1 != root2) {
@@ -169,7 +174,7 @@ public class IslandNumber {
     // beats 33.18%(7 ms for 47 tests)
     public int numIslands4(char[][] grid) {
         int m = grid.length;
-        if (m == 0) return 0;
+        if (m == 0) { return 0; }
 
         int n = grid[0].length;
         int[] id = new int[m * n];
@@ -177,13 +182,13 @@ public class IslandNumber {
         int islands = 0;
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
-                if (grid[i][j] == '0') continue;
+                if (grid[i][j] == WATER) { continue; }
 
                 islands++;
                 for (int[] move : MOVES) {
                     int x = i + move[0];
                     int y = j + move[1];
-                    if (x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == '1') {
+                    if (x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == LAND) {
                         islands -= union(id, i * n + j, x * n + y) ? 1 : 0;
                     }
                 }
@@ -201,7 +206,7 @@ public class IslandNumber {
     private boolean union(int[] id, int x, int y) {
         int px = parent(id, x);
         int py = parent(id, y);
-        if (px == py) return false;
+        if (px == py) { return false; }
 
         if (id[py] < id[px]) {
             int tmp = px;
