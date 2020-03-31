@@ -31,19 +31,17 @@ public class ValidateBinaryTreeNodes {
         boolean[] visited = new boolean[n];
         Queue<Integer> queue = new LinkedList<>();
         for (queue.offer(root); !queue.isEmpty(); ) {
-            for (int i = queue.size(); i > 0; i--) {
-                int cur = queue.poll();
-                if (visited[cur]) return false;
+            int cur = queue.poll();
+            if (visited[cur]) return false;
 
-                visited[cur] = true;
-                int left = leftChild[cur];
-                if (left >= 0) {
-                    queue.offer(left);
-                }
-                int right = rightChild[cur];
-                if (right >= 0) {
-                    queue.offer(right);
-                }
+            visited[cur] = true;
+            int left = leftChild[cur];
+            if (left >= 0) {
+                queue.offer(left);
+            }
+            int right = rightChild[cur];
+            if (right >= 0) {
+                queue.offer(right);
             }
         }
         for (boolean v : visited) {
@@ -73,10 +71,32 @@ public class ValidateBinaryTreeNodes {
         return linked.size() == n - 1;
     }
 
+    // Set
+    // time complexity: O(N), space complexity: O(N)
+    // 12 ms(22.57%), 41.5 MB(100%) for 33 tests
+    public boolean validateBinaryTreeNodes3(int n, int[] leftChild, int[] rightChild) {
+        if (n == 1) return true;
+
+        Set<Integer> nodes = IntStream.range(0, n).boxed().collect(Collectors.toCollection(HashSet::new));
+        int[] inDegree = new int[n];
+        for (int i = 0; i < n; i++) {
+            for (int child : new int[]{leftChild[i], rightChild[i]}) {
+                if (child < 0) continue;
+                if (++inDegree[child] > 1) return false;
+
+                nodes.remove(child);
+            }
+        }
+        if (nodes.size() != 1) return false;
+
+        int root = nodes.iterator().next(); // check for cycle
+        return (leftChild[root] >= 0) || (rightChild[root] >= 0); // shouldn't be single root
+    }
+
     // Union Find
     // time complexity: O(N), space complexity: O(N)
     // 2 ms(87.97%), 41.5 MB(100%) for 33 tests
-    public boolean validateBinaryTreeNodes3(int n, int[] leftChild, int[] rightChild) {
+    public boolean validateBinaryTreeNodes4(int n, int[] leftChild, int[] rightChild) {
         int[] parent = new int[n];
         Arrays.fill(parent, -1);
         for (int i = n - 1; i >= 0; i--) {
@@ -101,28 +121,6 @@ public class ValidateBinaryTreeNodes {
             }
         }
         return (root >= 0) && (n == 1 || leftChild[root] >= 0 || rightChild[root] >= 0);
-    }
-
-    // Set
-    // time complexity: O(N), space complexity: O(N)
-    // 12 ms(22.57%), 41.5 MB(100%) for 33 tests
-    public boolean validateBinaryTreeNodes4(int n, int[] leftChild, int[] rightChild) {
-        if (n == 1) return true;
-
-        Set<Integer> nodes = IntStream.range(0, n).boxed().collect(Collectors.toCollection(HashSet::new));
-        int[] inDegree = new int[n];
-        for (int i = 0; i < n; i++) {
-            for (int child : new int[]{leftChild[i], rightChild[i]}) {
-                if (child < 0) continue;
-                if (++inDegree[child] > 1) return false;
-
-                nodes.remove(child);
-            }
-        }
-        if (nodes.size() != 1) return false;
-
-        int root = nodes.iterator().next(); // check for cycle
-        return (leftChild[root] >= 0) || (rightChild[root] >= 0); // shouldn't be single root
     }
 
     private void test(int n, int[] leftChild, int[] rightChild, boolean expected) {
