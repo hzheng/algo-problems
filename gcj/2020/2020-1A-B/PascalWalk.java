@@ -141,17 +141,17 @@ public class PascalWalk {
         boolean leftToRight = true;
         for (int num = target - BASE; num > 0; row++, num >>= 1) {
             if ((num & 1) == 0) { // 0-bit
-                res.add(new int[] {row, leftToRight ? 1 : row});
+                res.add(new int[]{row, leftToRight ? 1 : row});
                 remaining--;
             } else { // 1-bit (sum of each row is 2^row)
-               for (int i = 1; i <= row; i++) {
-                   res.add(new int[] {row, leftToRight ? i : (row - i + 1)});
-               }
-               leftToRight ^= true; // change direction
+                for (int i = 1; i <= row; i++) {
+                    res.add(new int[]{row, leftToRight ? i : (row - i + 1)});
+                }
+                leftToRight ^= true; // change direction
             }
         }
         for (int i = row; remaining > 0; remaining--, i++) {
-            res.add(new int[] {i, leftToRight ? 1 : i});
+            res.add(new int[]{i, leftToRight ? 1 : i});
         }
         return res;
     }
