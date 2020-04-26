@@ -1,6 +1,7 @@
 import java.util.*;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 // LC239: https://leetcode.com/problems/sliding-window-maximum/
@@ -8,6 +9,12 @@ import static org.junit.Assert.*;
 // Given an array nums, there is a sliding window of size k which is moving from
 // the very left of the array to the very right. You can only see the k numbers
 // in the window. Each time the sliding window moves right by one position.
+// Return the max sliding window.
+// Constraints:
+//
+// 1 <= nums.length <= 10^5
+// -10^4 <= nums[i] <= 10^4
+// 1 <= k <= nums.length
 public class MaxSlidingWindow {
     // Deque
     // time complexity: O(N), space complexity: O(K)
@@ -66,7 +73,7 @@ public class MaxSlidingWindow {
     }
 
     // Solution of Choice
-    // Deque
+    // Deque (monoqueue)
     // almost same as above except for saving max index instead of value
     // time complexity: O(N), space complexity: O(K)
     // beats 74.33%(12 ms for 18 tests)
@@ -111,7 +118,7 @@ public class MaxSlidingWindow {
     }
 
     // Solution of Choice
-    // Dynamic Programming
+    // Dynamic Programming (double cyclic sliding windows)
     // https://discuss.leetcode.com/topic/26480/o-n-solution-in-java-with-two-simple-pass-in-the-array/2
     // time complexity: O(N), space complexity: O(N)
     // beats 95.00%(13 ms for 18 tests)
@@ -169,13 +176,13 @@ public class MaxSlidingWindow {
 
     @Test
     public void test1() {
-        test(new int[] {}, 0, new int[] {});
-        test(new int[] {1, -1}, 1, new int[] {1, -1});
-        test(new int[] {1, 3, 1, 2, 0, 5}, 3, new int[] {3, 3, 2, 5});
-        test(new int[] {1, 3, -1, -3, 5, 3, 6, 7}, 3, new int[] {3, 3, 5, 5, 6, 7});
-        test(new int[] {3, 2, 1, -3, 5, 3, 6, 7}, 3, new int[] {3, 2, 5, 5, 6, 7});
-        test(new int[] {4, 5, 8, -1, 9, 10, 12, 18, 11, 0, -3, 6}, 4,
-             new int[] {8, 9, 10, 12, 18, 18, 18, 18, 11});
+        test(new int[]{}, 0, new int[]{});
+        test(new int[]{1, -1}, 1, new int[]{1, -1});
+        test(new int[]{1, 3, 1, 2, 0, 5}, 3, new int[]{3, 3, 2, 5});
+        test(new int[]{1, 3, -1, -3, 5, 3, 6, 7}, 3, new int[]{3, 3, 5, 5, 6, 7});
+        test(new int[]{3, 2, 1, -3, 5, 3, 6, 7}, 3, new int[]{3, 2, 5, 5, 6, 7});
+        test(new int[]{4, 5, 8, -1, 9, 10, 12, 18, 11, 0, -3, 6}, 4,
+                new int[]{8, 9, 10, 12, 18, 18, 18, 18, 11});
     }
 
     public static void main(String[] args) {
