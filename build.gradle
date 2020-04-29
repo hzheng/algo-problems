@@ -19,6 +19,9 @@ sourceSets {
             srcDir { 
                 file('leetcode').listFiles().findAll { it.isDirectory() && it.name != 'tmp' }
             }
+            srcDir { 
+                file('hackerrank').listFiles().findAll { it.isDirectory() && it.name != 'tmp' }
+            }
             srcDir {
                 file('poj').listFiles().findAll { it.isDirectory() && it.name != 'tmp' }
             }
