@@ -14,26 +14,20 @@ public class KSmallestPairs {
     // time complexity: O(min(M, K) * min(N, K) * log(K)), space complexity: O(K)
     // beats 50.03%(11 ms for 27 tests)
     public List<int[]> kSmallestPairs(int[] nums1, int[] nums2, int k) {
-        PriorityQueue<int[]> pq = new PriorityQueue<>(new Comparator<int[]>() {
-            public int compare(int[] a, int[] b) {
-                return b[0] + b[1] - a[0] - a[1];
-            }
-        });
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> b[0] + b[1] - a[0] - a[1]);
         int n1 = Math.min(nums1.length, k);
         int n2 = Math.min(nums2.length, k);
         for (int i = 0; i < n1; i++) {
             for (int j = 0; j < n2; j++) {
                 int[] pair = {nums1[i], nums2[j]};
-                if (pq.size() < k) {
-                    pq.offer(pair);
-                } else {
+                if (pq.size() >= k) {
                     int[] topPair = pq.peek();
                     // early break improves performance
-                    if (topPair[0] + topPair[1] <= pair[0] + pair[1]) break;
+                    if (topPair[0] + topPair[1] <= pair[0] + pair[1]) { break; }
 
                     pq.poll();
-                    pq.offer(pair);
                 }
+                pq.offer(pair);
             }
         }
         return new ArrayList<>(pq);
@@ -44,20 +38,16 @@ public class KSmallestPairs {
     // time complexity: O(K * log(K)), space complexity: O(K)
     // beats 93.01%(4 ms for 27 tests)
     public List<int[]> kSmallestPairs2(int[] nums1, int[] nums2, int k) {
-        PriorityQueue<int[]> pq = new PriorityQueue<>(new Comparator<int[]>() {
-            public int compare(int[] a, int[] b) {
-                return a[0] + a[1] - b[0] - b[1];
-            }
-        });
         List<int[]> res = new ArrayList<>();
         int n1 = Math.min(nums1.length, k);
         int n2 = Math.min(nums2.length, k);
         if (n1 == 0 || n2 == 0) return res;
 
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[0] + a[1] - b[0] - b[1]);
         for (int i = 0; i < n1; i++) {
             pq.offer(new int[] {nums1[i], nums2[0], 0});
         }
-        while (k-- > 0 && !pq.isEmpty()) {
+        for (int i = k; i > 0 && !pq.isEmpty(); i--) {
             int[] cur = pq.poll();
             res.add(new int[] {cur[0], cur[1]});
             if (++cur[2] < n2) {
@@ -72,11 +62,8 @@ public class KSmallestPairs {
     // time complexity: O(K * log(min(N, K)), space complexity: O(K)
     // beats 64.78%(8 ms for 27 tests)
     public List<int[]> kSmallestPairs3(int[] nums1, int[] nums2, int k) {
-        PriorityQueue<int[]> pq = new PriorityQueue<>(new Comparator<int[]>() {
-            public int compare(int[] a, int[] b) {
-                return nums1[a[0]] + nums2[a[1]] - nums1[b[0]] - nums2[b[1]];
-            }
-        });
+        PriorityQueue<int[]> pq = new PriorityQueue<>(
+                (a, b) -> nums1[a[0]] + nums2[a[1]] - nums1[b[0]] - nums2[b[1]]);
         List<int[]> res = new ArrayList<>();
         int n1 = Math.min(nums1.length, k);
         int n2 = Math.min(nums2.length, k);
@@ -129,7 +116,7 @@ public class KSmallestPairs {
     void test(Function<int[], int[], Integer, List<int[]> > kSmallestPairs,
               int[] nums1, int[] nums2, int k, int[][] expected) {
         List<int[]> res = kSmallestPairs.apply(nums1, nums2, k);
-        Collections.sort(res, ((a, b) -> {
+        res.sort(((a, b) -> {
             int diff = a[0] + a[1] - b[0] - b[1];
             return diff != 0 ? diff : a[0] - b[0];
         }));
