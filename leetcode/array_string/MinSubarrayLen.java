@@ -48,7 +48,6 @@ public class MinSubarrayLen {
         return minLen;
     }
 
-    // Solution of Choice
     // Two pointers
     // time complexity: O(N), space complexity: O(1)
     // beats 11.99%(1 ms for 14 tests)
@@ -67,6 +66,21 @@ public class MinSubarrayLen {
             minLen = Math.min(minLen, end - start + 2);
         }
         return minLen > n ? 0 : minLen;
+    }
+
+    // Solution of Choice
+    // Two pointers
+    // time complexity: O(N), space complexity: O(1)
+    // beats 99.87%(1 ms for 15 tests)
+    public int minSubArrayLen2_2(int s, int[] nums) {
+        int n = nums.length;
+        int res = n + 1;
+        for (int start = 0, end = 0, diff = s; end < nums.length; end++) {
+            for (diff -= nums[end]; diff <= 0; diff += nums[start++]) {
+                res = Math.min(res, end - start + 1);
+            }
+        }
+        return res % (n + 1);
     }
 
     // Solution of Choice
@@ -168,6 +182,7 @@ public class MinSubarrayLen {
         MinSubarrayLen m = new MinSubarrayLen();
         test(m::minSubArrayLen, "minSubArrayLen", s, nums, expected);
         test(m::minSubArrayLen2, "minSubArrayLen2", s, nums, expected);
+        test(m::minSubArrayLen2_2, "minSubArrayLen2_2", s, nums, expected);
         test(m::minSubArrayLen3, "minSubArrayLen3", s, nums, expected);
         test(m::minSubArrayLen4, "minSubArrayLen4", s, nums, expected);
         test(m::minSubArrayLen5, "minSubArrayLen5", s, nums, expected);
@@ -176,7 +191,7 @@ public class MinSubarrayLen {
     @Test
     public void test1() {
         test(1, new int[] {}, 0);
-        test(0, new int[] {2, 3}, 1);
+        test(1, new int[] {2, 3}, 1);
         test(6, new int[] {2, 3}, 0);
         test(6, new int[] {2, 3, 1}, 3);
         test(7, new int[] {2, 3, 1, 2, 4, 3}, 2);
