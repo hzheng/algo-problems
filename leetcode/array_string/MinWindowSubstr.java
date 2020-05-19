@@ -65,7 +65,8 @@ public class MinWindowSubstr {
     // Solution of Choice
     // Hashtable + Two Pointers
     // simpler than last solution, but need rescan partial source string.
-    // beats 87.40%(6 ms)
+    // time complexity: O(N), space complexity: O(N)
+    // 3 ms(97.06%), 40 MB(100%) for 268 tests
     public String minWindow2(String s, String t) {
         int[] map = new int[128];
         for (char c : t.toCharArray()) {
@@ -128,10 +129,51 @@ public class MinWindowSubstr {
                "" : s.substring(minStart, minEnd + 1);
     }
 
+    // Hashtable + Set + Two Pointers
+    // time complexity: O(N), space complexity: O(N)
+    // 14 ms(40.07%), 41.4 MB(100%) for 268 tests
+    public String minWindow4(String s, String t) {
+        int n = s.length();
+        Map<Character, Integer> missingMap = new HashMap<>();
+        Set<Character> missing = new HashSet<>();
+        for (char c : t.toCharArray()) {
+            missingMap.put(c, missingMap.getOrDefault(c, 0) + 1);
+            missing.add(c);
+        }
+        int min = n + 1;
+        int minStart = 0;
+        for (int start = 0, end = 0; end < n; end++) {
+            char c = s.charAt(end);
+            if (!missingMap.containsKey(c)) continue;
+
+            int count = missingMap.get(c)  - 1;
+            missingMap.put(c, count);
+            if (count == 0) {
+                missing.remove(c);
+            }
+            for ( ; missing.size() == 0; start++) {
+                if (end - start + 1 < min) {
+                    min = end - start + 1;
+                    minStart = start;
+                }
+                char toDel = s.charAt(start);
+                if (missingMap.containsKey(toDel)) {
+                    count = missingMap.get(toDel) + 1;
+                    missingMap.put(toDel, count);
+                    if (count > 0) {
+                        missing.add(toDel);
+                    }
+                }
+            }
+        }
+        return min > n ? "" : s.substring(minStart, minStart + min);
+    }
+
     void test(String s, String t, String expected) {
         assertEquals(expected, minWindow(s, t));
         assertEquals(expected, minWindow2(s, t));
         assertEquals(expected, minWindow3(s, t));
+        assertEquals(expected, minWindow4(s, t));
     }
 
     @Test
