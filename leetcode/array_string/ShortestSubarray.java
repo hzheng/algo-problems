@@ -8,7 +8,8 @@ import static org.junit.Assert.*;
 // Return the length of the shortest non-empty contiguous subarray of A with sum
 // at least K. If there is no non-empty subarray with sum at least K, return -1.
 public class ShortestSubarray {
-    // Deque
+    // Solution of Choice
+    // Deque (monoqueue)
     // time complexity: O(N), space complexity: O(N)
     // beats 43.42%(41 ms for 93 tests)
     public int shortestSubarray(int[] A, int K) {
