@@ -20,8 +20,7 @@ import static org.junit.Assert.*;
 // sum(balls) is even.
 // Answers within 10^-5 of the actual value will be accepted as correct.
 public class ProbabilityOfSameDistinctBalls {
-    // Recursion + Dynamic Programming
-    // time complexity: O(N*M), space complexity: O(N*M)
+    // Recursion + Dynamic Programming(Top-Down)
     // 43 ms(77.11%), 36.6 MB(100%) for 21 tests
     public double getProbability(int[] balls) {
         final int N = 50;
@@ -56,19 +55,22 @@ public class ProbabilityOfSameDistinctBalls {
         return cTable[a] / cTable[b] / cTable[a - b];
     }
 
-    private static final int N = 10;
-    private static final double[][] C = new double[N][N];
+    private static double[][] C;
 
-    // Recursion + Dynamic Programming
-    // time complexity: O(N*M), space complexity: O(N*M)
-    // 24 ms(88.45%), 36.6 MB(100%) for 21 tests
-    public double getProbability2(int[] balls) {
+    private static void createTable(int N) {
+        C = new double[N][N];
         for (int i = 0; i < N; i++) {
             C[i][i] = C[i][0] = 1;
             for (int j = 1; j < i; j++) {
                 C[i][j] = C[i - 1][j - 1] + C[i - 1][j];
             }
         }
+    }
+
+    // Recursion + Dynamic Programming(Top-Down)
+    // 24 ms(88.45%), 36.6 MB(100%) for 21 tests
+    public double getProbability2(int[] balls) {
+        createTable(10);
         int sum = Arrays.stream(balls).sum();
         double[] res = new double[2];
         dfs(balls, sum / 2, 0, 0, 0, 0, 1, res);
@@ -91,9 +93,46 @@ public class ProbabilityOfSameDistinctBalls {
         }
     }
 
+    // 2-D Dynamic Programming(Bottom-Up)
+    // time complexity: O(N*M*SUM*MAX(ball)), space complexity: O(N*SUM)
+    // 4 ms(97.48%), 38.9 MB(100%) for 21 tests
+    public double getProbability3(int[] balls) {
+        createTable(60);
+        int m = balls.length;
+        int sum = Arrays.stream(balls).sum();
+        double[][] dp = new double[2 * m + 1][sum / 2 + 1];
+        dp[m][0] = 1; // dp[i][j] - i: box distinct difference shifted by m; j: total balls
+        int ballsSoFar = 0;
+        for (int ball : balls) {
+            ballsSoFar += ball;
+            double[][] ndp = new double[2 * m + 1][sum / 2 + 1];
+            for (int i = 0; i <= ball; i++) { // select i of ball to box 1
+                for (int distinctDiff = 0; distinctDiff <= 2 * m; distinctDiff++) {
+                    for (int total1 = 0; total1 <= sum / 2; total1++) {
+                        int nTotal1 = total1 + i;
+                        int nTotal2 = ballsSoFar - nTotal1;
+                        if (dp[distinctDiff][total1] > 0 && nTotal1 <= sum / 2 && nTotal2 <= sum / 2) {
+                            int nDiff = (i == 0) ? (distinctDiff - 1) : ((i == ball) ? distinctDiff + 1 : distinctDiff);
+                            ndp[nDiff][nTotal1] += dp[distinctDiff][total1] * C[ball][i];
+                        }
+                    }
+                }
+            }
+            dp = ndp;
+        }
+        return dp[m][sum / 2] / C[sum][sum / 2];
+    }
+
+    // Math combinatorics
+    // https://en.wikipedia.org/wiki/Multinomial_theorem
+    public double getProbability4(int[] balls) {
+        return 0.0; // TODO
+    }
+
     private void test(int[] balls, double expected) {
         assertEquals(expected, getProbability(balls), 1e-5);
         assertEquals(expected, getProbability2(balls), 1e-5);
+        assertEquals(expected, getProbability3(balls), 1e-5);
     }
 
     @Test public void test() {
