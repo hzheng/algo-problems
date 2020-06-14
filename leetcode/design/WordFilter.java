@@ -141,7 +141,6 @@ public class WordFilter {
         }.getClass().getEnclosingClass().getSimpleName();
         Class<?> clazz = Class.forName(name + "$" + methods[0]);
         Constructor<?> ctor = clazz.getConstructors()[0];
-        System.out.println(ctor);
         Object obj = ctor.newInstance(args[0]);
         for (int i = 1; i < methods.length; i++) {
             Object[] arg = args[i];
