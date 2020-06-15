@@ -1,6 +1,7 @@
 import java.util.*;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 import common.TreeNode;
@@ -17,7 +18,7 @@ public class LCAOfTree {
         while (true) {
             if (cur != null) {
                 stack.push(cur);
-                if (cur == p || cur == q) break;
+                if (cur == p || cur == q) { break; }
 
                 cur = cur.left;
             } else {
@@ -27,23 +28,21 @@ public class LCAOfTree {
         TreeNode other = (cur == p) ? q : p;
         while (true) {
             cur = stack.pop();
-            if (cur == root) return root;
+            if (cur == root) { return root; }
 
-            if (search(cur, other)) return cur;
+            if (search(cur, other)) { return cur; }
         }
     }
 
     private boolean search(TreeNode root, TreeNode p) {
-        if (root == null) return false;
-
-        return root == p || search(root.left, p) || search(root.right, p);
+        return root != null && (root == p || search(root.left, p) || search(root.right, p));
     }
 
     // Solution of Choice
     // Recursion
     // beats 99.87%(6 ms for 31 tests)
     public TreeNode lowestCommonAncestor2(TreeNode root, TreeNode p, TreeNode q) {
-        if (root == null || root == p || root == q) return root;
+        if (root == null || root == p || root == q) { return root; }
 
         TreeNode left = lowestCommonAncestor2(root.left, p, q);
         TreeNode right = lowestCommonAncestor2(root.right, p, q);
@@ -76,14 +75,70 @@ public class LCAOfTree {
         return q;
     }
 
-    @FunctionalInterface
-    interface Function<A, B, C, D> {
+    // Binary Lifting + Dynamic Programming
+    // https://cp-algorithms.com/graph/lca_binary_lifting.html
+    // good for repetitive query
+    // 48 ms(5.79%), 44 MB(17.38%) for 31 tests
+    public TreeNode lowestCommonAncestor4(TreeNode root, TreeNode p, TreeNode q) {
+        int total = count(root);
+        int level = (int)(Math.log(total) / Math.log(2)) + 1;
+        Map<TreeNode, Integer> inOrder = new HashMap<>();
+        Map<TreeNode, Integer> outOrder = new HashMap<>();
+        Map<TreeNode, List<TreeNode>> ancestors = new HashMap<>();
+        dfs(root, root, level, ancestors, inOrder, outOrder, new int[1]);
+        return lca(p, q, level, ancestors, inOrder, outOrder);
+    }
+
+    private int count(TreeNode node) {
+        if (node == null) { return 0; }
+
+        return 1 + count(node.left) + count(node.right);
+    }
+
+    private TreeNode lca(TreeNode p, TreeNode q, int level, Map<TreeNode, List<TreeNode>> ancestors,
+                         Map<TreeNode, Integer> inOrder, Map<TreeNode, Integer> outOrder) {
+        if (isAncestor(p, q, inOrder, outOrder)) { return p; }
+        if (isAncestor(q, p, inOrder, outOrder)) { return q; }
+
+        for (int i = level; i >= 0; i--) {
+            TreeNode ancestor = ancestors.get(p).get(i);
+            if (!isAncestor(ancestor, q, inOrder, outOrder)) {
+                p = ancestor;
+            }
+        }
+        return ancestors.get(p).get(0);
+    }
+
+    boolean isAncestor(TreeNode p, TreeNode q, Map<TreeNode, Integer> inOrder,
+                       Map<TreeNode, Integer> outOrder) {
+        return inOrder.get(p) <= inOrder.get(q) && outOrder.get(p) >= outOrder.get(q);
+    }
+
+    private void dfs(TreeNode node, TreeNode parent, int level,
+                     Map<TreeNode, List<TreeNode>> ancestors, Map<TreeNode, Integer> inOrder,
+                     Map<TreeNode, Integer> outOrder, int[] order) {
+        inOrder.put(node, ++order[0]);
+        List<TreeNode> ancestor = ancestors.computeIfAbsent(node, x -> new ArrayList<>());
+        ancestor.add(parent);
+        for (int i = 1; i <= level; i++) {
+            ancestor.add(ancestors.get(ancestor.get(i - 1)).get(i - 1));
+        }
+        if (node.left != null) {
+            dfs(node.left, node, level, ancestors, inOrder, outOrder, order);
+        }
+        if (node.right != null) {
+            dfs(node.right, node, level, ancestors, inOrder, outOrder, order);
+        }
+        outOrder.put(node, ++order[0]);
+    }
+
+    @FunctionalInterface interface Function<A, B, C, D> {
         public D apply(A a, B b, C c);
     }
 
     TreeNode find(TreeNode root, int x) {
-        if (root == null) return null;
-        if (root.val == x) return root;
+        if (root == null) { return null; }
+        if (root.val == x) { return root; }
 
         TreeNode res = find(root.left, x);
         return (res != null) ? res : find(root.right, x);
@@ -100,10 +155,10 @@ public class LCAOfTree {
         test(l::lowestCommonAncestor, s, p, q, expected);
         test(l::lowestCommonAncestor2, s, p, q, expected);
         test(l::lowestCommonAncestor3, s, p, q, expected);
+        test(l::lowestCommonAncestor4, s, p, q, expected);
     }
 
-    @Test
-    public void test1() {
+    @Test public void test1() {
         test("3,5,1,6,2,0,8,#,#,7,4", 5, 1, 3);
         test("37,-34,-48,#,-100,-100,48,#,#,#,#,-54,#,-71,-22,#,#,#,8", -71, 48, 48);
         test("9,-1,-4,10,3,#,#,#,5", 3, 5, -1);
@@ -125,7 +180,8 @@ public class LCAOfTree {
     }
 
     public static void main(String[] args) {
-        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }
