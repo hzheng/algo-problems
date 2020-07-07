@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-// LC5456: https://leetcode.com/problems/kth-ancestor-of-a-tree-node/
+// LC1483: https://leetcode.com/problems/kth-ancestor-of-a-tree-node/
 //
 // You are given a tree with n nodes numbered from 0 to n-1 in the form of a parent array where
 // parent[i] is the parent of node i. The root of the tree is node 0.

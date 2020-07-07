@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-// LC5455: https://leetcode.com/problems/minimum-number-of-days-to-make-m-bouquets/
+// LC1482: https://leetcode.com/problems/minimum-number-of-days-to-make-m-bouquets/
 //
 // Given an integer array bloomDay, an integer m and an integer k.
 // We need to make m bouquets. To make a bouquet, you need to use k adjacent flowers from the garden.
