@@ -1,5 +1,4 @@
 import java.util.*;
-import javafx.util.Pair;
 
 import java.lang.reflect.Constructor;
 
@@ -40,6 +39,23 @@ public class TimeMap {
 
             Integer k = v.floorKey(timestamp);
             return k == null ? "" : v.get(k);
+        }
+    }
+
+    private static class Pair<K, V> {
+        K key;
+        V value;
+        Pair(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        K getKey() {
+            return key;
+        }
+
+        V getValue() {
+            return value;
         }
     }
 
