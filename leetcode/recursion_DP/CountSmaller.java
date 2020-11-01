@@ -322,7 +322,7 @@ public class CountSmaller {
         for (int i : nums) {
             max = Math.max(max, i);
         }
-        SegementTreeNode root = SegementTreeNode.build(min, max);
+        SegmentTreeNode root = SegmentTreeNode.build(min, max);
         for (int num : nums) {
             root.update(num, 1);
         }
@@ -334,16 +334,16 @@ public class CountSmaller {
         return res;
     }
 
-    private static class SegementTreeNode {
+    private static class SegmentTreeNode {
         int start, end, count;
-        SegementTreeNode left, right;
-        SegementTreeNode(int start, int end) {
+        SegmentTreeNode left, right;
+        SegmentTreeNode(int start, int end) {
             this.start = start;
             this.end = end;
         }
 
-        public static SegementTreeNode build(int start, int end) {
-            SegementTreeNode root = new SegementTreeNode(start, end);
+        public static SegmentTreeNode build(int start, int end) {
+            SegmentTreeNode root = new SegmentTreeNode(start, end);
             if (start == end) return root;
 
             int mid = start + (end - start) / 2; // NOT (start + end) >>> 1;
