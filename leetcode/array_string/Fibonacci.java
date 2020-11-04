@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 public class Fibonacci {
     // 1-D Dynamic Programming(Bottom-Up)
     // time complexity: O(N), space complexity: O(N)
-    // 0 ms(100%), 35.6 MB(11.58%) for 31 tests
+    // 0 ms(100.00%), 35.6 MB(11.58%) for 31 tests
     public int fib(int N) {
         int[] dp = new int[N + 2];
         dp[1] = 1;
@@ -26,7 +26,7 @@ public class Fibonacci {
 
     // 0-D Dynamic Programming(Bottom-Up)
     // time complexity: O(N), space complexity: O(1)
-    // 0 ms(100%), 35.7 MB(11.58%) for 31 tests
+    // 0 ms(100.00%), 35.7 MB(11.58%) for 31 tests
     public int fib2(int N) {
         if (N <= 0) { return 0; }
 
@@ -49,7 +49,7 @@ public class Fibonacci {
 
     // Recursion + Dynamic Programming(Top-Down)
     // time complexity: O(N), space complexity: O(1)
-    // 6 ms(32.31%), 35.7 MB(11.58%) for 31 tests
+    // 0 ms(100.00%), 36 MB(11.58%) for 31 tests
     public int fib4(int N) {
         return fib(N, new int[N + 1]);
     }
@@ -62,7 +62,7 @@ public class Fibonacci {
 
     // Math (https://en.wikipedia.org/wiki/Fibonacci_number#Matrix_form)
     // time complexity: O(log(N)), space complexity: O(1)
-    // 6 ms(32.31%), 36 MB(11.58%) for 31 tests
+    // 0 ms(100.00%), 36 MB(11.58%) for 31 tests
     public int fib5(int N) {
         if (N < 2) { return N; }
 
@@ -89,12 +89,22 @@ public class Fibonacci {
         return product;
     }
 
+    // Math
+    // time complexity: O(1), space complexity: O(1)
+    // 0 ms(100.00%), 35.6 MB(11.58%) for 31 tests
+    public int fib6(int N) {
+        double sqrt5 = Math.sqrt(5);
+        double phi = (sqrt5 + 1) / 2;
+        return (int)(Math.pow(phi, N) / sqrt5 + 0.5);
+    }
+
     private void test(int N, int expected) {
         assertEquals(expected, fib(N));
         assertEquals(expected, fib2(N));
         assertEquals(expected, fib3(N));
         assertEquals(expected, fib4(N));
         assertEquals(expected, fib5(N));
+        assertEquals(expected, fib6(N));
     }
 
     @Test public void test() {
