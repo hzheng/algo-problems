@@ -1,8 +1,10 @@
 import java.util.*;
 
+import java.util.stream.*;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.collection.IsIn.*;
 
 // LC936: https://leetcode.com/problems/stamping-the-sequence/
 //
@@ -125,18 +127,31 @@ public class StampSequence {
         }
     }
 
-    void test(String stamp, String target, int[]... expected) {
-        assertThat(Arrays.asList(expected), hasItem(movesToStamp(stamp, target)));
-        assertThat(Arrays.asList(expected), hasItem(movesToStamp2(stamp, target)));
+    @FunctionalInterface
+    interface Function<A, B, C> {
+        C apply(A a, B b);
+    }
+
+    void test(Function<String, String, int[]> f, String stamp, String target, Integer[]... expected) {
+        Object[] expectedList = Stream.of(expected).map(Arrays::asList).toArray();
+        int[] result = f.apply(stamp, target);
+        List<Integer> resultList = Arrays.stream(result).boxed().collect(Collectors.toList());
+        assertThat(resultList, in(expectedList));
+    }
+
+    void test(String stamp, String target, Integer[]... expected) {
+        StampSequence s = new StampSequence();
+        test(s::movesToStamp, stamp, target, expected);
+        test(s::movesToStamp2, stamp, target, expected);
     }
 
     @Test
     public void test() {
-        test("abc", "ababc", new int[] {0, 2}, new int[] {1, 0, 2});
-        test("abca", "aabcaca", new int[] {3, 0, 1}, new int[] {2, 3, 0, 1});
-        test("abcac", "abcacbcaccaabcac", new int[] {7, 11, 5, 4, 0},
-             new int[] {9, 8, 6, 7, 5, 3, 2, 1, 10, 4, 11, 0});
-        test("bedaefaeddccbce", "bebedabebbedaefaeddccbced", new int[0]);
+        test("abc", "ababc", new Integer[] {0, 2}, new Integer[] {1, 0, 2});
+        test("abca", "aabcaca", new Integer[] {3, 0, 1}, new Integer[] {2, 3, 0, 1});
+        test("abcac", "abcacbcaccaabcac", new Integer[] {7, 11, 5, 4, 0},
+             new Integer[] {9, 8, 6, 7, 5, 3, 2, 1, 10, 4, 11, 0});
+        test("bedaefaeddccbce", "bebedabebbedaefaeddccbced", new Integer[0]);
     }
 
     public static void main(String[] args) {

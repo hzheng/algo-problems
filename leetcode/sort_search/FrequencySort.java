@@ -2,7 +2,7 @@ import java.util.*;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.collection.IsIn.*;
 
 // LC451: https://leetcode.com/problems/sort-characters-by-frequency/
 //
@@ -141,10 +141,10 @@ public class FrequencySort {
     }
 
     void test(String s, String ... expected) {
-        assertThat(Arrays.asList(expected), hasItem(frequencySort(s)));
-        assertThat(Arrays.asList(expected), hasItem(frequencySort2(s)));
-        assertThat(Arrays.asList(expected), hasItem(frequencySort3(s)));
-        assertThat(Arrays.asList(expected), hasItem(frequencySort4(s)));
+        assertThat(frequencySort(s), in(expected));
+        assertThat(frequencySort2(s), in(expected));
+        assertThat(frequencySort3(s), in(expected));
+        assertThat(frequencySort4(s), in(expected));
     }
 
     @Test
@@ -157,6 +157,8 @@ public class FrequencySort {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("FrequencySort");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

@@ -8,6 +8,7 @@ repositories {
 
 dependencies {
     compile 'junit:junit:4.12'
+    compile 'org.hamcrest:hamcrest:2.2'
 }
 
 sourceSets {

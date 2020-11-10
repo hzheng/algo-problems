@@ -1,8 +1,10 @@
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.collection.IsIn.*;
 
 // LC870: https://leetcode.com/problems/advantage-shuffle/
 //
@@ -149,21 +151,34 @@ public class AdvantageShuffle {
         return res;
     }
 
-    void test(int[] A, int[] B, int[] ... expected) {
-        assertThat(Arrays.asList(expected), hasItem(advantageCount(A, B)));
-        assertThat(Arrays.asList(expected), hasItem(advantageCount2(A, B)));
-        assertThat(Arrays.asList(expected), hasItem(advantageCount3(A, B)));
+    @FunctionalInterface
+    interface Function<A, B, C> {
+        C apply(A a, B b);
+    }
+
+    void test(Function<int[], int[], int[]> f, int[] A, int[] B, Integer[]... expected) {
+        Object[] expectedList = Stream.of(expected).map(Arrays::asList).toArray();
+        int[] result = f.apply(A, B);
+        List<Integer> resultList = Arrays.stream(result).boxed().collect(Collectors.toList());
+        assertThat(resultList, in(expectedList));
+    }
+
+    void test(int[] A, int[] B, Integer[] ... expected) {
+        AdvantageShuffle a = new AdvantageShuffle();
+        test(a::advantageCount, A, B, expected);
+        test(a::advantageCount2, A, B, expected);
+        test(a::advantageCount3, A, B, expected);
     }
 
     @Test
     public void test() {
         test(new int[] { 12, 24, 8, 32 }, new int[] { 13, 25, 32, 11 },
-             new int[] { 24, 32, 8, 12 });
+             new Integer[] { 24, 32, 8, 12 });
         test(new int[] { 2, 7, 11, 15 }, new int[] { 1, 10, 4, 11 },
-             new int[] { 2, 11, 7, 15 });
+             new Integer[] { 2, 11, 7, 15 });
         test(new int[] { 2, 0, 4, 1, 2 }, new int[] { 1, 3, 0, 0, 2 },
-             new int[] { 2, 0, 1, 2, 4 },
-             new int[] { 2, 0, 2, 1, 4 }, new int[] { 2, 4, 1, 2, 0 });
+             new Integer[] { 2, 0, 1, 2, 4 },
+             new Integer[] { 2, 0, 2, 1, 4 }, new Integer[] { 2, 4, 1, 2, 0 });
     }
 
     public static void main(String[] args) {

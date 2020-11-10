@@ -2,7 +2,7 @@ import java.util.*;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.collection.IsIn.*;
 
 // LC358: https://leetcode.com/problems/rearrange-string-k-distance-apart
 //
@@ -158,10 +158,10 @@ public class RearrangeString {
 
     void test(String s, int k, String ... expected) {
         // assertTrue(Arrays.asList(expected).contains(rearrangeString(s, k)));
-        assertThat(Arrays.asList(expected), hasItem(rearrangeString(s, k)));
-        assertThat(Arrays.asList(expected), hasItem(rearrangeString2(s, k)));
-        assertThat(Arrays.asList(expected), hasItem(rearrangeString3(s, k)));
-        assertThat(Arrays.asList(expected), hasItem(rearrangeString4(s, k)));
+        assertThat(rearrangeString(s, k), in(expected));
+        assertThat(rearrangeString2(s, k), in(expected));
+        assertThat(rearrangeString3(s, k), in(expected));
+        assertThat(rearrangeString4(s, k), in(expected));
     }
 
     @Test
@@ -181,6 +181,8 @@ public class RearrangeString {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("RearrangeString");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

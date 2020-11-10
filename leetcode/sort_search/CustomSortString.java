@@ -5,7 +5,7 @@ import static java.util.Comparator.*;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.collection.IsIn.*;
 
 // LC791: https://leetcode.com/problems/custom-sort-string/
 //
@@ -69,16 +69,15 @@ public class CustomSortString {
                .map(c -> String.valueOf((char)c)).collect(joining());
     }
 
-    void test(String S, String T, String[] expected) {
-        List<String> expectedList = Arrays.asList(expected);
-        assertThat(expectedList, hasItem(customSortString(S, T)));
-        assertThat(expectedList, hasItem(customSortString2(S, T)));
-        assertThat(expectedList, hasItem(customSortString3(S, T)));
+    void test(String S, String T, String... expected) {
+        assertThat(customSortString(S, T), in(expected));
+        assertThat(customSortString2(S, T), in(expected));
+        assertThat(customSortString3(S, T), in(expected));
     }
 
     @Test
     public void test() {
-        test("cba", "abcd", new String[]{"cdba", "cbad"});
+        test("cba", "abcd", "cdba", "cbad");
     }
 
     public static void main(String[] args) {

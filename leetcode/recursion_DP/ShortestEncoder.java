@@ -2,7 +2,7 @@ import java.util.*;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.collection.IsIn.*;
 
 // LC471: https://leetcode.com/problems/encode-string-with-shortest-length/
 //
@@ -180,10 +180,10 @@ outer:
     }
 
     void test(String s, String ... expected) {
-        assertThat(Arrays.asList(expected), hasItem(encode(s)));
-        assertThat(Arrays.asList(expected), hasItem(encode2(s)));
-        assertThat(Arrays.asList(expected), hasItem(encode3(s)));
-        assertThat(Arrays.asList(expected), hasItem(encode4(s)));
+        assertThat(encode(s), in(expected));
+        assertThat(encode2(s), in(expected));
+        assertThat(encode3(s), in(expected));
+        assertThat(encode4(s), in(expected));
     }
 
     @Test
@@ -200,6 +200,8 @@ outer:
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("ShortestEncoder");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

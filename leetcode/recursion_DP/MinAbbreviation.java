@@ -2,7 +2,7 @@ import java.util.*;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.collection.IsIn.*;
 
 // LC411: https://leetcode.com/problems/minimum-unique-word-abbreviation/
 //
@@ -205,7 +205,7 @@ outer:
 
     void test(Function<String, String[], String> minAbbr,
               String target, String[] dict, String ... expected) {
-        assertThat(Arrays.asList(expected), hasItem(minAbbr.apply(target, dict)));
+        assertThat(minAbbr.apply(target, dict), in(expected));
     }
 
     @Test

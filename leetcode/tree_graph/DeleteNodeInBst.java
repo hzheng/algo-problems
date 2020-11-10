@@ -2,7 +2,7 @@ import java.util.*;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.collection.IsIn.*;
 
 import common.TreeNode;
 
@@ -82,7 +82,7 @@ public class DeleteNodeInBst {
               String s, int key, String ... expected) {
         TreeNode root = TreeNode.of(s);
         TreeNode res = deleteNode.apply(root, key);
-        assertThat(Arrays.asList(expected), hasItem(res.toString()));
+        assertThat(res.toString(), in(expected));
     }
 
     void test(String s, int key, String ... expected) {
@@ -99,6 +99,8 @@ public class DeleteNodeInBst {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("DeleteNode");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
