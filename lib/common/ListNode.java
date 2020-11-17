@@ -38,12 +38,16 @@ public class ListNode {
         return dummy.next;
     }
 
-    public int[] toArray() {
+    public List<Integer> toList() {
         List<Integer> list = new ArrayList<>();
         for (ListNode l = this; l != null; l = l.next) {
             list.add(l.val);
         }
-        return list.stream().mapToInt(i->i).toArray();
+        return list;
+    }
+
+    public int[] toArray() {
+        return toList().stream().mapToInt(i->i).toArray();
     }
 
     public String toString() {
