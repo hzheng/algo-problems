@@ -118,7 +118,7 @@ public class MinDaysToDisconnect {
 
     private void test(int[][] grid, int expected) {
         assertEquals(expected, minDays(grid));
-        //        assertEquals(expected, minDays2(grid));
+        assertEquals(expected, minDays2(grid));
     }
 
     @Test public void test() {
