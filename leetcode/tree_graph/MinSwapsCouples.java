@@ -174,7 +174,7 @@ public class MinSwapsCouples {
     }
 
     @Test public void test() {
-//        test(new int[] {0, 2, 1, 3}, 1);
+        test(new int[] {0, 2, 1, 3}, 1);
         test(new int[] {3, 2, 0, 1}, 0);
         test(new int[] {1, 4, 0, 5, 8, 7, 6, 3, 2, 9}, 3);
         test(new int[] {1, 9, 7, 0, 2, 15, 5, 13, 4, 3, 11, 12, 6, 8, 14, 10}, 6);
