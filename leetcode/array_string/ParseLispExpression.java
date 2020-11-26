@@ -98,7 +98,7 @@ public class ParseLispExpression {
         return Character.isLowerCase(s.charAt(0)) && !s.endsWith(")");
     }
 
-    // Recursion + Hash Table + Stack + Queue
+    // Recursion + Hash Table
     // time complexity: O(N^2), space complexity: O(N^2)
     // 4 ms(66.13%), 39.4 MB(11.94%) for 64 tests
     public int evaluate2(String expression) {
