@@ -71,10 +71,31 @@ public class LongestSubstringKDistinct {
         return max;
     }
 
+    // Solution of Choice
+    // Sliding Window
+    // time complexity: O(N)
+    public int lengthOfLongestSubstringKDistinct3(String s, int k) {
+        int n = s.length();
+        int start = 0;
+        int end = 0;
+        int[] freq = new int[256];
+        for (int avail = k; end < n; end++) {
+            char c = s.charAt(end);
+            if (freq[c]++ == 0) {
+                avail--;
+            }
+            if (avail < 0 && --freq[s.charAt(start++)] == 0) {
+                avail++;
+            }
+        }
+        return end - start;
+    }
+
     void test(String s, int k, int expected) {
         assertEquals(expected, lengthOfLongestSubstringKDistinct(s, k));
         assertEquals(expected, lengthOfLongestSubstringKDistinct_2(s, k));
         assertEquals(expected, lengthOfLongestSubstringKDistinct2(s, k));
+        assertEquals(expected, lengthOfLongestSubstringKDistinct3(s, k));
     }
 
     @Test
@@ -83,10 +104,16 @@ public class LongestSubstringKDistinct {
         test("a", 1, 1);
         test("", 3, 0);
         test("eceba", 2, 3);
+        test("ecebcdacadcabdehbca", 3, 8);
+        test("aaaaaaaaaaaaa", 4, 13);
+        test("aaaaaababaaaabbbbbbbbaaaaaa", 1, 8);
+        test("aaaaaababaaacabbbbcbbbbacaaaaabbbbbbca", 2, 12);
         test("a@b$5!a8alskj234jasdf*()@$&%&#FJAvjjdaurNNMa8ASDF-0321jf?>{}L:fh", 10, 14);
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("LongestSubstringKDistinct");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
