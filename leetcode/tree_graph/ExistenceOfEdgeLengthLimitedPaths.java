@@ -91,6 +91,7 @@ public class ExistenceOfEdgeLengthLimitedPaths {
                 visited[node] = true;
                 if (node == target) {
                     res[i] = true;
+                    break;
                 }
                 Map<Integer, Integer> neighs = graph.getOrDefault(node, Collections.emptyMap());
                 for (int v : neighs.keySet()) {
