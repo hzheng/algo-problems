@@ -38,18 +38,19 @@ public class SubarraySum {
         return count;
     }
 
-    // Hash Table
-    // time complexity: O(N)
-    // beats 99.47%(33 ms for 80 tests)
+    // Solution of Choice
+    // Hash Table + Sliding Window
+    // time complexity: O(N), space complexity: O(N)
+    // 18 ms(68.65%), 42.3 MB(22.38%) for 89 tests
     public int subarraySum2(int[] nums, int k) {
         int sum = 0;
-        Map<Integer, Integer> map = new HashMap<>();
-        map.put(0, 1);
+        Map<Integer, Integer> sumCounter = new HashMap<>();
+        sumCounter.put(0, 1);
         int res = 0;
         for (int num : nums) {
             sum += num;
-            res += map.getOrDefault(sum - k, 0);
-            map.put(sum, map.getOrDefault(sum, 0) + 1);
+            res += sumCounter.getOrDefault(sum - k, 0);
+            sumCounter.put(sum, sumCounter.getOrDefault(sum, 0) + 1);
         }
         return res;
     }
