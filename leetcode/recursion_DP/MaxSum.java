@@ -100,6 +100,19 @@ public class MaxSum {
                                  maxSubArray5(nums, mid + 1, end)));
     }
 
+    // 0-D Dynamic Programming(Bottom-Up)
+    // time complexity: O(N), space complexity: O(1)
+    // 0 ms(100.00%), 39.5 MB(12.40%) for 203 tests
+    public static int maxSubArray6(int[] nums) {
+        int res = Integer.MIN_VALUE;
+        int runningSum = 0;
+        for (int a : nums) {
+            runningSum = a + Math.max(runningSum, 0);
+            res = Math.max(res, runningSum);
+        }
+        return res;
+    }
+
     private void test(Function<int[], Integer> maxSum, String name,
                       int expected, int ... a) {
         long t1 = System.nanoTime();
@@ -117,6 +130,7 @@ public class MaxSum {
         test(MaxSum::maxSubArray3, "maxSubArray3", expected, a);
         test(MaxSum::maxSubArray4, "maxSubArray4", expected, a);
         test(MaxSum::maxSubArray5, "maxSubArray5", expected, a);
+        test(MaxSum::maxSubArray6, "maxSubArray6", expected, a);
     }
 
     @Test
@@ -131,6 +145,8 @@ public class MaxSum {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("MaxSum");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
