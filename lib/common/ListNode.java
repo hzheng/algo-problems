@@ -50,7 +50,15 @@ public class ListNode {
         return toList().stream().mapToInt(i->i).toArray();
     }
 
+    @Override
     public String toString() {
         return Arrays.toString(toArray());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof ListNode)) { return false; }
+
+        return Arrays.equals(toArray(), ((ListNode)other).toArray());
     }
 }
