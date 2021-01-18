@@ -56,7 +56,7 @@ public class LargestSubmatrix {
     }
 
     // Sort
-    // time complexity: O(M*N*log(M)), space complexity: O(M*N)
+    // time complexity: O(M*N*log(M)), space complexity: O(N)
     // 19 ms(100.00%), 59.8 MB(100%) for 57 tests
     public int largestSubmatrix2(int[][] matrix) {
         int m = matrix.length;
@@ -80,9 +80,35 @@ public class LargestSubmatrix {
         return res;
     }
 
+    // time complexity: O(M^2*N), space complexity: O(N)
+    // 43 ms(83.33%), 125.5 MB(16.67%) for 57 tests
+    public int largestSubmatrix3(int[][] matrix) {
+        int m = matrix.length;
+        int n = matrix[0].length;
+        int res = 0;
+        for (int i = 0; i < m && (m - i) * n > res; i++) {
+            List<Integer> cols = new ArrayList<>();
+            for (int j = 0; j < n; j++) {
+                cols.add(j);
+            }
+            for (int j = i; j < m && (m - i) * cols.size() > res; j++) {
+                List<Integer> all1Cols = new ArrayList<>();
+                for (int k : cols) {
+                    if (matrix[j][k] == 1) {
+                        all1Cols.add(k);
+                    }
+                }
+                cols = all1Cols;
+                res = Math.max(res, (j - i + 1) * cols.size());
+            }
+        }
+        return res;
+    }
+
     private void test(int[][] matrix, int expected) {
         assertEquals(expected, largestSubmatrix(matrix));
         assertEquals(expected, largestSubmatrix2(matrix));
+        assertEquals(expected, largestSubmatrix3(matrix));
     }
 
     @Test public void test() {
