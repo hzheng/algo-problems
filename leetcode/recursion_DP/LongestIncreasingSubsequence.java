@@ -32,7 +32,7 @@ public class LongestIncreasingSubsequence {
     }
 
     // http://www.algorithmist.com/index.php/Longest_Increasing_Subsequence
-    // time complexity: O(N ^ log(N)), space complexity: O(N)
+    // time complexity: O(N * log(N)), space complexity: O(N)
     // beats 62.94%(4 ms)
     public int lengthOfLIS2(int[] nums) {
         int n = nums.length;
@@ -68,7 +68,7 @@ public class LongestIncreasingSubsequence {
         return seq.size();
     }
 
-    // time complexity: O(N ^ log(N)), space complexity: O(N)
+    // time complexity: O(N * log(N)), space complexity: O(N)
     // beats 89.51%(1 ms)
     public int lengthOfLIS3(int[] nums) {
         int n = nums.length;
@@ -100,7 +100,7 @@ public class LongestIncreasingSubsequence {
     }
 
     // Solution of Choice
-    // time complexity: O(N ^ log(N)), space complexity: O(N)
+    // time complexity: O(N * log(N)), space complexity: O(N)
     // beats 94.91%(1 ms for 24 tests)
     public int lengthOfLIS4(int[] nums) {
         int[] seq = new int[nums.length];
