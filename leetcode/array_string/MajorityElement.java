@@ -1,6 +1,7 @@
 import java.util.*;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 // LC169: https://leetcode.com/problems/majority-element/
@@ -16,12 +17,12 @@ public class MajorityElement {
     }
 
     private int majorityElement(int[] nums, int start, int end) {
-        if (start == end) return nums[start];
+        if (start == end) { return nums[start]; }
 
         int mid = (start + end) >>> 1;
         int left = majorityElement(nums, start, mid);
         int right = majorityElement(nums, mid + 1, end);
-        if (left == right) return left;
+        if (left == right) { return left; }
 
         int leftCount = 0;
         for (int i = start; i <= end; i++) {
@@ -40,7 +41,7 @@ public class MajorityElement {
         int n = nums.length;
         for (int i = 0; i < n; i += 2) {
             int num = nums[i];
-            if (i + 1 == n) return (count == 0) ? num : major;
+            if (i + 1 == n) { return (count == 0) ? num : major; }
 
             if (num == nums[i + 1]) {
                 if (count > 0 && major != num) {
@@ -95,7 +96,7 @@ public class MajorityElement {
     }
 
     // Sort
-    // time complexity: O(N * log(N)), space complexity: O(1)
+    // time complexity: O(N * log(N)), space complexity: O(log(N))
     // beats 36.05%(3 ms for 44 tests)
     public int majorityElement5(int[] nums) {
         Arrays.sort(nums);
@@ -108,7 +109,8 @@ public class MajorityElement {
         Map<Integer, Integer> counts = new HashMap<>();
         for (int num : nums) {
             int count = counts.getOrDefault(num, 0) + 1;
-            if (count > nums.length / 2) return num;
+            if (count > nums.length / 2) { return num; }
+
             counts.put(num, count);
         }
         return 0;
@@ -120,19 +122,15 @@ public class MajorityElement {
         Random rand = new Random();
         int n = nums.length;
         while (true) {
-            int i = rand.nextInt(n);
-            int candidate = nums[i];
-            int counts = 0;
+            int candidate = nums[rand.nextInt(n)];
+            int count = 0;
             for (int num : nums) {
-                if (num == candidate) {
-                    counts++;
-                }
-                if (counts > n / 2) return candidate;
+                if (num == candidate && ++count > n / 2) { return candidate; }
             }
         }
     }
 
-    void test(int expected, int ... nums) {
+    void test(int expected, int... nums) {
         assertEquals(expected, majorityElement(nums));
         assertEquals(expected, majorityElement2(nums));
         assertEquals(expected, majorityElement3(nums));
@@ -142,8 +140,7 @@ public class MajorityElement {
         assertEquals(expected, majorityElement7(nums));
     }
 
-    @Test
-    public void test1() {
+    @Test public void test1() {
         test(5, 5);
         test(5, 5, 5);
         test(5, 6, 5, 5);
@@ -151,6 +148,8 @@ public class MajorityElement {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("MajorityElement");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
