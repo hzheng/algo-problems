@@ -2,6 +2,8 @@ package common;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class Utils {
     public static int[][] clone(int[][] nums) {
@@ -79,6 +81,14 @@ public class Utils {
         return listOfList.stream().map(i -> toArray(i)).toArray(int[][]::new);
     }
 
+    public static Integer[] toIntegerArray(int[] arr) {
+        return IntStream.of(arr).boxed().toArray(Integer[]::new);
+    }
+
+    public static Integer[][] toIntegerArray(int[][] arr) {
+        return Stream.of(arr).map(Utils::toIntegerArray).toArray(Integer[][]::new);
+    }
+
     public static int[][] sort(int[][] arrays) {
         Arrays.sort(arrays, new IntArrayComparator());
         return arrays;
@@ -126,7 +136,10 @@ public class Utils {
     }
 
     public static int[][] readInt2Array(String str) {
-        String[] arr = str.strip().split(",(?= *\\[)");
+        str = str.strip();
+        if (str.equals("[]")) { return new int[0][0]; }
+
+        String[] arr = str.split(",(?= *\\[)");
         int[][] res = new int[arr.length][];
         int i = 0;
         for (String a : arr) {
