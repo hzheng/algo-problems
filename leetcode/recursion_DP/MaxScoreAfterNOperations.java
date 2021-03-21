@@ -110,6 +110,7 @@ public class MaxScoreAfterNOperations {
         test(new int[] {1, 2, 3, 4, 5, 6}, 14);
         test(new int[] {415, 230, 471, 705, 902, 87}, 23);
         test(new int[] {95, 859, 906, 227, 1000, 135, 82, 858, 211, 858, 697, 923}, 5385);
+        test(new int[] {281692, 114808, 836017, 655153, 193578, 361154, 304386, 72893}, 45);
     }
 
     public static void main(String[] args) {
