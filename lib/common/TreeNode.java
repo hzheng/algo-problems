@@ -20,7 +20,7 @@ public class TreeNode {
     }
 
     public static TreeNode of(String s) {
-        if (s == null) {
+        if (s == null || s.isEmpty()) {
             return null;
         }
         List<Integer> vals = new ArrayList<>();

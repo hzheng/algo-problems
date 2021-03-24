@@ -60,6 +60,7 @@ public class CountPairsWithXORInRange {
         }
     }
 
+    // Hash Table
     // time complexity: O(N), space complexity: O(N)
     // 108 ms(%), 46.5 MB(%) for 61 tests
     public int countPairs2(int[] nums, int low, int high) {
