@@ -84,7 +84,6 @@ public class WaysToFormTargetString {
 
     @Test public void test() {
         test(new String[] {"acca", "bbbb", "caca"}, "aba", 6);
-        if (true) return;
         test(new String[] {"abba", "baab"}, "bab", 4);
         test(new String[] {"abcd"}, "abcd", 1);
         test(new String[] {"abab", "baba", "abba", "baab"}, "abba", 16);
