@@ -147,4 +147,60 @@ public class Utils {
         }
         return res;
     }
+
+    public static String[] readStrArray(String str) {
+        str = str.strip();
+        if (str.equals("[]")) { return new String[0]; }
+
+        String[] res = str.split("\",\"");
+        res[0] = res[0].substring(2);
+        int last = res.length - 1;
+        if (last > 0) {
+            res[last] = res[last].substring(0, res[last].length() - 2);
+        }
+        return res;
+    }
+
+    public static Object[][] readObj2Array(String str) {
+        str = str.strip();
+        if (str.equals("[]")) { return new Object[0][0]; }
+
+        String[] arr = str.split(",(?= *\\[)");
+        Object[][] res = new Object[arr.length][];
+        int i = 0;
+        for (String a : arr) {
+            res[i++] = readObjArray(a);
+        }
+        return res;
+    }
+
+    public static Object[] readObjArray(String str) {
+        String[] arr = str.strip().split("[\\[,\\]]");
+        Object[] res = new Object[arr.length];
+        int i = 0;
+        String NULL = "" + null;
+        String TRUE = Boolean.TRUE.toString();
+        String FALSE = Boolean.FALSE.toString();
+        for (String a : arr) {
+            a = a.strip();
+            if (a.isEmpty()) { continue; }
+
+            if (a.startsWith("\"")) {
+                res[i++] = a.substring(1, a.length() - 1);
+            } else if (a.startsWith("'")) {
+                res[i++] = a.charAt(1);
+            } else if (TRUE.equals(a)) {
+                res[i++] = true;
+            } else if (FALSE.equals(a)) {
+                res[i++] = false;
+            } else if (NULL.equals(a)) {
+                res[i++] = null;
+            } else if (a.contains(".")) {
+                res[i++] = Double.parseDouble(a);
+            } else {
+                res[i++] = Integer.parseInt(a);
+            }
+        }
+        return Arrays.copyOfRange(res, 0, i);
+    }
 }
