@@ -3,6 +3,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 // LC004: https://leetcode.com/problems/median-of-two-sorted-arrays/
@@ -12,27 +13,24 @@ import static org.junit.Assert.*;
 public class MedianArray {
     // beats 6.24%
     // time complexity: O(log(M + N))
-    private double findMedianSortedArrays(int[] nums1, int start1, int end1,
-                                          int[] nums2, int start2, int end2) {
+    private double findMedianSortedArrays(int[] nums1, int start1, int end1, int[] nums2,
+                                          int start2, int end2) {
         final int len1 = end1 - start1 + 1;
         final int len2 = end2 - start2 + 1;
         int shrink = (len1 + len2) / 4;
         if (shrink < 2) {
-            return findMedianArraysSlow(nums1, start1, end1,
-                                        nums2, start2, end2);
+            return findMedianArraysSlow(nums1, start1, end1, nums2, start2, end2);
         }
 
         // nums2's lens >= shrink * 2 (L = len1 + len2)
-        if ((len1 <= shrink)
-            || (nums1[start1 + shrink] >= nums2[start2 + shrink])) {
+        if ((len1 <= shrink) || (nums1[start1 + shrink] >= nums2[start2 + shrink])) {
             // nums2's leftmost 1/4L must be on the median's left
             start2 += shrink - 1;
         } else {
             // nums1's lens >= shrink and nums1's 1/4L value < nums2's
             start1 += shrink - 1;
         }
-        if ((len1 <= shrink)
-            || (nums2[end2 - shrink] >= nums1[end1 - shrink])) {
+        if ((len1 <= shrink) || (nums2[end2 - shrink] >= nums1[end1 - shrink])) {
             // nums2's rightmost 1/4L must be on the median's right
             end2 -= shrink - 1;
         } else {
@@ -41,18 +39,16 @@ public class MedianArray {
         }
 
         if (end1 - start1 < end2 - start2) {
-            return findMedianSortedArrays(nums1, start1, end1, nums2,
-                                          start2, end2);
+            return findMedianSortedArrays(nums1, start1, end1, nums2, start2, end2);
         } else {
-            return findMedianSortedArrays(nums2, start2, end2, nums1,
-                                          start1, end1);
+            return findMedianSortedArrays(nums2, start2, end2, nums1, start1, end1);
         }
     }
 
     public double findMedianSortedArrays(int[] nums1, int[] nums2) {
         int end1 = nums1.length - 1;
         int end2 = nums2.length - 1;
-        if (end1 < 0 && end2 < 0) return 0; // in case
+        if (end1 < 0 && end2 < 0) { return 0; }
 
         if (end1 < end2) {
             return findMedianSortedArrays(nums1, 0, end1, nums2, 0, end2);
@@ -65,7 +61,7 @@ public class MedianArray {
     public double findMedianSortedArraysIterative(int[] nums1, int[] nums2) {
         int end1 = nums1.length - 1;
         int end2 = nums2.length - 1;
-        if (end1 < 0 && end2 < 0) return 0; // in case
+        if (end1 < 0 && end2 < 0) { return 0; }
 
         int start1 = 0;
         int start2 = 0;
@@ -88,21 +84,18 @@ public class MedianArray {
             }
             int shrink = (len1 + len2) / 4;
             if (shrink < 2) {
-                return findMedianArraysSlow(nums1, start1, end1,
-                                            nums2, start2, end2);
+                return findMedianArraysSlow(nums1, start1, end1, nums2, start2, end2);
             }
 
             // nums2's lens >= shrink * 2 (L = len1 + len2)
-            if ((len1 <= shrink)
-                || (nums1[start1 + shrink] >= nums2[start2 + shrink])) {
+            if ((len1 <= shrink) || (nums1[start1 + shrink] >= nums2[start2 + shrink])) {
                 // nums2's leftmost 1/4L must be on the median's left
                 start2 += shrink - 1;
             } else {
                 // nums1's lens >= shrink and nums1's 1/4L value < nums2's
                 start1 += shrink - 1;
             }
-            if ((len1 <= shrink)
-                || (nums2[end2 - shrink] >= nums1[end1 - shrink])) {
+            if ((len1 <= shrink) || (nums2[end2 - shrink] >= nums1[end1 - shrink])) {
                 // nums2's rightmost 1/4L must be on the median's right
                 end2 -= shrink - 1;
             } else {
@@ -114,20 +107,17 @@ public class MedianArray {
 
     private double median(int[] nums, int start, int end) {
         int mid = (start + end) / 2;
-        if (((end - start) & 1) == 0) {
-            return (double)nums[mid];
-        }
+        if (((end - start) & 1) == 0) { return nums[mid]; }
         return (nums[mid] + nums[mid + 1]) / 2.0;
     }
 
     public double findMedianArraysSlow(int[] nums1, int[] nums2) {
-        if (nums1.length == 0 && nums2.length == 0) return 0; // in case
-        return findMedianArraysSlow(nums1, 0, nums1.length - 1,
-                                    nums2, 0, nums2.length - 1);
+        if (nums1.length == 0 && nums2.length == 0) { return 0; }
+        return findMedianArraysSlow(nums1, 0, nums1.length - 1, nums2, 0, nums2.length - 1);
     }
 
-    private double findMedianArraysSlow(int[] nums1, int start1, int end1,
-                                        int[] nums2, int start2, int end2) {
+    private double findMedianArraysSlow(int[] nums1, int start1, int end1, int[] nums2, int start2,
+                                        int end2) {
         int l1 = end1 - start1 + 1;
         int l2 = end2 - start2 + 1;
         int[] nums = new int[l1 + l2];
@@ -135,49 +125,47 @@ public class MedianArray {
         for (; i < l1; i++) {
             nums[i] = nums1[start1 + i];
         }
-        for (int j = 0; j < l2; j++) {
-            nums[i + j] = nums2[start2 + j];
+        if (l2 >= 0) {
+            System.arraycopy(nums2, start2, nums, i, l2);
         }
         Arrays.sort(nums);
         return median(nums, 0, l1 + l2 - 1);
     }
 
-    private double quickFindSortedMedianArrays(int[] nums1, int start1, int end1,
-                                               int[] nums2, int start2, int end2) {
+    private double quickFindSortedMedianArrays(int[] nums1, int start1, int end1, int[] nums2,
+                                               int start2, int end2) {
         int l1 = end1 - start1 + 1;
         int l2 = end2 - start2 + 1;
-        if (l1 > l2) return quickFindSortedMedianArrays(nums2, start2, end2,
-                                                        nums1, start1, end1);
+        if (l1 > l2) {
+            return quickFindSortedMedianArrays(nums2, start2, end2, nums1, start1, end1);
+        }
+        if (l1 == 0) { return median(nums2, start2, end2); }
 
-        if (l1 == 0) return median(nums2, start2, end2);
-
-        if (l1 == 1 && l2 == 1) return (nums1[start1] + nums2[start2]) / 2d;
+        if (l1 == 1 && l2 == 1) { return (nums1[start1] + nums2[start2]) / 2d; }
 
         int mid2 = (start2 + end2) / 2;
         if (l1 == 1 && (l2 & 1) == 0) {
-            return Math.min(nums2[mid2 + 1],
-                            Math.max(nums1[start1], nums2[mid2]));
+            return Math.min(nums2[mid2 + 1], Math.max(nums1[start1], nums2[mid2]));
         } else if (l1 == 1) { // l2 is odd and > 1
-            return (Math.max(nums2[mid2 - 1],
-                             Math.min(nums1[start1], nums2[mid2 + 1]))
+            return (Math.max(nums2[mid2 - 1], Math.min(nums1[start1], nums2[mid2 + 1]))
                     + nums2[mid2]) / 2d;
         }
 
         if (l1 == 2) {
             if ((l2 & 1) == 0) {
                 // provided l2 <= 4 and passed overlap check if l2 > 2
-                return (Math.max(nums1[start1], nums2[mid2])
-                        + Math.min(nums1[start1 + 1], nums2[mid2 + 1])) / 2d;
+                return (Math.max(nums1[start1], nums2[mid2]) + Math
+                        .min(nums1[start1 + 1], nums2[mid2 + 1])) / 2d;
             }
             // l2 is odd
             if (nums2[mid2] < nums1[start1]) {
                 return Math.min(nums1[start1], nums2[mid2 + 1]);
-            } else if (nums2[mid2] > nums1[start1 + 1]) {
+            }
+            if (nums2[mid2] > nums1[start1 + 1]) {
                 return Math.max(nums1[start1 + 1], nums2[mid2 - 1]);
             }
             return nums2[mid2];
         }
-
         throw new AssertionError(l1 < 3);
     }
 
@@ -186,27 +174,27 @@ public class MedianArray {
     public double findMedianSortedArrays2(int[] nums1, int[] nums2) {
         int l1 = nums1.length;
         int l2 = nums2.length;
-
         int total = l1 + l2;
-        if (total == 0) return 0; // in case
+        if (total == 0) { return 0; }
 
         if ((total & 1) == 1) {
-            return findKth(nums1, 0, l1 - 1,
-                           nums2, 0, l2 - 1, total / 2);
+            return findKth(nums1, 0, l1 - 1, nums2, 0, l2 - 1, total / 2);
         }
-        return (findKth(nums1, 0, l1 - 1, nums2, 0, l2 - 1, total / 2) +
-                findKth(nums1, 0, l1 - 1, nums2, 0, l2 - 1, total / 2 - 1)) / 2;
+        return (findKth(nums1, 0, l1 - 1, nums2, 0, l2 - 1, total / 2) + findKth(nums1, 0, l1 - 1,
+                                                                                 nums2, 0, l2 - 1,
+                                                                                 total / 2 - 1))
+               / 2;
     }
 
-    private double findKth(int[] nums1, int start1, int end1,
-                           int[] nums2, int start2, int end2, int k) {
+    private double findKth(int[] nums1, int start1, int end1, int[] nums2, int start2, int end2,
+                           int k) {
         int len1 = end1 - start1 + 1;
-        if (len1 == 0) return nums2[start2 + k];
+        if (len1 == 0) { return nums2[start2 + k]; }
 
         int len2 = end2 - start2 + 1;
-        if (len2 == 0) return nums1[start1 + k];
+        if (len2 == 0) { return nums1[start1 + k]; }
 
-        if (k == 0) return Math.min(nums1[start1], nums2[start2]);
+        if (k == 0) { return Math.min(nums1[start1], nums2[start2]); }
 
         int k1 = len1 * k / (len1 + len2);
         int k2 = k - k1 - 1;
@@ -228,28 +216,25 @@ public class MedianArray {
     // properly paired. Actually, this method works when two arrays have
     // the same length.
     public double findMedianSortedArrays3(int[] nums1, int[] nums2) {
-        if (nums1.length == 0 && nums2.length == 0) return 0; // in case
+        if (nums1.length == 0 && nums2.length == 0) { return 0; }
 
-        return findMedianSortedArrays3(nums1, 0, nums1.length - 1,
-                                       nums2, 0, nums2.length - 1);
+        return findMedianSortedArrays3(nums1, 0, nums1.length - 1, nums2, 0, nums2.length - 1);
     }
 
-    private double findMedianSortedArrays3(int[] nums1, int start1, int end1,
-                                           int[] nums2, int start2, int end2) {
+    private double findMedianSortedArrays3(int[] nums1, int start1, int end1, int[] nums2,
+                                           int start2, int end2) {
         int l1 = end1 - start1 + 1;
-        if (l1 == 0) return median(nums2, start2, end2);
+        if (l1 == 0) { return median(nums2, start2, end2); }
 
         int l2 = end2 - start2 + 1;
-        if (l2 == 0) return median(nums1, start1, end1);
+        if (l2 == 0) { return median(nums1, start1, end1); }
 
         double m1 = median(nums1, start1, end1);
         double m2 = median(nums2, start2, end2);
-
-        if (Math.abs(m1 - m2) < 1e-8) return m1;
+        if (Math.abs(m1 - m2) < 1e-8) { return m1; }
 
         if ((l1 < 2) || (l2 < 2) || (l1 + l2 < 5)) {
-            return quickFindSortedMedianArrays(nums1, start1, end1,
-                                               nums2, start2, end2);
+            return quickFindSortedMedianArrays(nums1, start1, end1, nums2, start2, end2);
         }
 
         if (m1 < m2) {
@@ -259,8 +244,7 @@ public class MedianArray {
             end1 = (start1 + end1) / 2 + 1;
             start2 = (start2 + end2) / 2;
         }
-        return findMedianSortedArrays3(nums1, start1, end1,
-                                       nums2, start2, end2);
+        return findMedianSortedArrays3(nums1, start1, end1, nums2, start2, end2);
     }
 
     // time complexity: O(log(min(M, N)))
@@ -268,23 +252,21 @@ public class MedianArray {
     public double findMedianSortedArrays4(int[] nums1, int[] nums2) {
         int len1 = nums1.length;
         int len2 = nums2.length;
-        if (len1 == 0 && len2 == 0) return 0; // in case
+        if (len1 == 0 && len2 == 0) { return 0; }
 
         return findMedianSortedArrays4(nums1, 0, len1 - 1, nums2, 0, len2 - 1);
     }
 
-    private double findMedianSortedArrays4(int[] nums1, int start1, int end1,
-                                           int[] nums2, int start2, int end2) {
+    private double findMedianSortedArrays4(int[] nums1, int start1, int end1, int[] nums2,
+                                           int start2, int end2) {
         int len1 = end1 - start1 + 1;
         int len2 = end2 - start2 + 1;
         if (len1 > len2) {
             return findMedianSortedArrays4(nums2, start2, end2, nums1, start1, end1);
         }
 
-        assert (len1 <= len2);
         if (len1 < 2) { // fast quit
-            return quickFindSortedMedianArrays(nums1, start1, end1,
-                                               nums2, start2, end2);
+            return quickFindSortedMedianArrays(nums1, start1, end1, nums2, start2, end2);
         }
 
         // try to shrink nums1...
@@ -307,21 +289,21 @@ public class MedianArray {
 
         // overlap check
         if (nums2[start2] >= nums1[end1]) {
-            if (len1 == len2) return (nums1[end1] + nums2[start2]) / 2d;
+            if (len1 == len2) { return (nums1[end1] + nums2[start2]) / 2d; }
             return median(nums2, start2, start2 + len2 - len1 - 1);
-        } else if (nums2[end2] <= nums1[start1]) {
-            if (len1 == len2) return (nums1[start1] + nums2[end2]) / 2d;
+        }
+        if (nums2[end2] <= nums1[start1]) {
+            if (len1 == len2) { return (nums1[start1] + nums2[end2]) / 2d; }
             return median(nums2, end2 - len2 + len1 + 1, end2);
         }
 
         if (len1 < 3) { // small cases to quit
-            return quickFindSortedMedianArrays(nums1, start1, end1,
-                                               nums2, start2, end2);
+            return quickFindSortedMedianArrays(nums1, start1, end1, nums2, start2, end2);
         }
 
         double m1 = median(nums1, start1, end1);
         double m2 = median(nums2, start2, end2);
-        if (Math.abs(m1 - m2) < 1e-8) return m1;
+        if (Math.abs(m1 - m2) < 1e-8) { return m1; }
 
         int shrink = (len1 + 1) / 2 - 1; // must > 0
         if (m1 < m2) {
@@ -331,8 +313,7 @@ public class MedianArray {
             end1 -= shrink;
             start2 += shrink;
         }
-        return findMedianSortedArrays4(nums1, start1, end1,
-                                       nums2, start2, end2);
+        return findMedianSortedArrays4(nums1, start1, end1, nums2, start2, end2);
     }
 
     private int findPos(double x, int[] nums, int start, int end) {
@@ -355,7 +336,7 @@ public class MedianArray {
     public double findMedianSortedArrays5(int[] nums1, int[] nums2) {
         int n1 = nums1.length;
         int n2 = nums2.length;
-        if (n1 < n2) return findMedianSortedArrays5(nums2, nums1);
+        if (n1 < n2) { return findMedianSortedArrays5(nums2, nums1); }
 
         if (n2 == 0) {
             return n1 == 0 ? 0 : (nums1[(n1 - 1) / 2] + nums1[n1 / 2]) / 2d;
@@ -373,7 +354,7 @@ public class MedianArray {
                 low = mid2 + 1;
             } else if (l2 > r1) {
                 high = mid2 - 1;
-            } else return (Math.max(l1, l2) + Math.min(r1, r2)) / 2d;
+            } else { return (Math.max(l1, l2) + Math.min(r1, r2)) / 2d; }
         }
         return -1;
     }
@@ -383,7 +364,7 @@ public class MedianArray {
     public double findMedianSortedArrays6(int[] nums1, int[] nums2) {
         int n1 = nums1.length;
         int n2 = nums2.length;
-        if (n1 > n2) return findMedianSortedArrays6(nums2, nums1);
+        if (n1 > n2) { return findMedianSortedArrays6(nums2, nums1); }
 
         if (n1 == 0) {
             return n2 == 0 ? 0 : (nums2[(n2 - 1) / 2] + nums2[n2 / 2]) / 2d;
@@ -407,7 +388,7 @@ public class MedianArray {
                     maxLeft = Math.max(nums1[i - 1], nums2[j - 1]);
                 }
 
-                if ((n1 + n2) % 2 == 1) return maxLeft;
+                if ((n1 + n2) % 2 == 1) { return maxLeft; }
 
                 int minRight;
                 if (i == n1) {
@@ -423,6 +404,63 @@ public class MedianArray {
         return -1;
     }
 
+    // time complexity: O(M+N), space complexity: O(1)
+    // 2 ms(99.83%), 39.8 MB(93.04%) for 2094 tests
+    public double findMedianSortedArrays7(int[] nums1, int[] nums2) {
+        int n1 = nums1.length;
+        int n2 = nums2.length;
+        int mid = (n1 + n2) / 2;
+        if (mid == 0) {
+            if (n1 == 0) { return n2 == 0 ? 0 : nums2[0]; }
+            return nums1[0];
+        }
+        for (int i1 = 0, i2 = 0, k = 0, first = 0; ; k++) {
+            int cur;
+            if (i1 >= n1) {
+                cur = nums2[i2++];
+            } else if (i2 >= n2 || nums1[i1] <= nums2[i2]) {
+                cur = nums1[i1++];
+            } else {
+                cur = nums2[i2++];
+            }
+            if (k == mid - 1) {
+                first = cur;
+            } else if (k == mid) {
+                if ((n1 + n2) % 2 == 1) { return cur; }
+
+                return (first + cur) / 2.0;
+            }
+        }
+    }
+
+    // Divide and Conquer + Recursion
+    // time complexity: O(log(M+N)), space complexity: O(1)
+    // 2 ms(99.83%), 40 MB(83.46%) for 2094 tests
+    public double findMedianSortedArrays8(int[] nums1, int[] nums2) {
+        int m = nums1.length;
+        int n = nums2.length;
+        if (m + n == 0) { return 0; }
+
+        int l = (m + n + 1) / 2;
+        int r = (m + n + 2) / 2;
+        return (select(nums1, 0, nums2, 0, l) + select(nums1, 0, nums2, 0, r)) / 2.0;
+    }
+
+    public double select(int[] nums1, int start1, int[] nums2, int start2, int k) {
+        int n1 = nums1.length;
+        int n2 = nums2.length;
+        if (start1 >= n1) { return nums2[start2 + k - 1]; }
+        if (start2 >= n2) { return nums1[start1 + k - 1]; }
+        if (k == 1) { return Math.min(nums1[start1], nums2[start2]); }
+
+        int mid1 = (start1 + k / 2 - 1 < n1) ? nums1[start1 + k / 2 - 1] : Integer.MAX_VALUE;
+        int mid2 = (start2 + k / 2 - 1 < n2) ? nums2[start2 + k / 2 - 1] : Integer.MAX_VALUE;
+        if (mid1 < mid2) {
+            return select(nums1, start1 + k / 2, nums2, start2, k - k / 2);
+        }
+        return select(nums1, start1, nums2, start2 + k / 2, k - k / 2);
+    }
+
     private void test(int[] nums1, int[] nums2, double expected) {
         assertEquals(expected, findMedianSortedArrays(nums1, nums2), 1e-8);
         assertEquals(expected, findMedianArraysSlow(nums1, nums2), 1e-8);
@@ -431,10 +469,11 @@ public class MedianArray {
         assertEquals(expected, findMedianSortedArrays4(nums1, nums2), 1e-8);
         assertEquals(expected, findMedianSortedArrays5(nums1, nums2), 1e-8);
         assertEquals(expected, findMedianSortedArrays6(nums1, nums2), 1e-8);
+        assertEquals(expected, findMedianSortedArrays7(nums1, nums2), 1e-8);
+        assertEquals(expected, findMedianSortedArrays8(nums1, nums2), 1e-8);
     }
 
-    @Test
-    public void test1() {
+    @Test public void test1() {
         test(new int[] {1}, new int[] {}, 1);
         test(new int[] {}, new int[] {1}, 1);
         test(new int[] {1}, new int[] {2}, 1.5);
@@ -444,9 +483,9 @@ public class MedianArray {
         test(new int[] {1}, new int[] {2, 3, 4}, 2.5);
         test(new int[] {1}, new int[] {2, 3, 4, 5, 6}, 3.5);
         test(new int[] {1}, new int[] {2, 3, 4, 5, 6, 7, 8, 9, 10}, 5.5);
-        test(new int[] {1, 3, 5, 7, 20 }, new int[] {2, 4, 6, 8}, 5);
-        test(new int[] {1, 3, 5, 7, 20 }, new int[] {2, 4, 6, 8, 10, 12}, 6);
-        test(new int[] {1, 3, 5, 7, 20 }, new int[] {0, 2, 4, 6, 8, 10, 12}, 5.5);
+        test(new int[] {1, 3, 5, 7, 20}, new int[] {2, 4, 6, 8}, 5);
+        test(new int[] {1, 3, 5, 7, 20}, new int[] {2, 4, 6, 8, 10, 12}, 6);
+        test(new int[] {1, 3, 5, 7, 20}, new int[] {0, 2, 4, 6, 8, 10, 12}, 5.5);
         test(new int[] {2}, new int[] {-1, 0, 5, 6});
         test(new int[] {2, 8}, new int[] {-3, -1, 0, 5, 6});
         test(new int[] {-2, 2, 8}, new int[] {-3, -1, 0, 5, 6, 9});
@@ -459,25 +498,20 @@ public class MedianArray {
 
     private void test(int[] nums1, int[] nums2) {
         double expected = findMedianArraysSlow(nums1, nums2);
-        assertEquals(expected,
-                     findMedianSortedArrays(nums1, nums2), 1e-8);
-        assertEquals(expected,
-                     findMedianSortedArrays2(nums1, nums2), 1e-8);
+        assertEquals(expected, findMedianSortedArrays(nums1, nums2), 1e-8);
+        assertEquals(expected, findMedianSortedArrays2(nums1, nums2), 1e-8);
         // assertEquals(expected,
         //              findMedianSortedArrays3(nums1, nums2), 1e-8);
-        assertEquals(expected,
-                     findMedianSortedArrays4(nums1, nums2), 1e-8);
-        assertEquals(expected,
-                     findMedianSortedArrays5(nums1, nums2), 1e-8);
-        assertEquals(expected,
-                     findMedianSortedArrays6(nums1, nums2), 1e-8);
+        assertEquals(expected, findMedianSortedArrays4(nums1, nums2), 1e-8);
+        assertEquals(expected, findMedianSortedArrays5(nums1, nums2), 1e-8);
+        assertEquals(expected, findMedianSortedArrays6(nums1, nums2), 1e-8);
+        assertEquals(expected, findMedianSortedArrays7(nums1, nums2), 1e-8);
+        assertEquals(expected, findMedianSortedArrays8(nums1, nums2), 1e-8);
     }
 
-    @Test
-    public void test2() {
-        test(new int[] {1, 3, 5, 7, 20 }, new int[] {0, 2, 4, 6, 8, 10, 12});
-        test(new int[] {1, 2, 3, 4, 5, 6, 7},
-             new int[] {-4, -3, -2, -1, 0, 1, 2, 3, 4});
+    @Test public void test2() {
+        test(new int[] {1, 3, 5, 7, 20}, new int[] {0, 2, 4, 6, 8, 10, 12});
+        test(new int[] {1, 2, 3, 4, 5, 6, 7}, new int[] {-4, -3, -2, -1, 0, 1, 2, 3, 4});
         test(new int[] {-1, 2, 9}, new int[] {-9, -8, 9});
         test(new int[] {-992, -361, 372, 491, 505, 785},
              new int[] {-239, -185, -98, -78, 192, 532});
@@ -485,13 +519,12 @@ public class MedianArray {
              new int[] {-912, -759, -445, -239, -185, -98, -78, 192, 532});
     }
 
-    @FunctionalInterface
-    interface Function<A, B, C> {
+    @FunctionalInterface interface Function<A, B, C> {
         public C apply(A a, B b);
     }
 
-    private double test(Function<int[], int[], Double> findMedian, String name,
-                        int[] a1, int[] a2) {
+    private double test(Function<int[], int[], Double> findMedian, String name, int[] a1,
+                        int[] a2) {
         long t1 = System.nanoTime();
         double median = findMedian.apply(a1, a2);
         if (a1.length + a2.length > 1000) {
@@ -505,10 +538,10 @@ public class MedianArray {
         int max = 1000;
         l1 = ThreadLocalRandom.current().nextInt(l1);
         l2 = ThreadLocalRandom.current().nextInt(l2);
-        int[] nums1 = IntStream.range(1, l1).map(
-            i -> ThreadLocalRandom.current().nextInt(min, max)).toArray();
-        int[] nums2 = IntStream.range(1, l2).map(
-            i -> ThreadLocalRandom.current().nextInt(min, max)).toArray();
+        int[] nums1 = IntStream.range(1, l1).map(i -> ThreadLocalRandom.current().nextInt(min, max))
+                               .toArray();
+        int[] nums2 = IntStream.range(1, l2).map(i -> ThreadLocalRandom.current().nextInt(min, max))
+                               .toArray();
         Arrays.sort(nums1);
         Arrays.sort(nums2);
         if (l1 + l2 < 25) {
@@ -516,15 +549,15 @@ public class MedianArray {
             System.out.println("n2=" + Arrays.toString(nums2));
         }
         MedianArray ma = new MedianArray();
-        double fastMedian = test(ma::findMedianSortedArrays,
-                                 "findMedianSortedArrays", nums1, nums2);
-        double iterativeMedian = test(ma::findMedianSortedArraysIterative,
-                                      "findMedianSortedArraysIterative", nums1, nums2);
-        double slowMedian = test(ma::findMedianArraysSlow,
-                                 "findMedianArraysSlow", nums1, nums2);
+        double fastMedian =
+                test(ma::findMedianSortedArrays, "findMedianSortedArrays", nums1, nums2);
+        double iterativeMedian =
+                test(ma::findMedianSortedArraysIterative, "findMedianSortedArraysIterative", nums1,
+                     nums2);
+        double slowMedian = test(ma::findMedianArraysSlow, "findMedianArraysSlow", nums1, nums2);
         if (l1 < 1000 && l2 < 1000) { // may cause stack overflow
-            double kthMedian = test(ma::findMedianSortedArrays2,
-                                    "findMedianSortedArrays2", nums1, nums2);
+            double kthMedian =
+                    test(ma::findMedianSortedArrays2, "findMedianSortedArrays2", nums1, nums2);
             assertEquals(kthMedian, fastMedian, 1e-8);
         }
         assertEquals(slowMedian, fastMedian, 1e-8);
@@ -532,20 +565,20 @@ public class MedianArray {
         // double median3 = test(ma::findMedianSortedArrays3,
         //                          "findMedianSortedArrays3", nums1, nums2);
         // assertEquals(median3, fastMedian, 1e-8);
-        double median4 = test(ma::findMedianSortedArrays4,
-                              "findMedianSortedArrays4", nums1, nums2);
+        double median4 = test(ma::findMedianSortedArrays4, "findMedianSortedArrays4", nums1, nums2);
         assertEquals(median4, fastMedian, 1e-8);
-        double median5 = test(ma::findMedianSortedArrays5,
-                              "findMedianSortedArrays5", nums1, nums2);
+        double median5 = test(ma::findMedianSortedArrays5, "findMedianSortedArrays5", nums1, nums2);
         assertEquals(median5, fastMedian, 1e-8);
-        double median6 = test(ma::findMedianSortedArrays6,
-                              "findMedianSortedArrays6", nums1, nums2);
+        double median6 = test(ma::findMedianSortedArrays6, "findMedianSortedArrays6", nums1, nums2);
         assertEquals(median6, fastMedian, 1e-8);
+        double median7 = test(ma::findMedianSortedArrays7, "findMedianSortedArrays7", nums1, nums2);
+        assertEquals(median7, fastMedian, 1e-8);
+        double median8 = test(ma::findMedianSortedArrays8, "findMedianSortedArrays8", nums1, nums2);
+        assertEquals(median8, fastMedian, 1e-8);
         System.out.println("====================");
     }
 
-    @Test
-    public void test3() {
+    @Test public void test3() {
         for (int i = 0; i < 10; i++) {
             test(5, 10);
             test(10, 10);
@@ -560,6 +593,8 @@ public class MedianArray {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("MedianArray");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
