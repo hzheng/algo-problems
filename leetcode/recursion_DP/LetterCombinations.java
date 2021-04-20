@@ -1,7 +1,9 @@
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 // LC017: https://leetcode.com/problems/letter-combinations-of-a-phone-number/
@@ -9,19 +11,20 @@ import static org.junit.Assert.*;
 // Given a digit string, return all possible letter combinations that the number
 // could represent.
 public class LetterCombinations {
-    private final String[][] LETTERS = {{" "}, {""}, {"a", "b", "c"}, {"d", "e", "f"},
-                                        {"g", "h", "i"}, {"j", "k", "l"}, {"m", "n", "o"},
-                                        {"p", "q", "r", "s"}, {"t", "u", "v"},
-                                        {"w", "x", "y", "z"}};
+    private final String[][] LETTERS =
+            {{" "}, {""}, {"a", "b", "c"}, {"d", "e", "f"}, {"g", "h", "i"}, {"j", "k", "l"},
+             {"m", "n", "o"}, {"p", "q", "r", "s"}, {"t", "u", "v"}, {"w", "x", "y", "z"}};
 
     // beats 47.29%(1 ms)
     public List<String> letterCombinations(String digits) {
-        if (digits.isEmpty()) return Collections.emptyList();
+        if (digits.isEmpty())
+            return Collections.emptyList();
 
         Queue<String[]> letterList = new LinkedList<>();
         for (char c : digits.toCharArray()) {
             int index = c - '0';
-            if (index < 2 || index > 9) return Collections.emptyList();
+            if (index < 2 || index > 9)
+                return Collections.emptyList();
 
             letterList.add(LETTERS[index]);
         }
@@ -29,12 +32,14 @@ public class LetterCombinations {
     }
 
     private String[] combine(Queue<String[]> strsList) {
-        if (strsList.isEmpty()) return new String[0];
+        if (strsList.isEmpty())
+            return new String[0];
 
         String[] combinations = strsList.poll();
         while (true) {
             String[] strs = strsList.poll();
-            if (strs == null) return combinations;
+            if (strs == null)
+                return combinations;
 
             combinations = combine(combinations, strs);
         }
@@ -42,10 +47,12 @@ public class LetterCombinations {
 
     private String[] combine(String[] s1, String[] s2) {
         int len1 = s1.length;
-        if (len1 == 0) return s2;
+        if (len1 == 0)
+            return s2;
 
         int len2 = s2.length;
-        if (len2 == 0) return s1;
+        if (len2 == 0)
+            return s1;
 
         String[] combinations = new String[len1 * len2];
         for (int i = 0, k = 0; i < len1; i++) {
@@ -58,12 +65,13 @@ public class LetterCombinations {
 
     // BFS + Queue
     // beats 11.68%(3 ms)
-    private final char[][] LETTERS2 = {{}, {}, {'a', 'b', 'c'}, {'d', 'e', 'f'}, {'g', 'h', 'i'},
-                                       {'j', 'k', 'l'}, {'m', 'n', 'o'}, {'p', 'q', 'r', 's'},
-                                       {'t', 'u', 'v'}, {'w', 'x', 'y', 'z'}};
+    private final char[][] LETTERS2 =
+            {{}, {}, {'a', 'b', 'c'}, {'d', 'e', 'f'}, {'g', 'h', 'i'}, {'j', 'k', 'l'},
+             {'m', 'n', 'o'}, {'p', 'q', 'r', 's'}, {'t', 'u', 'v'}, {'w', 'x', 'y', 'z'}};
 
     public List<String> letterCombinations2(String digits) {
-        if (digits.isEmpty()) return Collections.emptyList();
+        if (digits.isEmpty())
+            return Collections.emptyList();
 
         LinkedList<String> res = new LinkedList<>();
         res.add("");
@@ -86,10 +94,11 @@ public class LetterCombinations {
     // beats 44.96%(3 ms for 25 tests)
     public List<String> letterCombinations2_2(String digits) {
         LinkedList<String> res = new LinkedList<String>();
-        if (digits.isEmpty()) return res;
+        if (digits.isEmpty())
+            return res;
 
         res.offer("");
-        for (int n = digits.length(); res.peek().length() != n;) {
+        for (int n = digits.length(); res.peek().length() != n; ) {
             String prefix = res.poll();
             for (char c : LETTERS2[digits.charAt(prefix.length()) - '0']) {
                 res.offer(prefix + c);
@@ -101,7 +110,8 @@ public class LetterCombinations {
     // DFS/Backtracking + Recursion
     // beats 11.68%(3 ms)
     public List<String> letterCombinations3(String digits) {
-        if (digits.isEmpty()) return Collections.emptyList();
+        if (digits.isEmpty())
+            return Collections.emptyList();
 
         List<String> res = new ArrayList<>();
         combine3(0, digits.toCharArray(), new StringBuilder(), res);
@@ -124,10 +134,10 @@ public class LetterCombinations {
 
     // Solution of Choice
     // DFS + Recursion
-    // beats 100.00%(1 ms for 25 tests)
+    // 0 ms(100.00%), 37.5 MB(91.07%) for 25 tests
     public List<String> letterCombinations4(String digits) {
         List<String> res = new ArrayList<>();
-        if (digits.isEmpty()) return res;
+        if (digits.isEmpty()) { return res; }
 
         combine(digits.toCharArray(), 0, new char[digits.length()], res);
         return res;
@@ -144,9 +154,29 @@ public class LetterCombinations {
         }
     }
 
+    // List
+    // 4 ms(40.64%), 38.9 MB(46.63%) for 25 tests
+    public List<String> letterCombinations5(String digits) {
+        List<String> cur = new ArrayList<>();
+        if (digits.isEmpty()) { return cur; }
+
+        cur.add("");
+        for (char d : digits.toCharArray()) {
+            List<String> next = new ArrayList<>();
+            for (char c : LETTERS2[d - '0']) {
+                for (String s : cur) {
+                    next.add(s + c);
+                }
+            }
+            cur = next;
+        }
+        return cur;
+    }
+
     void test(Function<String, List<String>> letterCombinations, String digits, String[] expected) {
-        String[] res = letterCombinations.apply(digits).stream().toArray(String[]::new);
-        assertArrayEquals(expected, res);
+        Set<String> res = new HashSet<>(letterCombinations.apply(digits));
+        Set<String> expectedSet = new HashSet<>(Arrays.asList(expected));
+        assertEquals(expectedSet, res);
     }
 
     void test(String digits, String[] expected) {
@@ -156,17 +186,22 @@ public class LetterCombinations {
         test(l::letterCombinations2_2, digits, expected);
         test(l::letterCombinations3, digits, expected);
         test(l::letterCombinations4, digits, expected);
+        test(l::letterCombinations5, digits, expected);
     }
 
-    @Test
-    public void test1() {
+    @Test public void test1() {
         test("", new String[] {});
         // test("12", new String[] {});
         test("23", new String[] {"ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"});
+        test("258",
+             new String[] {"ajt", "aju", "ajv", "akt", "aku", "akv", "alt", "alu", "alv", "bjt",
+                           "bju", "bjv", "bkt", "bku", "bkv", "blt", "blu", "blv", "cjt", "cju",
+                           "cjv", "ckt", "cku", "ckv", "clt", "clu", "clv"});
     }
 
     public static void main(String[] args) {
-        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }
