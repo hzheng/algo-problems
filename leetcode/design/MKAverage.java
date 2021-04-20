@@ -30,6 +30,7 @@ import static org.junit.Assert.*;
 // 1 <= num <= 10^5
 // At most 10^5 calls will be made to addElement and calculateMKAverage.
 public class MKAverage {
+    // SortedMap + Queue
     // 53 ms(98.73%), 99.2 MB(65.61%) for 17 tests
     static class MKAverage1 {
         private int min;
