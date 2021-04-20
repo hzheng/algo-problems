@@ -99,7 +99,7 @@ public class MergeIntervals {
         if (n < 2) return intervals;
 
         List<Interval> res = new ArrayList<>();
-        Collections.sort(intervals, ((a, b) -> a.start - b.start));
+        intervals.sort((Comparator.comparingInt(a -> a.start)));
         Interval prev = intervals.get(0);
         for (int i = 1; i < n; i++) {
             Interval next = intervals.get(i);
@@ -143,9 +143,9 @@ public class MergeIntervals {
     // beats 38.02%(16 ms)
     public List<Interval> merge5(List<Interval> intervals) {
         int n = intervals.size();
-        if (n < 2) return intervals;
+        if (n < 2) { return intervals; }
 
-        Collections.sort(intervals, ((a, b) -> a.start - b.start));
+        intervals.sort((Comparator.comparingInt(a -> a.start)));
         int endIndex = 0;
         for (int i = 1; i < n; i++) {
             Interval cur = intervals.get(i);

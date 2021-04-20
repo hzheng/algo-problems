@@ -92,6 +92,8 @@ public class Pow {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("Pow");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
