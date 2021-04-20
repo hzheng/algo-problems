@@ -38,6 +38,31 @@ public class Parentheses {
         }
     }
 
+    // Recursion/Backtracking
+    // 0 ms(100.00%), 38.9 MB(86.74%) for 8 tests
+    public static List<String> generateParenthesis0(int n) {
+        List<String> res = new ArrayList<>();
+        dfs(res, new StringBuilder(), n, n);
+        return res;
+    }
+
+    private static void dfs(List<String> res, StringBuilder buf, int leftRemain, int rightRemain) {
+        if (rightRemain == 0 ) {
+            res.add(buf.toString());
+            return;
+        }
+        if (leftRemain > 0) {
+            buf.append("(");
+            dfs(res, buf, leftRemain -1 , rightRemain);
+            buf.setLength(buf.length() - 1);
+        }
+        if (rightRemain > leftRemain) {
+            buf.append(")");
+            dfs(res, buf, leftRemain, rightRemain - 1);
+            buf.setLength(buf.length() - 1);
+        }
+    }
+
     // rewrite <tt>parentheses</tt> by bit operation
     public static List<String> parenthesesBit(int count) {
         // char[] str = new char[count * 2];
@@ -157,6 +182,7 @@ public class Parentheses {
         test(Parentheses::parentheses, "parentheses", n, expected);
         test(Parentheses::parenthesesBit, "parenthesesBit", n, expected);
         test(Parentheses::generateParenthesis, "generateParenthesis", n, expected);
+        test(Parentheses::generateParenthesis0, "generateParenthesis0", n, expected);
         test(Parentheses::generateParenthesis2, "generateParenthesiss2", n, expected);
         test(Parentheses::generateParenthesis3, "generateParenthesiss3", n, expected);
     }
