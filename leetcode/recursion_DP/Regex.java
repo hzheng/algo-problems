@@ -254,20 +254,20 @@ public class Regex {
     // Solution of Choice
     // Dynamic Programming
     // time complexity: O(M * N), space complexity: O(M * N)
-    // beats 58.51%(20 ms for 447 tests)
+    // 2 ms(87.79%), 39.2 MB(34.01%) for 448 tests
     public boolean isMatch7(String s, String p) {
         int m = s.length();
         int n = p.length();
         boolean[][] dp = new boolean[m + 1][n + 1];
         dp[m][n] = true;
-        for (int i = m; i >= 0; i--){
+        for (int i = m; i >= 0; i--) {
             for (int j = n - 1; j >= 0; j--) {
                 boolean match = (i < m && (p.charAt(j) == s.charAt(i) 
                                  || p.charAt(j) == '.'));
                 if (j + 1 < n && p.charAt(j + 1) == '*') {
-                    dp[i][j] = dp[i][j + 2] || match && dp[i + 1][j];
-                } else {
-                    dp[i][j] = match && dp[i + 1][j + 1];
+                    dp[i][j] = dp[i][j + 2] || (match && dp[i + 1][j]);
+                } else if (match) {
+                    dp[i][j] = dp[i + 1][j + 1];
                 }
             }
         }
