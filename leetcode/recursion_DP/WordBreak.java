@@ -21,7 +21,6 @@ public class WordBreak {
         return false;
     }
 
-    // Dynamic Programming
     // Dynamic Programming(Bottom-up)
     // beats 36.05%(12 ms)
     public boolean wordBreak2(String s, Set<String> wordDict) {
@@ -41,7 +40,7 @@ public class WordBreak {
 
     // Solution of Choice
     // Dynamic Programming(Bottom-up)
-    // beats 85.12%%(5 ms)
+    // beats 85.12%(5 ms)
     public boolean wordBreak3(String s, Set<String> wordDict) {
         int len = s.length();
         boolean[] dp = new boolean[len + 1];
@@ -49,6 +48,25 @@ public class WordBreak {
         for (int i = 0; i < len; i++) {
             for (int j = i; j >= 0; j--) {
                 if (dp[j] && wordDict.contains(s.substring(j, i + 1))) {
+                    dp[i + 1] = true;
+                    break;
+                }
+            }
+        }
+        return dp[len];
+    }
+
+    // Dynamic Programming(Bottom-up)
+    // time complexity: O(N^2), space complexity: O(N+M)
+    // 2 ms(92.42%), 38.9 MB(82.29%) for 42 tests
+    public boolean wordBreak3(String s, List<String> wordDict) {
+        int len = s.length();
+        boolean[] dp = new boolean[len + 1];
+        Set<String> words = new HashSet<>(wordDict);
+        dp[0] = true;
+        for (int i = 0; i < len; i++) {
+            for (int j = i; j >= 0; j--) {
+                if (dp[j] && words.contains(s.substring(j, i + 1))) {
                     dp[i + 1] = true;
                     break;
                 }
@@ -101,7 +119,7 @@ public class WordBreak {
 
     @FunctionalInterface
     interface Function<A, B, C> {
-        public C apply(A a, B b);
+        C apply(A a, B b);
     }
 
     void test(Function<String, Set<String>, Boolean> wordBreak, String name, String s,
@@ -123,6 +141,8 @@ public class WordBreak {
     public void test1() {
         test("leetcode", true, "leet", "code");
         test("aaaaaaa", true, "aaaa", "aaa");
+        test("applepenapple", true, "apple", "pen");
+        test("catsandog", false, "cats","dog","sand","and","cat");
     }
 
     public static void main(String[] args) {

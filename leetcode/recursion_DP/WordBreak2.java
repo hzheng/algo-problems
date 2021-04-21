@@ -129,7 +129,7 @@ public class WordBreak2 {
         List<String> res = new LinkedList<>();
         if (dp[len] == null) return res;
 
-        wordBreak3(dp, len, new LinkedList<String>(), res);
+        wordBreak3(dp, len, new LinkedList<>(), res);
         return res;
     }
 
@@ -177,16 +177,24 @@ public class WordBreak2 {
         return dfs(s, new ArrayList<>(wordDict), new HashMap<>());
     }
 
-    private List<String> dfs(String s, List<String> wordDict, Map<String, List<String>> map) {
-        if (map.containsKey(s)) return map.get(s);
+    // Leetcode's new signature
+    // DFS + Recursion + Dynamic Programming(Top-down)
+    // 6 ms(29.82%), 37.5 MB(62.77%) for 26 tests
+    public List<String> wordBreak5(String s, List<String> wordDict) {
+        return dfs(s, wordDict, new HashMap<>());
+    }
 
-        List<String> res = new LinkedList<>();
-        if (s.length() == 0) {
+    private List<String> dfs(String s, List<String> wordDict, Map<String, List<String>> map) {
+        List<String> res = map.get(s);
+        if (res != null) { return res; }
+
+        res = new LinkedList<>();
+        if (s.isEmpty()) {
             res.add("");
             return res;
         }
         for (String word : wordDict) {
-            if (!s.startsWith(word)) continue;
+            if (!s.startsWith(word)) { continue; }
 
             List<String> list = dfs(s.substring(word.length()), wordDict, map);
             for (String str : list) {
@@ -199,7 +207,7 @@ public class WordBreak2 {
 
     @FunctionalInterface
     interface Function<A, B, C> {
-        public C apply(A a, B b);
+        C apply(A a, B b);
     }
 
     void test(Function<String, Set<String>, List<String>> wordBreak, String name, String s,
