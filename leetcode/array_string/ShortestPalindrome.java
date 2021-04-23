@@ -175,7 +175,7 @@ public class ShortestPalindrome {
     // Solution of Choice
     // KMP algorithm
     // time complexity: O(N), space complexity: O(N)
-    // beats 58.66%(10 ms for 120 tests)
+    // 5 ms(84.55%), 39.4 MB(36.81%) for 120 tests
     public String shortestPalindrome7(String s) {
         String t = s + "#" + new StringBuilder(s).reverse().toString();
         int len = t.length();
@@ -190,6 +190,31 @@ public class ShortestPalindrome {
         }
         return new StringBuilder(s.substring(kmp[len - 1])).reverse()
                .append(s).toString();
+    }
+
+    // Solution of Choice
+    // Rabin–Karp Algorithm(Rolling Hashing)
+    // time complexity: O(N), space complexity: O(N)
+    // 2 ms(95.57%), 38.6 MB(98.52%) for 120 tests
+    public String shortestPalindrome8(String s) {
+        final int MOD = 1_000_000_007;
+        final int BASE = 29;
+        int n = s.length();
+        int pos = -1;
+        long power = 1;
+        long hash1 = 0;
+        long hash2 = 0;
+        outer: for (int i = 0; i < n; i++, power = power * BASE % MOD) {
+            hash1 = (hash1 * BASE + s.charAt(i) - 'a' + 1) % MOD;
+            hash2 = (hash2 + (s.charAt(i) - 'a' + 1) * power) % MOD;
+            if (hash1 == hash2) {
+//                for (int j = 0, k = i; j < k; j++, k--) { // to make sure
+//                    if (s.charAt(j) != s.charAt(k)) { continue outer; }
+//                }
+                pos = i;
+            }
+        }
+        return new StringBuilder().append(s, pos + 1, n).reverse().append(s).toString();
     }
 
     void test(Function<String, String> shortestPalindrome, String name,
@@ -211,6 +236,7 @@ public class ShortestPalindrome {
         test(p::shortestPalindrome5, "shortestPalindrome5", s, expected);
         test(p::shortestPalindrome6, "shortestPalindrome6", s, expected);
         test(p::shortestPalindrome7, "shortestPalindrome7", s, expected);
+        test(p::shortestPalindrome8, "shortestPalindrome8", s, expected);
     }
 
     @Test
