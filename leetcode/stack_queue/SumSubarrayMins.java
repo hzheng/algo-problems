@@ -140,7 +140,7 @@ public class SumSubarrayMins {
         return res;
     }
 
-    // Stack
+    // Monotonic Stack
     // time complexity: O(N), space complexity: O(N)
     // beats 81.51%(73 ms for 100 tests)
     public int sumSubarrayMins6(int[] A) {

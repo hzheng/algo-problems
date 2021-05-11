@@ -125,7 +125,7 @@ public class LargestRect {
     // code omitted
 
     // Solution of Choice
-    // Stack
+    // Monotonic Stack
     // http://www.geeksforgeeks.org/largest-rectangle-under-histogram/
     // time complexity: O(N), space complexity: O(N)
     // beats 72.85%(18 ms for 96 tests)
@@ -147,7 +147,7 @@ public class LargestRect {
     }
 
     // Solution of Choice
-    // Stack(array form)
+    // Monotonic Stack(array form)
     // time complexity: O(N), space complexity: O(N)
     // beats 94.33%(5 ms)
     public int largestRectangleArea5(int[] heights) {
