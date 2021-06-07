@@ -287,6 +287,50 @@ public class RemoveInvalidParentheses {
         sb.setLength(len);
     }
 
+    // DFS/Backtracking + Recursion + Set
+    // https://discuss.leetcode.com/topic/30743/easiest-9ms-java-solution
+    // 31 ms(47.93%), 39.1 MB(69.21%) for 125 tests
+    public List<String> removeInvalidParentheses6(String s) {
+        int n = s.length();
+        int bal = 0;
+        int len = n;
+        for (int i = 0; i < n; i++) {
+            switch (s.charAt(i)) {
+            case '(':
+                bal++;
+                break;
+            case ')':
+                if (--bal < 0) {
+                    len--;
+                    bal = 0;
+                }
+                break;
+            }
+        }
+        Set<String> res = new HashSet<>();
+        remove(s, 0, 0, len - bal, new StringBuilder(), res);
+        return new ArrayList<>(res);
+    }
+
+    private void remove(String s, int cur, int bal, int remain, StringBuilder sb, Set<String> res) {
+        if (remain == 0) {
+            if (bal == 0) {
+                res.add(sb.toString());
+            }
+            return;
+        }
+        if (bal < 0 || cur >= s.length()) { return; }
+
+        char c = s.charAt(cur);
+        if (c == '(' || c == ')') {
+            remove(s, cur + 1, bal, remain, sb, res);
+            bal += (c == '(') ? 1 : -1;
+        }
+        int len = sb.length();
+        remove(s, cur + 1, bal, remain - 1, sb.append(c), res);
+        sb.setLength(len);
+    }
+
     void test(Function<String, List<String> > remove, String name,
               String s, String ... expected) {
         long t1 = System.nanoTime();
@@ -307,6 +351,7 @@ public class RemoveInvalidParentheses {
         test(r::removeInvalidParentheses3, "removeInvalidParentheses3", s, expected);
         test(r::removeInvalidParentheses4, "removeInvalidParentheses4", s, expected);
         test(r::removeInvalidParentheses5, "removeInvalidParentheses5", s, expected);
+        test(r::removeInvalidParentheses6, "removeInvalidParentheses6", s, expected);
     }
 
     @Test
