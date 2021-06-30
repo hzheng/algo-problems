@@ -29,9 +29,26 @@ public class FlattenTree {
         return last.right == null ? last : flattenTree(last.right);
     }
 
+    // Recursion
+    // 0 ms(100.00%), 38.6 MB(35.14%) for 225 tests
+    public void flatten2(TreeNode root) {
+        doFlatten(root);
+    }
+
+    private TreeNode doFlatten(TreeNode root) {
+        if (root == null) { return null; }
+
+        TreeNode leftRes = (root.left == null) ? root : doFlatten(root.left);
+        TreeNode oldRight = root.right;
+        root.right = root.left;
+        root.left = null;
+        leftRes.right = oldRight;
+        return (oldRight == null) ? leftRes : doFlatten(root.right);
+    }
+
     // Morris Traversal(just for exercise, since space complexity is still O(N))
     // beats 21.58%(2 ms)
-    public void flatten2(TreeNode root) {
+    public void flatten3(TreeNode root) {
         if (root == null) return;
 
         Queue<TreeNode> queue = new LinkedList<>();
@@ -63,7 +80,7 @@ public class FlattenTree {
 
     // Morris Traversal(space complexity is O(1))
     // beats 29.33%(1 ms)
-    public void flatten3(TreeNode root) {
+    public void flatten4(TreeNode root) {
         for (TreeNode cur = root, last = null, prev; cur != null; ) {
             if (cur.left == null) {
                 if (last != null) {
@@ -98,7 +115,7 @@ public class FlattenTree {
     // Stack
     // http://www.programcreek.com/2013/01/leetcode-flatten-binary-tree-to-linked-list/
     // beats 4.53%(3 ms)
-    public void flatten4(TreeNode root) {
+    public void flatten5(TreeNode root) {
         Stack<TreeNode> stack = new Stack<>();
         for (TreeNode n = root; n != null || !stack.empty(); n = n.right) {
             if (n.right != null) {
@@ -116,7 +133,7 @@ public class FlattenTree {
     // Solution of Choice
     // space complexity: O(1)
     // beats 29.33%(1 ms)
-    public void flatten5(TreeNode root) {
+    public void flatten6(TreeNode root) {
         for (TreeNode cur = root, prev; cur != null; ) {
             if (cur.left == null) {
                 cur = cur.right;
@@ -131,7 +148,7 @@ public class FlattenTree {
 
     // Stack
     // beats 4.53%(3 ms)
-    public void flatten6(TreeNode root) {
+    public void flatten7(TreeNode root) {
         if (root == null) return;
 
         Stack<TreeNode> stack = new Stack<>();
@@ -170,6 +187,7 @@ public class FlattenTree {
         test(f::flatten4, s, expected);
         test(f::flatten5, s, expected);
         test(f::flatten6, s, expected);
+        test(f::flatten7, s, expected);
     }
 
     @Test
@@ -183,6 +201,8 @@ public class FlattenTree {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("FlattenTree");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
