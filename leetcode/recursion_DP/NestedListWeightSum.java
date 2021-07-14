@@ -35,8 +35,8 @@ public class NestedListWeightSum {
     // beats 3.23%(4 ms for 27 tests)
     public int depthSum2(List<NestedInteger> nestedList) {
         int sum = 0;
-        ArrayDeque<NestedInteger> stack = new ArrayDeque<>();
-        ArrayDeque<Integer> levels = new ArrayDeque<>();
+        Deque<NestedInteger> stack = new ArrayDeque<>();
+        Deque<Integer> levels = new ArrayDeque<>();
         int lastLevel = 1;
         for (Iterator<NestedInteger> itr = nestedList.iterator(); itr.hasNext() || !stack.isEmpty(); ) {
             if (itr.hasNext()) {
@@ -72,7 +72,7 @@ public class NestedListWeightSum {
     // beats 6.72%(3 ms for 27 tests)
     public int depthSum2_2(List<NestedInteger> nestedList) {
         int sum = 0;
-        ArrayDeque<LeveledNestedInteger> stack = new ArrayDeque<>();
+        Deque<LeveledNestedInteger> stack = new ArrayDeque<>();
         int lastLevel = 1;
         for (Iterator<NestedInteger> itr = nestedList.iterator(); itr.hasNext() || !stack.isEmpty(); ) {
             if (itr.hasNext()) {
@@ -98,7 +98,7 @@ public class NestedListWeightSum {
     // beats 21.94%(2 ms for 27 tests)
     public int depthSum3(List<NestedInteger> nestedList) {
         int sum = 0;
-        ArrayDeque<Iterator<NestedInteger> > stack = new ArrayDeque<>();
+        Deque<Iterator<NestedInteger> > stack = new ArrayDeque<>();
         stack.push(nestedList.iterator());
         while (!stack.isEmpty()) {
             Iterator<NestedInteger> itr = stack.peek();
@@ -181,6 +181,8 @@ public class NestedListWeightSum {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("NestedListWeightSum");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }

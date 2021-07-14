@@ -58,7 +58,6 @@ public class NestedListWeightSum2 {
             } else {
                 sum += dfs(ni.getList(), depth + 1, res);
             }
-
         }
         return sum;
     }
@@ -108,7 +107,7 @@ public class NestedListWeightSum2 {
     public int depthSumInverse5(List<NestedInteger> nestedList) {
         int sum = 0;
         Queue<NestedInteger> queue = new LinkedList<>(nestedList);
-        for (int prevSum = 0; !queue.isEmpty(); ) {
+        for (int prevSum = 0; !queue.isEmpty(); sum += prevSum) {
             for (int i = queue.size(); i > 0; i--) {
                 NestedInteger ni = queue.poll();
                 if (ni.isInteger()) {
@@ -117,7 +116,6 @@ public class NestedListWeightSum2 {
                     queue.addAll(ni.getList());
                 }
             }
-            sum += prevSum;
         }
         return sum;
     }
@@ -165,6 +163,8 @@ public class NestedListWeightSum2 {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("NestedListWeightSum2");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
