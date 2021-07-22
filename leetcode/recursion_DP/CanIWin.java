@@ -47,12 +47,39 @@ public class CanIWin {
         return res;
     }
 
+    // Recursion + Dynamic Programming(Top-Down) + Bit Manipulation
+    // 70 ms(95.06%), 42.5 MB(88.63%) for 57 tests
+    public boolean canIWin2(int maxChoosableInteger, int desiredTotal) {
+        if (desiredTotal <= 0) { return true; }
+        if (maxChoosableInteger * (maxChoosableInteger + 1) / 2 < desiredTotal) { return false; }
+
+        return dfs(maxChoosableInteger, desiredTotal, 0, new Boolean[1 << maxChoosableInteger]);
+    }
+
+    private boolean dfs(int max, int target, int chosen, Boolean[] dp) {
+        if (target <= 0) { return false; }
+        if (dp[chosen] != null) { return dp[chosen]; }
+
+        boolean res = false;
+        for (int i = 0; i < max; i++) {
+            int mask = 1 << i;
+            if ((chosen & mask) == 0) {
+                if (!dfs(max, target - i - 1, chosen | mask, dp)) {
+                    res = true;
+                    break;
+                }
+            }
+        }
+        return dp[chosen] = res;
+    }
+
     // TODO: Dynamic Programming(Bottom-Up)
     // TODO: more efficient(e.g. take advantage of i + 1 - total > 0)
 
     void test(int maxChoosableInteger, int desiredTotal, boolean expected) {
         // assertEquals(expected, canIWin0(maxChoosableInteger, desiredTotal));
         assertEquals(expected, canIWin(maxChoosableInteger, desiredTotal));
+        assertEquals(expected, canIWin2(maxChoosableInteger, desiredTotal));
     }
 
     @Test
@@ -69,6 +96,8 @@ public class CanIWin {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("CanIWin");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
