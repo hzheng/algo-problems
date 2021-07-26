@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-// TODO: move to hackerrank dir
 // https://www.hackerrank.com/challenges/crush/problem
 //
 // Starting with a 1-indexed array of zeros and a list of operations, for each operation add a value
