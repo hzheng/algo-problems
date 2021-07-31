@@ -1,19 +1,26 @@
 import java.util.*;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 import common.TreeNode;
 
-// LC449: http://www.10jqka.com.cn/
+// LC449: https://leetcode.com/problems/serialize-and-deserialize-bst/
 //
 // Design an algorithm to serialize and deserialize a binary search tree.
 // The encoded string should be as compact as possible.
+//
+// Constraints:
+// The number of nodes in the tree is in the range [0, 10^4].
+// 0 <= Node.val <= 104
+// The input tree is guaranteed to be a binary search tree.
 public class Codec {
+
     // BFS + Queue + Recursion
     // beats 80.03%(15 ms for 62 tests)
     public String serialize(TreeNode root) {
-        if (root == null) return null;
+        if (root == null) { return null; }
 
         Queue<TreeNode> queue = new LinkedList<>();
         queue.offer(root);
@@ -35,10 +42,10 @@ public class Codec {
     }
 
     public TreeNode deserialize(String data) {
-        if (data == null) return null;
+        if (data == null) { return null; }
 
         String[] nodes = data.split(",");
-        if (nodes.length == 0) return null;
+        if (nodes.length == 0) { return null; }
 
         TreeNode root = new TreeNode(Integer.parseInt(nodes[0]));
         int n = nodes.length;
@@ -75,8 +82,7 @@ public class Codec {
         assertEquals(root, deserialized);
     }
 
-    @Test
-    public void test1() {
+    @Test public void test1() {
         test("5,3,6,2,4,#,#,1");
         test("5,3,8,2,#,#,9");
         test("5,3,8,2,#,7");
@@ -85,6 +91,8 @@ public class Codec {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("Codec");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
