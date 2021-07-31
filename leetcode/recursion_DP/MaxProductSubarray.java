@@ -114,17 +114,18 @@ public class MaxProductSubarray {
     }
 
     // Solution of Choice
-    // 0-D Dynamic Programming
+    // 0-D Dynamic Programming(Kadane's algorithm)
     // time complexity: O(N), space complexity: O(1)
     // beats 94.56%(1 ms for 184 tests)
+    // 1 ms(93.23%), 38.4 MB(97.97%) for 187 tests
     public int maxProduct2(int[] nums) {
         int localMax = 1;
         int localMin = 1;
         int max = Integer.MIN_VALUE;
         for (int num : nums) {
-            int oldLocalMax = localMax;
-            localMax = Math.max(Math.max(num * localMax, num), localMin *= num);
-            localMin = Math.min(Math.min(num * oldLocalMax, num), localMin);
+            int newLocalMax = localMax * num;
+            localMax = Math.max(Math.max(newLocalMax, num), localMin *= num);
+            localMin = Math.min(Math.min(newLocalMax, num), localMin);
             max = Math.max(max, localMax);
         }
         return max;
@@ -249,10 +250,12 @@ public class MaxProductSubarray {
         test(12, -3, -4, 0, -2, -5);
         test(1, 0, -3, 1, 1);
         test(1, -3, 0, 1, -2);
+        test(12, -4, -3, -2);
         test(4320, -2, -3, 8, 9, 10, 0, 3, 8, 9, -2, 5, 3);
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("MaxProductSubarray");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
     }
 }
