@@ -135,11 +135,41 @@ public class VerticalTraversal {
         }
     }
 
+    // DFS + Recursion + Sort
+    // 2 ms(99.78%), 39.4 MB(39.83%) for 32 tests
+    // time complexity: O(N * log(N)), space complexity: O(N)
+    public List<List<Integer>> verticalTraversal4(TreeNode root) {
+        List<int[]> nodes = new ArrayList<>();
+        dfs4(root, 0, 0, nodes);
+        nodes.sort((a, b) -> (a[0] != b[0]) ? a[0] - b[0] :
+                             (a[1] != b[1] ? a[1] - b[1] : a[2] - b[2]));
+        List<List<Integer>> res = new ArrayList<>();
+        res.add(new ArrayList<>());
+        int prev = nodes.get(0)[0];
+        for (int[] node : nodes) {
+            if (node[0] != prev) {
+                prev = node[0];
+                res.add(new ArrayList<>());
+            }
+            res.get(res.size() - 1).add(node[2]);
+        }
+        return res;
+    }
+
+    private void dfs4(TreeNode node, int x, int y, List<int[]> locations) {
+        if (node == null) { return; }
+
+        locations.add(new int[]{x, y, node.val});
+        dfs4(node.left, x - 1, y + 1, locations);
+        dfs4(node.right, x + 1, y + 1, locations);
+    }
+
     void test(String s, Integer[][] expected) {
         List<List<Integer>> exp = Utils.toList(expected);
         assertEquals(exp, verticalTraversal(TreeNode.of(s)));
         assertEquals(exp, verticalTraversal2(TreeNode.of(s)));
         assertEquals(exp, verticalTraversal3(TreeNode.of(s)));
+        assertEquals(exp, verticalTraversal4(TreeNode.of(s)));
     }
 
     @Test
