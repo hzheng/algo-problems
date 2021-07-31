@@ -117,9 +117,7 @@ public class CombinationSum {
         return res;
     }
 
-    // Solution of Choice
-    // Backtracking
-    // http://www.jiuzhang.com/solutions/combination-sum/
+    // DFS + Recursion + Backtracking
     // beats 74.42%(5 ms)
     public List<List<Integer> > combinationSum4(int[] candidates, int target) {
         Arrays.sort(candidates);
@@ -146,9 +144,34 @@ public class CombinationSum {
         }
     }
 
+    // Solution of Choice
+    // DFS + Recursion + Backtracking
+    // 2 ms(98.31%), 38.9 MB(95.85%) for 170 tests
+    public List<List<Integer>> combinationSum5(int[] candidates, int target) {
+        Arrays.sort(candidates);
+        List<List<Integer>> res = new ArrayList<>();
+        dfs(candidates, target, 0, new ArrayList<>(), res);
+        return res;
+    }
+
+    private void dfs(int[] candidates, int target, int cur, List<Integer> path, List<List<Integer>> res) {
+        if (target == 0) {
+            res.add(new ArrayList<>(path));
+            return;
+        }
+        if (cur >= candidates.length || candidates[cur] > target) { return; }
+
+        // skip the current number
+        dfs(candidates, target, cur + 1, path, res);
+        // use the current number
+        path.add(candidates[cur]);
+        dfs(candidates, target - candidates[cur], cur, path, res);
+        path.remove(path.size() - 1);
+    }
+
     @FunctionalInterface
     interface Function<A, B, C> {
-        public C apply(A a, B b);
+        C apply(A a, B b);
     }
 
     void test(Function<int[], Integer, List<List<Integer>>> sum,
@@ -180,6 +203,7 @@ public class CombinationSum {
         test(sum::combinationSum2, expected, target, candidates);
         test(sum::combinationSum3, expected, target, candidates);
         test(sum::combinationSum4, expected, target, candidates);
+        test(sum::combinationSum5, expected, target, candidates);
     }
 
     @Test
@@ -195,6 +219,8 @@ public class CombinationSum {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("CombinationSum");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
