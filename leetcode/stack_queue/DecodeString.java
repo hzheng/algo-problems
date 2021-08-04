@@ -14,7 +14,6 @@ import static org.junit.Assert.*;
 // Furthermore, you may assume that the original data does not contain any
 // digits and that digits are only for those repeat numbers, k.
 public class DecodeString {
-    // Solution of Choice
     // Stack
     // beats 22.14%(5 ms for 27 tests)
     public String decodeString(String s) {
@@ -40,6 +39,33 @@ public class DecodeString {
             }
         }
         return strs.peek().toString();
+    }
+
+    // Solution of Choice
+    // Stack
+    // 0 ms(100.00%), 36.9 MB(90.05%) for 34 tests
+    public String decodeString_2(String s) {
+        Deque<Integer> counts = new ArrayDeque<>();
+        Deque<StringBuilder> strs = new ArrayDeque<>();
+        StringBuilder buffer = new StringBuilder();
+        int count = 0;
+        for (char c : s.toCharArray()) {
+            if (Character.isDigit(c)) {
+                count = count * 10 + (c - '0');
+            } else if (c == '[') {
+                counts.push(count);
+                count = 0;
+                strs.push(buffer);
+                buffer = new StringBuilder();
+            } else if (c == ']') {
+                String repeatedBuffer = buffer.toString().repeat(counts.pop());
+                buffer = strs.pop();
+                buffer.append(repeatedBuffer);
+            } else {
+                buffer.append(c);
+            }
+        }
+        return buffer.toString();
     }
 
     // Recursion
@@ -70,6 +96,7 @@ public class DecodeString {
 
     void test(String s, String expected) {
         assertEquals(expected, decodeString(s));
+        assertEquals(expected, decodeString_2(s));
         assertEquals(expected, decodeString2(s));
     }
 
@@ -83,6 +110,8 @@ public class DecodeString {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("DecodeString");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
