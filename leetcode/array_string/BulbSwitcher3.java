@@ -1,6 +1,4 @@
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
@@ -18,10 +16,37 @@ import static org.junit.Assert.*;
 // 1 <= n <= 5 * 10^4
 // light is a permutation of  [1, 2, ..., n]
 public class BulbSwitcher3 {
+    // SortedMap
+    // time complexity: O(N*log(N)), space complexity: O(N)
+    // 51 ms(13.72%), 46.9 MB(98.01%) for 63 tests
+    public int numTimesAllBlue(int[] light) {
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+        int res = 0;
+        for (int cur : light) {
+            Integer prev = map.floorKey(cur);
+            int key = cur;
+            if (prev != null) {
+                int end = map.get(prev);
+                if (cur == end + 1) {
+                    map.put(prev, cur);
+                    key = prev;
+                }
+            }
+            Integer next = map.ceilingKey(cur);
+            if (next != null && cur + 1 == next) {
+                map.put(key, map.remove(next));
+            } else if (key == cur) {
+                map.put(key, cur);
+            }
+            res += (key == 1 && map.size() == 1) ? 1 : 0;
+        }
+        return res;
+    }
+
     // Hash Table
     // time complexity: O(N), space complexity: O(N)
     // 39 ms(66.67%), 51.6 MB(100%) for 63 tests
-    public int numTimesAllBlue(int[] light) {
+    public int numTimesAllBlue2(int[] light) {
         int res = 0;
         Map<Integer, Integer> map = new HashMap<>();
         Map<Integer, Integer> revMap = new HashMap<>();
@@ -49,10 +74,10 @@ public class BulbSwitcher3 {
         return res;
     }
 
-    // Max
+    // Solution of Choice
     // time complexity: O(N), space complexity: O(1)
     // 1 ms(100%), 51.2 MB(100%) for 63 tests
-    public int numTimesAllBlue2(int[] light) {
+    public int numTimesAllBlue3(int[] light) {
         int res = 0;
         for (int i = 0, n = light.length, rightmost = 0; i < n; i++) {
             rightmost = Math.max(rightmost, light[i]);
@@ -66,6 +91,7 @@ public class BulbSwitcher3 {
     private void test(int[] light, int expected) {
         assertEquals(expected, numTimesAllBlue(light));
         assertEquals(expected, numTimesAllBlue2(light));
+        assertEquals(expected, numTimesAllBlue3(light));
     }
 
     @Test
