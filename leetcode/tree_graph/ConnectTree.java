@@ -106,9 +106,24 @@ public class ConnectTree {
     }
 
     // Solution of Choice
+    // Recursion
+    // 0 ms(100.00%), 39.5 MB(18.54%) for 58 tests
+    public void connect5(TreeLinkNode root) {
+        dfs(root, null);
+    }
+
+    private void dfs(TreeLinkNode cur, TreeLinkNode next) {
+        if (cur == null) { return; }
+
+        cur.next = next;
+        dfs(cur.left, cur.right);
+        dfs(cur.right, cur.next == null ? null : cur.next.left);
+    }
+
+    // Solution of Choice
     // space complexity: O(1)
     // beats 31.38%(1 ms)
-    public void connect5(TreeLinkNode root) {
+    public void connect6(TreeLinkNode root) {
         if (root == null) return;
 
         for (TreeLinkNode prev = root; prev.left != null; prev = prev.left) {
@@ -123,7 +138,7 @@ public class ConnectTree {
 
     @FunctionalInterface
     interface Function<A> {
-        public void apply(A a);
+        void apply(A a);
     }
 
     void test(Function<TreeLinkNode> connect, String s, String expected) {
@@ -136,6 +151,7 @@ public class ConnectTree {
     void test(String s, String expected) {
         ConnectTree c = new ConnectTree();
         test(c::connect, s, expected);
+        test(c::connect5, s, expected);
     }
 
     @Test
@@ -143,6 +159,8 @@ public class ConnectTree {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("ConnectTree");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
