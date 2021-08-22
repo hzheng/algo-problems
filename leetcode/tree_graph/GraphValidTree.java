@@ -26,6 +26,24 @@ public class GraphValidTree {
         return visited.size();
     }
 
+    // DFS + Recursion + List + Set
+    public boolean validTree_2(int n, int[][] edges) {
+        if (edges.length != n - 1) { return false; }
+
+        Set<Integer> visited = new HashSet<>();
+        dfs(0, visited, createAdjacencyList(n, edges));
+        return visited.size() == n;
+    }
+
+    private void dfs(int cur, Set<Integer> visited, List<Integer>[] list) {
+        visited.add(cur);
+        for (int neighbor : list[cur]) {
+            if (!visited.contains(neighbor)) {
+                dfs(neighbor, visited, list);
+            }
+        }
+    }
+
     private List<Integer>[] createAdjacencyList(int n, int[][] edges) {
         @SuppressWarnings("unchecked")
         List<Integer>[] adjacencyList = new List[n];
@@ -152,6 +170,7 @@ public class GraphValidTree {
 
     void test(int n, int[][] edges, boolean expected) {
         assertEquals(expected, validTree(n, edges));
+        assertEquals(expected, validTree_2(n, edges));
         assertEquals(expected, validTree2(n, edges));
         assertEquals(expected, validTree3(n, edges));
         assertEquals(expected, validTree4(n, edges));
@@ -176,6 +195,8 @@ public class GraphValidTree {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("GraphValidTree");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
