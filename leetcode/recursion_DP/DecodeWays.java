@@ -6,6 +6,10 @@ import static org.junit.Assert.*;
 // A message containing letters from A-Z is being encoded to numbers using the
 // following mapping: 'A' -> 1 'B' -> 2 ... 'Z' -> 26. Given an encoded message
 // containing digits, determine the total number of ways to decode it.
+//
+// Constraints:
+// 1 <= s.length <= 100
+// s contains only digits and may contain leading zero(s).
 public class DecodeWays {
     // beats 52.85%(4 ms)
     public int numDecodings(String s) {
@@ -123,16 +127,36 @@ public class DecodeWays {
         return dp[len];
     }
 
+    // Dynamic Programming
+    // beats 68.87%(2 ms)
+    // 0 ms(100.00%), 36.9 MB(93.59%) for 269 tests
+    // time complexity: O(N), space complexity: O(N)
+    public int numDecodings5(String s) {
+        int n = s.length();
+        int[] dp = new int[n + 1];
+        dp[n] = 1;
+        dp[n - 1] = s.charAt(n - 1) == '0' ? 0 : 1;
+        for (int i = n - 2; i >= 0; i--) {
+            char c = s.charAt(i);
+            if (c == '0') { continue; }
+
+            dp[i] = dp[i + 1];
+            if (c == '1' || (c == '2' && s.charAt(i + 1) < '7')) {
+                dp[i] += dp[i + 2];
+            }
+        }
+        return dp[0];
+    }
+
     // Solution of Choice
     // Dynamic Programming
-    // beats 91.36%(1 ms)
+    // 1 ms(88.83%), 37.4 MB(63.49%) for 269 tests
     // time complexity: O(N), space complexity: O(1)
-    public int numDecodings5(String s) {
-        int len = s.length();
-        if (len == 0 || s.charAt(0) == '0') return 0;
+    public int numDecodings6(String s) {
+        if (s.charAt(0) == '0') { return 0; }
 
         int prev = 1;
-        for (int i = 1, prev2 = 1; i < len; i++) {
+        for (int i = 1, n = s.length(), prev2 = 1; i < n; i++) {
             char c1 = s.charAt(i - 1);
             char c2 = s.charAt(i);
             int cur = (c2 > '0') ? prev : 0;
@@ -143,28 +167,6 @@ public class DecodeWays {
             prev = cur;
         }
         return prev;
-    }
-
-    // Dynamic Programming
-    // beats 68.87%(2 ms)
-    // time complexity: O(N), space complexity: O(N)
-    public int numDecodings6(String s) {
-        int len = s.length();
-        if (len == 0) return 0;
-
-        int[] dp = new int[len + 1];
-        dp[len] = 1;
-        dp[len - 1] = s.charAt(len - 1) == '0' ? 0 : 1;
-        for (int i = len - 2; i >= 0; i--) {
-            char c1 = s.charAt(i);
-            if (c1 > '0') {
-                dp[i] = dp[i + 1];
-                if (c1 == '1' || (c1 == '2' && s.charAt(i + 1) < '7')) {
-                    dp[i] += dp[i + 2];
-                }
-            }
-        }
-        return dp[0];
     }
 
     void test(String s, int expected) {
@@ -204,6 +206,8 @@ public class DecodeWays {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("DecodeWays");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
