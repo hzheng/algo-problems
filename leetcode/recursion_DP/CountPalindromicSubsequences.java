@@ -1,6 +1,7 @@
 import java.util.*;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 // LC730: https://leetcode.com/problems/count-different-palindromic-subsequences/
@@ -11,44 +12,42 @@ import static org.junit.Assert.*;
 // The length of S will be in the range [1, 1000].
 // Each character S[i] will be in the set {'a', 'b', 'c', 'd'}.
 public class CountPalindromicSubsequences {
-    final static int MOD = 1_000_000_000 + 7;
+    private final static int MOD = 1_000_000_000 + 7;
 
     // Dynamic Programming(Top-down) + Recursion + SortedSet
     // time complexity: O(N ^ 2 * log(N)), space complexity: O(N ^ 2)
-    // beats 18.72%(213 ms for 366 tests)
-    public int countPalindromicSubsequences(String S) {
-        @SuppressWarnings("unchecked")
-        NavigableSet<Integer>[] freqs = new TreeSet[4];
+    // 303 ms(8.58%), 78.4 MB(5.07%) for 367 tests
+    public int countPalindromicSubsequences(String s) {
+        @SuppressWarnings("unchecked") NavigableSet<Integer>[] freqs = new TreeSet[4];
         for (int i = 0; i < 4; i++) {
-            freqs[i] = new TreeSet<Integer>();
+            freqs[i] = new TreeSet<>();
         }
-        int n = S.length();
+        int n = s.length();
         for (int i = 0; i < n; i++) {
-            freqs[S.charAt(i) - 'a'].add(i);
+            freqs[s.charAt(i) - 'a'].add(i);
         }
         return count(freqs, 0, n, new Integer[n + 1][n + 1]);
     }
 
-    private int count(NavigableSet<Integer>[] freqs, int start, int end,
-                      Integer[][] dp) {
-        if (start >= end) return 0;
-        if (dp[start][end] != null) return dp[start][end];
+    private int count(NavigableSet<Integer>[] freqs, int start, int end, Integer[][] dp) {
+        if (start >= end) { return 0; }
+        if (dp[start][end] != null) { return dp[start][end]; }
 
         long res = 0;
         for (NavigableSet<Integer> freq : freqs) {
             Integer nextStart = freq.ceiling(start);
-            Integer nextEnd = freq.lower(end);
-            if (nextStart == null || nextStart >= end) continue;
-
-            res += (nextStart != nextEnd) ? 2 : 1;
-            res += count(freqs, nextStart + 1, nextEnd, dp);
+            if (nextStart != null && nextStart < end) {
+                Integer nextEnd = freq.lower(end);
+                res += nextStart.equals(nextEnd) ? 1 : 2;
+                res += count(freqs, nextStart + 1, nextEnd, dp);
+            }
         }
-        return dp[start][end] = (int) (res % MOD);
+        return dp[start][end] = (int)(res % MOD);
     }
 
     // Dynamic Programming(Bottom-Up)
     // time complexity: O(N ^ 3), space complexity: O(N ^ 2)
-    // beats 49.75%(81 ms for 366 tests)
+    // 79 ms(37.62%), 53.5 MB(19.30%) for 367 tests
     public int countPalindromicSubsequences2(String S) {
         char[] cs = S.toCharArray();
         int n = cs.length;
@@ -90,9 +89,9 @@ public class CountPalindromicSubsequences {
         // where the first character c. (only need 3 lengths:  len-2, len-1, len)
         for (int len = 1; len <= n; len++) {
             for (int i = 0, j = i + len - 1; j < n; i++, j++) {
-                for (int k = 0; k < 4; k++)  {
-                    int count = 0;
+                for (int k = 0; k < 4; k++) {
                     char c = (char)('a' + k);
+                    int count;
                     if (len == 1) {
                         count = (cs[i] == c) ? 1 : 0;
                     } else {
@@ -133,18 +132,16 @@ public class CountPalindromicSubsequences {
         assertEquals(expected, countPalindromicSubsequences3(S));
     }
 
-    @Test
-    public void test() {
+    @Test public void test() {
         test("bccb", 6);
-        test("abcdabcdabcdabcdabcdabcdabcdabcddcbadcbadcbadcbadcbadcbadcbadcba",
-             104860361);
+        test("abcdabcdabcdabcdabcdabcdabcdabcddcbadcbadcbadcbadcbadcbadcbadcba", 104860361);
         test("bcbacbabdcbcbdcbddcaaccdcbbcdbcabbcdddadaadddbdbbbdacbabaabdddcaccccdccdbabcddbdcccabccbbcdbcdbdaada",
              117990582);
     }
 
     public static void main(String[] args) {
-        String clazz =
-            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }
