@@ -81,6 +81,45 @@ public class RangeModule {
         }
     }
 
+    // SortedMap
+    // 87 ms(16.68%), 83.6 MB(9.68%) for 53 tests
+    static class RangeModule2 {
+        private final NavigableMap<Integer, Integer> intervals = new TreeMap<>();
+
+        public RangeModule2() {
+        }
+
+        public void addRange(int left, int right) {
+            Integer start = intervals.floorKey(left);
+            Integer end = intervals.floorKey(right);
+            if (start != null && intervals.get(start) >= left) {
+                left = start;
+            }
+            if (end != null && intervals.get(end) > right) {
+                right = intervals.get(end);
+            }
+            intervals.put(left, right);
+            intervals.subMap(left, false, right, true).clear();
+        }
+
+        public boolean queryRange(int left, int right) {
+            Integer prevLeft = intervals.floorKey(left);
+            return prevLeft != null && intervals.get(prevLeft) >= right;
+        }
+
+        public void removeRange(int left, int right) {
+            Integer start = intervals.floorKey(left);
+            Integer end = intervals.floorKey(right);
+            if (end != null && intervals.get(end) > right) {
+                intervals.put(right, intervals.get(end));
+            }
+            if (start != null && intervals.get(start) > left) {
+                intervals.put(start, left);
+            }
+            intervals.subMap(left, true, right, false).clear();
+        }
+    }
+
     // TODO: Segment Tree
 
     void test1(String className) throws Exception {
@@ -132,6 +171,7 @@ public class RangeModule {
     @Test public void test1() {
         try {
             test1("RangeModule1");
+            test1("RangeModule2");
         } catch (Exception e) {
             e.printStackTrace();
         }
