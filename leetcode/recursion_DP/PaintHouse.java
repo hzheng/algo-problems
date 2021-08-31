@@ -1,4 +1,5 @@
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 // LC256: https://leetcode.com/problems/paint-house/
@@ -14,13 +15,13 @@ public class PaintHouse {
     // DFS + Recursion
     // Time Limit Exceeded
     public int minCost(int[][] costs) {
-        int[] min = new int[]{Integer.MAX_VALUE};
+        int[] min = new int[] {Integer.MAX_VALUE};
         dfs(costs, 0, -1, 0, min);
         return min[0];
     }
 
     private void dfs(int[][] costs, int start, int forbid, int sum, int[] min) {
-        if (sum >= min[0]) return;
+        if (sum >= min[0]) { return; }
 
         if (start >= costs.length) {
             min[0] = sum;
@@ -52,12 +53,11 @@ public class PaintHouse {
     // space complexity: O(1)
     // beats 58.52%(1 ms for 101 tests)
     public int minCost3(int[][] costs) {
-        int n = costs.length;
         int[] mins = new int[3];
-        for (int i = 0; i < n; i++) {
-            int min0 = Math.min(mins[1], mins[2]) + costs[i][0];
-            int min1 = Math.min(mins[0], mins[2]) + costs[i][1];
-            mins[2] = Math.min(mins[0], mins[1]) + costs[i][2];
+        for (int[] cost : costs) {
+            int min0 = Math.min(mins[1], mins[2]) + cost[0];
+            int min1 = Math.min(mins[0], mins[2]) + cost[1];
+            mins[2] = Math.min(mins[0], mins[1]) + cost[2];
             mins[0] = min0;
             mins[1] = min1;
         }
@@ -70,14 +70,15 @@ public class PaintHouse {
         assertEquals(expected, minCost3(costs));
     }
 
-    @Test
-    public void test() {
+    @Test public void test() {
         test(new int[][] {{1, 3, 4}, {1, 3, 2}, {3, 2, 1}}, 5);
         test(new int[][] {{1, 3, 4}, {1, 3, 2}, {3, 9, 1}}, 5);
         test(new int[][] {{1, 3, 4}, {1, 3, 2}, {3, 9, 1}, {2, 3, 1}}, 7);
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("PaintHouse");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
