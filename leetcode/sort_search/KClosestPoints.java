@@ -47,7 +47,7 @@ public class KClosestPoints {
     public int[][] kClosest3(int[][] points, int K) {
         for (int len = points.length, l = 0, r = len - 1; l <= r; ) {
             int mid = select(points, l, r);
-            if (mid == K) { break; }
+            if (mid == K) {break;}
 
             if (mid < K) {
                 l = mid + 1;
@@ -70,11 +70,55 @@ public class KClosestPoints {
         return l;
     }
 
+    // Solution of Choice
+    // Quick Select
+    // time complexity: average: O(N) worst: O(N^2), space complexity: O(K)
+    // 2 ms(100.00%), 47.5 MB(60.64%) for 83 tests
+    public int[][] kClosest4(int[][] points, int K) {
+        //        shuffle(points); // even slower
+        for (int len = points.length, start = 0, end = len - 1; start <= end; ) {
+            int index = quickSelect(points, start, end);
+            if (index == K) {break;}
+
+            if (index < K) {
+                start = index + 1;
+            } else {
+                end = index - 1;
+            }
+        }
+        return Arrays.copyOfRange(points, 0, K);
+    }
+
+    private int quickSelect(int[][] points, int start, int end) {
+        int i = start;
+        for (int j = end, pivotDist = distance(points[end]); i < j; i++) {
+            if (distance(points[i]) > pivotDist) {
+                swap(points, i--, --j);
+            }
+        }
+        swap(points, i, end);
+        return i;
+    }
+
+    private void swap(int[][] points, int i, int j) {
+        int[] tmp = points[i];
+        points[i] = points[j];
+        points[j] = tmp;
+    }
+
+    private void shuffle(int[][] points) {
+        Random random = new Random();
+        for (int i = points.length - 1; i > 0; i--) {
+            swap(points, i, random.nextInt(i + 1));
+        }
+    }
+
     private void test(int[][] points, int K, int[][] expected) {
         KClosestPoints k = new KClosestPoints();
         test(k::kClosest, points, K, expected);
         test(k::kClosest2, points, K, expected);
         test(k::kClosest3, points, K, expected);
+        test(k::kClosest4, points, K, expected);
     }
 
     @FunctionalInterface interface Function<A, B, C> {
