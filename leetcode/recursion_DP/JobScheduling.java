@@ -75,12 +75,43 @@ public class JobScheduling {
             int j = Arrays.binarySearch(jobs, i + 1, n, new Job(key, 0, 0));
             if (j < 0) {
                 j = -j - 1;
-            } else { // go to the leftmost
+            } else { // go to the leftmost (performance may be degraded)
                 for (; j > 0 && jobs[j - 1].start == key; j--) {}
             }
             dp[i] = Math.max(dp[i + 1], jobs[i].profit + dp[j]);
         }
         return dp[0];
+    }
+
+    // 1D-Dynamic Programming(Bottom-Up) + Sort + Binary Search
+    // time complexity: O(N*log(N)), space complexity: O(N)
+    // 16 ms(89.83%), 47.9 MB(85.04%) for 27 tests
+    public int jobScheduling2_2(int[] startTime, int[] endTime, int[] profit) {
+        int n = startTime.length;
+        int[][] jobs = new int[n][];
+        for (int i = 0; i < n; i++) {
+            jobs[i] = new int[]{startTime[i], endTime[i], profit[i]};
+        }
+        Arrays.sort(jobs, Comparator.comparingInt(a -> a[0]));
+        int[] dp = new int[n + 1];
+        for (int i = n - 1; i >= 0; i--) {
+            int j = searchLeftmost(jobs, i + 1, n, jobs[i][1]);
+            dp[i] = Math.max(dp[i + 1], jobs[i][2] + dp[j]);
+        }
+        return dp[0];
+    }
+
+    private int searchLeftmost(int[][] jobs, int start, int end, int key) {
+        int low = start;
+        for (int high = end; low < high; ) {
+            int mid = (low + high) >>> 1;
+            if (jobs[mid][0] < key) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        return low;
     }
 
     // 1D-Dynamic Programming(Bottom-Up) + Sort + SortedMap
@@ -107,6 +138,7 @@ public class JobScheduling {
     private void test(int[] startTime, int[] endTime, int[] profit, int expected) {
         assertEquals(expected, jobScheduling(startTime, endTime, profit));
         assertEquals(expected, jobScheduling2(startTime, endTime, profit));
+        assertEquals(expected, jobScheduling2_2(startTime, endTime, profit));
         assertEquals(expected, jobScheduling3(startTime, endTime, profit));
     }
 
