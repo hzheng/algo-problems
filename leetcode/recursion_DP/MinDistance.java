@@ -1,10 +1,15 @@
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
-// LC583: https://leetcode.com/contest/leetcode-weekly-contest-32/problems/delete-operation-for-two-strings
+// LC583: https://leetcode.com/problems/delete-operation-for-two-strings/
 //
-// Given two words word1 and word2, find the minimum number of steps required to make
-// word1 and word2 the same, where in each step you can delete one character in either string.
+// Given two strings word1 and word2, return the minimum number of steps required to make word1 and
+// word2 the same. In one step, you can delete exactly one character in either string.
+//
+// Constraints:
+// 1 <= word1.length, word2.length <= 500
+// word1 and word2 consist of only lowercase English letters.
 public class MinDistance {
     // 2-D Dynamic Programming(Bottom-Up)
     // time complexity: O(M * N), space complexity: O(M * N)
@@ -79,15 +84,15 @@ public class MinDistance {
     }
 
     private int lcs(String s1, String s2, int n1, int n2, int[][] memo) {
-        if (n1 == 0 || n2 == 0) return 0;
-        if (memo[n1][n2] > 0) return memo[n1][n2];
+        if (n1 == 0 || n2 == 0) {return 0;}
+
+        if (memo[n1][n2] > 0) {return memo[n1][n2];}
 
         if (s1.charAt(n1 - 1) == s2.charAt(n2 - 1)) {
             return memo[n1][n2] = 1 + lcs(s1, s2, n1 - 1, n2 - 1, memo);
         }
         return memo[n1][n2] =
-            Math.max(lcs(s1, s2, n1, n2 - 1, memo),
-                     lcs(s1, s2, n1 - 1, n2, memo));
+                Math.max(lcs(s1, s2, n1, n2 - 1, memo), lcs(s1, s2, n1 - 1, n2, memo));
     }
 
     void test(String word1, String word2, int expected) {
@@ -97,14 +102,15 @@ public class MinDistance {
         assertEquals(expected, minDistance4(word1, word2));
     }
 
-    @Test
-    public void test() {
+    @Test public void test() {
         test("sea", "eat", 2);
+        test("leetcode", "etco", 4);
+        test("longestleetcode", "digestetco", 9);
     }
 
     public static void main(String[] args) {
-        String clazz =
-            new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }
