@@ -1,14 +1,22 @@
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 // LC075: https://leetcode.com/problems/sort-colors/
 //
-// Given an array with n objects colored red, white or blue, sort them so that
-// objects of the same color are adjacent, with the colors in the order red,
-// white and blue.
+// Given an array nums with n objects colored red, white, or blue, sort them in-place so that
+// objects of the same color are adjacent, with the colors in the order red, white, and blue.
+// We will use the integers 0, 1, and 2 to represent the color red, white, and blue, respectively.
+// You must solve this problem without using the library's sort function.
+//
+// Constraints:
+// n == nums.length
+// 1 <= n <= 300
+// nums[i] is 0, 1, or 2.
 public class SortColor {
     // Solution of Choice
     // Two Pointers
+    // time complexity: O(N), space complexity: O(1)
     // beats 53.70%(0 ms)
     public void sortColors(int[] nums) {
         for (int cur = 0, red = 0, blue = nums.length - 1; cur <= blue; cur++) {
@@ -28,12 +36,13 @@ public class SortColor {
 
     // Three Pointers
     // http://www.lifeincode.net/programming/leetcode-sort-colors-java/
+    // time complexity: O(N), space complexity: O(1)
     // beats 53.70%(0 ms)
     public void sortColors2(int[] nums) {
         int redPos = 0;
         int whitePos = 0;
         int bluePos = 0;
-        for(int i = 0; i < nums.length; i++) {
+        for (int i = 0; i < nums.length; i++) {
             switch (nums[i]) {
             case 0:
                 nums[bluePos++] = 2;
@@ -50,25 +59,40 @@ public class SortColor {
         }
     }
 
-    @FunctionalInterface
-    interface Function<A> {
-        public void apply(A a);
+    // Solution of Choice
+    // Three Pointers (can be generalized)
+    // time complexity: O(N), space complexity: O(1)
+    // 0 ms(100.00%), 37.5 MB(63.71%) for 87 tests
+    public void sortColors3(int[] nums) {
+        final int k = 3;
+        int[] pos = new int[k];
+        for (int num : nums) {
+            for (int i = k - 1; i >= 0; i--) {
+                if (i >= num) {
+                    nums[pos[i]++] = i;
+                }
+            }
+        }
     }
 
-    void test(Function<int[]> sortColors, int[] nums, int ... expected) {
+    @FunctionalInterface interface Function<A> {
+        void apply(A a);
+    }
+
+    void test(Function<int[]> sortColors, int[] nums, int... expected) {
         int[] nums2 = nums.clone();
         sortColors.apply(nums2);
         assertArrayEquals(expected, nums2);
     }
 
-    void test(int[] nums, int ... expected) {
+    void test(int[] nums, int... expected) {
         SortColor s = new SortColor();
         test(s::sortColors, nums, expected);
         test(s::sortColors2, nums, expected);
+        test(s::sortColors3, nums, expected);
     }
 
-    @Test
-    public void test1() {
+    @Test public void test1() {
         test(new int[] {1, 0}, 0, 1);
         test(new int[] {0, 2, 0, 0}, 0, 0, 0, 2);
         test(new int[] {0, 2, 0, 2}, 0, 0, 2, 2);
@@ -76,11 +100,12 @@ public class SortColor {
         test(new int[] {1}, 1);
         test(new int[] {2}, 2);
         test(new int[] {1, 1}, 1, 1);
-        test(new int[] {0, 1, 2, 0, 1, 1, 1, 2, 1, 0, 2, 2},
-             0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2);
+        test(new int[] {0, 1, 2, 0, 1, 1, 1, 2, 1, 0, 2, 2}, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2);
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("SortColor");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
