@@ -90,22 +90,42 @@ public class LongestStringChain {
         return max;
     }
 
+    // Dynamic Programming + Sort + Hash Table
+    // time complexity: O(N * (log(N)+len(W)), space complexity: O(N*S)
+    // 77 ms(16.95%), 70.7 MB(5.71%) for 79 tests
+    public int longestStrChain4(String[] words) {
+        Arrays.sort(words, Comparator.comparing(String::length));
+        Map<String, Integer> dp = new HashMap<>();
+        int res = 0;
+        for (String word : words) {
+            int max = 0;
+            for (int i = word.length() - 1; i >= 0; i--) {
+                String predecessor = word.substring(0, i) + word.substring(i + 1);
+                max = Math.max(max, dp.getOrDefault(predecessor, 0));
+            }
+            dp.put(word, ++max);
+            res = Math.max(res, max);
+        }
+        return res;
+    }
+
     void test(String[] words, int expected) {
         assertEquals(expected, longestStrChain(words));
         assertEquals(expected, longestStrChain2(words));
         assertEquals(expected, longestStrChain3(words));
+        assertEquals(expected, longestStrChain4(words));
     }
 
-    @Test
-    public void test() {
-        test(new String[]{"a", "b", "ba", "bca", "bda", "bdca"}, 4);
-        test(new String[]{"ksqvsyq", "ks", "kss", "czvh", "zczpzvdhx", "zczpzvh", "zczpzvhx",
-                          "zcpzvh", "zczvh", "gr", "grukmj", "ksqvsq", "gruj", "kssq", "ksqsq",
-                          "grukkmj", "grukj", "zczpzfvdhx", "gru"}, 7);
+    @Test public void test() {
+        test(new String[] {"a", "b", "ba", "bca", "bda", "bdca"}, 4);
+        test(new String[] {"ksqvsyq", "ks", "kss", "czvh", "zczpzvdhx", "zczpzvh", "zczpzvhx",
+                           "zcpzvh", "zczvh", "gr", "grukmj", "ksqvsq", "gruj", "kssq", "ksqsq",
+                           "grukkmj", "grukj", "zczpzfvdhx", "gru"}, 7);
     }
 
     public static void main(String[] args) {
-        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }
