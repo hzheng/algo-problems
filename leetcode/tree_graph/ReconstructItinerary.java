@@ -3,15 +3,24 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// LC332: Given a list of airline tickets represented by pairs of departure and
-// arrival airports [from, to], reconstruct the itinerary in order. All of the
-// tickets belong to a man who departs from JFK. Thus, the itinerary must begin
-// with JFK.
-// Note:
-// If there are multiple valid itineraries, you should return the itinerary
-// that has the smallest lexical order when read as a single string.
-// All airports are represented by three capital letters (IATA code).
-// You may assume all tickets form at least one valid itinerary.
+// LC332: https://leetcode.com/problems/reconstruct-itinerary/
+//
+// You are given a list of airline tickets where tickets[i] = [fromi, toi] represent the departure
+// and the arrival airports of one flight. Reconstruct the itinerary in order and return it.
+// All of the tickets belong to a man who departs from "JFK", thus, the itinerary must begin with
+// "JFK". If there are multiple valid itineraries, you should return the itinerary that has the
+// smallest lexical order when read as a single string.
+// For example, the itinerary ["JFK", "LGA"] has a smaller lexical order than ["JFK", "LGB"].
+// You may assume all tickets form at least one valid itinerary. You must use all the tickets once
+// and only once.
+//
+// Constraints:
+// 1 <= tickets.length <= 300
+// tickets[i].length == 2
+// fromi.length == 3
+// toi.length == 3
+// fromi and toi consist of uppercase English letters.
+// fromi != toi
 public class ReconstructItinerary {
     // Recursion + DFS + Backtracking
     // beats 27.47%(18 ms for 79 tests)
@@ -137,6 +146,8 @@ public class ReconstructItinerary {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("ReconstructItinerary");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
