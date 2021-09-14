@@ -1,6 +1,7 @@
 import java.util.*;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 // LC076: https://leetcode.com/problems/minimum-window-substring/
@@ -43,12 +44,14 @@ public class MinWindowSubstr {
         int left = t.length();
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-            if (!map.containsKey(c)) continue;
+            if (!map.containsKey(c))
+                continue;
 
             if (map.get(c).consume(i) < 0) {
                 left--;
             }
-            if (left > 0) continue;
+            if (left > 0)
+                continue;
 
             int start = Integer.MAX_VALUE;
             for (CharSet charSet : map.values()) {
@@ -62,7 +65,6 @@ public class MinWindowSubstr {
         return minEnd < 0 ? "" : s.substring(minStart, minEnd + 1);
     }
 
-    // Solution of Choice
     // Hashtable + Two Pointers
     // simpler than last solution, but need rescan partial source string.
     // time complexity: O(N), space complexity: O(N)
@@ -78,9 +80,9 @@ public class MinWindowSubstr {
             if (map[s.charAt(end)]-- > 0) {
                 toMatch--;
             }
-            if (toMatch > 0) continue;
+            if (toMatch > 0) { continue; }
 
-            for ( ; map[s.charAt(start)] < 0; start++) { // rescan from start
+            for (; map[s.charAt(start)] < 0; start++) { // rescan from start
                 map[s.charAt(start)]++;
             }
             if (end - start < minLen) {
@@ -88,8 +90,7 @@ public class MinWindowSubstr {
                 minLen = end - start;
             }
         }
-        return minLen == Integer.MAX_VALUE ?
-               "" : s.substring(minStart, minStart + minLen + 1);
+        return minLen == Integer.MAX_VALUE ? "" : s.substring(minStart, minStart + minLen + 1);
     }
 
     // Hashtable + Two Pointers + Queue
@@ -107,10 +108,12 @@ public class MinWindowSubstr {
         for (int i = 0, toMatch = t.length(), len = s.length(); i < len; i++) {
             char c = s.charAt(i);
             int tgtCount = target[c];
-            if (tgtCount == 0) continue;
+            if (tgtCount == 0)
+                continue;
 
             queue.offer(i);
-            if (freq[c]++ >= tgtCount || --toMatch > 0) continue;
+            if (freq[c]++ >= tgtCount || --toMatch > 0)
+                continue;
 
             while (!queue.isEmpty()) {
                 int j = queue.poll();
@@ -125,8 +128,7 @@ public class MinWindowSubstr {
                 }
             }
         }
-        return minEnd == Integer.MAX_VALUE ?
-               "" : s.substring(minStart, minEnd + 1);
+        return minEnd == Integer.MAX_VALUE ? "" : s.substring(minStart, minEnd + 1);
     }
 
     // Hashtable + Set + Two Pointers
@@ -144,14 +146,15 @@ public class MinWindowSubstr {
         int minStart = 0;
         for (int start = 0, end = 0; end < n; end++) {
             char c = s.charAt(end);
-            if (!missingMap.containsKey(c)) continue;
+            if (!missingMap.containsKey(c))
+                continue;
 
-            int count = missingMap.get(c)  - 1;
+            int count = missingMap.get(c) - 1;
             missingMap.put(c, count);
             if (count == 0) {
                 missing.remove(c);
             }
-            for ( ; missing.size() == 0; start++) {
+            for (; missing.size() == 0; start++) {
                 if (end - start + 1 < min) {
                     min = end - start + 1;
                     minStart = start;
@@ -169,22 +172,90 @@ public class MinWindowSubstr {
         return min > n ? "" : s.substring(minStart, minStart + min);
     }
 
+    // Set + Two Pointers
+    // time complexity: O(N), space complexity: O(N)
+    // 4 ms(85.38%), 38.9 MB(87.53%) for 266 tests
+    public String minWindow5(String s, String t) {
+        int[] need = new int[128];
+        boolean[] target = new boolean[128];
+        Set<Character> missingSet = new HashSet<>();
+        for (char c : t.toCharArray()) {
+            missingSet.add(c);
+            need[c]++;
+            target[c] = true;
+        }
+        int min = Integer.MAX_VALUE;
+        int start = 0;
+        for (int i = 0, j = 0, n = s.length(); ; ) {
+            if (missingSet.isEmpty()) {
+                if (j - i < min) {
+                    min = j - i;
+                    start = i;
+                }
+                char c = s.charAt(i++);
+                if (target[c] && ++need[c] > 0) {
+                    missingSet.add(c);
+                }
+            } else {
+                if (j >= n) { break; }
+
+                char c = s.charAt(j++);
+                if (target[c] && --need[c] <= 0) {
+                    missingSet.remove(c);
+                }
+            }
+        }
+        return min == Integer.MAX_VALUE ? "" : s.substring(start, start + min);
+    }
+
+    // Solution of Choice
+    // Two Pointers
+    // time complexity: O(N), space complexity: O(N)
+    // 3 ms(96.10%), 38.5 MB(99.37%) for 266 tests
+    public String minWindow6(String s, String t) {
+        int[] need = new int[128];
+        for (char c : t.toCharArray()) {
+            need[c]++;
+        }
+        int min = Integer.MAX_VALUE;
+        int start = 0;
+        for (int i = 0, j = 0, n = s.length(), missing = t.length(); missing == 0 || j < n; ) {
+            if (missing == 0) {
+                if (j - i < min) { // update min
+                    min = j - i;
+                    start = i;
+                }
+                if (need[s.charAt(i++)]++ == 0) { // need increased
+                    missing++;
+                }
+            } else if (need[s.charAt(j++)]-- > 0) { // need decreased
+                missing--;
+            }
+        }
+        return min == Integer.MAX_VALUE ? "" : s.substring(start, start + min);
+    }
+
     void test(String s, String t, String expected) {
         assertEquals(expected, minWindow(s, t));
         assertEquals(expected, minWindow2(s, t));
         assertEquals(expected, minWindow3(s, t));
         assertEquals(expected, minWindow4(s, t));
+        assertEquals(expected, minWindow5(s, t));
+        assertEquals(expected, minWindow6(s, t));
     }
 
-    @Test
-    public void test1() {
+    @Test public void test1() {
         test("bba", "ab", "ba");
         test("ADOBECODEBANC", "ABC", "BANC");
         test("cabwefgewcwaefgcf", "cae", "cwae");
         test("a", "aa", "");
+        test("CACBCBA", "AB", "BA");
+        test("CACBACBDA", "ABA", "ACBA");
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("MinWindowSubstr");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
