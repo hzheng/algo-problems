@@ -123,32 +123,33 @@ public class TreeFromPreorderInorder {
 
     // Solution of Choice
     // Divide & Conquer/Recursion + Hashtable
-    // beats 77.21%(7 ms)
+    // 4 ms(34.14%), 41.9 MB(12.20%) for 203 tests
     public TreeNode buildTree4(int[] preorder, int[] inorder) {
         Map<Integer, Integer> map = new HashMap<>();
         for (int i = 0; i < inorder.length; i++) {
             map.put(inorder[i], i);
         }
-        return buildTree4(map, preorder, new int[1], inorder, 0, inorder.length);
+        return buildTree(map, preorder, 0, 0, inorder.length);
     }
 
-    private TreeNode buildTree4(Map<Integer, Integer> map, int[] preorder,
-                                int[] from, int[] inorder, int start, int end) {
-        if (start >= end) return null;
+    private TreeNode buildTree(Map<Integer, Integer> map, int[] preorder,
+                                int preIndex, int inStart, int inEnd) {
+        if (inStart >= inEnd) {return null;}
 
-        TreeNode root = new TreeNode(preorder[from[0]++]);
+        TreeNode root = new TreeNode(preorder[preIndex]);
         int rootIndex = map.get(root.val);
-        root.left = buildTree4(map, preorder, from, inorder, start, rootIndex);
-        root.right = buildTree4(map, preorder, from, inorder, rootIndex + 1, end);
+        root.left = buildTree(map, preorder, preIndex + 1, inStart, rootIndex);
+        root.right =
+                buildTree(map, preorder, preIndex + 1 + rootIndex - inStart, rootIndex + 1, inEnd);
         return root;
     }
 
     // Solution of Choice
     // Stack
-    // beats 83.92%(5 ms)
+    // 4 ms(34.14%), 40.9 MB(26.34%) for 203 tests
     public TreeNode buildTree5(int[] preorder, int[] inorder) {
         TreeNode dummy = new TreeNode(Integer.MIN_VALUE);
-        Stack<TreeNode> stack = new Stack<>();
+        Deque<TreeNode> stack = new ArrayDeque<>();
         stack.push(dummy);
         TreeNode node = null;
         for (int i = 0, j = 0; j < preorder.length; ) {
@@ -161,7 +162,7 @@ public class TreeFromPreorderInorder {
                     stack.peek().left = child;
                 } else {
                     node.right = child;
-                    node = null;
+                    node = null; // reset flag
                 }
                 stack.push(child);
             }
@@ -171,7 +172,7 @@ public class TreeFromPreorderInorder {
 
     @FunctionalInterface
     interface Function<A, B, C> {
-        public C apply(A a, B b);
+        C apply(A a, B b);
     }
 
     void test(Function<int[], int[], TreeNode> build, int[] preorder,
@@ -200,6 +201,8 @@ public class TreeFromPreorderInorder {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("TreeFromPreorderInorder");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
