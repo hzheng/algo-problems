@@ -48,7 +48,6 @@ public class MaxSum {
         return maxSum;
     }
 
-    // Solution of Choice
     // beats 22.56%(2 ms)
     public static int maxSubArray3(int[] nums) {
         int n = nums.length;
@@ -100,7 +99,8 @@ public class MaxSum {
                                  maxSubArray5(nums, mid + 1, end)));
     }
 
-    // 0-D Dynamic Programming(Bottom-Up)
+    // Solution of Choice
+    // 0-D Dynamic Programming(Bottom-Up) (Kadane's algorithm)
     // time complexity: O(N), space complexity: O(1)
     // 0 ms(100.00%), 39.5 MB(12.40%) for 203 tests
     public static int maxSubArray6(int[] nums) {
