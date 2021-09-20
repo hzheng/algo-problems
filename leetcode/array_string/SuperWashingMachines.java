@@ -1,4 +1,5 @@
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 // LC517: https://leetcode.com/problems/super-washing-machines/
@@ -23,7 +24,7 @@ public class SuperWashingMachines {
         for (int machine : machines) {
             sum += machine;
         }
-        if (sum % n != 0) return -1;
+        if (sum % n != 0) {return -1;}
 
         int mean = sum / n;
         int[] count = new int[n];
@@ -48,7 +49,7 @@ public class SuperWashingMachines {
         for (int machine : machines) {
             sum += machine;
         }
-        if (sum % n != 0) return -1;
+        if (sum % n != 0) {return -1;}
 
         int mean = sum / n;
         int res = 0;
@@ -68,7 +69,7 @@ public class SuperWashingMachines {
         for (int i = 0; i < n; i++) {
             sum[i + 1] = sum[i] + machines[i];
         }
-        if (sum[n] % n != 0) return -1;
+        if (sum[n] % n != 0) {return -1;}
 
         int mean = sum[n] / n;
         int res = 0;
@@ -92,7 +93,7 @@ public class SuperWashingMachines {
         for (int machine : machines) {
             sum += machine;
         }
-        if (sum % n != 0) return -1;
+        if (sum % n != 0) {return -1;}
 
         int mean = sum / n;
         int res = 0;
@@ -116,8 +117,7 @@ public class SuperWashingMachines {
         assertEquals(expected, findMinMoves3_2(machines));
     }
 
-    @Test
-    public void test() {
+    @Test public void test() {
         test(new int[] {1, 1}, 0);
         test(new int[] {1, 0, 5}, 3);
         test(new int[] {0, 3, 0}, 2);
@@ -127,10 +127,12 @@ public class SuperWashingMachines {
         test(new int[] {0, 0, 5, 0, 0, 0, 5, 0, 0, 0}, 4);
         test(new int[] {0, 0, 10, 0, 0, 0, 10, 0, 0, 0}, 8);
         test(new int[] {1000, 0, 1000, 0, 1000, 0, 1000, 0, 1000, 0, 1000, 0}, 500);
-        test(new int[] {100000,0,100000,0,100000,0,100000,0,100000,0,100000,0}, 50000);
+        test(new int[] {100000, 0, 100000, 0, 100000, 0, 100000, 0, 100000, 0, 100000, 0}, 50000);
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("SuperWashingMachines");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
