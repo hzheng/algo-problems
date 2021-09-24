@@ -1,6 +1,7 @@
 import java.util.*;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 // LC856: https://leetcode.com/problems/score-of-parentheses/
@@ -21,7 +22,7 @@ public class ScoreOfParentheses {
                 stack.push(0);
                 continue;
             }
-            for (int a = 0;; ) {
+            for (int a = 0; ; ) {
                 int top = stack.pop();
                 if (top == 0) {
                     stack.push(a == 0 ? 1 : a * 2);
@@ -53,6 +54,23 @@ public class ScoreOfParentheses {
             }
         }
         return stack.peek();
+    }
+
+    // Stack
+    // time complexity: O(N), space complexity: O(N)
+    // 0 ms(100.00%), 37.2 MB(55.42%) for 86 tests
+    public int scoreOfParentheses2_2(String s) {
+        Stack<Integer> stack = new Stack<>();
+        int cur = 0;
+        for (char c : s.toCharArray()) {
+            if (c == '(') {
+                stack.push(cur);
+                cur = 0;
+            } else {
+                cur = stack.pop() + Math.max(2 * cur, 1);
+            }
+        }
+        return cur;
     }
 
     // time complexity: O(N), space complexity: O(1)
@@ -98,12 +116,12 @@ public class ScoreOfParentheses {
     void test(String S, int expected) {
         assertEquals(expected, scoreOfParentheses(S));
         assertEquals(expected, scoreOfParentheses2(S));
+        assertEquals(expected, scoreOfParentheses2_2(S));
         assertEquals(expected, scoreOfParentheses3(S));
         assertEquals(expected, scoreOfParentheses4(S));
     }
 
-    @Test
-    public void test() {
+    @Test public void test() {
         test("()", 1);
         test("(())", 2);
         test("()()", 2);
@@ -111,8 +129,8 @@ public class ScoreOfParentheses {
     }
 
     public static void main(String[] args) {
-        String clazz =
-            new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }
