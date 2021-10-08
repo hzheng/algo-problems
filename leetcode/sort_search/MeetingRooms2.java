@@ -1,6 +1,7 @@
 import java.util.*;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 import common.Interval;
@@ -14,11 +15,7 @@ public class MeetingRooms2 {
     // time complexity: O(N * log(N)), space complexity: O(N)
     // beats 50.15%(17 ms for 77 tests)
     public int minMeetingRooms(Interval[] intervals) {
-        Arrays.sort(intervals, new Comparator<Interval>() {
-            public int compare(Interval a, Interval b) {
-                return a.start - b.start;
-            }
-        });
+        Arrays.sort(intervals, Comparator.comparingInt(a -> a.start));
         PriorityQueue<Integer> pq = new PriorityQueue<>();
         pq.offer(Integer.MAX_VALUE);
         for (Interval interval : intervals) {
@@ -119,8 +116,7 @@ public class MeetingRooms2 {
         assertEquals(expected, minMeetingRooms5(intervals));
     }
 
-    @Test
-    public void test() {
+    @Test public void test() {
         test(new int[][] {{0, 3}, {5, 10}, {15, 20}}, 1);
         test(new int[][] {{0, 5}, {5, 10}, {15, 20}}, 1);
         test(new int[][] {{0, 30}, {5, 10}, {15, 20}}, 2);
@@ -129,7 +125,8 @@ public class MeetingRooms2 {
     }
 
     public static void main(String[] args) {
-        String clazz = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
         org.junit.runner.JUnitCore.main(clazz);
     }
 }
