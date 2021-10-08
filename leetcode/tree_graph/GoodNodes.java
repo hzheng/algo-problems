@@ -36,7 +36,7 @@ public class GoodNodes {
     }
 
     // Recursion
-    // 3 ms(16.50%), 56.3 MB(5.89%) for 63 tests
+    // 2 ms(96.54%), 47.9 MB(55.03%) for 63 tests
     public int goodNodes2(TreeNode root) {
         return dfs(root, Integer.MIN_VALUE);
     }
@@ -44,9 +44,8 @@ public class GoodNodes {
     private int dfs(TreeNode root, int max) {
         if (root == null) {return 0;}
 
-        int res = (max <= root.val) ? 1 : 0;
-        max = Math.max(max, root.val);
-        return res + dfs(root.left, max) + dfs(root.right, max);
+        int nextMax = Math.max(max, root.val);
+        return ((max <= root.val) ? 1 : 0) + dfs(root.left, nextMax) + dfs(root.right, nextMax);
     }
 
     void test(String s, int expected) {
@@ -58,6 +57,7 @@ public class GoodNodes {
         test("3,1,4,3,#,1,5", 4);
         test("3,3,#,4,2", 3);
         test("1", 1);
+        test("3,11,4,3,8,#,9,6,2,#,1,5,7", 4);
     }
 
     public static void main(String[] args) {
