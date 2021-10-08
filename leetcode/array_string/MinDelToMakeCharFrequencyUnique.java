@@ -45,35 +45,41 @@ public class MinDelToMakeCharFrequencyUnique {
         return res;
     }
 
-    // Sort + Set
+    // Sort
     // time complexity: O(N), space complexity: O(N)
-    // 10 ms(89.37%), 39.6 MB(58.41%) for 103 tests
+    // 10 ms(93.34%), 39.7 MB(67.31%) for 103 tests
     public int minDeletions2(String s) {
         int[] freq = new int[26];
         for (char c : s.toCharArray()) {
             freq[c - 'a']++;
         }
         Arrays.sort(freq);
-        Set<Integer> set = new HashSet<>();
         int res = 0;
-        for (int i = freq.length - 1; i >= 0 && freq[i] > 0; i--) {
-            for (; freq[i] > 0 && !set.add(freq[i]); freq[i]--, res++) {}
+        for (int i = freq.length - 1, expected = freq[i]; i >= 0 && freq[i] > 0; i--) {
+            if (freq[i] > expected) {
+                res += freq[i] - expected;
+            } else {
+                expected = freq[i];
+            }
+            if (expected > 0) {
+                expected--;
+            }
         }
         return res;
     }
 
-    // Set
-    // time complexity: O(N), space complexity: O(N)
-    // 15 ms(59.34%), 39.8 MB(44.45%) for 103 tests
+    // Greedy + Set
+    // time complexity: O(N), space complexity: O(1)
+    // 15 ms(69.48%), 39.8 MB(67.31%) for 103 tests
     public int minDeletions3(String s) {
         int[] freq = new int[26];
-        Set<Integer> used = new HashSet<>();
         for (int i = s.length() - 1; i >= 0; i--) {
             freq[s.charAt(i) - 'a']++;
         }
         int res = 0;
+        Set<Integer> used = new HashSet<>();
         for (int i = freq.length - 1; i >= 0; i--) {
-            for (int c = freq[i]; c > 0 && !used.add(c); c--, res++) {}
+            for (int f = freq[i]; f > 0 && !used.add(f); f--, res++) {}
         }
         return res;
     }
