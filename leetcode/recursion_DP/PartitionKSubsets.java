@@ -8,9 +8,11 @@ import static org.junit.Assert.*;
 //
 // Given an array of integers nums and a positive integer k, find whether it's
 // possible to divide this array into k subsets whose sums are all equal.
-// Note:
-// 1 <= k <= len(nums) <= 16.
-// 0 < nums[i] < 10000.
+//
+// Constraints:
+// 1 <= k <= nums.length <= 16
+// 1 <= nums[i] <= 10^4
+// The frequency of each element is in the range [1, 4].
 public class PartitionKSubsets {
     // Recursion + DFS + Bit Manipulation
     // beats 16.34%(130 ms for 147 tests)
@@ -113,9 +115,9 @@ public class PartitionKSubsets {
     }
 
     // https://leetcode.com/articles/partition-to-k-equal-sum-subsets/ #2_2
-    // Dynamic Programming(Bottom-Up) + Bit Manipulation
+    // Dynamic Programming(Bottom-Up) + Bit Manipulation + Sort
     // time complexity: O(N * 2 ^ N)), space complexity: O(2 ^ N)
-    // beats 13.33%(153 ms for 147 tests)
+    // 26 ms(21.01%), 45.2 MB(5.01%) for 142 tests
     public boolean canPartitionKSubsets4(int[] nums, int k) {
         Arrays.sort(nums);
         int sum = Arrays.stream(nums).sum();
@@ -125,8 +127,8 @@ public class PartitionKSubsets {
 
         boolean[] dp = new boolean[1 << n];
         dp[0] = true;
-        int[] total = new int[1 << n];
-        for (int cur = 0; cur < (1 << n); cur++) {
+        int[] total = new int[dp.length];
+        for (int cur = 0; cur < dp.length; cur++) {
             if (!dp[cur]) { continue; }
 
             for (int i = 0; i < n; i++) {
@@ -139,7 +141,7 @@ public class PartitionKSubsets {
                 total[next] = total[cur] + nums[i];
             }
         }
-        return dp[(1 << n) - 1];
+        return dp[dp.length - 1];
     }
 
     // Recursion + DFS + Backtracking
@@ -173,30 +175,30 @@ public class PartitionKSubsets {
         return false;
     }
 
-    // Recursion + DFS + Backtracking
-    // 2 ms(53.53%), 36.7 MB(39.32%) for 142 tests
+    // Recursion + DFS + Backtracking + Sort
+    // 2 ms(61.51%), 36.4 MB(61.08%) for 142 tests
     public boolean canPartitionKSubsets6(int[] nums, int k) {
         int sum = Arrays.stream(nums).sum();
         if ((sum % k) != 0) { return false; }
 
         Arrays.sort(nums); // save time by trying bigger numbers first
         int n = nums.length;
-        return partition6(nums, k, sum / k, n - 1, 0, new boolean[n]);
+        return partition6(nums, k, sum / k, n - 1, sum / k, new boolean[n]);
     }
 
-    private boolean partition6(int[] nums, int groups, int target, int start, int sum,
+    private boolean partition6(int[] nums, int groups, int target, int start, int remain,
                                boolean[] visited) {
-        if (groups == 1) { return true; }
+        if (groups == 1) { return true; } // last group must be good
 
-        if (sum == target && partition6(nums, groups - 1, target, nums.length - 1, 0, visited)) {
-            return true;
+        if (remain == 0) {
+            return partition6(nums, groups - 1, target, nums.length - 1, target, visited);
         }
 
         for (int i = start; i >= 0; i--) {
-            if (visited[i] || sum + nums[i] > target) { continue; }
+            if (visited[i] || nums[i] > remain) { continue; }
 
             visited[i] = true;
-            if (partition6(nums, groups, target, i - 1, sum + nums[i], visited)) {
+            if (partition6(nums, groups, target, i - 1, remain - nums[i], visited)) {
                 return true;
             }
             visited[i] = false;
