@@ -13,30 +13,44 @@ import static org.junit.Assert.*;
 // elements in the linked list starting from the head correspond to some downward path connected in
 // the binary tree otherwise return False.
 // In this context downward path means a path that starts at some node and goes downwards.
+//
 // Constraints:
-// 1 <= node.val <= 100 for each node in the linked list and binary tree.
-// The given linked list will contain between 1 and 100 nodes.
-// The given binary tree will contain between 1 and 2500 nodes.
+// The number of nodes in the tree will be in the range [1, 2500].
+// The number of nodes in the list will be in the range [1, 100].
+// 1 <= Node.val <= 100 for each node in the linked list and binary tree.
 public class LinkedListInTree {
     // Recursion
-    // time complexity: O(N * min(H, L)), space complexity: O(H) (N/L: tree/list size H: tree height)
-    // 1 ms(97.94%), 39.4 MB(100%) for 61 tests
-    public boolean isSubPath(ListNode head, TreeNode root) {
+    // 
+    public boolean isSubPath0(ListNode head, TreeNode root) {
+        if (head == null) { return true; }
+
         if (root == null) { return false; }
+
+        if (head.val == root.val) {
+            return (isSubPath0(head.next, root.left) || isSubPath0(head.next, root.right));
+        }
+        return isSubPath0(head, root.left) || isSubPath0(head, root.right);
+    }
+
+    // Recursion
+    // time complexity: O(N * min(H, L)), space complexity: O(H) (N/L: tree/list size H: tree height)
+    // 2 ms(43.51%), 46.8 MB(19.06%) for 67 tests
+    public boolean isSubPath(ListNode head, TreeNode root) {
+        if (root == null) {return false;}
 
         return pathStarts(head, root) || isSubPath(head, root.left) || isSubPath(head, root.right);
     }
 
     private boolean pathStarts(ListNode head, TreeNode root) {
-        if (head == null) { return true; }
-        if (root == null || head.val != root.val) { return false; }
+        if (head == null) {return true;}
+        if (root == null || head.val != root.val) {return false;}
 
         return pathStarts(head.next, root.left) || pathStarts(head.next, root.right);
     }
 
     // Dynamic Programming (KMP algorithm)
     // time complexity: O(N), space complexity: O(L+H)
-    // 1 ms(97.94%), 47.3 MB(100%) for 61 tests
+    // 1 ms(99.66%), 39.6 MB(41.82%) for 67 tests
     public boolean isSubPath2(ListNode head, TreeNode root) {
         List<int[]> kmp = new ArrayList<>();
         kmp.add(new int[] {0, head.val});
@@ -52,7 +66,7 @@ public class LinkedListInTree {
     }
 
     private boolean dfs(TreeNode root, int cur, List<int[]> kmp) {
-        if (root == null) { return false; }
+        if (root == null) {return false;}
 
         for (; cur > 0 && root.val != kmp.get(cur)[1]; cur = kmp.get(cur - 1)[0]) {}
         if (root.val == kmp.get(cur)[1]) {
@@ -64,6 +78,7 @@ public class LinkedListInTree {
     private void test(int[] list, String tree, boolean expected) {
         ListNode head = ListNode.of(list);
         TreeNode root = TreeNode.of(tree);
+        assertEquals(expected, isSubPath0(head, root));
         assertEquals(expected, isSubPath(head, root));
         assertEquals(expected, isSubPath2(head, root));
     }
