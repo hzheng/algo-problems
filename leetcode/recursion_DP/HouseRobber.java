@@ -1,4 +1,5 @@
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 // LC198: https://leetcode.com/problems/house-robber/
@@ -11,6 +12,10 @@ import static org.junit.Assert.*;
 // Given a list of non-negative integers representing the amount of money of
 // each house, determine the maximum amount of money you can rob tonight without
 // alerting the police.
+//
+// Constraints:
+// 1 <= nums.length <= 100
+// 0 <= nums[i] <= 400
 public class HouseRobber {
     // Solution of Choice
     // Dynamic Programming
@@ -34,7 +39,7 @@ public class HouseRobber {
 
     // Dynamic Programming
     // time complexity: O(N), space complexity: O(1)
-    // beats 3.25%(1 ms)
+    // 0 ms(100.00%), 38.5 MB(17.24%) for 68 tests
     public int rob2(int[] nums) {
         int even = 0;
         int odd = 0;
@@ -45,33 +50,29 @@ public class HouseRobber {
                 odd = Math.max(even, odd + nums[i]);
             }
         }
-        return even > odd ? even : odd;
+        return Math.max(even, odd);
     }
 
     // Dynamic Programming
     // time complexity: O(N), space complexity: O(N)
-    // beats 41.08%(0 ms)
+    // 0 ms(100.00%), 38.3 MB(23.58%) for 68 tests
     public int rob3(int[] nums) {
         int n = nums.length;
-        if (n == 0) return 0;
-
         int[] dp = new int[n + 1];
         dp[1] = nums[0];
-        for (int i = 2; i <= n; i++) {
-            dp[i] = Math.max(dp[i - 2] + nums[i - 1], dp[i - 1]);
+        for (int i = 1; i < n; i++) {
+            dp[i + 1] = Math.max(dp[i - 1] + nums[i], dp[i]);
         }
         return dp[n];
     }
 
-    void test(int expected, int ... nums) {
+    void test(int expected, int... nums) {
         assertEquals(expected, rob(nums));
         assertEquals(expected, rob2(nums));
         assertEquals(expected, rob3(nums));
     }
 
-    @Test
-    public void test1() {
-        test(0);
+    @Test public void test1() {
         test(3, 3);
         test(4, 1, 4);
         test(5, 1, 4, 4);
@@ -81,6 +82,8 @@ public class HouseRobber {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("HouseRobber");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
