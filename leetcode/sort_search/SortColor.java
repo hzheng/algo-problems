@@ -59,8 +59,7 @@ public class SortColor {
         }
     }
 
-    // Solution of Choice
-    // Three Pointers (can be generalized)
+    // Three Pointers (can be generalized to k colors: O(N*K))
     // time complexity: O(N), space complexity: O(1)
     // 0 ms(100.00%), 37.5 MB(63.71%) for 87 tests
     public void sortColors3(int[] nums) {
@@ -71,6 +70,23 @@ public class SortColor {
                 if (i >= num) {
                     nums[pos[i]++] = i;
                 }
+            }
+        }
+    }
+
+    // Solution of Choice
+    // Three Pointers (can be generalized to k colors: O(N))
+    // time complexity: O(N), space complexity: O(1)
+    // 0 ms(100.00%), 39.3 MB(20.11%) for 87 tests
+    public void sortColors4(int[] nums) {
+        final int k = 3;
+        int[] count = new int[k];
+        for (int num : nums) {
+            count[num]++;
+        }
+        for (int i = 0, p = 0; i < k; i++) {
+            for (int j = count[i]; j > 0; j--) {
+                nums[p++] = i;
             }
         }
     }
@@ -90,6 +106,7 @@ public class SortColor {
         test(s::sortColors, nums, expected);
         test(s::sortColors2, nums, expected);
         test(s::sortColors3, nums, expected);
+        test(s::sortColors4, nums, expected);
     }
 
     @Test public void test1() {
