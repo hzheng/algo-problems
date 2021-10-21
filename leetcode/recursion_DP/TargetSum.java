@@ -1,6 +1,8 @@
 import java.util.*;
+import java.util.stream.IntStream;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 // LC494: https://leetcode.com/problems/target-sum/
@@ -9,12 +11,19 @@ import static org.junit.Assert.*;
 // S. Now you have 2 symbols + and -. For each integer, you should choose one
 // from + and - as its new symbol.
 // Find out how many ways to assign symbols to make sum of integers equal to target S.
+//
+// Constraints:
+// 1 <= nums.length <= 20
+// 0 <= nums[i] <= 1000
+// 0 <= sum(nums[i]) <= 1000
+// -1000 <= target <= 1000
 public class TargetSum {
     // Time Limit Exceeded
     // Bit Manipulation
     public int findTargetSumWays0(int[] nums, int S) {
         int n = nums.length;
-        if (n == 0) return 0;
+        if (n == 0)
+            return 0;
         int count = 0;
         for (int flag = (1 << (n - 1)) - 1; flag >= 0; flag--) {
             if (compute(nums, flag, S)) {
@@ -84,11 +93,11 @@ public class TargetSum {
     }
 
     private int findTarget(int[] nums, int index, int sum, int target, Map<Long, Integer> map) {
-        if (index == nums.length) return sum == target ? 1 : 0;
+        if (index == nums.length) {return sum == target ? 1 : 0;}
 
         long key = ((long)index << 32) + sum;
         Integer cached = map.get(key);
-        if (cached != null) return cached;
+        if (cached != null) {return cached;}
 
         int res = findTarget(nums, index + 1, sum - nums[index], target, map);
         res += findTarget(nums, index + 1, sum + nums[index], target, map);
@@ -104,7 +113,7 @@ public class TargetSum {
         for (int num : nums) {
             sum += num;
         }
-        if (S > sum || S < -sum) return 0;
+        if (S > sum || S < -sum) { return 0; }
 
         int size = 2 * sum + 1;
         int[] dp = new int[size];
@@ -122,22 +131,20 @@ public class TargetSum {
         return dp[sum + S];
     }
 
-    // Dynamic Programming
-    // beats 97.37%(16 ms for 139 tests)
-    public int findTargetSumWays5(int[] nums, int S) {
-        int sum = 0;
-        for (int num : nums) {
-            sum += num;
-        }
-        if (S > sum || S < -sum || ((S + sum) & 1) != 0) return 0;
+    // Solution of Choice
+    // 1-D Dynamic Programming(Bottom-Up)
+    // 5 ms(89.83%), 38.5 MB(61.65%) for 139 tests
+    public int findTargetSumWays5(int[] nums, int target) {
+        int sum = IntStream.of(nums).sum();;
+        if (target > sum || target < -sum || ((target + sum) & 1) != 0) {return 0;}
 
-        // Find a positive subset of nums such that sum(P) = (S + sum(nums)) / 2
-        int total = (S + sum) >>> 1;
+        // Find a positive subset of nums such that sum(P) = (target + sum(nums)) / 2
+        int total = (target + sum) >>> 1;
         int[] dp = new int[total + 1];
         dp[0] = 1;
         for (int num : nums) {
-            for (int i = total; i >= num; i--) {
-                dp[i] += dp[i - num];
+            for (int i = total; i >= num; i--) { // loop backwards to avoid duplicate calculation
+                dp[i] += dp[i - num]; // by simplifying: dp[i][j] = dp[i-1][j] + dp[i][j-nums[i]]
             }
         }
         return dp[total];
@@ -152,18 +159,19 @@ public class TargetSum {
         assertEquals(expected, findTargetSumWays0(nums, S));
     }
 
-    @Test
-    public void test() {
+    @Test public void test() {
         test(new int[] {1}, 1, 1);
         test(new int[] {0}, 0, 2);
         test(new int[] {1, 1, 1, 1, 1}, 3, 5);
-        test(new int[] {16, 40, 9, 17, 49, 32, 30, 10, 38, 36, 31, 22, 3, 36, 32,
-                        2, 26, 17, 30, 47}, 49, 5828);
-        test(new int[] {25, 14, 16, 44, 9, 22, 15, 27, 23, 10, 41, 25, 14, 35,
-                        28, 47, 39, 26, 11, 38}, 43, 6182);
+        test(new int[] {16, 40, 9, 17, 49, 32, 30, 10, 38, 36, 31, 22, 3, 36, 32, 2, 26, 17, 30,
+                        47}, 49, 5828);
+        test(new int[] {25, 14, 16, 44, 9, 22, 15, 27, 23, 10, 41, 25, 14, 35, 28, 47, 39, 26, 11,
+                        38}, 43, 6182);
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("TargetSum");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
