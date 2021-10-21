@@ -1,4 +1,3 @@
-import java.util.*;
 import java.util.stream.IntStream;
 
 import org.junit.Test;
@@ -21,7 +20,7 @@ import static org.junit.Assert.*;
 public class LastStoneWeightII {
     // Dynamic Programming
     // time complexity: O(N * SUM), space complexity: O(SUM)
-    // 35 ms(%), 33.7 MB(100%) for 82 tests
+    // 3 ms(72.08%), 36.4 MB(87.63%) for 87 tests
     public int lastStoneWeightII(int[] stones) {
         int sum = IntStream.of(stones).sum();
         boolean[] dp = new boolean[sum + 1];
@@ -39,7 +38,7 @@ public class LastStoneWeightII {
 
     // Dynamic Programming
     // time complexity: O(N * SUM), space complexity: O(SUM)
-    // 1 ms(%), 34 MB(100%) for 82 tests
+    // 4 ms(52.27%), 38.6 MB(28.99%) for 87 tests
     public int lastStoneWeightII_2(int[] stones) {
         final int MAX = 30 * 100 / 2;
         boolean[] dp = new boolean[MAX + 1];
@@ -47,7 +46,7 @@ public class LastStoneWeightII {
         int sum = 0;
         for (int stone : stones) {
             sum += stone;
-            for (int i = MAX; i >= stone; i--) {
+            for (int i = Math.min(MAX, sum); i >= stone; i--) {
                 dp[i] |= dp[i - stone];
             }
         }
