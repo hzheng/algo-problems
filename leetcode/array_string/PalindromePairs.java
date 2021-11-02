@@ -245,6 +245,8 @@ public class PalindromePairs {
     // TODO: Manacher algorithm
     // https://discuss.leetcode.com/topic/39512/java-naive-154-ms-o-nk-2-r-and-126-ms-o-nk-r-manacher-suffixes-prefixes
 
+    // TODO: rolling hash
+
     void test(Function<String[], List<List<Integer>>> pairs,
               Integer [][] expected, String ... words) {
         List<List<Integer> > res = pairs.apply(words);
@@ -285,6 +287,8 @@ public class PalindromePairs {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("PalindromePairs");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
