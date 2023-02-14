@@ -45,43 +45,37 @@ public class SumOfLeftLeaves {
         }
     }
 
+    // Solution of Choice
     // BFS + Queue
-    // beats 24.90%(10 ms for 102 tests)
+    // beats 12.1%(1 ms for 102 tests)
     public int sumOfLeftLeaves2(TreeNode root) {
-        if (root == null) return 0;
-
         int sum = 0;
         Queue<TreeNode> queue = new LinkedList<>();
-        queue.offer(root);
-        while (!queue.isEmpty()) {
+        for (queue.offer(root); !queue.isEmpty(); ) {
             TreeNode cur = queue.poll();
-            if (cur.left != null) {
-                if (cur.left.left == null && cur.left.right == null) {
-                    sum += cur.left.val;
-                }
-                queue.offer(cur.left);
-            }
-            if (cur.right != null) {
-                queue.offer(cur.right);
+            if (cur == null) { continue; }
+
+            queue.offer(cur.right);
+            TreeNode leftChild = cur.left;
+            queue.offer(leftChild);
+            if (leftChild != null && leftChild.left == null && leftChild.right == null) {
+                sum += leftChild.val;
             }
         }
         return sum;
     }
 
+    // Solution of Choice
     // DFS + Recursion
-    // beats 97.82%(7 ms for 102 tests)
+    // beats 100%(0 ms for 102 tests)
     public int sumOfLeftLeaves3(TreeNode root) {
-        if (root == null) return 0;
+        if (root == null) { return 0; }
 
-        int sum = 0;
-        if (root.left != null) {
-            if (root.left.left == null && root.left.right == null) {
-                sum = root.left.val;
-            } else {
-                sum = sumOfLeftLeaves2(root.left);
-            }
-        }
-        return sum + sumOfLeftLeaves2(root.right);
+        int sum = sumOfLeftLeaves2(root.right);
+        TreeNode leftChild = root.left;
+        if (leftChild == null) { return sum; }
+
+        return sum + ((leftChild.left == null && leftChild.right == null) ? leftChild.val : sumOfLeftLeaves2(leftChild));
     }
 
     // DFS + Stack
@@ -121,6 +115,8 @@ public class SumOfLeftLeaves {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("SumOfLeftLeaves");
+        String clazz = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        org.junit.runner.JUnitCore.main(clazz);
     }
 }
